@@ -1,0 +1,37 @@
+= ACL system
+
+predefined sets of ACLS
+
+* Public, totally open (like wikipedia)
+** Guests can read, edit, upload attachments
+* Public, join to edit
+** Guests can read, registration/joining the wiki is available
+* Public, invite to edit
+** Guests can read, joining is by invitation only
+* Private
+** Invitation only
+
+= Random features
+
+* Backlinks for attachments?
+** wikipedia implements attachments & images as special types of pages, I think
+
+* Determine wiki by path or hostname (dev.wiki.company.com or wiki.company.com/wiki/dev)?
+
+= Reporting
+
+* Logins
+* Page views, edits, creation, deletion
+* Attachment views, edits
+* Added users?
+** This is probably only necessary if there are plans to charge per-user-in-a-wiki, which seems like a big PITA
+* Created wiki, deleted wiki
+
+= Archiving feature
+
+* auto-archiving of unread content somehow
+** only shows up in search when explicitly asked for
+
+= Users
+
+* allow email aliases for purposes of logging in

@@ -1,0 +1,42 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use lib './lib';
+
+use Silk::Config;
+
+system( 'psql', 'template1', '-f', './schema/Silk.sql' )
+    and die 'Cannot create Silk database with psql';
+
+
+require Silk::Model::User;
+
+Silk::Model::User->EnsureRequiredUsersExist();
+
+make_admin_user();
+
+
+sub make_admin_user
+{
+    my $email = 'admin@' . Silk::Config->SystemHostname();
+    my $pw = 'changeme';
+
+    my $admin =
+        Silk::Model::User->insert( real_name          => 'Angela D. Min',
+                                   email_address      => $email,
+                                   password           => $pw,
+                                   is_admin           => 1,
+                                   created_by_user_id => Silk::Model::User->SystemUser()->user_id(),
+                                 );
+
+    print <<"EOF";
+
+Created the admin user:
+
+  email:    $email
+  password: $pw
+
+EOF
+}
