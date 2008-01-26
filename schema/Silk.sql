@@ -34,6 +34,7 @@ CREATE TABLE "Wiki" (
        wiki_id                  SERIAL8         PRIMARY KEY,
        title                    VARCHAR(255)    NOT NULL,
        domain_id                INT8            NOT NULL,
+       locale_code              VARCHAR(10)     NOT NULL,
        CONSTRAINT valid_title CHECK ( title != '' )
 );
 
@@ -44,6 +45,10 @@ CREATE TABLE "Domain" (
        domain_id                SERIAL8         PRIMARY KEY,
        hostname                 hostname        NOT NULL,
        requires_ssl             BOOLEAN         DEFAULT FALSE
+);
+
+CREATE TABLE "Locale" (
+       locale_code              VARCHAR(10)     PRIMARY KEY,
 );
 
 CREATE TABLE "Role" (
