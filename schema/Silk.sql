@@ -26,6 +26,9 @@ CREATE TABLE "User" (
        is_system_user           BOOLEAN         DEFAULT FALSE,
        creation_datetime        TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
        last_modified_datetime   TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
+       timezone                 VARCHAR(50)     DEFAULT 'UTC',
+       date_format              VARCHAR(12)     DEFAULT '%m/%d/%Y',
+       time_format              VARCHAR(12)     DEFAULT '%I:%M %P',
        created_by_user_id       INT8            NULL,
        CONSTRAINT valid_password CHECK ( password != '' )
 );
@@ -35,6 +38,7 @@ CREATE TABLE "Wiki" (
        title                    VARCHAR(255)    NOT NULL,
        domain_id                INT8            NOT NULL,
        locale_code              VARCHAR(10)     NOT NULL,
+       email_addresses_are_hidden               BOOL    default 't',
        CONSTRAINT valid_title CHECK ( title != '' )
 );
 
@@ -48,7 +52,7 @@ CREATE TABLE "Domain" (
 );
 
 CREATE TABLE "Locale" (
-       locale_code              VARCHAR(10)     PRIMARY KEY,
+       locale_code              VARCHAR(10)     PRIMARY KEY
 );
 
 CREATE TABLE "Role" (
