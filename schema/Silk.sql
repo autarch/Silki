@@ -19,16 +19,16 @@ CREATE TABLE "User" (
        -- system-created users even when the system's hostname
        -- changes, for normal users it can just be their email address
        username                 VARCHAR(255)    UNIQUE  NOT NULL,
-       real_name                VARCHAR(255)    DEFAULT '',
+       real_name                VARCHAR(255)    NOT NULL DEFAULT '',
        -- SHA512 in Base64 encoding
        password                 VARCHAR(86)     NOT NULL,
-       is_admin                 BOOLEAN         DEFAULT FALSE,
-       is_system_user           BOOLEAN         DEFAULT FALSE,
-       creation_datetime        TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
-       last_modified_datetime   TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
-       timezone                 VARCHAR(50)     DEFAULT 'UTC',
-       date_format              VARCHAR(12)     DEFAULT '%m/%d/%Y',
-       time_format              VARCHAR(12)     DEFAULT '%I:%M %P',
+       is_admin                 BOOLEAN         NOT NULL DEFAULT FALSE,
+       is_system_user           BOOLEAN         NOT NULL DEFAULT FALSE,
+       creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       last_modified_datetime   TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       timezone                 VARCHAR(50)     NOT NULL DEFAULT 'UTC',
+       date_format              VARCHAR(12)     NOT NULL DEFAULT '%m/%d/%Y',
+       time_format              VARCHAR(12)     NOT NULL DEFAULT '%I:%M %P',
        created_by_user_id       INT8            NULL,
        CONSTRAINT valid_password CHECK ( password != '' )
 );
@@ -37,8 +37,8 @@ CREATE TABLE "Wiki" (
        wiki_id                  SERIAL8         PRIMARY KEY,
        title                    VARCHAR(255)    NOT NULL,
        domain_id                INT8            NOT NULL,
-       locale_code              VARCHAR(10)     NOT NULL,
-       email_addresses_are_hidden               BOOL    default 't',
+       locale_code              VARCHAR(10)     NOT NULL DEFAULT 'en_US',
+       email_addresses_are_hidden               BOOLEAN    DEFAULT TRUE,
        CONSTRAINT valid_title CHECK ( title != '' )
 );
 
@@ -48,7 +48,7 @@ CREATE DOMAIN hostname AS VARCHAR(255)
 CREATE TABLE "Domain" (
        domain_id                SERIAL8         PRIMARY KEY,
        hostname                 hostname        NOT NULL,
-       requires_ssl             BOOLEAN         DEFAULT FALSE
+       requires_ssl             BOOLEAN         NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE "Locale" (
@@ -81,7 +81,7 @@ CREATE TABLE "WikiRolePermission" (
 
 CREATE TABLE "Page" (
        page_id                  SERIAL8         PRIMARY KEY,
-       is_deleted               BOOLEAN         DEFAULT FALSE
+       is_archived              BOOLEAN         NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE "PageRevision" (
@@ -90,8 +90,7 @@ CREATE TABLE "PageRevision" (
        title                    VARCHAR(255)    NOT NULL,
        content                  TEXT            NOT NULL,
        creator_user_id          INT8            NOT NULL,
-       creation_datetime        TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
-       is_deleted               BOOLEAN         DEFAULT 'n',
+       creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
        is_restoration_of_revision_number        INTEGER         NULL,
        PRIMARY KEY ( page_id, revision_number ),
        CONSTRAINT valid_revision_number CHECK ( revision_number > 0 ),
@@ -111,15 +110,15 @@ CREATE TABLE "PageFile" (
        PRIMARY KEY ( page_id, file_id )
 );
 
-CREATE TABLE "PageComment" (
+CREATE TABLE "Comment" (
        comment_id               SERIAL8         PRIMARY KEY,
        page_id                  INT8            NOT NULL,
+       user_id                  INT8            NOT NULL,
        revision_number          INTEGER         NOT NULL,
        title                    VARCHAR(255)    NOT NULL,
        body                     TEXT            NOT NULL,
-       parent_comment_id        INT8            NULL,
-       creation_datetime        TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
-       last_modified_datetime   TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
+       creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       last_modified_datetime   TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
        CONSTRAINT valid_title CHECK ( body != '' )
 );
 
@@ -146,8 +145,8 @@ CREATE TABLE "File" (
        file_name                file_name       NOT NULL,
        mime_type                VARCHAR(255)    NOT NULL,
        file_size                INTEGER         NOT NULL,
-       creation_datetime        TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
-       last_modified_datetime   TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
+       creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       last_modified_datetime   TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
        CONSTRAINT valid_file_name CHECK ( file_name != '' ),
        CONSTRAINT valid_file_size CHECK ( file_size > 0 )
 );
