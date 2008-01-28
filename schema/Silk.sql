@@ -19,7 +19,7 @@ CREATE TABLE "User" (
        -- system-created users even when the system's hostname
        -- changes, for normal users it can just be their email address
        username                 VARCHAR(255)    UNIQUE  NOT NULL,
-       real_name                VARCHAR(255)    NOT NULL DEFAULT '',
+       display_name             VARCHAR(255)    NOT NULL DEFAULT '',
        -- SHA512 in Base64 encoding
        password                 VARCHAR(86)     NOT NULL,
        is_admin                 BOOLEAN         NOT NULL DEFAULT FALSE,
@@ -33,12 +33,19 @@ CREATE TABLE "User" (
        CONSTRAINT valid_password CHECK ( password != '' )
 );
 
+CREATE DOMAIN uri_path_piece AS VARCHAR(255)
+       CONSTRAINT valid_uri_path_piece CHECK ( VALUE ~ E'^[a-zA-Z0-9_\-]+$' );
+
 CREATE TABLE "Wiki" (
        wiki_id                  SERIAL8         PRIMARY KEY,
        title                    VARCHAR(255)    NOT NULL,
+       -- This will be used in a URI path (/short-name/page/SomePage)
+       -- or as a hostname prefix (short-name.wiki.example.com)
+       short_name               uri_path_piece  NOT NULL,
        domain_id                INT8            NOT NULL,
        locale_code              VARCHAR(10)     NOT NULL DEFAULT 'en_US',
        email_addresses_are_hidden               BOOLEAN    DEFAULT TRUE,
+       created_by_user_id       INT8            NULL,
        CONSTRAINT valid_title CHECK ( title != '' )
 );
 
@@ -151,4 +158,15 @@ CREATE TABLE "File" (
        CONSTRAINT valid_file_size CHECK ( file_size > 0 )
 );
 
+-- another cache
+CREATE TABLE "FileLink" (
+       page_id                  INT8            NOT NULL,
+       file_id                  INT8            NOT NULL,
+       PRIMARY KEY ( page_id, file_id )
+);
+
 -- Need some foreign keys, yo
+
+ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_domain_id"
+  FOREIGN KEY ("domain_id") REFERENCES "Domain" ("domain_id")
+  ON DELETE SET DEFAULT ON UPDATE CASCADE;

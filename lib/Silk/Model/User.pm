@@ -4,8 +4,8 @@ use strict;
 use warnings;
 
 use Digest::SHA qw( sha512_base64 );
+use Silk::Model::Domain;
 use Silk::Model::Schema;
-use Silk::Config;
 
 use Fey::Class::Table;
 use MooseX::ClassAttribute;
@@ -97,11 +97,13 @@ sub _CreateSpecialUser
     my $class    = shift;
     my $username = shift;
 
-    my $email = $username . q{@} . Silk::Config->SystemHostname();
+    my $domain = Silk::Model::Domain->DefaultDomain();
 
-    my $real_name = join ' ', map { ucfirst } split /-/, $username;
+    my $email = $username . q{@} . $domain->hostname();
 
-    return $class->insert( real_name      => $real_name,
+    my $display_name = join ' ', map { ucfirst } split /-/, $username;
+
+    return $class->insert( display_name   => $display_name,
                            username       => $username,
                            email_address  => $email,
                            disable_login  => 1,
