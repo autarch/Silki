@@ -45,7 +45,7 @@ CREATE TABLE "Wiki" (
        domain_id                INT8            NOT NULL,
        locale_code              VARCHAR(10)     NOT NULL DEFAULT 'en_US',
        email_addresses_are_hidden               BOOLEAN    DEFAULT TRUE,
-       created_by_user_id       INT8            NULL,
+       user_id                  INT8            NULL,
        CONSTRAINT valid_title CHECK ( title != '' )
 );
 
@@ -55,6 +55,8 @@ CREATE DOMAIN hostname AS VARCHAR(255)
 CREATE TABLE "Domain" (
        domain_id                SERIAL8         PRIMARY KEY,
        hostname                 hostname        NOT NULL,
+       -- It'd be nice to have a domain for this too
+       path_prefix              VARCHAR(255)    NOT NULL DEFAULT '',
        requires_ssl             BOOLEAN         NOT NULL DEFAULT FALSE
 );
 
@@ -88,7 +90,9 @@ CREATE TABLE "WikiRolePermission" (
 
 CREATE TABLE "Page" (
        page_id                  SERIAL8         PRIMARY KEY,
-       is_archived              BOOLEAN         NOT NULL DEFAULT FALSE
+       is_archived              BOOLEAN         NOT NULL DEFAULT FALSE,
+       wiki_id                  INT8            NOT NULL,
+       user_id                  INT8            NOT NULL
 );
 
 CREATE TABLE "PageRevision" (
@@ -96,7 +100,7 @@ CREATE TABLE "PageRevision" (
        revision_number          INTEGER         NOT NULL,
        title                    VARCHAR(255)    NOT NULL,
        content                  TEXT            NOT NULL,
-       creator_user_id          INT8            NOT NULL,
+       user_id                  INT8            NOT NULL,
        creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
        is_restoration_of_revision_number        INTEGER         NULL,
        PRIMARY KEY ( page_id, revision_number ),
@@ -109,6 +113,12 @@ CREATE TABLE "PageRevisionTag" (
        revision_number          INTEGER         NOT NULL,
        tag_id                   INT8            NOT NULL,
        PRIMARY KEY ( page_id, revision_number, tag_id )
+);
+
+CREATE TABLE "Tag" (
+       tag_id                   SERIAL8         PRIMARY KEY,
+       tag                      VARCHAR(200)    NOT NULL,
+       CONSTRAINT valid_tag CHECK ( tag != '' )
 );
 
 CREATE TABLE "PageFile" (
@@ -138,12 +148,6 @@ CREATE TABLE "PageLink" (
        PRIMARY KEY ( from_page_id, to_page_id )
 );
 
-CREATE TABLE "Tag" (
-       tag_id                   SERIAL8         PRIMARY KEY,
-       tag                      VARCHAR(200)    NOT NULL,
-       CONSTRAINT valid_tag CHECK ( tag != '' )
-);
-
 CREATE DOMAIN file_name AS VARCHAR(255)
        CONSTRAINT no_slashes CHECK ( VALUE ~ E'^[^\\\\/]+$' );
 
@@ -165,8 +169,95 @@ CREATE TABLE "FileLink" (
        PRIMARY KEY ( page_id, file_id )
 );
 
--- Need some foreign keys, yo
+
+ALTER TABLE "User" ADD CONSTRAINT "User_created_by_user_id"
+  FOREIGN KEY ("created_by_user_id") REFERENCES "User" ("user_id")
+  ON DELETE SET NULL ON UPDATE CASCADE;
 
 ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_domain_id"
   FOREIGN KEY ("domain_id") REFERENCES "Domain" ("domain_id")
   ON DELETE SET DEFAULT ON UPDATE CASCADE;
+
+ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_user_id"
+  FOREIGN KEY ("user_id") REFERENCES "User" ("user_id")
+  ON DELETE RESTRICT ON UPDATE CASCADE;
+
+ALTER TABLE "UserWikiRole" ADD CONSTRAINT "UserWikiRole_user_id"
+  FOREIGN KEY ("user_id") REFERENCES "User" ("user_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "UserWikiRole" ADD CONSTRAINT "UserWikiRole_wiki_id"
+  FOREIGN KEY ("wiki_id") REFERENCES "Wiki" ("wiki_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "UserWikiRole" ADD CONSTRAINT "UserWikiRole_role_id"
+  FOREIGN KEY ("role_id") REFERENCES "Role" ("role_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "WikiRolePermission" ADD CONSTRAINT "WikiRolePermission_wiki_id"
+  FOREIGN KEY ("wiki_id") REFERENCES "Wiki" ("wiki_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "WikiRolePermission" ADD CONSTRAINT "WikiRolePermission_role_id"
+  FOREIGN KEY ("role_id") REFERENCES "Role" ("role_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "WikiRolePermission" ADD CONSTRAINT "WikiRolePermission_permission_id"
+  FOREIGN KEY ("permission_id") REFERENCES "Permission" ("permission_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "Page" ADD CONSTRAINT "Page_wiki_id"
+  FOREIGN KEY ("wiki_id") REFERENCES "Wiki" ("wiki_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "Page" ADD CONSTRAINT "Page_user_id"
+  FOREIGN KEY ("user_id") REFERENCES "User" ("user_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "PageRevision" ADD CONSTRAINT "PageRevision_page_id"
+  FOREIGN KEY ("page_id") REFERENCES "Page" ("page_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "PageRevision" ADD CONSTRAINT "PageRevision_user_id"
+  FOREIGN KEY ("user_id") REFERENCES "User" ("user_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "PageRevisionTag" ADD CONSTRAINT "PageRevisionTag_page_id_revision_number"
+  FOREIGN KEY ("page_id", "revision_number") REFERENCES "PageRevision" ("page_id", "revision_number")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "PageRevisionTag" ADD CONSTRAINT "PageRevisionTag_tag_id"
+  FOREIGN KEY ("tag_id") REFERENCES "Tag" ("tag_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "PageFile" ADD CONSTRAINT "PageFile_page_id"
+  FOREIGN KEY ("page_id") REFERENCES "Page" ("page_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "PageFile" ADD CONSTRAINT "PageFile_file_id"
+  FOREIGN KEY ("file_id") REFERENCES "File" ("file_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "Comment" ADD CONSTRAINT "Page_page_id"
+  FOREIGN KEY ("page_id") REFERENCES "Page" ("page_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "Comment" ADD CONSTRAINT "Comment_page_id_revision_number"
+  FOREIGN KEY ("page_id", "revision_number") REFERENCES "PageRevision" ("page_id", "revision_number")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "PageLink" ADD CONSTRAINT "PageLink_from_page_id"
+  FOREIGN KEY ("from_page_id") REFERENCES "Page" ("page_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "PageLink" ADD CONSTRAINT "PageLink_to_page_id"
+  FOREIGN KEY ("to_page_id") REFERENCES "Page" ("page_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "FileLink" ADD CONSTRAINT "FileLink_page_id"
+  FOREIGN KEY ("page_id") REFERENCES "Page" ("page_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "FileLink" ADD CONSTRAINT "FileLink_file_id"
+  FOREIGN KEY ("file_id") REFERENCES "File" ("file_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;

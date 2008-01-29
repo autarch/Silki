@@ -29,6 +29,7 @@ sub base_uri
 
     $uri->scheme( $self->requires_ssl() ? 'https' : 'http' );
     $uri->host( $self->hostname() );
+    $uri->path( $self->path_prefix() );
 
     return $uri;
 }

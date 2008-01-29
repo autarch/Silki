@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Digest::SHA qw( sha512_base64 );
+use List::Util qw( first );
 use Silk::Model::Domain;
 use Silk::Model::Schema;
 
@@ -12,6 +13,25 @@ use MooseX::ClassAttribute;
 
 has_table( Silk::Model::Schema->Schema()->table('User') );
 
+{
+    my $user_t = Silk::Model::Schema->Schema()->table('User');
+
+    my @fks = Silk::Model::Schema->Schema()->foreign_keys_between_tables( $user_t, $user_t );
+    my $fk  = first { ( $_->source_columns() )[0]->name() eq 'created_by_user_id' } @fks;
+
+    has_one( name  => 'creator',
+             table => Silk::Model::Schema->Schema()->table('User'),
+             fk    => $fk,
+           );
+}
+
+has_many( name  => 'pages',
+          table => Silk::Model::Schema->Schema()->table('Page'),
+        );
+
+has_many( name  => 'wikis',
+          table => Silk::Model::Schema->Schema()->table('Wiki'),
+        );
 
 class_has 'SystemUser' =>
     ( is      => 'ro',

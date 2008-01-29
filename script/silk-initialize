@@ -54,8 +54,12 @@ sub make_first_wiki
         Silk::Model::Wiki->insert( title      => 'The First Wiki',
                                    short_name => 'first-wiki',
                                    domain_id  => Silk::Model::Domain->DefaultDomain()->domain_id(),
-                                   created_by_user_id => Silk::Model::User->SystemUser()->user_id(),
+                                   user_id    => Silk::Model::User->SystemUser()->user_id(),
                                  );
+
+#    require Silk::Model::Page;
+
+#    my $page = Silk::Model::Page->
 
     my $uri = $wiki->base_uri();
 
@@ -65,5 +69,6 @@ Created the first wiki:
   URI: $uri
 
 EOF
+
 }
 
