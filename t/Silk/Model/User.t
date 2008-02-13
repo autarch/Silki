@@ -5,7 +5,6 @@ use Test::More tests => 4;
 
 use DateTime;
 use DateTime::Format::Pg;
-use DBI;
 use Digest::SHA qw( sha512_base64 );
 use Silk::Model::User;
 
