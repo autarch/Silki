@@ -22,6 +22,13 @@ has_many 'revisions' =>
       [ Silk::Model::Schema->Schema()->table('PageRevision')->column('revision_number'), 'DESC' ],
     );
 
+has 'most_recent_revision' =>
+    ( is       => 'ro',
+      isa      => 'Silk::Model::PageRevision',
+      lazy     => 1,
+      default  => \&_most_recent_revision,
+      init_arg => "\0most_recent_revision",
+    );
 
 sub uri
 {
@@ -82,12 +89,41 @@ sub insert
     return $page;
 }
 
+# replace with something like ...
+#
+#
+# my $select = ...;
+#
+# has_one 'most_recent_revision' =>
+#     ( table       => $schema->table('PageRevision')
+#       select      => $select,
+#       bind_params => sub { $_[0]->page_id() },
+#     );
+sub _most_recent_revision
+{
+    my $self = shift;
+
+    my $schema = $self->SchemaClass()->Schema();
+
+    my $select = $self->SchemaClass()->SQLFactoryClass()->new_select();
+
+    $select->select( $schema->table('PageRevision') )
+           ->where( $schema->table('PageRevision')->column('page_id'),
+                    '=', $self->page_id() )
+           ->order_by( $schema->table('PageRevision')->column('revision_number'), 'DESC' )
+           ->limit(1);
+
+    my $dbh = $self->_dbh($select);
+
+    my $row = $dbh->selectrow_hashref( $select->sql($dbh), {}, $select->bind_params() );
+
+    return Silk::Model::PageRevision->new( %{ $row }, _from_query => 1 );
+}
 
 no Fey::ORM::Table;
 no Moose;
 
 __PACKAGE__->meta()->make_immutable();
-
 
 1;
 

@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 2;
+use Test::More tests => 3;
 
 use DateTime;
 use DateTime::Format::Pg;
@@ -53,4 +53,26 @@ my $dbh = mock_dbh();
     is_deeply( $inserts[1],
                [ 'This is a page', 100, 1, 'SomePage', 12 ],
                'Inserting a page also inserts the first page revision' );
+}
+
+{
+    my $page = Silk::Model::Page->new( page_id     => 20,
+                                       _from_query => 1,
+                                     );
+
+    $dbh->{mock_clear_history} = 1;
+
+    my $now = DateTime::Format::Pg->format_timestamp( DateTime->now( time_zone => 'UTC' ) );
+
+    $dbh->{mock_add_resultset} =
+        [ [ qw( content creation_datetime is_restoration_of_revision_number
+                page_id revision_number title user_id ) ],
+          [ 'This is a page', $now, undef,
+            20, 15, 'SomePage', 99 ],
+        ];
+
+    my $revision = $page->most_recent_revision();
+
+    is( $revision->revision_number(), 15,
+        'most_recent_revision() returns a single revision, rev 15' );
 }
