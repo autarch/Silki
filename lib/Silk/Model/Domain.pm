@@ -7,7 +7,7 @@ use Silk::Config;
 use Silk::Model::Schema;
 use URI;
 
-use Fey::Class::Table;
+use Fey::ORM::Table;
 use MooseX::ClassAttribute;
 
 has_table( Silk::Model::Schema->Schema()->table('Domain') );
@@ -54,7 +54,7 @@ sub _FindOrCreateDefaultDomain
 }
 
 
-no Fey::Class::Table;
+no Fey::ORM::Table;
 no Moose;
 no MooseX::ClassAttribute;
 

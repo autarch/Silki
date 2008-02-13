@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use DBI;
-use Fey::Class::Schema;
+use Fey::ORM::Schema;
 use Fey::DBIManager::Source;
 use Fey::Loader;
 
@@ -35,7 +35,7 @@ sub _set_dbh_attributes
     return;
 }
 
-no Fey::Class::Schema;
+no Fey::ORM::Schema;
 no Moose;
 
 __PACKAGE__->meta()->make_immutable();

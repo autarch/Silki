@@ -8,30 +8,25 @@ use List::Util qw( first );
 use Silk::Model::Domain;
 use Silk::Model::Schema;
 
-use Fey::Class::Table;
+use Fey::ORM::Table;
 use MooseX::ClassAttribute;
 
-has_table( Silk::Model::Schema->Schema()->table('User') );
-
 {
-    my $user_t = Silk::Model::Schema->Schema()->table('User');
+    my $schema = Silk::Model::Schema->Schema();
 
-    my @fks = Silk::Model::Schema->Schema()->foreign_keys_between_tables( $user_t, $user_t );
-    my $fk  = first { ( $_->source_columns() )[0]->name() eq 'created_by_user_id' } @fks;
+    my $user_t = $schema->table('User');
 
-    has_one( name  => 'creator',
-             table => Silk::Model::Schema->Schema()->table('User'),
-             fk    => $fk,
-           );
+    has_table $user_t;
+
+    has_one 'creator' =>
+        ( table => $user_t );
+
+    has_many 'pages' =>
+        ( table => $schema->table('Page') );
+
+    has_many 'wikis' =>
+        ( table => $schema->table('Wiki') );
 }
-
-has_many( name  => 'pages',
-          table => Silk::Model::Schema->Schema()->table('Page'),
-        );
-
-has_many( name  => 'wikis',
-          table => Silk::Model::Schema->Schema()->table('Wiki'),
-        );
 
 class_has 'SystemUser' =>
     ( is      => 'ro',
@@ -132,7 +127,7 @@ sub _CreateSpecialUser
 }
 
 
-no Fey::Class::Table;
+no Fey::ORM::Table;
 no Moose;
 no MooseX::ClassAttribute;
 

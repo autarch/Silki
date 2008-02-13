@@ -7,7 +7,7 @@ use Silk::Config;
 use Silk::Model::Domain;
 use Silk::Model::Schema;
 
-use Fey::Class::Table;
+use Fey::ORM::Table;
 use MooseX::ClassAttribute;
 
 has_table( Silk::Model::Schema->Schema()->table('Wiki') );
@@ -27,7 +27,7 @@ sub base_uri
     return $uri;
 }
 
-no Fey::Class::Table;
+no Fey::ORM::Table;
 no Moose;
 no MooseX::ClassAttribute;
 
