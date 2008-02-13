@@ -88,7 +88,7 @@ my $dbh = mock_dbh();
         [ [ qw( content creation_datetime is_restoration_of_revision_number
                 title user_id ) ],
           [ 'Welcome to Some Wiki', $now, undef,
-            'Front Page', 99 ],
+            'FrontPage', 99 ],
         ];
 
     my $wiki =
@@ -113,6 +113,6 @@ my $dbh = mock_dbh();
                'Creating a wiki also creates a front page' );
 
     is_deeply( $inserts[2],
-               [ 'Welcome to Some Wiki', 3, 1, 'Front Page', 99 ],
+               [ 'Welcome to Some Wiki', 3, 1, 'FrontPage', 99 ],
                'Creating a wiki also creates a front page (page revision)' );
 }

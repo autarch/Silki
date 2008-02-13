@@ -28,7 +28,7 @@ sub insert
               $wiki = $class->SUPER::insert(%p);
 
               Silk::Model::Page->insert
-                  ( title   => 'Front Page',
+                  ( title   => 'FrontPage',
                     content => 'Welcome to ' . $wiki->title(),
                     wiki_id => $wiki->wiki_id(),
                     user_id => $wiki->user_id(),
