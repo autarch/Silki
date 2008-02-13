@@ -5,15 +5,39 @@ use warnings;
 
 use Silk::Config;
 use Silk::Model::Domain;
+use Silk::Model::Page;
 use Silk::Model::Schema;
 
 use Fey::ORM::Table;
-use MooseX::ClassAttribute;
 
 has_table( Silk::Model::Schema->Schema()->table('Wiki') );
 
 has_one( Silk::Model::Schema->Schema()->table('Domain') );
 
+
+sub insert
+{
+    my $class = shift;
+    my %p     = @_;
+
+    my $wiki;
+
+    $class->SchemaClass()->InTransaction
+        ( sub
+          {
+              $wiki = $class->SUPER::insert(%p);
+
+              Silk::Model::Page->insert
+                  ( title   => 'Front Page',
+                    content => 'Welcome to ' . $wiki->title(),
+                    wiki_id => $wiki->wiki_id(),
+                    user_id => $wiki->user_id(),
+                  );
+          }
+        );
+
+    return $wiki;
+}
 
 sub base_uri
 {
@@ -29,7 +53,6 @@ sub base_uri
 
 no Fey::ORM::Table;
 no Moose;
-no MooseX::ClassAttribute;
 
 __PACKAGE__->meta()->make_immutable();
 

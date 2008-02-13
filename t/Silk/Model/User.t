@@ -5,18 +5,15 @@ use Test::More tests => 4;
 
 use DateTime;
 use DateTime::Format::Pg;
-use DBD::Mock 1.36;
 use DBI;
 use Digest::SHA qw( sha512_base64 );
-use Silk::Model::Schema;
 use Silk::Model::User;
 
+use lib 't/lib';
+use Silk::Test qw( mock_dbh );
 
-my $dbh = DBI->connect( 'dbi:Mock:', '', '' );
-my $man = Silk::Model::Schema->DBIManager();
 
-$man->remove_source('default');
-$man->add_source( name => 'default', dbh => $dbh );
+my $dbh = mock_dbh();
 
 {
     $dbh->{mock_last_insert_id} = [ 'User', 1 ];

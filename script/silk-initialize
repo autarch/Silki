@@ -57,10 +57,6 @@ sub make_first_wiki
                                    user_id    => Silk::Model::User->SystemUser()->user_id(),
                                  );
 
-#    require Silk::Model::Page;
-
-#    my $page = Silk::Model::Page->
-
     my $uri = $wiki->base_uri();
 
     print <<"EOF";

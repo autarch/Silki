@@ -12,6 +12,11 @@ SET CLIENT_MIN_MESSAGES = ERROR;
 CREATE DOMAIN email_address AS VARCHAR(255)
        CONSTRAINT valid_email_address CHECK ( VALUE ~ E'^.+@.+(?:\\..+)+' );
 
+-- Is there a way to ensure that this table only ever has one row?
+CREATE TABLE "Version" (
+       version                  INTEGER         PRIMARY KEY
+);
+
 CREATE TABLE "User" (
        user_id                  SERIAL8         PRIMARY KEY,
        email_address            email_address   UNIQUE  NOT NULL,
@@ -261,3 +266,6 @@ ALTER TABLE "FileLink" ADD CONSTRAINT "FileLink_page_id"
 ALTER TABLE "FileLink" ADD CONSTRAINT "FileLink_file_id"
   FOREIGN KEY ("file_id") REFERENCES "File" ("file_id")
   ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+INSERT INTO "Version" (version) VALUES (1);
