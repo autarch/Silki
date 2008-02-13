@@ -16,7 +16,7 @@ use Silk::Test qw( mock_dbh );
 my $dbh = mock_dbh();
 
 {
-    $dbh->{mock_last_insert_id} = [ 'User', 1 ];
+    $dbh->{mock_start_insert_id} = [ "User", 1 ];
 
     my %user_data = ( email_address => 'user@example.com',
                       display_name  => 'Example User',
