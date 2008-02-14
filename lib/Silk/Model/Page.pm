@@ -34,9 +34,11 @@ sub uri
 {
     my $self = shift;
 
-    my $uri = $self->wiki()->uri();
+    my $uri = $self->wiki()->base_uri();
 
     my $path = $uri->path() . '/page/' . $self->page_id();
+
+    $uri->path($path);
 
     return $uri;
 }

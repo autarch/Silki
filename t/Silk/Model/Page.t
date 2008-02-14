@@ -1,11 +1,13 @@
 use strict;
 use warnings;
 
-use Test::More tests => 3;
+use Test::More tests => 6;
 
 use DateTime;
 use DateTime::Format::Pg;
+use Silk::Model::Domain;
 use Silk::Model::Page;
+use Silk::Model::Wiki;
 
 use lib 't/lib';
 use Silk::Test qw( mock_dbh );
@@ -75,4 +77,47 @@ my $dbh = mock_dbh();
 
     is( $revision->revision_number(), 15,
         'most_recent_revision() returns a single revision, rev 15' );
+}
+
+{
+    my $domain =
+        Silk::Model::Domain->new( domain_id    => 1,
+                                  hostname     => 'host.example.com',
+                                  path_prefix  => '/prefix',
+                                  requires_ssl => 0,
+                                  _from_query  => 1,
+                                );
+
+    my $wiki =
+        Silk::Model::Wiki->new( wiki_id    => 1,
+                                domain_id  => 1,
+                                title      => 'Some Wiki',
+                                short_name => 'some-wiki',
+                                _from_query => 1,
+                              );
+
+    no warnings 'redefine';
+    local *Silk::Model::Wiki::domain = sub { return $domain };
+    local *Silk::Model::Page::wiki   = sub { return $wiki };
+
+    my $page = Silk::Model::Page->new( page_id     => 2,
+                                       _from_query => 1,
+                                     );
+
+    is( $page->uri(), 'http://host.example.com/prefix/wiki/1/page/2',
+        '$page->uri()' );
+
+    is( $page->uri_for_domain($domain), '/prefix/wiki/1/page/2',
+        '$page->uri_for_domain() - same domain' );
+
+    my $other_domain =
+        Silk::Model::Domain->new( domain_id    => 2,
+                                  hostname     => 'another.example.com',
+                                  path_prefix  => '/prefix2',
+                                  requires_ssl => 0,
+                                  _from_query  => 1,
+                                );
+
+    is( $page->uri_for_domain($other_domain), 'http://host.example.com/prefix/wiki/1/page/2',
+        '$page->uri_for_domain() - different domain' );
 }

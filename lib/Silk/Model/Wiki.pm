@@ -45,7 +45,7 @@ sub base_uri
 
     my $uri = $self->domain()->base_uri();
 
-    my $path = $self->domain()->path_prefix() . '/wiki/' . $self->short_name();
+    my $path = $self->domain()->path_prefix() . '/wiki/' . $self->wiki_id();
     $uri->path($path);
 
     return $uri;

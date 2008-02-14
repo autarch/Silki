@@ -32,7 +32,7 @@ use Silk::Test qw( mock_dbh );
                                 _from_query => 1,
                               );
 
-    is( $wiki->base_uri(), 'http://host.example.com/wiki/some-wiki',
+    is( $wiki->base_uri(), 'http://host.example.com/wiki/1',
         'base_uri() for wiki' );
 }
 
@@ -55,7 +55,7 @@ use Silk::Test qw( mock_dbh );
                                 _from_query => 1,
                               );
 
-    is( $wiki->base_uri(), 'http://host.example.com/silk/wiki/some-wiki',
+    is( $wiki->base_uri(), 'http://host.example.com/silk/wiki/1',
         'base_uri() for wiki in domain with path prefix' );
 }
 
