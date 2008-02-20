@@ -5,12 +5,12 @@ use Test::More tests => 6;
 
 use DateTime;
 use DateTime::Format::Pg;
-use Silk::Model::Domain;
-use Silk::Model::Page;
-use Silk::Model::Wiki;
+use Silki::Model::Domain;
+use Silki::Model::Page;
+use Silki::Model::Wiki;
 
 use lib 't/lib';
-use Silk::Test qw( mock_dbh );
+use Silki::Test qw( mock_dbh );
 
 
 my $dbh = mock_dbh();
@@ -37,7 +37,7 @@ my $dbh = mock_dbh();
             'SomePage', 99 ],
         ];
 
-    my $page = Silk::Model::Page->insert( title   => 'SomePage',
+    my $page = Silki::Model::Page->insert( title   => 'SomePage',
                                           content => 'This is a page',
                                           user_id => 12,
                                           wiki_id => 42,
@@ -58,7 +58,7 @@ my $dbh = mock_dbh();
 }
 
 {
-    my $page = Silk::Model::Page->new( page_id     => 20,
+    my $page = Silki::Model::Page->new( page_id     => 20,
                                        _from_query => 1,
                                      );
 
@@ -81,7 +81,7 @@ my $dbh = mock_dbh();
 
 {
     my $domain =
-        Silk::Model::Domain->new( domain_id    => 1,
+        Silki::Model::Domain->new( domain_id    => 1,
                                   hostname     => 'host.example.com',
                                   path_prefix  => '/prefix',
                                   requires_ssl => 0,
@@ -89,7 +89,7 @@ my $dbh = mock_dbh();
                                 );
 
     my $wiki =
-        Silk::Model::Wiki->new( wiki_id    => 1,
+        Silki::Model::Wiki->new( wiki_id    => 1,
                                 domain_id  => 1,
                                 title      => 'Some Wiki',
                                 short_name => 'some-wiki',
@@ -97,10 +97,10 @@ my $dbh = mock_dbh();
                               );
 
     no warnings 'redefine';
-    local *Silk::Model::Wiki::domain = sub { return $domain };
-    local *Silk::Model::Page::wiki   = sub { return $wiki };
+    local *Silki::Model::Wiki::domain = sub { return $domain };
+    local *Silki::Model::Page::wiki   = sub { return $wiki };
 
-    my $page = Silk::Model::Page->new( page_id     => 2,
+    my $page = Silki::Model::Page->new( page_id     => 2,
                                        _from_query => 1,
                                      );
 
@@ -111,7 +111,7 @@ my $dbh = mock_dbh();
         '$page->uri_for_domain() - same domain' );
 
     my $other_domain =
-        Silk::Model::Domain->new( domain_id    => 2,
+        Silki::Model::Domain->new( domain_id    => 2,
                                   hostname     => 'another.example.com',
                                   path_prefix  => '/prefix2',
                                   requires_ssl => 0,

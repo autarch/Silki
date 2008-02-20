@@ -1,4 +1,4 @@
-package Silk::Test;
+package Silki::Test;
 
 use strict;
 use warnings;
@@ -12,9 +12,9 @@ use DBD::Mock 1.36;
 
 sub mock_dbh
 {
-    require Silk::Model::Schema;
+    require Silki::Model::Schema;
 
-    my $man = Silk::Model::Schema->DBIManager();
+    my $man = Silki::Model::Schema->DBIManager();
 
     $man->remove_source('default');
     $man->add_source( name => 'default', dsn => 'dbi:Mock:' );

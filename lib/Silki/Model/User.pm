@@ -1,18 +1,18 @@
-package Silk::Model::User;
+package Silki::Model::User;
 
 use strict;
 use warnings;
 
 use Digest::SHA qw( sha512_base64 );
 use List::Util qw( first );
-use Silk::Model::Domain;
-use Silk::Model::Schema;
+use Silki::Model::Domain;
+use Silki::Model::Schema;
 
 use Fey::ORM::Table;
 use MooseX::ClassAttribute;
 
 {
-    my $schema = Silk::Model::Schema->Schema();
+    my $schema = Silki::Model::Schema->Schema();
 
     my $user_t = $schema->table('User');
 
@@ -112,7 +112,7 @@ sub _CreateSpecialUser
     my $class    = shift;
     my $username = shift;
 
-    my $domain = Silk::Model::Domain->DefaultDomain();
+    my $domain = Silki::Model::Domain->DefaultDomain();
 
     my $email = $username . q{@} . $domain->hostname();
 

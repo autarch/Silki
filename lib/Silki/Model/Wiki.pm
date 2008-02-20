@@ -1,18 +1,18 @@
-package Silk::Model::Wiki;
+package Silki::Model::Wiki;
 
 use strict;
 use warnings;
 
-use Silk::Config;
-use Silk::Model::Domain;
-use Silk::Model::Page;
-use Silk::Model::Schema;
+use Silki::Config;
+use Silki::Model::Domain;
+use Silki::Model::Page;
+use Silki::Model::Schema;
 
 use Fey::ORM::Table;
 
-has_table( Silk::Model::Schema->Schema()->table('Wiki') );
+has_table( Silki::Model::Schema->Schema()->table('Wiki') );
 
-has_one( Silk::Model::Schema->Schema()->table('Domain') );
+has_one( Silki::Model::Schema->Schema()->table('Domain') );
 
 
 sub insert
@@ -27,7 +27,7 @@ sub insert
           {
               $wiki = $class->SUPER::insert(%p);
 
-              Silk::Model::Page->insert
+              Silki::Model::Page->insert
                   ( title   => 'FrontPage',
                     content => 'Welcome to ' . $wiki->title(),
                     wiki_id => $wiki->wiki_id(),

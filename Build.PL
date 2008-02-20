@@ -4,7 +4,7 @@ use warnings;
 use Module::Build;
 
 my $builder = Module::Build->new
-    ( module_name        => 'Silk',
+    ( module_name        => 'Silki',
       license            => 'perl',
       requires           => { 'Fey::Class' => 0,
                             },

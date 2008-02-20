@@ -5,19 +5,19 @@ use warnings;
 
 use lib './lib';
 
-use Silk::Config;
+use Silki::Config;
 
-system( 'psql', 'template1', '-f', './schema/Silk.sql' )
-    and die 'Cannot create Silk database with psql';
+system( 'psql', 'template1', '-f', './schema/Silki.sql' )
+    and die 'Cannot create Silki database with psql';
 
 
-require Silk::Model::Domain;
+require Silki::Model::Domain;
 
-Silk::Model::Domain->EnsureRequiredDomainsExist();
+Silki::Model::Domain->EnsureRequiredDomainsExist();
 
-require Silk::Model::User;
+require Silki::Model::User;
 
-Silk::Model::User->EnsureRequiredUsersExist();
+Silki::Model::User->EnsureRequiredUsersExist();
 
 print "\n";
 
@@ -26,15 +26,15 @@ make_first_wiki($admin);
 
 sub make_admin_user
 {
-    my $email = 'admin@' . Silk::Model::Domain->DefaultDomain()->hostname();
+    my $email = 'admin@' . Silki::Model::Domain->DefaultDomain()->hostname();
     my $pw = 'changeme';
 
     my $admin =
-        Silk::Model::User->insert( display_name       => 'Angela D. Min',
+        Silki::Model::User->insert( display_name       => 'Angela D. Min',
                                    email_address      => $email,
                                    password           => $pw,
                                    is_admin           => 1,
-                                   created_by_user_id => Silk::Model::User->SystemUser()->user_id(),
+                                   created_by_user_id => Silki::Model::User->SystemUser()->user_id(),
                                  );
 
     print <<"EOF";
@@ -48,13 +48,13 @@ EOF
 
 sub make_first_wiki
 {
-    require Silk::Model::Wiki;
+    require Silki::Model::Wiki;
 
     my $wiki =
-        Silk::Model::Wiki->insert( title      => 'The First Wiki',
+        Silki::Model::Wiki->insert( title      => 'The First Wiki',
                                    short_name => 'first-wiki',
-                                   domain_id  => Silk::Model::Domain->DefaultDomain()->domain_id(),
-                                   user_id    => Silk::Model::User->SystemUser()->user_id(),
+                                   domain_id  => Silki::Model::Domain->DefaultDomain()->domain_id(),
+                                   user_id    => Silki::Model::User->SystemUser()->user_id(),
                                  );
 
     my $uri = $wiki->base_uri();

@@ -1,4 +1,4 @@
-package Silk::Config;
+package Silki::Config;
 
 use strict;
 use warnings;

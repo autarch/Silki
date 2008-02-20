@@ -1,4 +1,4 @@
-package Silk::Controller::Root;
+package Silki::Controller::Root;
 
 use strict;
 use warnings;
@@ -12,7 +12,7 @@ __PACKAGE__->config->{namespace} = '';
 
 =head1 NAME
 
-Silk::Controller::Root - Root Controller for Silk
+Silki::Controller::Root - Root Controller for Silki
 
 =head1 DESCRIPTION
 

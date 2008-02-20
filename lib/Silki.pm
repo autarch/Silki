@@ -1,4 +1,4 @@
-package Silk;
+package Silki;
 
 use strict;
 use warnings;
@@ -26,7 +26,7 @@ our $VERSION = '0.01';
 # with a external configuration file acting as an override for
 # local deployment.
 
-__PACKAGE__->config( name => 'Silk' );
+__PACKAGE__->config( name => 'Silki' );
 
 # Start the application
 __PACKAGE__->setup;
@@ -34,7 +34,7 @@ __PACKAGE__->setup;
 
 =head1 NAME
 
-Silk - Catalyst based application
+Silki - Catalyst based application
 
 =head1 SYNOPSIS
 
@@ -46,7 +46,7 @@ Silk - Catalyst based application
 
 =head1 SEE ALSO
 
-L<Silk::Controller::Root>, L<Catalyst>
+L<Silki::Controller::Root>, L<Catalyst>
 
 =head1 AUTHOR
 

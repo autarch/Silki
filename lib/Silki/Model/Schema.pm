@@ -1,4 +1,4 @@
-package Silk::Model::Schema;
+package Silki::Model::Schema;
 
 use strict;
 use warnings;
@@ -13,7 +13,7 @@ my $Schema;
 
 {
     my $source =
-        Fey::DBIManager::Source->new( dsn          => 'dbi:Pg:dbname=Silk',
+        Fey::DBIManager::Source->new( dsn          => 'dbi:Pg:dbname=Silki',
                                       post_connect => \&_set_dbh_attributes,
                                     );
 

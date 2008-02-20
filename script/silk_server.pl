@@ -50,9 +50,9 @@ if ( $debug ) {
 
 # This is require instead of use so that the above environment
 # variables can be set at runtime.
-require Silk;
+require Silki;
 
-Silk->run( $port, $host, {
+Silki->run( $port, $host, {
     argv              => \@argv,
     'fork'            => $fork,
     keepalive         => $keepalive,

@@ -1,16 +1,16 @@
-package Silk::Model::Domain;
+package Silki::Model::Domain;
 
 use strict;
 use warnings;
 
-use Silk::Config;
-use Silk::Model::Schema;
+use Silki::Config;
+use Silki::Model::Schema;
 use URI;
 
 use Fey::ORM::Table;
 use MooseX::ClassAttribute;
 
-has_table( Silk::Model::Schema->Schema()->table('Domain') );
+has_table( Silki::Model::Schema->Schema()->table('Domain') );
 
 
 class_has 'DefaultDomain' =>
@@ -45,7 +45,7 @@ sub _FindOrCreateDefaultDomain
 {
     my $class = shift;
 
-    my $hostname = Silk::Config->SystemHostname();
+    my $hostname = Silki::Config->SystemHostname();
 
     my $domain = $class->new( hostname => $hostname );
     return $domain if $domain;

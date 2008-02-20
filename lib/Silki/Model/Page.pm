@@ -1,30 +1,30 @@
-package Silk::Model::Page;
+package Silki::Model::Page;
 
 use strict;
 use warnings;
 
-use Silk::Config;
-use Silk::Model::PageRevision;
-use Silk::Model::Schema;
-use Silk::Model::Wiki;
+use Silki::Config;
+use Silki::Model::PageRevision;
+use Silki::Model::Schema;
+use Silki::Model::Wiki;
 
 use Fey::ORM::Table;
 
-has_table( Silk::Model::Schema->Schema()->table('Page') );
+has_table( Silki::Model::Schema->Schema()->table('Page') );
 
-has_one( Silk::Model::Schema->Schema()->table('User') );
+has_one( Silki::Model::Schema->Schema()->table('User') );
 
-has_one( Silk::Model::Schema->Schema()->table('Wiki') );
+has_one( Silki::Model::Schema->Schema()->table('Wiki') );
 
 has_many 'revisions' =>
-    ( table    => Silk::Model::Schema->Schema()->table('PageRevision'),
+    ( table    => Silki::Model::Schema->Schema()->table('PageRevision'),
       order_by =>
-      [ Silk::Model::Schema->Schema()->table('PageRevision')->column('revision_number'), 'DESC' ],
+      [ Silki::Model::Schema->Schema()->table('PageRevision')->column('revision_number'), 'DESC' ],
     );
 
 has 'most_recent_revision' =>
     ( is       => 'ro',
-      isa      => 'Silk::Model::PageRevision',
+      isa      => 'Silki::Model::PageRevision',
       lazy     => 1,
       default  => \&_most_recent_revision,
       init_arg => "\0most_recent_revision",
@@ -79,7 +79,7 @@ sub insert
               $page = $class->SUPER::insert(%page_p);
 
               my $revision =
-                  Silk::Model::PageRevision->insert
+                  Silki::Model::PageRevision->insert
                       ( %p,
                         revision_number => 1,
                         page_id         => $page->page_id(),
@@ -119,7 +119,7 @@ sub _most_recent_revision
 
     my $row = $dbh->selectrow_hashref( $select->sql($dbh), {}, $select->bind_params() );
 
-    return Silk::Model::PageRevision->new( %{ $row }, _from_query => 1 );
+    return Silki::Model::PageRevision->new( %{ $row }, _from_query => 1 );
 }
 
 no Fey::ORM::Table;

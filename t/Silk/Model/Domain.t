@@ -3,11 +3,11 @@ use warnings;
 
 use Test::More tests => 3;
 
-use Silk::Model::Domain;
+use Silki::Model::Domain;
 
 {
     my $domain =
-        Silk::Model::Domain->new( domain_id    => 1,
+        Silki::Model::Domain->new( domain_id    => 1,
                                   hostname     => 'host.example.com',
                                   requires_ssl => 0,
                                   path_prefix  => '',
@@ -19,7 +19,7 @@ use Silk::Model::Domain;
 
 {
     my $domain =
-        Silk::Model::Domain->new( domain_id    => 1,
+        Silki::Model::Domain->new( domain_id    => 1,
                                   hostname     => 'host.example.com',
                                   path_prefix  => '',
                                   requires_ssl => 1,
@@ -31,7 +31,7 @@ use Silk::Model::Domain;
 
 {
     my $domain =
-        Silk::Model::Domain->new( domain_id    => 1,
+        Silki::Model::Domain->new( domain_id    => 1,
                                   hostname     => 'host.example.com',
                                   requires_ssl => 0,
                                   path_prefix  => '/silk',
