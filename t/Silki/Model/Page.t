@@ -15,33 +15,14 @@ use Silki::Test qw( mock_dbh );
 
 my $dbh = mock_dbh();
 
-
 {
     $dbh->{mock_start_insert_id} = [ q{"Page"}, 100 ];
 
-    $dbh->{mock_add_resultset} = [];
-
-    $dbh->{mock_add_resultset} =
-        [ [ qw( is_archived user_id wiki_id ) ],
-          [ 0, 12, 42 ],
-        ];
-
-    $dbh->{mock_add_resultset} = [];
-
-    my $now = DateTime::Format::Pg->format_timestamp( DateTime->now( time_zone => 'UTC' ) );
-
-    $dbh->{mock_add_resultset} =
-        [ [ qw( content creation_datetime is_restoration_of_revision_number
-                title user_id ) ],
-          [ 'This is a page', $now, undef,
-            'SomePage', 99 ],
-        ];
-
     my $page = Silki::Model::Page->insert( title   => 'SomePage',
-                                          content => 'This is a page',
-                                          user_id => 12,
-                                          wiki_id => 42,
-                                        );
+                                           content => 'This is a page',
+                                           user_id => 12,
+                                           wiki_id => 42,
+                                         );
 
     my @inserts =
         map { $_->bound_params() }
@@ -59,8 +40,8 @@ my $dbh = mock_dbh();
 
 {
     my $page = Silki::Model::Page->new( page_id     => 20,
-                                       _from_query => 1,
-                                     );
+                                        _from_query => 1,
+                                      );
 
     $dbh->{mock_clear_history} = 1;
 
@@ -82,27 +63,27 @@ my $dbh = mock_dbh();
 {
     my $domain =
         Silki::Model::Domain->new( domain_id    => 1,
-                                  hostname     => 'host.example.com',
-                                  path_prefix  => '/prefix',
-                                  requires_ssl => 0,
-                                  _from_query  => 1,
-                                );
+                                   hostname     => 'host.example.com',
+                                   path_prefix  => '/prefix',
+                                   requires_ssl => 0,
+                                   _from_query  => 1,
+                                 );
 
     my $wiki =
         Silki::Model::Wiki->new( wiki_id    => 1,
-                                domain_id  => 1,
-                                title      => 'Some Wiki',
-                                short_name => 'some-wiki',
-                                _from_query => 1,
-                              );
+                                 domain_id  => 1,
+                                 title      => 'Some Wiki',
+                                 short_name => 'some-wiki',
+                                 _from_query => 1,
+                               );
 
     no warnings 'redefine';
     local *Silki::Model::Wiki::domain = sub { return $domain };
     local *Silki::Model::Page::wiki   = sub { return $wiki };
 
     my $page = Silki::Model::Page->new( page_id     => 2,
-                                       _from_query => 1,
-                                     );
+                                        _from_query => 1,
+                                      );
 
     is( $page->uri(), 'http://host.example.com/prefix/wiki/1/page/2',
         '$page->uri()' );
@@ -112,11 +93,11 @@ my $dbh = mock_dbh();
 
     my $other_domain =
         Silki::Model::Domain->new( domain_id    => 2,
-                                  hostname     => 'another.example.com',
-                                  path_prefix  => '/prefix2',
-                                  requires_ssl => 0,
-                                  _from_query  => 1,
-                                );
+                                   hostname     => 'another.example.com',
+                                   path_prefix  => '/prefix2',
+                                   requires_ssl => 0,
+                                   _from_query  => 1,
+                                 );
 
     is( $page->uri_for_domain($other_domain), 'http://host.example.com/prefix/wiki/1/page/2',
         '$page->uri_for_domain() - different domain' );

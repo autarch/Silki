@@ -22,7 +22,7 @@ sub insert
 
     my $wiki;
 
-    $class->SchemaClass()->InTransaction
+    $class->SchemaClass()->RunInTransaction
         ( sub
           {
               $wiki = $class->SUPER::insert(%p);

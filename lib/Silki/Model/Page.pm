@@ -3,6 +3,7 @@ package Silki::Model::Page;
 use strict;
 use warnings;
 
+use Fey::Placeholder;
 use Silki::Config;
 use Silki::Model::PageRevision;
 use Silki::Model::Schema;
@@ -22,12 +23,10 @@ has_many 'revisions' =>
       [ Silki::Model::Schema->Schema()->table('PageRevision')->column('revision_number'), 'DESC' ],
     );
 
-has 'most_recent_revision' =>
-    ( is       => 'ro',
-      isa      => 'Silki::Model::PageRevision',
-      lazy     => 1,
-      default  => \&_most_recent_revision,
-      init_arg => "\0most_recent_revision",
+has_one 'most_recent_revision' =>
+    ( table       => Silki::Model::Schema->Schema()->table('PageRevision'),
+      select      => __PACKAGE__->_most_recent_revision_select(),
+      bind_params => sub { $_[0]->page_id() },
     );
 
 sub uri
@@ -73,7 +72,7 @@ sub insert
         );
 
     my $page;
-    $class->SchemaClass()->InTransaction
+    $class->SchemaClass()->RunInTransaction
         ( sub
           {
               $page = $class->SUPER::insert(%page_p);
@@ -91,17 +90,7 @@ sub insert
     return $page;
 }
 
-# replace with something like ...
-#
-#
-# my $select = ...;
-#
-# has_one 'most_recent_revision' =>
-#     ( table       => $schema->table('PageRevision')
-#       select      => $select,
-#       bind_params => sub { $_[0]->page_id() },
-#     );
-sub _most_recent_revision
+sub _most_recent_revision_select
 {
     my $self = shift;
 
@@ -110,16 +99,13 @@ sub _most_recent_revision
     my $select = $self->SchemaClass()->SQLFactoryClass()->new_select();
 
     $select->select( $schema->table('PageRevision') )
+           ->from( $schema->table('PageRevision') )
            ->where( $schema->table('PageRevision')->column('page_id'),
-                    '=', $self->page_id() )
+                    '=', Fey::Placeholder->new() )
            ->order_by( $schema->table('PageRevision')->column('revision_number'), 'DESC' )
            ->limit(1);
 
-    my $dbh = $self->_dbh($select);
-
-    my $row = $dbh->selectrow_hashref( $select->sql($dbh), {}, $select->bind_params() );
-
-    return Silki::Model::PageRevision->new( %{ $row }, _from_query => 1 );
+    return $select;
 }
 
 no Fey::ORM::Table;

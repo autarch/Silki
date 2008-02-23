@@ -65,32 +65,6 @@ my $dbh = mock_dbh();
     $dbh->{mock_start_insert_id} = [ q{"Wiki"}, 42 ];
     $dbh->{mock_start_insert_id} = [ q{"Page"}, 3 ];
 
-    $dbh->{mock_add_resultset} = [];
-
-    $dbh->{mock_add_resultset} =
-        [ [ qw( domain_id locale_code email_addresses_are_hidden
-                short_name title user_id ) ],
-          [ qw( 1 en_US 0 some-wiki ), 'Some Wiki', 99 ],
-        ];
-
-    $dbh->{mock_add_resultset} = [];
-
-    $dbh->{mock_add_resultset} =
-        [ [ qw( is_archived user_id wiki_id ) ],
-          [ 0, 99, 42 ],
-        ];
-
-    $dbh->{mock_add_resultset} = [];
-
-    my $now = DateTime::Format::Pg->format_timestamp( DateTime->now( time_zone => 'UTC' ) );
-
-    $dbh->{mock_add_resultset} =
-        [ [ qw( content creation_datetime is_restoration_of_revision_number
-                title user_id ) ],
-          [ 'Welcome to Some Wiki', $now, undef,
-            'FrontPage', 99 ],
-        ];
-
     my $wiki =
         Silki::Model::Wiki->insert( title      => 'Some Wiki',
                                    short_name => 'some-wiki',
