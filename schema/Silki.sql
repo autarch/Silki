@@ -59,11 +59,14 @@ CREATE DOMAIN hostname AS VARCHAR(255)
        CONSTRAINT valid_hostname CHECK ( VALUE ~ E'^[^\\.]+(?:\\.[^\\.]+)+$' );
 
 CREATE TABLE "Domain" (
-       domain_id                SERIAL8         PRIMARY KEY,
-       hostname                 hostname        NOT NULL,
-       -- It'd be nice to have a domain for this too
-       path_prefix              VARCHAR(255)    NOT NULL DEFAULT '',
-       requires_ssl             BOOLEAN         NOT NULL DEFAULT FALSE
+       domain_id          SERIAL             PRIMARY KEY,
+       web_hostname       VARCHAR(255)       UNIQUE NOT NULL,
+       email_hostname     VARCHAR(255)       UNIQUE NOT NULL,
+       path_prefix        VARCHAR(255)    NOT NULL DEFAULT '',
+       requires_ssl       BOOLEAN            DEFAULT FALSE,
+       creation_datetime  TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       CONSTRAINT valid_web_hostname CHECK ( web_hostname != '' ),
+       CONSTRAINT valid_email_hostname CHECK ( email_hostname != '' )
 );
 
 CREATE TABLE "Locale" (
