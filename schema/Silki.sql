@@ -27,6 +27,7 @@ CREATE TABLE "User" (
        display_name             VARCHAR(255)    NOT NULL DEFAULT '',
        -- SHA512 in Base64 encoding
        password                 VARCHAR(86)     NOT NULL,
+       openid_uri               VARCHAR(255)    NOT NULL,
        is_admin                 BOOLEAN         NOT NULL DEFAULT FALSE,
        is_system_user           BOOLEAN         NOT NULL DEFAULT FALSE,
        creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -35,7 +36,7 @@ CREATE TABLE "User" (
        date_format              VARCHAR(12)     NOT NULL DEFAULT '%m/%d/%Y',
        time_format              VARCHAR(12)     NOT NULL DEFAULT '%I:%M %P',
        created_by_user_id       INT8            NULL,
-       CONSTRAINT valid_password CHECK ( password != '' )
+       CONSTRAINT valid_user_record CHECK ( password != '' OR openid_uri != '' )
 );
 
 CREATE DOMAIN uri_path_piece AS VARCHAR(255)
