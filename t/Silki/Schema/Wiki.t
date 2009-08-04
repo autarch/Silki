@@ -16,21 +16,21 @@ use Silki::Test qw( mock_dbh );
 {
     my $domain =
         Silki::Schema::Domain->new( domain_id    => 1,
-                                  hostname     => 'host.example.com',
-                                  path_prefix  => '',
-                                  requires_ssl => 0,
-                                  _from_query  => 1,
-                                );
+                                    hostname     => 'host.example.com',
+                                    path_prefix  => '',
+                                    requires_ssl => 0,
+                                    _from_query  => 1,
+                                  );
 
     no warnings 'redefine';
     local *Silki::Schema::Wiki::domain = sub { return $domain };
 
     my $wiki =
         Silki::Schema::Wiki->new( wiki_id    => 1,
-                                title      => 'Some Wiki',
-                                short_name => 'some-wiki',
-                                _from_query => 1,
-                              );
+                                  title      => 'Some Wiki',
+                                  short_name => 'some-wiki',
+                                  _from_query => 1,
+                                );
 
     is( $wiki->base_uri(), 'http://host.example.com/wiki/1',
         'base_uri() for wiki' );
@@ -39,21 +39,21 @@ use Silki::Test qw( mock_dbh );
 {
     my $domain =
         Silki::Schema::Domain->new( domain_id    => 1,
-                                  hostname     => 'host.example.com',
-                                  path_prefix  => '/silk',
-                                  requires_ssl => 0,
-                                  _from_query  => 1,
-                                );
+                                    hostname     => 'host.example.com',
+                                    path_prefix  => '/silk',
+                                    requires_ssl => 0,
+                                    _from_query  => 1,
+                                  );
 
     no warnings 'redefine';
     local *Silki::Schema::Wiki::domain = sub { return $domain };
 
     my $wiki =
         Silki::Schema::Wiki->new( wiki_id    => 1,
-                                title      => 'Some Wiki',
-                                short_name => 'some-wiki',
-                                _from_query => 1,
-                              );
+                                  title      => 'Some Wiki',
+                                  short_name => 'some-wiki',
+                                  _from_query => 1,
+                                );
 
     is( $wiki->base_uri(), 'http://host.example.com/silk/wiki/1',
         'base_uri() for wiki in domain with path prefix' );
@@ -67,10 +67,10 @@ my $dbh = mock_dbh();
 
     my $wiki =
         Silki::Schema::Wiki->insert( title      => 'Some Wiki',
-                                   short_name => 'some-wiki',
-                                   domain_id  => 1,
-                                   user_id    => 99,
-                                 );
+                                     short_name => 'some-wiki',
+                                     domain_id  => 1,
+                                     user_id    => 99,
+                                   );
 
 
     my @inserts =
