@@ -11,13 +11,13 @@ system( 'psql', 'template1', '-f', './schema/Silki.sql' )
     and die 'Cannot create Silki database with psql';
 
 
-require Silki::Model::Domain;
+require Silki::Schema::Domain;
 
-Silki::Model::Domain->EnsureRequiredDomainsExist();
+Silki::Schema::Domain->EnsureRequiredDomainsExist();
 
-require Silki::Model::User;
+require Silki::Schema::User;
 
-Silki::Model::User->EnsureRequiredUsersExist();
+Silki::Schema::User->EnsureRequiredUsersExist();
 
 print "\n";
 
@@ -26,15 +26,15 @@ make_first_wiki($admin);
 
 sub make_admin_user
 {
-    my $email = 'admin@' . Silki::Model::Domain->DefaultDomain()->hostname();
+    my $email = 'admin@' . Silki::Schema::Domain->DefaultDomain()->hostname();
     my $pw = 'changeme';
 
     my $admin =
-        Silki::Model::User->insert( display_name       => 'Angela D. Min',
+        Silki::Schema::User->insert( display_name       => 'Angela D. Min',
                                    email_address      => $email,
                                    password           => $pw,
                                    is_admin           => 1,
-                                   created_by_user_id => Silki::Model::User->SystemUser()->user_id(),
+                                   created_by_user_id => Silki::Schema::User->SystemUser()->user_id(),
                                  );
 
     print <<"EOF";
@@ -48,13 +48,13 @@ EOF
 
 sub make_first_wiki
 {
-    require Silki::Model::Wiki;
+    require Silki::Schema::Wiki;
 
     my $wiki =
-        Silki::Model::Wiki->insert( title      => 'The First Wiki',
+        Silki::Schema::Wiki->insert( title      => 'The First Wiki',
                                    short_name => 'first-wiki',
-                                   domain_id  => Silki::Model::Domain->DefaultDomain()->domain_id(),
-                                   user_id    => Silki::Model::User->SystemUser()->user_id(),
+                                   domain_id  => Silki::Schema::Domain->DefaultDomain()->domain_id(),
+                                   user_id    => Silki::Schema::User->SystemUser()->user_id(),
                                  );
 
     my $uri = $wiki->base_uri();

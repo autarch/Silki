@@ -1,30 +1,30 @@
-package Silki::Model::Page;
+package Silki::Schema::Page;
 
 use strict;
 use warnings;
 
 use Fey::Placeholder;
 use Silki::Config;
-use Silki::Model::PageRevision;
-use Silki::Model::Schema;
-use Silki::Model::Wiki;
+use Silki::Schema::PageRevision;
+use Silki::Schema::Schema;
+use Silki::Schema::Wiki;
 
 use Fey::ORM::Table;
 
-has_table( Silki::Model::Schema->Schema()->table('Page') );
+has_table( Silki::Schema::Schema->Schema()->table('Page') );
 
-has_one( Silki::Model::Schema->Schema()->table('User') );
+has_one( Silki::Schema::Schema->Schema()->table('User') );
 
-has_one( Silki::Model::Schema->Schema()->table('Wiki') );
+has_one( Silki::Schema::Schema->Schema()->table('Wiki') );
 
 has_many 'revisions' =>
-    ( table    => Silki::Model::Schema->Schema()->table('PageRevision'),
+    ( table    => Silki::Schema::Schema->Schema()->table('PageRevision'),
       order_by =>
-      [ Silki::Model::Schema->Schema()->table('PageRevision')->column('revision_number'), 'DESC' ],
+      [ Silki::Schema::Schema->Schema()->table('PageRevision')->column('revision_number'), 'DESC' ],
     );
 
 has_one 'most_recent_revision' =>
-    ( table       => Silki::Model::Schema->Schema()->table('PageRevision'),
+    ( table       => Silki::Schema::Schema->Schema()->table('PageRevision'),
       select      => __PACKAGE__->_most_recent_revision_select(),
       bind_params => sub { $_[0]->page_id() },
     );
@@ -78,7 +78,7 @@ sub insert
               $page = $class->SUPER::insert(%page_p);
 
               my $revision =
-                  Silki::Model::PageRevision->insert
+                  Silki::Schema::PageRevision->insert
                       ( %p,
                         revision_number => 1,
                         page_id         => $page->page_id(),

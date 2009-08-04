@@ -1,16 +1,16 @@
-package Silki::Model::Domain;
+package Silki::Schema::Domain;
 
 use strict;
 use warnings;
 
 use Silki::Config;
-use Silki::Model::Schema;
+use Silki::Schema::Schema;
 use URI;
 
 use Fey::ORM::Table;
 use MooseX::ClassAttribute;
 
-has_table( Silki::Model::Schema->Schema()->table('Domain') );
+has_table( Silki::Schema::Schema->Schema()->table('Domain') );
 
 
 class_has 'DefaultDomain' =>

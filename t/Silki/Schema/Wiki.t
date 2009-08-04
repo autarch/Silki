@@ -5,9 +5,9 @@ use Test::More tests => 5;
 
 use DateTime;
 use DateTime::Format::Pg;
-use Silki::Model::Domain;
-use Silki::Model::User;
-use Silki::Model::Wiki;
+use Silki::Schema::Domain;
+use Silki::Schema::User;
+use Silki::Schema::Wiki;
 
 use lib 't/lib';
 use Silki::Test qw( mock_dbh );
@@ -15,7 +15,7 @@ use Silki::Test qw( mock_dbh );
 
 {
     my $domain =
-        Silki::Model::Domain->new( domain_id    => 1,
+        Silki::Schema::Domain->new( domain_id    => 1,
                                   hostname     => 'host.example.com',
                                   path_prefix  => '',
                                   requires_ssl => 0,
@@ -23,10 +23,10 @@ use Silki::Test qw( mock_dbh );
                                 );
 
     no warnings 'redefine';
-    local *Silki::Model::Wiki::domain = sub { return $domain };
+    local *Silki::Schema::Wiki::domain = sub { return $domain };
 
     my $wiki =
-        Silki::Model::Wiki->new( wiki_id    => 1,
+        Silki::Schema::Wiki->new( wiki_id    => 1,
                                 title      => 'Some Wiki',
                                 short_name => 'some-wiki',
                                 _from_query => 1,
@@ -38,7 +38,7 @@ use Silki::Test qw( mock_dbh );
 
 {
     my $domain =
-        Silki::Model::Domain->new( domain_id    => 1,
+        Silki::Schema::Domain->new( domain_id    => 1,
                                   hostname     => 'host.example.com',
                                   path_prefix  => '/silk',
                                   requires_ssl => 0,
@@ -46,10 +46,10 @@ use Silki::Test qw( mock_dbh );
                                 );
 
     no warnings 'redefine';
-    local *Silki::Model::Wiki::domain = sub { return $domain };
+    local *Silki::Schema::Wiki::domain = sub { return $domain };
 
     my $wiki =
-        Silki::Model::Wiki->new( wiki_id    => 1,
+        Silki::Schema::Wiki->new( wiki_id    => 1,
                                 title      => 'Some Wiki',
                                 short_name => 'some-wiki',
                                 _from_query => 1,
@@ -66,7 +66,7 @@ my $dbh = mock_dbh();
     $dbh->{mock_start_insert_id} = [ q{"Page"}, 3 ];
 
     my $wiki =
-        Silki::Model::Wiki->insert( title      => 'Some Wiki',
+        Silki::Schema::Wiki->insert( title      => 'Some Wiki',
                                    short_name => 'some-wiki',
                                    domain_id  => 1,
                                    user_id    => 99,

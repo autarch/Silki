@@ -6,7 +6,7 @@ use Test::More tests => 4;
 use DateTime;
 use DateTime::Format::Pg;
 use Digest::SHA qw( sha512_base64 );
-use Silki::Model::User;
+use Silki::Schema::User;
 
 use lib 't/lib';
 use Silki::Test qw( mock_dbh );
@@ -39,7 +39,7 @@ my $dbh = mock_dbh();
             '%I:%M %P', 'UTC', 1, $user_data{username} ],
         ];
 
-    my $user = Silki::Model::User->insert(%user_data);
+    my $user = Silki::Schema::User->insert(%user_data);
 
     my $insert_params = $dbh->{mock_all_history}[0]->bound_params();
 
@@ -74,7 +74,7 @@ my $dbh = mock_dbh();
         ];
 
     my $user =
-        Silki::Model::User->insert( %user_data,
+        Silki::Schema::User->insert( %user_data,
                                    disable_login => 1,
                                  );
 

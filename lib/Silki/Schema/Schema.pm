@@ -1,4 +1,4 @@
-package Silki::Model::Schema;
+package Silki::Schema::Schema;
 
 use strict;
 use warnings;
