@@ -1,10 +1,22 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
 use Getopt::Long;
 use Pod::Usage;
-use Catalyst::Helper;
+eval "use Catalyst::Helper;";
+
+if ($@) {
+  die <<END;
+To use the Catalyst development tools including catalyst.pl and the
+generated script/myapp_create.pl you need Catalyst::Helper, which is
+part of the Catalyst-Devel distribution. Please install this via a
+vendor package or by running one of -
+
+  perl -MCPAN -e 'install Catalyst::Devel'
+  perl -MCPANPLUS -e 'install Catalyst::Devel'
+END
+}
 
 my $force = 0;
 my $mech  = 0;
@@ -26,11 +38,11 @@ pod2usage(1) unless $helper->mk_component( 'Silki', @ARGV );
 
 =head1 NAME
 
-silk_create.pl - Create a new Catalyst Component
+silki_create.pl - Create a new Catalyst Component
 
 =head1 SYNOPSIS
 
-silk_create.pl [options] model|view|controller name [helper] [options]
+silki_create.pl [options] model|view|controller name [helper] [options]
 
  Options:
    -force        don't create a .new file where a file to be created exists
@@ -38,16 +50,15 @@ silk_create.pl [options] model|view|controller name [helper] [options]
    -help         display this help and exits
 
  Examples:
-   silk_create.pl controller My::Controller
-   silk_create.pl controller My::Controller BindLex
-   silk_create.pl -mechanize controller My::Controller
-   silk_create.pl view My::View
-   silk_create.pl view MyView TT
-   silk_create.pl view TT TT
-   silk_create.pl model My::Model
-   silk_create.pl model SomeDB DBIC::Schema MyApp::Schema create=dynamic\
+   silki_create.pl controller My::Controller
+   silki_create.pl -mechanize controller My::Controller
+   silki_create.pl view My::View
+   silki_create.pl view MyView TT
+   silki_create.pl view TT TT
+   silki_create.pl model My::Model
+   silki_create.pl model SomeDB DBIC::Schema MyApp::Schema create=dynamic\
    dbi:SQLite:/tmp/my.db
-   silk_create.pl model AnotherDB DBIC::Schema MyApp::Schema create=static\
+   silki_create.pl model AnotherDB DBIC::Schema MyApp::Schema create=static\
    dbi:Pg:dbname=foo root 4321
 
  See also:
@@ -62,14 +73,13 @@ Existing component files are not overwritten.  If any of the component files
 to be created already exist the file will be written with a '.new' suffix.
 This behavior can be suppressed with the C<-force> option.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Sebastian Riedel, C<sri@oook.de>
-Maintained by the Catalyst Core Team.
+Catalyst Contributors, see Catalyst.pm
 
 =head1 COPYRIGHT
 
-This library is free software, you can redistribute it and/or modify
+This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut

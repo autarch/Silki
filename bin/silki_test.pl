@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -20,18 +20,18 @@ print request($ARGV[0])->content . "\n";
 
 =head1 NAME
 
-silk_test.pl - Catalyst Test
+silki_test.pl - Catalyst Test
 
 =head1 SYNOPSIS
 
-silk_test.pl [options] uri
+silki_test.pl [options] uri
 
  Options:
    -help    display this help and exits
 
  Examples:
-   silk_test.pl http://localhost/some_action
-   silk_test.pl /some_action
+   silki_test.pl http://localhost/some_action
+   silki_test.pl /some_action
 
  See also:
    perldoc Catalyst::Manual
@@ -41,14 +41,13 @@ silk_test.pl [options] uri
 
 Run a Catalyst action from the command line.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Sebastian Riedel, C<sri@oook.de>
-Maintained by the Catalyst Core Team.
+Catalyst Contributors, see Catalyst.pm
 
 =head1 COPYRIGHT
 
-This library is free software, you can redistribute it and/or modify
+This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
