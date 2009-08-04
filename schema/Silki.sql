@@ -107,6 +107,7 @@ CREATE TABLE "PageRevision" (
        content                  TEXT            NOT NULL,
        user_id                  INT8            NOT NULL,
        creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       comment                  TEXT            NULL,
        is_restoration_of_revision_number        INTEGER         NULL,
        PRIMARY KEY ( page_id, revision_number ),
        CONSTRAINT valid_revision_number CHECK ( revision_number > 0 ),
@@ -151,6 +152,15 @@ CREATE TABLE "PageLink" (
        from_page_id             INT8            NOT NULL,
        to_page_id               INT8            NOT NULL,
        PRIMARY KEY ( from_page_id, to_page_id )
+);
+
+-- This stores links to pages which do not yet exist. When a page is created,
+-- any pending links can be removed and put into the PageLink table
+-- instead. This table can also be used to generate a list of wanted pages.
+CREATE TABLE "PendingPageLink" (
+       from_page_id             INT8            NOT NULL,
+       to_page_title            VARCHAR(255)    NOT NULL,
+       PRIMARY KEY ( from_page_id, to_page_title )
 );
 
 CREATE DOMAIN file_name AS VARCHAR(255)
@@ -257,6 +267,10 @@ ALTER TABLE "PageLink" ADD CONSTRAINT "PageLink_from_page_id"
 
 ALTER TABLE "PageLink" ADD CONSTRAINT "PageLink_to_page_id"
   FOREIGN KEY ("to_page_id") REFERENCES "Page" ("page_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "PendingPageLink" ADD CONSTRAINT "PendingPageLink_from_page_id"
+  FOREIGN KEY ("from_page_id") REFERENCES "Page" ("page_id")
   ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE "FileLink" ADD CONSTRAINT "FileLink_page_id"
