@@ -6,13 +6,13 @@ use warnings;
 use Digest::SHA qw( sha512_base64 );
 use List::Util qw( first );
 use Silki::Schema::Domain;
-use Silki::Schema::Schema;
+use Silki::Schema;
 
 use Fey::ORM::Table;
 use MooseX::ClassAttribute;
 
 {
-    my $schema = Silki::Schema::Schema->Schema();
+    my $schema = Silki::Schema->Schema();
 
     my $user_t = $schema->table('User');
 

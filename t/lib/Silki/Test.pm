@@ -12,9 +12,9 @@ use DBD::Mock 1.36;
 
 sub mock_dbh
 {
-    require Silki::Schema::Schema;
+    require Silki::Schema;
 
-    my $man = Silki::Schema::Schema->DBIManager();
+    my $man = Silki::Schema->DBIManager();
 
     $man->remove_source('default');
     $man->add_source( name => 'default', dsn => 'dbi:Mock:' );

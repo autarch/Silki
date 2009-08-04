@@ -6,13 +6,13 @@ use warnings;
 use Silki::Config;
 use Silki::Schema::Domain;
 use Silki::Schema::Page;
-use Silki::Schema::Schema;
+use Silki::Schema;
 
 use Fey::ORM::Table;
 
-has_table( Silki::Schema::Schema->Schema()->table('Wiki') );
+has_table( Silki::Schema->Schema()->table('Wiki') );
 
-has_one( Silki::Schema::Schema->Schema()->table('Domain') );
+has_one( Silki::Schema->Schema()->table('Domain') );
 
 
 sub insert

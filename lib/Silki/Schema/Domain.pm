@@ -4,13 +4,13 @@ use strict;
 use warnings;
 
 use Silki::Config;
-use Silki::Schema::Schema;
+use Silki::Schema;
 use URI;
 
 use Fey::ORM::Table;
 use MooseX::ClassAttribute;
 
-has_table( Silki::Schema::Schema->Schema()->table('Domain') );
+has_table( Silki::Schema->Schema()->table('Domain') );
 
 
 class_has 'DefaultDomain' =>
