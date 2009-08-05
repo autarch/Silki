@@ -169,7 +169,10 @@ sub _build_config_hash
 {
     my $self = shift;
 
-    my $hash = Config::INI::Reader->read_file( $self->_config_file() );
+    my $hash =
+          $ENV{SILKI_NO_CONFIG}
+        ? {}
+        : Config::INI::Reader->read_file( $self->_config_file() );
 
     # Can't call $self->is_production() or else we get a loop
     if ( $hash->{Silki}{is_production} )
@@ -283,7 +286,7 @@ sub _build_share_dir
 
     return $self->_dir( [ 'share' ],
                         '/usr/local/share/silki',
-                        dir( dir()->absolute(), 'share' ),
+                        dir( 'share' )->absolute,
                       );
 }
 

@@ -14,7 +14,7 @@ my $Schema;
 my $source;
 if ($Silki::Schema::TestSchema)
 {
-    has_schema $Silki::Schema::TestSchema
+    has_schema( $Silki::Schema::TestSchema );
 }
 else
 {

@@ -3,34 +3,50 @@ package Silki;
 use strict;
 use warnings;
 
-use Catalyst::Runtime '5.70';
-
-# Set flags and add plugins for the application
-#
-#         -Debug: activates the debug mode for very useful log messages
-#   ConfigLoader: will load the configuration from a YAML file in the
-#                 application's home directory
-# Static::Simple: will serve static files from the application's root 
-#                 directory
-
-use Catalyst qw/-Debug ConfigLoader Static::Simple/;
-
 our $VERSION = '0.01';
 
-# Configure the application. 
-#
-# Note that settings in silk.yml (or other external
-# configuration file that you set up manually) take precedence
-# over this when using ConfigLoader. Thus configuration
-# details given here can function as a default configuration,
-# with a external configuration file acting as an override for
-# local deployment.
+use Catalyst::Runtime 5.8;
 
-__PACKAGE__->config( name => 'Silki' );
+use Catalyst::App::RoleApplicator;
+use Catalyst::Request::REST::ForBrowsers;
+use Silki::Config;
+use Silki::Request;
+use Silki::Schema;
+use Silki::Web::Session;
 
-# Start the application
-__PACKAGE__->setup;
+use Moose;
 
+my $Config;
+
+BEGIN
+{
+    extends 'Catalyst';
+
+    $Config = Silki::Config->new();
+
+    Catalyst->import( @{ $Config->catalyst_imports() } );
+
+    Silki::Schema->LoadAllClasses();
+}
+
+with @{ $Config->catalyst_roles() };
+
+__PACKAGE__->config( name => 'Silki',
+                     %{ $Config->catalyst_config() },
+                   );
+
+__PACKAGE__->request_class('Catalyst::Request::REST::ForBrowsers');
+__PACKAGE__->apply_request_class_roles( 'Silki::Request' );
+
+Silki::Schema->EnableObjectCaches();
+
+__PACKAGE__->setup();
+
+no Moose;
+
+__PACKAGE__->meta()->make_immutable( replace_constructor => 1 );
+
+1;
 
 =head1 NAME
 
