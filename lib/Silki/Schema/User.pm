@@ -114,13 +114,15 @@ sub _CreateSpecialUser
 
     my $domain = Silki::Schema::Domain->DefaultDomain();
 
-    my $email = $username . q{@} . $domain->hostname();
+    my $email = $username . q{@} . $domain->email_hostname();
 
     my $display_name = join ' ', map { ucfirst } split /-/, $username;
 
     return $class->insert( display_name   => $display_name,
                            username       => $username,
                            email_address  => $email,
+                           password       => q{},
+                           openid_uri     => q{},
                            disable_login  => 1,
                            is_system_user => 1,
                          );

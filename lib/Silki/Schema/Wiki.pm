@@ -10,6 +10,8 @@ use Silki::Schema;
 
 use Fey::ORM::Table;
 
+with 'Silki::Role::Schema::URIMaker';
+
 has_table( Silki::Schema->Schema()->table('Wiki') );
 
 has_one( Silki::Schema->Schema()->table('Domain') );
@@ -39,16 +41,11 @@ sub insert
     return $wiki;
 }
 
-sub base_uri
+sub _base_uri_path
 {
     my $self = shift;
 
-    my $uri = $self->domain()->base_uri();
-
-    my $path = $self->domain()->path_prefix() . '/wiki/' . $self->wiki_id();
-    $uri->path($path);
-
-    return $uri;
+    return '/w/' . $self->short_name();
 }
 
 no Fey::ORM::Table;

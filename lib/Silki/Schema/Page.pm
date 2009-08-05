@@ -8,8 +8,11 @@ use Silki::Config;
 use Silki::Schema::PageRevision;
 use Silki::Schema;
 use Silki::Schema::Wiki;
+use URI::Escape qw( uri_escape_utf8 );
 
 use Fey::ORM::Table;
+
+with 'Silki::Role::Schema::URIMaker';
 
 has_table( Silki::Schema->Schema()->table('Page') );
 
@@ -29,34 +32,11 @@ has_one 'most_recent_revision' =>
       bind_params => sub { $_[0]->page_id() },
     );
 
-sub uri
+sub _base_uri_path
 {
     my $self = shift;
 
-    my $uri = $self->wiki()->base_uri();
-
-    my $path = $uri->path() . '/page/' . $self->page_id();
-
-    $uri->path($path);
-
-    return $uri;
-}
-
-sub uri_for_domain
-{
-    my $self   = shift;
-    my $domain = shift;
-
-    my $uri = $self->uri();
-
-    if ( $self->wiki()->domain_id() == $domain->domain_id() )
-    {
-        return $uri->path();
-    }
-    else
-    {
-        return $uri;
-    }
+    return $self->wiki()->_base_uri_path() . '/p/' . $self->uri_path();
 }
 
 sub insert
@@ -70,6 +50,8 @@ sub insert
           map { $_->name() }
           $class->Table()->columns()
         );
+
+    $page_p{uri_path} = $class->_title_to_uri_path( $p{title} );
 
     my $page;
     $class->SchemaClass()->RunInTransaction
@@ -88,6 +70,14 @@ sub insert
         );
 
     return $page;
+}
+
+sub _title_to_uri_path
+{
+    my $self  = shift;
+    my $title = shift;
+
+    return uri_escape_utf8($title);
 }
 
 sub _most_recent_revision_select

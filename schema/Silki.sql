@@ -36,7 +36,9 @@ CREATE TABLE "User" (
        date_format              VARCHAR(12)     NOT NULL DEFAULT '%m/%d/%Y',
        time_format              VARCHAR(12)     NOT NULL DEFAULT '%I:%M %P',
        created_by_user_id       INT8            NULL,
-       CONSTRAINT valid_user_record CHECK ( password != '' OR openid_uri != '' )
+       CONSTRAINT valid_user_record
+           CHECK ( ( password != '' OR openid_uri != '' )
+                    OR is_system_user )
 );
 
 CREATE DOMAIN uri_path_piece AS VARCHAR(255)
@@ -62,7 +64,6 @@ CREATE TABLE "Domain" (
        domain_id          SERIAL             PRIMARY KEY,
        web_hostname       VARCHAR(255)       UNIQUE NOT NULL,
        email_hostname     VARCHAR(255)       UNIQUE NOT NULL,
-       path_prefix        VARCHAR(255)    NOT NULL DEFAULT '',
        requires_ssl       BOOLEAN            DEFAULT FALSE,
        creation_datetime  TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
        CONSTRAINT valid_web_hostname CHECK ( web_hostname != '' ),
@@ -97,32 +98,36 @@ CREATE TABLE "WikiRolePermission" (
        PRIMARY KEY ( wiki_id, role_id, permission_id )
 );
 
+CREATE DOMAIN revision AS INT
+       CONSTRAINT valid_revision CHECK ( VALUE > 0 );
+
 CREATE TABLE "Page" (
        page_id                  SERIAL8         PRIMARY KEY,
+       title                    VARCHAR(255)    NOT NULL,
+       uri_path                 VARCHAR(255)    NOT NULL,
        is_archived              BOOLEAN         NOT NULL DEFAULT FALSE,
        wiki_id                  INT8            NOT NULL,
-       user_id                  INT8            NOT NULL
+       user_id                  INT8            NOT NULL,
+       UNIQUE ( wiki_id, title ),
+       UNIQUE ( wiki_id, uri_path ),
+       CONSTRAINT valid_title CHECK ( title != '' )
 );
 
 CREATE TABLE "PageRevision" (
        page_id                  INT8            NOT NULL,
-       revision_number          INTEGER         NOT NULL,
-       title                    VARCHAR(255)    NOT NULL,
+       revision_number          revision        NOT NULL,
        content                  TEXT            NOT NULL,
        user_id                  INT8            NOT NULL,
        creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
        comment                  TEXT            NULL,
        is_restoration_of_revision_number        INTEGER         NULL,
-       PRIMARY KEY ( page_id, revision_number ),
-       CONSTRAINT valid_revision_number CHECK ( revision_number > 0 ),
-       CONSTRAINT valid_title CHECK ( title != '' )
+       PRIMARY KEY ( page_id, revision_number )
 );
 
-CREATE TABLE "PageRevisionTag" (
+CREATE TABLE "PageTag" (
        page_id                  INT8            NOT NULL,
-       revision_number          INTEGER         NOT NULL,
        tag_id                   INT8            NOT NULL,
-       PRIMARY KEY ( page_id, revision_number, tag_id )
+       PRIMARY KEY ( page_id, tag_id )
 );
 
 CREATE TABLE "Tag" (
@@ -141,7 +146,7 @@ CREATE TABLE "Comment" (
        comment_id               SERIAL8         PRIMARY KEY,
        page_id                  INT8            NOT NULL,
        user_id                  INT8            NOT NULL,
-       revision_number          INTEGER         NOT NULL,
+       revision_number          revision        NOT NULL,
        title                    VARCHAR(255)    NOT NULL,
        body                     TEXT            NOT NULL,
        creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -241,11 +246,11 @@ ALTER TABLE "PageRevision" ADD CONSTRAINT "PageRevision_user_id"
   FOREIGN KEY ("user_id") REFERENCES "User" ("user_id")
   ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "PageRevisionTag" ADD CONSTRAINT "PageRevisionTag_page_id_revision_number"
-  FOREIGN KEY ("page_id", "revision_number") REFERENCES "PageRevision" ("page_id", "revision_number")
+ALTER TABLE "PageTag" ADD CONSTRAINT "PageTag_page_id_revision_number"
+  FOREIGN KEY ("page_id") REFERENCES "Page" ("page_id")
   ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "PageRevisionTag" ADD CONSTRAINT "PageRevisionTag_tag_id"
+ALTER TABLE "PageTag" ADD CONSTRAINT "PageTag_tag_id"
   FOREIGN KEY ("tag_id") REFERENCES "Tag" ("tag_id")
   ON DELETE CASCADE ON UPDATE CASCADE;
 
