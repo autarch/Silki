@@ -472,7 +472,8 @@ sub _build_static_path_prefix
 sub _build_system_hostname
 {
     for my $name ( hostname(),
-                   map { scalar gethostbyaddr $_->address(), AF_INET }
+                   map { scalar gethostbyaddr( $_->address(), AF_INET ) }
+                   grep { $_->address() }
                    Net::Interface->interfaces()
                  )
     {
