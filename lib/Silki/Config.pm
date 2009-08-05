@@ -50,15 +50,6 @@ has _config_hash =>
       clearer => '_clear_config_hash',
     );
 
-has _config_file =>
-    ( is      => 'ro',
-      isa     => 'Path::Class::File',
-      lazy    => 1,
-      builder => '_build_config_file',
-      # for testing
-      clearer => '_clear_config_file',
-    );
-
 has catalyst_imports =>
     ( is      => 'ro',
       isa     => 'ArrayRef[Str]',
@@ -169,10 +160,10 @@ sub _build_config_hash
 {
     my $self = shift;
 
-    my $hash =
-          $ENV{SILKI_NO_CONFIG}
-        ? {}
-        : Config::INI::Reader->read_file( $self->_config_file() );
+    my $file = $self->_find_config_file()
+        or return {};
+
+    my $hash = Config::INI::Reader->read_file($file);
 
     # Can't call $self->is_production() or else we get a loop
     if ( $hash->{Silki}{is_production} )
@@ -184,7 +175,7 @@ sub _build_config_hash
     return $hash;
 }
 
-sub _build_config_file
+sub _find_config_file
 {
     my $self = shift;
 
@@ -196,8 +187,6 @@ sub _build_config_file
         return file( $ENV{SILKI_CONFIG} );
     }
 
-    my @looked;
-
     my @dirs = dir( '/etc/silki' );
     push @dirs, $self->_home_dir()->subdir( '.silki', 'etc' )
         if $>;
@@ -207,11 +196,9 @@ sub _build_config_file
         my $file = $dir->file('silki.conf');
 
         return $file if -f $file;
-
-        push @looked, $file;
     }
 
-    die "Cannot find a config file anywhere I looked (@looked)\n";
+    return;
 }
 
 {
