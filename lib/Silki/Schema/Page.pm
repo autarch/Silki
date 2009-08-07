@@ -14,6 +14,8 @@ use Fey::ORM::Table;
 
 with 'Silki::Role::Schema::URIMaker';
 
+has_policy 'Silki::Schema::Policy';
+
 has_table( Silki::Schema->Schema()->table('Page') );
 
 has_one( Silki::Schema->Schema()->table('User') );

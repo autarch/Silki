@@ -1,0 +1,14 @@
+    <div class="yui-b">
+      <div id="local-nav">
+        <form action="/contact/search" method="get">
+          <input name="search" type="text" class="text" value="Quick Search" />
+        </form>
+      
+        <ul>
+          <li>A</li>
+          <li>B</li>
+          <li>C</li>
+          <li>D</li>
+        </ul>
+      </div>
+    </div>

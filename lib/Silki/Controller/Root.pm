@@ -5,18 +5,17 @@ use warnings;
 
 use Moose;
 
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { extends 'Silki::Controller::Base' }
 
 __PACKAGE__->config( namespace => q{} );
 
-sub default : Private {
-    my ( $self, $c ) = @_;
+sub default : Private
+{
+    my $self = shift;
+    my $c    = shift;
 
-    # Hello World
-    $c->response->body( $c->welcome_message );
+    $self->redirect_and_detach( $self->domain()->uri( view => '/site', with_host => 1 ) );
 }
-
-sub end : ActionClass('RenderView') {}
 
 no Moose;
 

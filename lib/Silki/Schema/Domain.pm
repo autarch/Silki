@@ -13,6 +13,8 @@ use MooseX::ClassAttribute;
 
 with 'Silki::Role::Schema::URIMaker';
 
+has_policy 'Silki::Schema::Policy';
+
 has_table( Silki::Schema->Schema()->table('Domain') );
 
 class_has 'DefaultDomain' =>

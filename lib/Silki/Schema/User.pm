@@ -16,6 +16,8 @@ use MooseX::ClassAttribute;
 
     my $user_t = $schema->table('User');
 
+    has_policy 'Silki::Schema::Policy';
+
     has_table $user_t;
 
     has_one 'creator' =>

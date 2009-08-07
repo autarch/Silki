@@ -9,6 +9,8 @@ use Silki::Schema;
 
 use Fey::ORM::Table;
 
+has_policy 'Silki::Schema::Policy';
+
 has_table( Silki::Schema->Schema()->table('PageRevision') );
 
 has_one( Silki::Schema->Schema()->table('Page') );

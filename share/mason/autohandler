@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+  <title>Silki | <& SELF:title, %ARGS &></title>
+
+  <link rel="stylesheet"
+        href="<% static_uri('/css/silki-combined.css') %>"
+        type="text/css" />
+
+  <script src="<% static_uri( '/js/silki-combined.js' ) %>"
+          type="text/javascript"></script>
+
+</head>
+<body>
+
+<div id="doc3" class="yui-t2">
+
+<& header.mas, %ARGS &>
+
+  <div id="bd">
+    <div id="yui-main">
+      <div class="yui-b">
+        <div id="content">
+<& .messages &>
+
+% $m->call_next();
+        </div>
+      </div>
+    </div>
+
+<& side-nav.mas, %ARGS &>
+	
+  </div>
+
+<& footer.mas, %ARGS &>
+
+</div>
+
+</body>
+</html>
+
+<%def .messages>
+<div id="messages">
+% for my $msg (@messages) {
+  <p><% $msg %></p>
+% }
+</div>
+<%init>
+my @messages = $c->session_object()->messages();
+
+return unless @messages;
+</%init>
+</%def>

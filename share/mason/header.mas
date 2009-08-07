@@ -1,0 +1,32 @@
+  <div id="hd">
+    <ul id="global-nav">
+      <li><a href="">log in</a></li>
+      <li><a href="">register</a></li>
+    </ul>
+
+<!--
+    <a href="<% $c->domain()->uri() %>"
+       ><img src="<% static_uri('/images/silki-logo.jpg') %>"
+             width="115" height="57" /></a>
+-->
+    &nbsp;
+
+    <div id="tabs">
+      <ul>
+% for my $tab (@tabs) {
+        <li class="<% $tab->is_selected() ? 'selected' : '' %>"
+            ><a href="<% $tab->uri() %>"
+                title="<% $tab->tooltip %>"><% $tab->label() %></a></li>
+% }
+% if ( ! @tabs ) {
+        <!-- we need an element here or else the height of the header
+        is different for a page with tabs vs one without -->
+        <li class="invisible">&nbsp;</li>
+% }
+      </ul>
+    </div>
+  </div>
+
+<%args>
+@tabs => ()
+</%args>

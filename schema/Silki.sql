@@ -76,12 +76,12 @@ CREATE TABLE "Locale" (
 
 CREATE TABLE "Role" (
        role_id                  SERIAL8         PRIMARY KEY,
-       name                     VARCHAR(50)     NOT NULL
+       name                     VARCHAR(50)     NOT NULL UNIQUE
 );
 
 CREATE TABLE "Permission" (
        permission_id            SERIAL8         PRIMARY KEY,
-       name                     VARCHAR(50)     NOT NULL
+       name                     VARCHAR(50)     NOT NULL UNIQUE
 );
 
 CREATE TABLE "UserWikiRole" (
@@ -108,6 +108,7 @@ CREATE TABLE "Page" (
        is_archived              BOOLEAN         NOT NULL DEFAULT FALSE,
        wiki_id                  INT8            NOT NULL,
        user_id                  INT8            NOT NULL,
+       can_be_renamed           BOOLEAN         NOT NULL DEFAULT TRUE,
        UNIQUE ( wiki_id, title ),
        UNIQUE ( wiki_id, uri_path ),
        CONSTRAINT valid_title CHECK ( title != '' )
@@ -193,6 +194,11 @@ CREATE TABLE "FileLink" (
        PRIMARY KEY ( page_id, file_id )
 );
 
+CREATE TABLE "Session" (
+       id                 CHAR(72)           PRIMARY KEY,
+       session_data       BYTEA              NOT NULL,
+       expires            INT                NOT NULL
+);
 
 ALTER TABLE "User" ADD CONSTRAINT "User_created_by_user_id"
   FOREIGN KEY ("created_by_user_id") REFERENCES "User" ("user_id")

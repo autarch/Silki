@@ -1,0 +1,369 @@
+html {
+    background-color: white;
+}
+
+body {
+    font-family: sans-serif;
+    line-height: 1.6em;
+}
+
+#doc3 {
+    background-color: white;
+}
+
+#hd, #bd, #ft {
+    /* yui base defaults to relatively small fonts, putting this in
+       the body or #doc4 selector destroys the yui layout */
+    font-size: 120%;
+}
+
+#hd {
+    background-color: #345;
+    border-bottom: 1px solid black;
+}
+
+#ft {
+    background-color: #eee;
+    color: black;
+    font-size: 90%;
+    padding: 2em 0.5em;
+    text-align: center;
+}
+
+#global-nav {
+    display: inline;
+    float: right;
+    font-size: 80%;
+}
+
+#global-nav li {
+    display: inline;
+    list-style: none;
+}
+
+#global-nav li a {
+    color: white;
+    padding-left: 0.5em;
+}
+
+#tabs {
+    /* These values are copied from the YUI styles so it matches the
+       body left margin */
+    margin-left: 14.8456em;
+    *margin-left: 14.512em;
+}
+
+#tabs ul {
+    font-size: 90%;
+    margin: 0;
+    padding-bottom: 0.3em;
+}
+
+#tabs li {
+    border: 1px 1px 0px 1px solid black;
+    display: inline;
+    list-style: none;
+    margin-right: 0.3em;
+}
+
+#tabs li a {
+    background-color: #EEFFCA;
+    border-bottom: 1px solid #EEFFCA;
+    color: #333;
+    font-weight: bold;
+    padding: 0.3em 1em;
+    text-decoration: none;
+}
+
+#tabs li.selected a {
+    background-color: white;
+    border-bottom: 1px solid white;
+    padding: 0.5em 1.2em;
+}
+
+/* This makes sure that the header is the same height with our without
+   tabs */
+#tabs li.invisible {
+    border: 1px 1px 0px 1px solid black;
+    padding: 0.3em 1em;
+}
+
+#tabs li a:hover {
+    background-color: #5B824C;
+    border-bottom: 1px solid #5B824C;
+    color: white;
+}
+
+#tabs li.selected a:hover {
+    background-color: white;
+    border-bottom: 1px solid white;
+    color: #333;
+}
+
+#messages {
+    background-color: #FFFFD9;
+    font-size: 90%;
+}
+
+#content {
+    background-color: white;
+    padding: 0.5em;
+}
+
+#local-nav {
+    background-color: #ddd;
+    border-bottom: 1px solid #777;
+    border-right: 1px solid #777;
+    padding-left: 0.5em;
+    padding-top: 0.5em;
+}
+
+/* === Tables === */
+
+table.standard-table {
+    width: 100%;
+}
+
+table.standard-table th,
+table.standard-table td {
+    border: none;
+}
+
+table.standard-table td {
+    padding: 0.2em 0.5em;
+}
+
+table.standard-table thead tr {
+    background-color: #A1BA6C;
+    color: white;
+}
+
+table.standard-table tbody:hover tr {
+    background-color: #EEE;
+}
+
+table.standard-table th {
+    text-align: left;
+}
+
+table.standard-table tr.even {
+    background-color: #F6FFE4;
+}
+
+table.standard-table tr.note {
+    padding-top: 0;
+}
+
+table.standard-table tr.note td {
+    padding-top: 0;
+}
+
+table.standard-table tr.note td p {
+    font-size: 90%;
+    margin-bottom: 0;
+    margin-left: 0.2em;
+}
+
+/* === Forms === */
+
+fieldset {
+    background-color: #F6FFE4;
+    border-top: 1px solid #A1BA6C;
+    margin-right: 2em;
+    padding: 0.5em;
+    padding-bottom: 1em;
+}
+
+fieldset.last {
+    padding-bottom: 0;
+}
+
+fieldset legend {
+    background-color: #A1BA6C;
+    color: white;
+    font-weight: bold;
+    padding: 0.4em;
+}
+
+form div.form-error {
+    border: 1px solid black;
+    margin: 0.3em 2em 0.3em 0;
+    padding: 0.3em;
+}
+
+form div.form-error p {
+    margin: 0.1em 0;
+}
+
+form div.form-error, form div.error {
+    background-color: #FCC841;
+}
+
+form div.error {
+    margin-top: 2px;
+}
+
+form div.error p.error-message {
+    margin-bottom: 0.1em;
+    margin-left: 12.5em;
+}
+
+form div.error p span {
+    font-size: 85%;
+}
+
+form div.form-item { 
+    clear: both;
+    padding: 0.4em 0 0.4em 0;
+}
+
+/* Having the help-text div allows us to set the margin in ems, to
+   match the width of the label tag. Without the div, we'd have to set
+   the margin on the p tag, but this has a different font-size than
+   the label, so the em size is not the same. */
+form div.form-item div.help-text { 
+    clear: both;
+    margin-top: 0.1em;
+    margin-left: 12.5em;
+}
+
+.help-text p {
+    font-size: 85%;
+    margin-bottom: 0em;
+}
+
+form label {
+    font-weight: bold;
+}
+
+form .for-field {
+    display: block;
+    float: left;
+    margin-right: 0.5em;
+    text-align: right;
+    width: 12em;
+}
+
+form label.secondary {
+    display: block;
+    float: left;
+    font-weight: normal;
+    margin-right: 0.5em;
+    text-align: right;
+    width: 12em;
+}
+
+form div.no-label {
+    margin-left: 12.5em;
+}
+
+form input.no-label {
+    display: block;
+    margin-bottom: 0.2em;
+}
+
+form label.for-radio {
+    color: #777;
+    margin-right: 0.5em;
+}
+
+form label.for-checkbox {
+    font-weight: normal;
+}
+
+form label.selected {
+    color: black;
+}
+
+form div.form-item span.required {
+    font-weight: bold;
+}
+
+form input.checkbox {
+    margin-top: 0.2em;
+}
+
+form a.add-another {
+    font-size: 90%;
+}
+
+input.text,
+input.file,
+textarea,
+select {
+    border: 1px solid #5B824C;
+    color: #5B824C;
+    font-weight: bold;
+    margin-top: -0.1em;
+    padding: 0.2em;
+}
+
+span.text-for-hidden {
+    font-weight: bold;
+    color: #5B824C;
+}
+
+input.error,
+textarea.error,
+select.error,
+p.error {
+    background-color: #FFCC66;
+}
+
+input.disabled,
+textarea.disabled,
+select.disabled {
+    background-color: #CCC;
+    border-color: #333;
+}
+
+input.text:focus,
+textarea:focus,
+select:focus {
+    background-color: #FAFFCA;
+    border-color: black;
+}
+
+input.narrow {
+    width: 7em;
+}
+
+input.medium {
+    width: 18em;
+}
+
+input.wide, textarea.wide {
+    width: 30em;
+}
+
+textarea {
+    height: 7em;
+}
+
+textarea.short {
+    height: 3.7em;
+}
+
+textarea.tall {
+    height: 10em;
+}
+
+input.submit {
+    background-color: #5B824C;
+    border-bottom: 2px solid #39602A;
+    border-left: 1px solid #D9FFCA;
+    border-right: 2px solid #39602A;
+    border-top: 1px solid #D9FFCA;
+    color: white;
+    font-weight: bold;
+    margin-top: 0.5em;
+    padding: 0.1em;
+}
+
+form.inline {
+    display: inline;
+}
+
+form.inline input.submit {
+    margin-top: 0.1em;
+}

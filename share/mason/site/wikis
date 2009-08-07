@@ -1,0 +1,28 @@
+<h1><& SELF:title, %ARGS &></h1>
+
+% if ($wiki_count) {
+<ul>
+%   while ( my $wiki = $wikis->next() ) {
+  <li><a href="<% $wiki->uri() %>"><% $wiki->title() %></a></li>
+%   }
+</ul>
+% } else {
+<p>
+This Silki site has no public wikis available.
+Please <a href="<% $c->domain()->uri( view => '/user/login_form' ) %>">login</a>
+if you have an account.
+</p>
+% }
+
+<%args>
+$wikis
+$wiki_count
+</%args>
+
+<%method title>
+% if ( $c->user() ) {
+Wikis readable by <% $c->user()->display_name() %>
+% } else {
+Public wikis
+% }
+</%method>
