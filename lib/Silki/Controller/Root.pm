@@ -17,6 +17,15 @@ sub default : Private
     $self->redirect_and_detach( $self->domain()->uri( view => '/site', with_host => 1 ) );
 }
 
+sub robots_txt : Path('/robots.txt') : Args(0)
+{
+    my $self = shift;
+    my $c    = shift;
+
+    $c->response()->content_type('text/plain');
+    $c->response()->body("User-agent: *\nDisallow: /\n");
+}
+
 no Moose;
 
 __PACKAGE__->meta()->make_immutable();
