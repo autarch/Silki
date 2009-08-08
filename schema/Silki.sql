@@ -108,6 +108,8 @@ CREATE TABLE "Page" (
        is_archived              BOOLEAN         NOT NULL DEFAULT FALSE,
        wiki_id                  INT8            NOT NULL,
        user_id                  INT8            NOT NULL,
+       -- This is only false for system-generated pages like FrontPage and
+       -- Help
        can_be_renamed           BOOLEAN         NOT NULL DEFAULT TRUE,
        UNIQUE ( wiki_id, title ),
        UNIQUE ( wiki_id, uri_path ),
