@@ -46,10 +46,10 @@ CREATE DOMAIN uri_path_piece AS VARCHAR(255)
 
 CREATE TABLE "Wiki" (
        wiki_id                  SERIAL8         PRIMARY KEY,
-       title                    VARCHAR(255)    NOT NULL,
+       title                    VARCHAR(255)    UNIQUE  NOT NULL,
        -- This will be used in a URI path (/short-name/page/SomePage)
        -- or as a hostname prefix (short-name.wiki.example.com)
-       short_name               uri_path_piece  NOT NULL,
+       short_name               uri_path_piece  UNIQUE  NOT NULL,
        domain_id                INT8            NOT NULL,
        locale_code              VARCHAR(10)     NOT NULL DEFAULT 'en_US',
        email_addresses_are_hidden               BOOLEAN    DEFAULT TRUE,
@@ -62,8 +62,8 @@ CREATE DOMAIN hostname AS VARCHAR(255)
 
 CREATE TABLE "Domain" (
        domain_id          SERIAL             PRIMARY KEY,
-       web_hostname       VARCHAR(255)       UNIQUE NOT NULL,
-       email_hostname     VARCHAR(255)       UNIQUE NOT NULL,
+       web_hostname       VARCHAR(255)       UNIQUE  NOT NULL,
+       email_hostname     VARCHAR(255)       NOT NULL,
        requires_ssl       BOOLEAN            DEFAULT FALSE,
        creation_datetime  TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
        CONSTRAINT valid_web_hostname CHECK ( web_hostname != '' ),
@@ -76,12 +76,12 @@ CREATE TABLE "Locale" (
 
 CREATE TABLE "Role" (
        role_id                  SERIAL8         PRIMARY KEY,
-       name                     VARCHAR(50)     NOT NULL UNIQUE
+       name                     VARCHAR(50)     UNIQUE  NOT NULL
 );
 
 CREATE TABLE "Permission" (
        permission_id            SERIAL8         PRIMARY KEY,
-       name                     VARCHAR(50)     NOT NULL UNIQUE
+       name                     VARCHAR(50)     UNIQUE  NOT NULL
 );
 
 CREATE TABLE "UserWikiRole" (
@@ -152,7 +152,7 @@ CREATE TABLE "Comment" (
        body                     TEXT            NOT NULL,
        creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
        last_modified_datetime   TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-       CONSTRAINT valid_title CHECK ( body != '' )
+       CONSTRAINT valid_body CHECK ( body != '' )
 );
 
 -- This is a cache, since the same information could be retrieved by
