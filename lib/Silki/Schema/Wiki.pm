@@ -20,9 +20,30 @@ use MooseX::Params::Validate qw( pos_validated_list );
 
 with 'Silki::Role::Schema::URIMaker';
 
-has_table( Silki::Schema->Schema()->table('Wiki') );
+{
+    my $schema = Silki::Schema->Schema();
 
-has_one( Silki::Schema->Schema()->table('Domain') );
+    has_table( $schema->table('Wiki') );
+
+    has_one( $schema->table('Domain') );
+
+    has_many pages =>
+        ( table    => $schema->table('Page'),
+          order_by => [ $schema->table('Page')->column('title') ],
+        );
+}
+
+my $FrontPage = <<'EOF';
+Welcome to your new wiki.
+
+A wiki is a set of web pages that can be read and edited by a group of people. You use simple to add things like *italics* and **bold** to the text. Wikis are designed to make linking to other pages easy.
+
+For more information about wikis in general and Silki in particular, see the [[Help]] page.
+EOF
+
+my $Help = <<'EOF';
+This need some content.
+EOF
 
 sub insert
 {
@@ -38,7 +59,15 @@ sub insert
 
               Silki::Schema::Page->insert
                   ( title          => 'Front Page',
-                    content        => 'Welcome to ' . $wiki->title(),
+                    content        => $FrontPage,
+                    wiki_id        => $wiki->wiki_id(),
+                    user_id        => $wiki->user_id(),
+                    can_be_renamed => 0,
+                  );
+
+              Silki::Schema::Page->insert
+                  ( title          => 'Help',
+                    content        => $Help,
                     wiki_id        => $wiki->wiki_id(),
                     user_id        => $wiki->user_id(),
                     can_be_renamed => 0,
@@ -53,7 +82,7 @@ sub _base_uri_path
 {
     my $self = shift;
 
-    return '/w/' . $self->short_name();
+    return '/wiki/' . $self->short_name();
 }
 
 {

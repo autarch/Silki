@@ -22,23 +22,24 @@ has_one( Silki::Schema->Schema()->table('User') );
 
 has_one( Silki::Schema->Schema()->table('Wiki') );
 
-has_many 'revisions' =>
+has_many revisions =>
     ( table    => Silki::Schema->Schema()->table('PageRevision'),
       order_by =>
       [ Silki::Schema->Schema()->table('PageRevision')->column('revision_number'), 'DESC' ],
     );
 
-has_one 'most_recent_revision' =>
+has_one most_recent_revision =>
     ( table       => Silki::Schema->Schema()->table('PageRevision'),
       select      => __PACKAGE__->_most_recent_revision_select(),
       bind_params => sub { $_[0]->page_id() },
+      handles     => [ qw( body_as_html ) ],
     );
 
 sub _base_uri_path
 {
     my $self = shift;
 
-    return $self->wiki()->_base_uri_path() . '/p/' . $self->uri_path();
+    return $self->wiki()->_base_uri_path() . '/page/' . $self->uri_path();
 }
 
 sub insert
@@ -53,7 +54,7 @@ sub insert
           $class->Table()->columns()
         );
 
-    $page_p{uri_path} = $class->_title_to_uri_path( $p{title} );
+    $page_p{uri_path} = $class->_title_to_uri_path( $page_p{title} );
 
     my $page;
     $class->SchemaClass()->RunInTransaction
@@ -79,7 +80,14 @@ sub _title_to_uri_path
     my $self  = shift;
     my $title = shift;
 
-    return uri_escape_utf8($title);
+    # This is the default list of safe characters, except we also escape
+    # underscores. This lets us replace escaped spaces (%20) with underscores
+    # after URI-escaping, making for much friendlier paths.
+    my $escaped = uri_escape_utf8( $title, q{^A-Za-z0-9-.!~*'()"} );
+
+    $escaped =~ s/%20/_/;
+
+    return $escaped;
 }
 
 sub _most_recent_revision_select

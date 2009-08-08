@@ -1,0 +1,14 @@
+<h1><& SELF:title, %ARGS &></h1>
+
+<% $page->body_as_html() | n %>
+
+<%args>
+$page
+</%args>
+
+<%method title>
+<% $page->title() %>
+<%args>
+$page
+</%args>
+</%method>

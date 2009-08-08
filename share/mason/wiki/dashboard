@@ -1,0 +1,22 @@
+<h1><& SELF:title, %ARGS &></h1>
+
+<ul>
+% while ( my $page = $pages->next() ) {
+  <li><a href="<% $page->uri() %>"><% $page->title() %></a></li>
+% }
+</ul>
+
+<%args>
+$wiki
+</%args>
+
+<%init>
+my $pages = $wiki->pages();
+</%init>
+
+<%method title>
+<% $wiki->title() %>
+<%args>
+$wiki
+</%args>
+</%method>
