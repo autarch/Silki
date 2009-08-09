@@ -8,9 +8,10 @@ use Silki::Schema::Domain;
 use Moose::Role;
 
 has 'domain' =>
-    ( is         => 'ro',
-      isa        => 'Silki::Schema::Domain',
-      lazy_build => 1,
+    ( is      => 'ro',
+      isa     => 'Silki::Schema::Domain',
+      lazy    => 1,
+      builder => '_build_domain',
     );
 
 
