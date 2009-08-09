@@ -8,9 +8,10 @@ use Silki::Schema::User;
 use Moose::Role;
 
 has 'user' =>
-    ( is         => 'ro',
-      isa        => 'Silki::Schema::User',
-      lazy_build => 1,
+    ( is      => 'ro',
+      isa     => 'Silki::Schema::User',
+      lazy    => 1,
+      builder => '_build_user',
     );
 
 
