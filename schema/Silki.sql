@@ -9,6 +9,8 @@ CREATE DATABASE "Silki"
 
 SET CLIENT_MIN_MESSAGES = ERROR;
 
+CREATE LANGUAGE plpgsql;
+
 CREATE DOMAIN email_address AS VARCHAR(255)
        CONSTRAINT valid_email_address CHECK ( VALUE ~ E'^.+@.+(?:\\..+)+' );
 
@@ -111,10 +113,44 @@ CREATE TABLE "Page" (
        -- This is only false for system-generated pages like FrontPage and
        -- Help
        can_be_renamed           BOOLEAN         NOT NULL DEFAULT TRUE,
+       ts_text                  tsvector        NULL,
        UNIQUE ( wiki_id, title ),
        UNIQUE ( wiki_id, uri_path ),
        CONSTRAINT valid_title CHECK ( title != '' )
 );
+
+CREATE INDEX "Page_ts_text" ON "Page" USING GIN(ts_text);
+
+CREATE FUNCTION page_tsvector_trigger() RETURNS trigger AS $$
+DECLARE
+    new_content TEXT;
+BEGIN        
+    IF NEW.title = OLD.title THEN
+        return NEW;
+    END IF;
+
+    SELECT content INTO new_content
+      FROM "PageRevision"
+     WHERE page_id = NEW.page_id
+       AND revision_number =
+           ( SELECT MAX(revision_number)
+               FROM "PageRevision"
+              WHERE page_id = NEW.page_id );
+
+    IF content IS NULL THEN
+        return NEW;
+    END IF;
+
+    NEW.ts_text :=
+        setweight(to_tsvector('pg_catalog.english', NEW.title), 'A') ||
+        setweight(to_tsvector('pg_catalog.english', new_content), 'B');
+
+    return NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER ts_text_sync BEFORE UPDATE
+       ON "Page" FOR EACH ROW EXECUTE PROCEDURE page_tsvector_trigger();
 
 CREATE TABLE "PageRevision" (
        page_id                  INT8            NOT NULL,
@@ -126,6 +162,30 @@ CREATE TABLE "PageRevision" (
        is_restoration_of_revision_number        INTEGER         NULL,
        PRIMARY KEY ( page_id, revision_number )
 );
+
+CREATE FUNCTION page_revision_tsvector_trigger() RETURNS trigger AS $$
+DECLARE
+    existing_title VARCHAR(255);
+    new_ts_text tsvector;
+BEGIN
+    SELECT title INTO existing_title
+      FROM "Page"
+     WHERE page_id = NEW.page_id;
+
+    new_ts_text :=
+        setweight(to_tsvector('pg_catalog.english', existing_title), 'A') ||
+        setweight(to_tsvector('pg_catalog.english', new.content), 'B');
+
+    UPDATE "Page"
+       SET ts_text = new_ts_text
+     WHERE page_id = NEW.page_id;
+
+    return NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER page_revision_ts_text_sync AFTER INSERT OR UPDATE
+       ON "PageRevision" FOR EACH ROW EXECUTE PROCEDURE page_revision_tsvector_trigger();
 
 CREATE TABLE "PageTag" (
        page_id                  INT8            NOT NULL,
