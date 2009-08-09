@@ -3,8 +3,8 @@
 <& /lib/forms/page.mas, %ARGS &>
 
 <%method title>
-Edit <% $page->title() %>
+Create <% $title %>
 <%args>
-$page
+$title
 </%args>
 </%method>

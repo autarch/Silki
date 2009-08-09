@@ -41,6 +41,33 @@ sub dashboard : Chained('_set_wiki') : PathPart('dashboard') : Args(0)
     $c->stash()->{template} = '/wiki/dashboard';
 }
 
+sub new_page_form : Chained('_set_wiki') : PathPart('new_page_form') : Args(0)
+{
+    my $self = shift;
+    my $c    = shift;
+
+    $c->stash()->{title} = $c->request()->params()->{title};
+    $c->stash()->{template} = '/wiki/new_page_form';
+}
+
+sub page_collection : Chained('_set_wiki') : PathPart('page') : Args(0) : ActionClass('+Silki::Action::REST') { }
+
+sub page_collection_POST
+{
+    my $self      = shift;
+    my $c         = shift;
+
+    my $page =
+        Silki::Schema::Page->insert_with_content
+            ( title   => $c->request()->params()->{title},
+              content => $c->request()->params()->{content},
+              wiki_id => $c->stash()->{wiki}->wiki_id(),
+              user_id => $c->user()->user_id(),
+            );
+
+    $c->redirect_and_detach( $page->uri() );
+}
+
 sub _set_page : Chained('_set_wiki') : PathPart('page') : CaptureArgs(1)
 {
     my $self      = shift;

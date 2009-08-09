@@ -63,7 +63,12 @@ sub _link_to_page
                                 );
 
     my $class = $page ? 'existing-page' : 'new-page';
-    my $uri = $page ? $page->uri() : q{};
+
+    my $uri =
+          $page
+        ? $page->uri()
+        : $self->_wiki()
+               ->uri( view => 'new_page_form', query => { title => $title } );
 
     my $escaped_title = encode_entities($title);
 
