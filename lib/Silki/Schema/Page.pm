@@ -42,7 +42,7 @@ sub _base_uri_path
     return $self->wiki()->_base_uri_path() . '/page/' . $self->uri_path();
 }
 
-sub insert
+sub insert_with_content
 {
     my $class = shift;
     my %p     = @_;
@@ -60,7 +60,7 @@ sub insert
     $class->SchemaClass()->RunInTransaction
         ( sub
           {
-              $page = $class->SUPER::insert(%page_p);
+              $page = $class->insert(%page_p);
 
               my $revision =
                   Silki::Schema::PageRevision->insert

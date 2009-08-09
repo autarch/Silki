@@ -57,7 +57,7 @@ sub insert
           {
               $wiki = $class->SUPER::insert(%p);
 
-              Silki::Schema::Page->insert
+              Silki::Schema::Page->insert_with_content
                   ( title          => 'Front Page',
                     content        => $FrontPage,
                     wiki_id        => $wiki->wiki_id(),
@@ -65,7 +65,7 @@ sub insert
                     can_be_renamed => 0,
                   );
 
-              Silki::Schema::Page->insert
+              Silki::Schema::Page->insert_with_content
                   ( title          => 'Help',
                     content        => $Help,
                     wiki_id        => $wiki->wiki_id(),
@@ -86,15 +86,15 @@ sub _base_uri_path
 }
 
 {
-    my %Sets = ( 'public'           => { Anonymous => [ qw( Read Edit ) ],
+    my %Sets = ( 'public'           => { Guest => [ qw( Read Edit ) ],
                                          Member    => [ qw( Read Edit Archive Attachment ) ],
                                          Admin     => [ qw( Read Edit Archive Attachment Invite Manage ) ],
                                        },
-                 'public-read-only' => { Anonymous => [ qw( Read ) ],
+                 'public-read-only' => { Guest => [ qw( Read ) ],
                                          Member    => [ qw( Read Edit Archive Attachment ) ],
                                          Admin     => [ qw( Read Edit Archive Attachment Invite Manage ) ],
                                        },
-                 'private'          => { Anonymous => [],
+                 'private'          => { Guest => [],
                                          Member    => [ qw( Read Edit Archive Attachment Invite ) ],
                                          Admin     => [ qw( Read Edit Archive Attachment Invite Manage ) ],
                                        },
@@ -175,7 +175,7 @@ sub _PublicWikiSelect
 
     my $schema = Silki::Schema->Schema();
 
-    my $anon = Silki::Schema::Role->Anonymous();
+    my $anon = Silki::Schema::Role->Guest();
     my $read = Silki::Schema::Permission->Read();
 
     $select->from( $schema->tables( 'Wiki', 'WikiRolePermission' ) )

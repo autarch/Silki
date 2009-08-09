@@ -18,11 +18,11 @@ my $dbh = mock_dbh();
 {
     $dbh->{mock_start_insert_id} = [ q{"Page"}, 100 ];
 
-    my $page = Silki::Schema::Page->insert( title   => 'SomePage',
-                                            content => 'This is a page',
-                                            user_id => 12,
-                                            wiki_id => 42,
-                                          );
+    my $page = Silki::Schema::Page->insert_with_content( title   => 'SomePage',
+                                                         content => 'This is a page',
+                                                         user_id => 12,
+                                                         wiki_id => 42,
+                                                       );
 
     my @inserts =
         map { $_->bound_params() }

@@ -12,7 +12,7 @@ has_policy 'Silki::Schema::Policy';
 
 has_table( Silki::Schema->Schema()->table('Role') );
 
-for my $role ( qw( Anonymous Member Admin ) )
+for my $role ( qw( Guest Member Admin ) )
 {
     class_has $role =>
         ( is      => 'ro',
