@@ -20,9 +20,11 @@ sub _build_user
 
     my $cookie = $self->authen_cookie_value();
 
-    return unless $cookie;
+    my $user;
+    $user = Silki::Schema::User->new( user_id => $cookie->{user_id} )
+        if $cookie->{user_id};
 
-    return Silki::Schema::User->new( user_id => $cookie->{user_id} );
+    return $user = Silki::Schema::User->GuestUser();
 }
 
 no Moose::Role;

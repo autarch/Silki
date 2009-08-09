@@ -1,0 +1,29 @@
+<h1><& SELF:title, %ARGS &></h1>
+
+<div id="form-and-preview">
+  <form action="<% $page->uri() %>" method="post">
+    <input type="hidden" name="x-tunneled-method" value="PUT" />
+    <input type="hidden" name="page_id" value="<% $page->page_id() %>" />
+
+    <textarea id="content" name="content"><% $page->content() %></textarea>
+
+    <input type="submit" value="Submit" />
+  </form>
+
+  <h2>Preview</h2>
+
+  <div id="preview">
+    <% $page->content_as_html | n %>
+  </div>
+</div>
+
+<%args>
+$page
+</%args>
+
+<%method title>
+Edit <% $page->title() %>
+<%args>
+$page
+</%args>
+</%method>

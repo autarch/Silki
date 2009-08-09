@@ -1,6 +1,8 @@
+<a href="<% $page->uri( view => 'edit_form' ) %>" title="Edit this page">Edit</a>
+
 <h1><& SELF:title, %ARGS &></h1>
 
-<% $page->body_as_html() | n %>
+<% $page->content_as_html() | n %>
 
 <%args>
 $page

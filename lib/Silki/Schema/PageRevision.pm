@@ -18,8 +18,12 @@ has_one( Silki::Schema->Schema()->table('Page') );
 
 has_one( Silki::Schema->Schema()->table('User') );
 
+transform content =>
+    deflate { return unless defined $_[1];
+              $_[1] =~ s/\r\n|\r/\n/g;
+              return $_[1] };
 
-sub body_as_html
+sub content_as_html
 {
     my $self = shift;
 

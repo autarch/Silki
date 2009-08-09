@@ -11,7 +11,7 @@ BEGIN { extends 'Silki::Controller::Base' }
 
 __PACKAGE__->config( namespace => q{} );
 
-sub site : Path('')
+sub site : Path('') : Args(0)
 {
     my $self = shift;
     my $c    = shift;

@@ -32,7 +32,7 @@ has_one most_recent_revision =>
     ( table       => Silki::Schema->Schema()->table('PageRevision'),
       select      => __PACKAGE__->_most_recent_revision_select(),
       bind_params => sub { $_[0]->page_id() },
-      handles     => [ qw( body_as_html ) ],
+      handles     => [ qw( content content_as_html ) ],
     );
 
 sub _base_uri_path
@@ -62,17 +62,31 @@ sub insert_with_content
           {
               $page = $class->insert(%page_p);
 
-              my $revision =
-                  Silki::Schema::PageRevision->insert
-                      ( %p,
-                        revision_number => 1,
-                        page_id         => $page->page_id(),
-                        user_id         => $page->user_id(),
-                      );
+              $page->add_revision( %p,
+                                   user_id => $page->user_id(),
+                                 );
           }
         );
 
     return $page;
+}
+
+sub add_revision
+{
+    my $self = shift;
+    my %p    = @_;
+
+    my $revision = $self->most_recent_revision();
+    my $revision_number = $revision ? $revision->revision_number() + 1 : 1;
+
+    $self->_clear_most_recent_revision();
+
+    return
+        Silki::Schema::PageRevision->insert
+            ( %p,
+              revision_number => $revision_number,
+              page_id         => $self->page_id(),
+            );
 }
 
 sub _title_to_uri_path

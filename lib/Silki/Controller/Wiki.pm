@@ -41,9 +41,7 @@ sub dashboard : Chained('_set_wiki') : PathPart('dashboard') : Args(0)
     $c->stash->{template} = '/wiki/dashboard';
 }
 
-sub page : Chained('_set_wiki') : PathPart('page') : Args(1) : ActionClass('+Silki::Action::REST') { }
-
-sub page_GET_html
+sub _set_page : Chained('_set_wiki') : PathPart('page') : CaptureArgs(1)
 {
     my $self      = shift;
     my $c         = shift;
@@ -60,8 +58,38 @@ sub page_GET_html
         unless $page;
 
     $c->stash()->{page} = $page;
+}
+
+sub page : Chained('_set_page') : PathPart('') : Args(0) : ActionClass('+Silki::Action::REST') { }
+
+sub page_GET_html
+{
+    my $self      = shift;
+    my $c         = shift;
 
     $c->stash->{template} = '/page/view';
+}
+
+sub page_edit_form : Chained('_set_page') : PathPart('edit_form') : Args(0)
+{
+    my $self      = shift;
+    my $c         = shift;
+
+    $c->stash->{template} = '/page/edit_form';
+}
+
+sub page_PUT
+{
+    my $self = shift;
+    my $c    = shift;
+
+    my $page = Silki::Schema::Page->new( page_id => $c->request()->params()->{page_id} );
+
+    $page->add_revision( content => $c->request()->params()->{content},
+                         user_id => $c->user()->user_id(),
+                       );
+
+    $c->redirect_and_detach( $page->uri() );
 }
 
 no Moose;

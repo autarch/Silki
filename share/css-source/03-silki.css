@@ -289,10 +289,9 @@ form a.add-another {
 
 input.text,
 input.file,
-textarea,
 select {
-    border: 1px solid #5B824C;
-    color: #5B824C;
+    border: 1px solid #333;
+    color: black;
     font-weight: bold;
     margin-top: -0.1em;
     padding: 0.2em;
@@ -300,7 +299,7 @@ select {
 
 span.text-for-hidden {
     font-weight: bold;
-    color: #5B824C;
+    color: black;
 }
 
 input.error,
@@ -332,20 +331,8 @@ input.medium {
     width: 18em;
 }
 
-input.wide, textarea.wide {
+input.wide {
     width: 30em;
-}
-
-textarea {
-    height: 7em;
-}
-
-textarea.short {
-    height: 3.7em;
-}
-
-textarea.tall {
-    height: 10em;
 }
 
 input.submit {
@@ -366,4 +353,25 @@ form.inline {
 
 form.inline input.submit {
     margin-top: 0.1em;
+}
+
+/* Page edit form */
+
+
+#form-and-preview {
+    width: 98%;
+}
+
+textarea#content {
+    font-weight: normal;
+    height: 20em;
+    width: 100%;
+}
+
+#preview {
+    background-color: #f9f9f9;
+    border: 1px solid black;
+    margin-top: 1em;
+    padding: 0.5em;
+    width: 100%;
 }
