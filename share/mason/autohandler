@@ -16,7 +16,7 @@
 </head>
 <body>
 
-<div id="doc3" class="yui-t2">
+<div id="doc3" class="yui-t6">
 
 <& header.mas, %ARGS &>
 
