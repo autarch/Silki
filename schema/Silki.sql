@@ -184,7 +184,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER page_revision_ts_text_sync AFTER INSERT OR UPDATE
+CREATE TRIGGER page_revision_ts_text_sync AFTER INSERT
        ON "PageRevision" FOR EACH ROW EXECUTE PROCEDURE page_revision_tsvector_trigger();
 
 CREATE TABLE "PageTag" (
