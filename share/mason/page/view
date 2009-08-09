@@ -2,10 +2,11 @@
 
 <h1><& SELF:title, %ARGS &></h1>
 
-<% $page->content_as_html() | n %>
+<% $html | n %>
 
 <%args>
 $page
+$html
 </%args>
 
 <%method title>
