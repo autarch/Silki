@@ -166,18 +166,15 @@ CREATE TABLE "PageRevision" (
 CREATE FUNCTION page_revision_tsvector_trigger() RETURNS trigger AS $$
 DECLARE
     existing_title VARCHAR(255);
-    new_ts_text tsvector;
 BEGIN
     SELECT title INTO existing_title
       FROM "Page"
      WHERE page_id = NEW.page_id;
 
-    new_ts_text :=
-        setweight(to_tsvector('pg_catalog.english', existing_title), 'A') ||
-        setweight(to_tsvector('pg_catalog.english', new.content), 'B');
-
     UPDATE "Page"
-       SET ts_text = new_ts_text
+       SET ts_text =
+               setweight(to_tsvector('pg_catalog.english', existing_title), 'A') ||
+               setweight(to_tsvector('pg_catalog.english', new.content), 'B')
      WHERE page_id = NEW.page_id;
 
     return NULL;
