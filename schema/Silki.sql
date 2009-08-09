@@ -137,7 +137,7 @@ BEGIN
                FROM "PageRevision"
               WHERE page_id = NEW.page_id );
 
-    IF content IS NULL THEN
+    IF new_content IS NULL THEN
         return NEW;
     END IF;
 
