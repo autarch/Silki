@@ -9,14 +9,6 @@ BEGIN { extends 'Silki::Controller::Base' }
 
 __PACKAGE__->config( namespace => q{} );
 
-sub default : Private
-{
-    my $self = shift;
-    my $c    = shift;
-
-    $self->redirect_and_detach( $self->domain()->uri( view => '/site', with_host => 1 ) );
-}
-
 sub robots_txt : Path('/robots.txt') : Args(0)
 {
     my $self = shift;
