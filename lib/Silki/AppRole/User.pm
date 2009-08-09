@@ -9,7 +9,7 @@ use Moose::Role;
 
 has 'user' =>
     ( is         => 'ro',
-      isa        => 'Silki::Schema::User|Undef',
+      isa        => 'Silki::Schema::User',
       lazy_build => 1,
     );
 
