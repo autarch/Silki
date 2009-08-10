@@ -3,18 +3,19 @@ package Silki::Schema::User;
 use strict;
 use warnings;
 
-use Digest::SHA qw( sha512_base64 );
-use List::Util qw( first );
-use Silki::Schema::Domain;
+use Authen::Passphrase::BlowfishCrypt;
+use List::AllUtils qw( first );
 use Silki::Schema;
+use Silki::Schema::Domain;
 
 use Fey::ORM::Table;
 use MooseX::ClassAttribute;
+use MooseX::Params::Validate qw( pos_validated_list );
+
+my $Schema = Silki::Schema->Schema();
 
 {
-    my $schema = Silki::Schema->Schema();
-
-    my $user_t = $schema->table('User');
+    my $user_t = $Schema->table('User');
 
     has_policy 'Silki::Schema::Policy';
 
@@ -24,10 +25,10 @@ use MooseX::ClassAttribute;
         ( table => $user_t );
 
     has_many 'pages' =>
-        ( table => $schema->table('Page') );
+        ( table => $Schema->table('Page') );
 
     has_many 'wikis' =>
-        ( table => $schema->table('Wiki') );
+        ( table => $Schema->table('Wiki') );
 }
 
 class_has 'SystemUser' =>
@@ -58,7 +59,14 @@ around 'insert' => sub
     {
         # XXX - require a certain length or complexity? make it
         # configurable?
-        $p{password} = sha512_base64( $p{password} );
+        my $pass =
+            Authen::Passphrase::BlowfishCrypt->new
+                ( cost        => 8,
+                  salt_random => 1,
+                  passphrase  => $p{password},
+                );
+
+        $p{password} = $pass->as_rfc2307();
     }
 
     $p{username} ||= $p{email_address};
@@ -95,6 +103,20 @@ sub EnsureRequiredUsersExist
 
         return $class->_FindOrCreateSpecialUser($GuestUsername);
     }
+
+    sub is_guest
+    {
+        my $self = shift;
+
+        return $self->username() eq $GuestUsername;
+    }
+}
+
+sub is_authenticated
+{
+    my $self = shift;
+
+    return ! $self->is_system_user();
 }
 
 sub _FindOrCreateSpecialUser
@@ -130,9 +152,31 @@ sub _CreateSpecialUser
                          );
 }
 
+sub role_in_wiki
+{
+    my $self   = shift;
+    my ($wiki) = pos_validated_list( \@_, { isa => 'Silki::Schema::Wiki' } );
+
+    my $select = $Schema->SQLFactoryClass()->new_select();
+
+    $select->select( $Schema->table('Role')->column('name') )
+           ->from( $Schema->table('Role'), $Schema->table('UserWikiRole') )
+           ->where( $Schema->table('UserWikiRole')->column('wiki_id'),
+                    '=', $wiki->wiki_id() )
+           ->and( $Schema->table('UserWikiRole')->column('user_id'),
+                    '=', $self->user_id() );
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
+
+    my $row = $dbh->selectro_arrayref( $select->sql($dbh), {}, $select->bind_params() );
+
+    return
+          $row              ? $row->[0]
+        : $self->is_guest() ? 'Guest'
+        :                     'Authenticated';
+}
 
 no Fey::ORM::Table;
-no Moose;
 no MooseX::ClassAttribute;
 
 __PACKAGE__->meta()->make_immutable();
