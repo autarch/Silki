@@ -14,22 +14,24 @@ use Fey::ORM::Table;
 
 with 'Silki::Role::Schema::URIMaker';
 
+my $Schema = Silki::Schema->Schema();
+
 has_policy 'Silki::Schema::Policy';
 
-has_table( Silki::Schema->Schema()->table('Page') );
+has_table( $Schema->table('Page') );
 
-has_one( Silki::Schema->Schema()->table('User') );
+has_one( $Schema->table('User') );
 
-has_one( Silki::Schema->Schema()->table('Wiki') );
+has_one( $Schema->table('Wiki') );
 
 has_many revisions =>
-    ( table    => Silki::Schema->Schema()->table('PageRevision'),
+    ( table    => $Schema->table('PageRevision'),
       order_by =>
-      [ Silki::Schema->Schema()->table('PageRevision')->column('revision_number'), 'DESC' ],
+      [ $Schema->table('PageRevision')->column('revision_number'), 'DESC' ],
     );
 
 has_one most_recent_revision =>
-    ( table       => Silki::Schema->Schema()->table('PageRevision'),
+    ( table       => $Schema->table('PageRevision'),
       select      => __PACKAGE__->_most_recent_revision_select(),
       bind_params => sub { $_[0]->page_id() },
       handles     => [ qw( content content_as_html ) ],
@@ -41,6 +43,54 @@ sub _base_uri_path
 
     return $self->wiki()->_base_uri_path() . '/page/' . $self->uri_path();
 }
+
+around insert => sub
+{
+    my $orig  = shift;
+    my $class = shift;
+
+    my $page = $class->$orig(@_);
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+    $select->select( $Schema->table('PendingPageLink')->column('from_page_id') )
+           ->from( $Schema->table('PendingPageLink') )
+           ->where( $Schema->table('PendingPageLink')->column('to_wiki_id'),
+                    '=', $page->wiki_id() )
+           ->and( $Schema->table('PendingPageLink')->column('to_page_title'),
+                    '=', $page->title() );
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
+
+    # XXX - hack but it should work fine
+    my $select_sql = $select->sql($dbh) . ' FOR UPDATE';
+
+    my $delete = Silki::Schema->SQLFactoryClass()->new_delete();
+    $delete->delete()
+           ->from( $Schema->table('PendingPageLink') )
+           ->where( $Schema->table('PendingPageLink')->column('to_wiki_id'),
+                    '=', $page->wiki_id() )
+           ->and( $Schema->table('PendingPageLink')->column('to_page_title'),
+                    '=', $page->title() );
+
+    my $update_links = sub
+    {
+        my $links = $dbh->selectcol_arrayref( $select_sql, {}, $select->bind_params() );
+
+        return unless @{$links};
+
+        $dbh->do( $delete->sql($dbh), {}, $delete->bind_params() );
+
+        my @new_links = map { { from_page_id => $_,
+                                to_page_id   => $page->page_id(),
+                              } } @{ $links };
+
+        Silki::Schema::PageLink->insert_many(@new_links);
+    };
+
+    Silki::Schema->RunInTransaction($update_links);
+
+    return $page;
+};
 
 sub insert_with_content
 {

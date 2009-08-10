@@ -22,16 +22,14 @@ with 'Silki::Role::Schema::URIMaker';
 
 my $Schema = Silki::Schema->Schema();
 
-{
-    has_table( $Schema->table('Wiki') );
+has_table( $Schema->table('Wiki') );
 
-    has_one( $Schema->table('Domain') );
+has_one( $Schema->table('Domain') );
 
-    has_many pages =>
-        ( table    => $Schema->table('Page'),
-          order_by => [ $Schema->table('Page')->column('title') ],
-        );
-}
+has_many pages =>
+    ( table    => $Schema->table('Page'),
+      order_by => [ $Schema->table('Page')->column('title') ],
+    );
 
 has permissions =>
     ( is       => 'ro',
@@ -44,13 +42,15 @@ has permissions =>
 my $FrontPage = <<'EOF';
 Welcome to your new wiki.
 
-A wiki is a set of web pages that can be read and edited by a group of people. You use simple to add things like *italics* and **bold** to the text. Wikis are designed to make linking to other pages easy.
+A wiki is a set of web pages that can be read and edited by a group of people. You use simple syntax to add things like *italics* and **bold** to the text. Wikis are designed to make linking to other pages easy.
 
 For more information about wikis in general and Silki in particular, see the [[Help]] page.
 EOF
 
 my $Help = <<'EOF';
-This need some content.
+This needs some content.
+
+Link to a [[Wanted Page]].
 EOF
 
 sub insert

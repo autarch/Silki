@@ -228,8 +228,9 @@ CREATE TABLE "PageLink" (
 -- instead. This table can also be used to generate a list of wanted pages.
 CREATE TABLE "PendingPageLink" (
        from_page_id             INT8            NOT NULL,
+       to_wiki_id               INT8            NOT NULL,
        to_page_title            VARCHAR(255)    NOT NULL,
-       PRIMARY KEY ( from_page_id, to_page_title )
+       PRIMARY KEY ( from_page_id, to_wiki_id, to_page_title )
 );
 
 CREATE DOMAIN file_name AS VARCHAR(255)
@@ -345,6 +346,10 @@ ALTER TABLE "PageLink" ADD CONSTRAINT "PageLink_to_page_id"
 
 ALTER TABLE "PendingPageLink" ADD CONSTRAINT "PendingPageLink_from_page_id"
   FOREIGN KEY ("from_page_id") REFERENCES "Page" ("page_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "PendingPageLink" ADD CONSTRAINT "PendingPageLink_to_wiki_id"
+  FOREIGN KEY ("to_wiki_id") REFERENCES "Wiki" ("wiki_id")
   ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE "FileLink" ADD CONSTRAINT "FileLink_page_id"

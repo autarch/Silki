@@ -42,12 +42,13 @@ sub wikitext_to_html
     return $self->_tmm()->markdown($text);
 }
 
+my $link_re = qr/\[\[([^\]]+?)\]\]/;
 sub _handle_wiki_links
 {
     my $self = shift;
     my $text = shift;
 
-    $text =~ s/\[\[([^\]]+?)\]\]/$self->_link_to_page($1)/eg;
+    $text =~ s/$link_re/$self->_link_to_page($1)/eg;
 
     return $text;
 }
@@ -57,10 +58,7 @@ sub _link_to_page
     my $self  = shift;
     my $title = shift;
 
-    my $page =
-        Silki::Schema::Page->new( title   => $title,
-                                  wiki_id => $self->_wiki()->wiki_id(),
-                                );
+    my $page = $self->_page_for_title($title);
 
     my $class = $page ? 'existing-page' : 'new-page';
 
@@ -73,6 +71,32 @@ sub _link_to_page
     my $escaped_title = encode_entities($title);
 
     return qq{<a href="$uri" class="$class">$escaped_title</a>};
+}
+
+sub links
+{
+    my $self = shift;
+    my $text = shift;
+
+    my %links = map { $_ =>
+                          { page => $self->_page_for_title($_),
+                            wiki => $self->_wiki(),
+                          }
+                    } ( $text =~ /$link_re/g );
+
+    return \%links;
+}
+
+sub _page_for_title
+{
+    my $self  = shift;
+    my $title = shift;
+
+    return
+        Silki::Schema::Page->new( title   => $title,
+                                  wiki_id => $self->_wiki()->wiki_id(),
+                                )
+        || undef;
 }
 
 no Moose;

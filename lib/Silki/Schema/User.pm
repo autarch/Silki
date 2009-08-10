@@ -14,22 +14,18 @@ use MooseX::Params::Validate qw( pos_validated_list );
 
 my $Schema = Silki::Schema->Schema();
 
-{
-    my $user_t = $Schema->table('User');
+has_policy 'Silki::Schema::Policy';
 
-    has_policy 'Silki::Schema::Policy';
+has_table( $Schema->table('User') );
 
-    has_table $user_t;
+has_one 'creator' =>
+    ( table => $Schema->table('User'));
 
-    has_one 'creator' =>
-        ( table => $user_t );
+has_many 'pages' =>
+    ( table => $Schema->table('Page') );
 
-    has_many 'pages' =>
-        ( table => $Schema->table('Page') );
-
-    has_many 'wikis' =>
-        ( table => $Schema->table('Wiki') );
-}
+has_many 'wikis' =>
+    ( table => $Schema->table('Wiki') );
 
 class_has 'SystemUser' =>
     ( is      => 'ro',
