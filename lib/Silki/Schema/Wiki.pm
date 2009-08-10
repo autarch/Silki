@@ -13,25 +13,33 @@ use Silki::Schema::Page;
 use Silki::Schema::Permission;
 use Silki::Schema::Role;
 use Silki::Schema::WikiRolePermission;
-use Silki::Types qw( ValidPermissionType );
+use Silki::Types qw( Bool HashRef ValidPermissionType );
 
 use Fey::ORM::Table;
 use MooseX::Params::Validate qw( pos_validated_list );
 
 with 'Silki::Role::Schema::URIMaker';
 
+my $Schema = Silki::Schema->Schema();
+
 {
-    my $schema = Silki::Schema->Schema();
+    has_table( $Schema->table('Wiki') );
 
-    has_table( $schema->table('Wiki') );
-
-    has_one( $schema->table('Domain') );
+    has_one( $Schema->table('Domain') );
 
     has_many pages =>
-        ( table    => $schema->table('Page'),
-          order_by => [ $schema->table('Page')->column('title') ],
+        ( table    => $Schema->table('Page'),
+          order_by => [ $Schema->table('Page')->column('title') ],
         );
 }
+
+has permissions =>
+    ( is       => 'ro',
+      isa      => HashRef[ HashRef[ Bool ] ],
+      lazy     => 1,
+      builder  => '_build_permissions',
+      init_arg => undef,
+    );
 
 my $FrontPage = <<'EOF';
 Welcome to your new wiki.
@@ -85,19 +93,56 @@ sub _base_uri_path
     return '/wiki/' . $self->short_name();
 }
 
+sub _build_permissions
 {
-    my %Sets = ( 'public'           => { Guest => [ qw( Read Edit ) ],
-                                         Member    => [ qw( Read Edit Archive Attachment ) ],
-                                         Admin     => [ qw( Read Edit Archive Attachment Invite Manage ) ],
-                                       },
-                 'public-read-only' => { Guest => [ qw( Read ) ],
-                                         Member    => [ qw( Read Edit Archive Attachment ) ],
-                                         Admin     => [ qw( Read Edit Archive Attachment Invite Manage ) ],
-                                       },
-                 'private'          => { Guest => [],
-                                         Member    => [ qw( Read Edit Archive Attachment Invite ) ],
-                                         Admin     => [ qw( Read Edit Archive Attachment Invite Manage ) ],
-                                       },
+    my $self = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    $select->select( $Schema->table('Role')->column('name'),
+                     $Schema->table('Permission')->column('name'),
+                   )
+           ->from( $Schema->table('Permission'), $Schema->table('WikiRolePermission') )
+           ->from( $Schema->table('Role'), $Schema->table('WikiRolePermission') )
+           ->where( $Schema->table('WikiRolePermission')->column('wiki_id'),
+                    '=', $self->wiki_id() );
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
+
+    my %perms;
+    for my $row ( @{ $dbh->selectall_arrayref( $select->sql($dbh), {}, $select->bind_params() ) } )
+    {
+        $perms{ $row->[0] }{ $row->[1] } = 1;
+    }
+
+    return \%perms;
+}
+
+{
+    my %Sets = ( 'public' =>
+                     { Guest         => [qw( Read Edit )],
+                       Authenticated => [qw( Read Edit )],
+                       Member        => [qw( Read Edit Archive Attachment )],
+                       Admin         => [qw( Read Edit Archive Attachment Invite Manage )],
+                     },
+                 'public-authenticate-to-edit' =>
+                     { Guest         => [qw( Read )],
+                       Authenticated => [qw( Read Edit )],
+                       Member        => [qw( Read Edit Archive Attachment )],
+                       Admin         => [qw( Read Edit Archive Attachment Invite Manage )],
+                     },
+                 'public-read-only' =>
+                     { Guest         => [qw( Read )],
+                       Authenticated => [qw( Read )],
+                       Member        => [qw( Read Edit Archive Attachment )],
+                       Admin         => [qw( Read Edit Archive Attachment Invite Manage )],
+                     },
+                 'private' =>
+                     { Guest         => [],
+                       Authenticated => [],
+                       Member        => [qw( Read Edit Archive Attachment Invite )],
+                       Admin         => [qw( Read Edit Archive Attachment Invite Manage )],
+                     },
                );
 
     sub set_permissions
@@ -131,7 +176,7 @@ sub PublicWikiCount
 {
     my $class = shift;
 
-    my $select = Fey::SQL->new_select();
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
     my $distinct = Fey::Literal::Term->new( 'DISTINCT ', $class->Table()->column('wiki_id') );
     my $count = Fey::Literal::Function->new( 'COUNT', $distinct );
@@ -150,7 +195,7 @@ sub PublicWikis
 {
     my $class = shift;
 
-    my $select = Fey::SQL->new_select();
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
     $select->select( $class->Table() );
     $class->_PublicWikiSelect($select);
@@ -173,15 +218,13 @@ sub _PublicWikiSelect
     my $class  = shift;
     my $select = shift;
 
-    my $schema = Silki::Schema->Schema();
-
     my $anon = Silki::Schema::Role->Guest();
     my $read = Silki::Schema::Permission->Read();
 
-    $select->from( $schema->tables( 'Wiki', 'WikiRolePermission' ) )
-           ->where( $schema->table('WikiRolePermission')->column('role_id'),
+    $select->from( $Schema->tables( 'Wiki', 'WikiRolePermission' ) )
+           ->where( $Schema->table('WikiRolePermission')->column('role_id'),
                     '=', $anon->role_id() )
-           ->and( $schema->table('WikiRolePermission')->column('permission_id'),
+           ->and( $Schema->table('WikiRolePermission')->column('permission_id'),
                   '=', $read->permission_id() );
 
     return;

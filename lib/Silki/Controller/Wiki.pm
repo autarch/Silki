@@ -18,6 +18,8 @@ sub _set_wiki : Chained('/') : PathPart('wiki') : CaptureArgs(1)
     $c->redirect_and_detach( $c->domain()->uri( with_host => 1 ) )
         unless $wiki;
 
+    $self->_require_permission_for_wiki( $c, $wiki );
+
     $c->stash()->{wiki} = $wiki;
 }
 

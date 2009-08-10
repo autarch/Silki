@@ -34,7 +34,6 @@ sub _CreateOrFindPermission
     return $role;
 }
 
-
 no Fey::ORM::Table;
 no MooseX::ClassAttribute;
 

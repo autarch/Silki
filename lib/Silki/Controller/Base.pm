@@ -3,6 +3,7 @@ package Silki::Controller::Base;
 use strict;
 use warnings;
 
+use Carp qw( croak );
 use Silki::Config;
 use Silki::JSON;
 use Silki::Web::CSS;
@@ -35,19 +36,6 @@ sub begin : Private
     return 1;
 }
 
-sub _uri_requires_authen
-{
-    my $self = shift;
-    my $uri  = shift;
-
-    return 0
-        if $uri->path() =~ m{^/user/(?:login_form|forgot_password_form|authentication)};
-
-    return 0 if $uri->path() =~ m{^/(?:die|robots\.txt|exit)};
-
-#    return 1;
-}
-
 sub end : Private
 {
     my $self = shift;
@@ -78,17 +66,63 @@ sub _set_entity
     return 1;
 }
 
-sub _require_authen
+my %MethodPermission = ( GET  => 'Read',
+                         POST => 'Edit',
+                         PUT  => 'Edit',
+                       );
+
+sub _require_permission_for_wiki
 {
     my $self = shift;
     my $c    = shift;
+    my $wiki = shift;
+    my $perm = shift;
+
+    $perm ||= $MethodPermission{ uc $c->request()->method() };
+
+    croak 'No permission specified in call to _require_permission_for_wiki'
+        unless $perm;
+
+    my $perms = $wiki->permissions();
 
     my $user = $c->user();
 
-    return if $user;
+    my $role = $user->role_in_wiki($wiki);
 
-    $c->redirect_and_detach( '/user/login_form' );
+    return if $perms->{$role}{$perm};
+
+    if ( $user->is_guest() )
+    {
+        if ( $perms->{Authenticated}{$perm} )
+        {
+            $c->session_object()->add_message('This wiki requires you to log in to perform this action.');
+        }
+        else
+        {
+            $c->session_object()->add_message('This wiki requires to be a member to perform this action.');
+        }
+
+        $c->redirect_and_detach( '/user/login_form' );
+    }
+    else
+    {
+        $c->session_object()->add_message('This wiki requires to be a member to perform this action.');
+
+        my $uri;
+        if ( $perms->{$role}{Read} )
+        {
+            $uri = $c->stash()->{page} ? $c->stash()->{page}->uri() : $wiki->uri();
+        }
+        else
+        {
+            $uri = $c->domain()->uri();
+        }
+
+        $c->redirect_and_detach($uri);
+    }
+
 }
+
 
 no Moose;
 

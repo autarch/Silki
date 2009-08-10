@@ -157,7 +157,7 @@ sub role_in_wiki
     my $self   = shift;
     my ($wiki) = pos_validated_list( \@_, { isa => 'Silki::Schema::Wiki' } );
 
-    my $select = $Schema->SQLFactoryClass()->new_select();
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
     $select->select( $Schema->table('Role')->column('name') )
            ->from( $Schema->table('Role'), $Schema->table('UserWikiRole') )
@@ -168,7 +168,7 @@ sub role_in_wiki
 
     my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
 
-    my $row = $dbh->selectro_arrayref( $select->sql($dbh), {}, $select->bind_params() );
+    my $row = $dbh->selectrow_arrayref( $select->sql($dbh), {}, $select->bind_params() );
 
     return
           $row              ? $row->[0]
