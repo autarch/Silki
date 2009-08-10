@@ -27,8 +27,8 @@ CREATE TABLE "User" (
        -- changes, for normal users it can just be their email address
        username                 VARCHAR(255)    UNIQUE  NOT NULL,
        display_name             VARCHAR(255)    NOT NULL DEFAULT '',
-       -- SHA512 in Base64 encoding
-       password                 VARCHAR(86)     NOT NULL,
+       -- RFC2307 Blowfish crypt
+       password                 VARCHAR(67)     NOT NULL,
        openid_uri               VARCHAR(255)    NOT NULL,
        is_admin                 BOOLEAN         NOT NULL DEFAULT FALSE,
        is_system_user           BOOLEAN         NOT NULL DEFAULT FALSE,
