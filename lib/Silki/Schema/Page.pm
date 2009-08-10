@@ -11,6 +11,7 @@ use Silki::Schema::Wiki;
 use URI::Escape qw( uri_escape_utf8 );
 
 use Fey::ORM::Table;
+use MooseX::ClassAttribute;
 
 with 'Silki::Role::Schema::URIMaker';
 
@@ -32,9 +33,23 @@ has_many revisions =>
 
 has_one most_recent_revision =>
     ( table       => $Schema->table('PageRevision'),
-      select      => __PACKAGE__->_most_recent_revision_select(),
+      select      => __PACKAGE__->_MostRecentRevisionSelect(),
       bind_params => sub { $_[0]->page_id() },
       handles     => [ qw( content content_as_html ) ],
+    );
+
+class_has _PendingPageLinkSelectSQL =>
+    ( is      => 'ro',
+      isa     => 'Fey::SQL::Select',
+      lazy    => 1,
+      builder => '_BuildPendingPageLinkSelectSQL',
+    );
+
+class_has _PendingPageLinkDeleteSQL =>
+    ( is      => 'ro',
+      isa     => 'Fey::SQL::Delete',
+      lazy    => 1,
+      builder => '_BuildPendingPageLinkDeleteSQL',
     );
 
 sub _base_uri_path
@@ -51,34 +66,31 @@ around insert => sub
 
     my $page = $class->$orig(@_);
 
-    my $select = Silki::Schema->SQLFactoryClass()->new_select();
-    $select->select( $Schema->table('PendingPageLink')->column('from_page_id') )
-           ->from( $Schema->table('PendingPageLink') )
-           ->where( $Schema->table('PendingPageLink')->column('to_wiki_id'),
-                    '=', $page->wiki_id() )
-           ->and( $Schema->table('PendingPageLink')->column('to_page_title'),
-                    '=', $page->title() );
+    my $select = $class->_PendingPageLinkSelectSQL();
 
     my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
 
     # XXX - hack but it should work fine
     my $select_sql = $select->sql($dbh) . ' FOR UPDATE';
 
-    my $delete = Silki::Schema->SQLFactoryClass()->new_delete();
-    $delete->delete()
-           ->from( $Schema->table('PendingPageLink') )
-           ->where( $Schema->table('PendingPageLink')->column('to_wiki_id'),
-                    '=', $page->wiki_id() )
-           ->and( $Schema->table('PendingPageLink')->column('to_page_title'),
-                    '=', $page->title() );
+    my $delete = $class->_PendingPageLinkDeleteSQL();
 
     my $update_links = sub
     {
-        my $links = $dbh->selectcol_arrayref( $select_sql, {}, $select->bind_params() );
+        my $links =
+            $dbh->selectcol_arrayref( $select_sql,
+                                      {},
+                                      $page->wiki_id(),
+                                      $page->title(),
+                                    );
 
         return unless @{$links};
 
-        $dbh->do( $delete->sql($dbh), {}, $delete->bind_params() );
+        $dbh->do( $delete->sql($dbh),
+                  {},
+                  $page->wiki_id(),
+                  $page->title(),
+                );
 
         my @new_links = map { { from_page_id => $_,
                                 to_page_id   => $page->page_id(),
@@ -91,6 +103,32 @@ around insert => sub
 
     return $page;
 };
+
+sub _BuildPendingPageLinkSelectSQL
+{
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+    $select->select( $Schema->table('PendingPageLink')->column('from_page_id') )
+           ->from( $Schema->table('PendingPageLink') )
+           ->where( $Schema->table('PendingPageLink')->column('to_wiki_id'),
+                    '=', Fey::Placeholder->new() )
+           ->and( $Schema->table('PendingPageLink')->column('to_page_title'),
+                    '=', Fey::Placeholder->new() );
+
+    return $select;
+}
+
+sub _BuildPendingPageLinkDeleteSQL
+{
+    my $delete = Silki::Schema->SQLFactoryClass()->new_delete();
+    $delete->delete()
+           ->from( $Schema->table('PendingPageLink') )
+           ->where( $Schema->table('PendingPageLink')->column('to_wiki_id'),
+                    '=', Fey::Placeholder->new() )
+           ->and( $Schema->table('PendingPageLink')->column('to_page_title'),
+                    '=', Fey::Placeholder->new() );
+
+    return $delete;
+}
 
 sub insert_with_content
 {
@@ -154,7 +192,7 @@ sub _title_to_uri_path
     return $escaped;
 }
 
-sub _most_recent_revision_select
+sub _MostRecentRevisionSelect
 {
     my $self = shift;
 
@@ -173,7 +211,7 @@ sub _most_recent_revision_select
 }
 
 no Fey::ORM::Table;
-no Moose;
+no MooseX::ClassAttribute;
 
 __PACKAGE__->meta()->make_immutable();
 
