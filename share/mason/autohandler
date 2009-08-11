@@ -26,12 +26,14 @@
         <div id="content">
 <& .messages &>
 
+          <h1><& SELF:title, %ARGS &></h1>
+
 % $m->call_next();
         </div>
       </div>
     </div>
 
-<& side-nav.mas, %ARGS &>
+<& sidebar.mas, %ARGS &>
 	
   </div>
 
@@ -41,6 +43,10 @@
 
 </body>
 </html>
+
+<%attr>
+sidebar => []
+</%attr>
 
 <%def .messages>
 <div id="messages">

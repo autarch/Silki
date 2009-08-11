@@ -1,5 +1,3 @@
-<h1><& SELF:title, %ARGS &></h1>
-
 % if ($wiki_count) {
 <ul>
 %   while ( my $wiki = $wikis->next() ) {

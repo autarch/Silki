@@ -1,0 +1,26 @@
+      <div id="backlinks">
+        <h2>Incoming Links</h2>
+
+% if ($links) {
+        <ul>
+%   while ( my $page = $links->next() ) {
+          <li><a href="<% $page->uri() %>"><% $page->title() %></a></li>
+%   }
+        </ul>
+% } elsif ( ! $page->is_front_page() ) {
+        <p>
+          No other pages link to this page. Orphan pages can be confusing, so
+          you may want to add a link to this page.
+        </p>
+% }
+        
+      </div>
+
+<%args>
+$page
+</%args>
+
+<%init>
+my $links;
+$links = $page->incoming_links if $page->incoming_link_count();
+</%init>

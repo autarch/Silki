@@ -1,5 +1,3 @@
-<h1><& SELF:title, %ARGS &></h1>
-
 <ul>
 % while ( my $page = $pages->next() ) {
   <li><a href="<% $page->uri() %>"><% $page->title() %></a></li>

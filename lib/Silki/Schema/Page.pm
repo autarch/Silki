@@ -4,10 +4,12 @@ use strict;
 use warnings;
 
 use Fey::Placeholder;
+use List::AllUtils qw( first );
 use Silki::Config;
 use Silki::Schema::PageRevision;
 use Silki::Schema;
 use Silki::Schema::Wiki;
+use Silki::Types qw( Bool Int );
 use URI::Escape qw( uri_escape_utf8 );
 
 use Fey::ORM::Table;
@@ -36,6 +38,28 @@ has_one most_recent_revision =>
       select      => __PACKAGE__->_MostRecentRevisionSelect(),
       bind_params => sub { $_[0]->page_id() },
       handles     => [ qw( content content_as_html ) ],
+    );
+
+has incoming_link_count =>
+    ( metaclass   => 'FromSelect',
+      is          => 'ro',
+      isa         => Int,
+      select      => __PACKAGE__->_IncomingLinkCountSelect(),
+      bind_params => sub { $_[0]->page_id() },
+    );
+
+has_many incoming_links =>
+    ( table       => $Schema->table('Page'),
+      select      => __PACKAGE__->_IncomingLinkSelect(),
+      bind_params => sub { $_[0]->page_id() },
+    );
+
+has is_front_page =>
+    ( is       => 'ro',
+      isa      => Bool,
+      lazy     => 1,
+      default  => sub { $_[0]->title() eq 'Front Page' },
+      init_arg => undef,
     );
 
 class_has _PendingPageLinkSelectSQL =>
@@ -196,16 +220,47 @@ sub _MostRecentRevisionSelect
 {
     my $self = shift;
 
-    my $schema = $self->SchemaClass()->Schema();
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    my $select = $self->SchemaClass()->SQLFactoryClass()->new_select();
-
-    $select->select( $schema->table('PageRevision') )
-           ->from( $schema->table('PageRevision') )
-           ->where( $schema->table('PageRevision')->column('page_id'),
+    $select->select( $Schema->table('PageRevision') )
+           ->from( $Schema->table('PageRevision') )
+           ->where( $Schema->table('PageRevision')->column('page_id'),
                     '=', Fey::Placeholder->new() )
-           ->order_by( $schema->table('PageRevision')->column('revision_number'), 'DESC' )
+           ->order_by( $Schema->table('PageRevision')->column('revision_number'), 'DESC' )
            ->limit(1);
+
+    return $select;
+}
+
+sub _IncomingLinkCountSelect
+{
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $page_link_t = $Schema->table('PageLink');
+
+    my $count = Fey::Literal::Function->new( 'COUNT', $page_link_t->column('from_page_id') );
+
+    $select->select($count)
+           ->from($page_link_t)
+           ->where( $page_link_t->column('to_page_id'), '=', Fey::Placeholder->new() );
+
+    return $select;
+}
+
+sub _IncomingLinkSelect
+{
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my ( $page_t, $page_link_t ) = $Schema->tables( 'Page', 'PageLink' );
+
+    my ($fk) =
+        first { $_->has_column( $page_link_t->column('from_page_id') ) }
+              $Schema->foreign_keys_between_tables( $page_t, $page_link_t );
+
+    $select->select($page_t)
+           ->from( $page_t, $page_link_t, $fk )
+           ->where( $page_link_t->column('to_page_id'), '=', Fey::Placeholder->new() )
+           ->order_by( $page_t->column('title') );
 
     return $select;
 }

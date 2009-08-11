@@ -11,4 +11,8 @@
           <li>D</li>
         </ul>
       </div>
+
+% for my $comp ( @{ $m->request_comp()->attr('sidebar') } ) {
+      <& $comp . '.mas', %ARGS &>
+% }
     </div>

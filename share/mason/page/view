@@ -1,13 +1,15 @@
 <a href="<% $page->uri( view => 'edit_form' ) %>" title="Edit this page">Edit</a>
 
-<h1><& SELF:title, %ARGS &></h1>
-
 <% $html | n %>
 
 <%args>
 $page
 $html
 </%args>
+
+<%attr>
+sidebar => [ 'incoming-links' ]
+</%attr>
 
 <%method title>
 <% $page->title() %>
