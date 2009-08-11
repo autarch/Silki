@@ -232,6 +232,7 @@ sub _find_config_file
     my @StandardRoles =
         qw( Silki::AppRole::Domain
             Silki::AppRole::RedirectWithError
+            Silki::AppRole::Tabs
             Silki::AppRole::User
          );
 

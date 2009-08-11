@@ -27,6 +27,6 @@
     </div>
   </div>
 
-<%args>
-@tabs => ()
-</%args>
+<%init>
+my @tabs = $c->tabs();
+</%init>

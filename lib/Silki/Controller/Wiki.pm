@@ -3,6 +3,8 @@ package Silki::Controller::Wiki;
 use strict;
 use warnings;
 
+use Silki::Web::Tab;
+
 use Moose;
 
 BEGIN { extends 'Silki::Controller::Base' }
@@ -19,6 +21,18 @@ sub _set_wiki : Chained('/') : PathPart('wiki') : CaptureArgs(1)
         unless $wiki;
 
     $self->_require_permission_for_wiki( $c, $wiki );
+
+    $c->add_tab($_)
+        for map { Silki::Web::Tab->new( %{ $_ } ) }
+            ( { uri     => $wiki->uri(),
+                label   => 'Dashboard',
+                tooltip => 'Wiki overview',
+              },
+              { uri     => $wiki->uri( view => 'recent' ),
+                label   => 'Recent Changes',
+                tooltip => 'Recent activity in this wiki',
+              },
+            );
 
     $c->stash()->{wiki} = $wiki;
 }
@@ -39,6 +53,8 @@ sub dashboard : Chained('_set_wiki') : PathPart('dashboard') : Args(0)
 {
     my $self = shift;
     my $c    = shift;
+
+    $c->tab_by_label('Dashboard')->set_is_selected(1);
 
     $c->stash()->{template} = '/wiki/dashboard';
 }
@@ -85,6 +101,14 @@ sub _set_page : Chained('_set_wiki') : PathPart('page') : CaptureArgs(1)
 
     $c->redirect_and_detach( $wiki->uri( with_host => 1 ) )
         unless $page;
+
+    $c->add_tab( Silki::Web::Tab->new
+                     ( uri     => $page->uri(),
+                       label   => $page->title(),
+                       tooltip => 'View this page',
+                       is_selected => 1,
+                     )
+               );
 
     $c->stash()->{page} = $page;
 }

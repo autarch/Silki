@@ -1,5 +1,3 @@
-<a href="<% $page->uri( view => 'edit_form' ) %>" title="Edit this page">Edit</a>
-
 <% $html | n %>
 
 <%args>

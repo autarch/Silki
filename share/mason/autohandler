@@ -16,14 +16,16 @@
 </head>
 <body>
 
-<div id="doc3" class="yui-t6">
+<div id="doc3" class="yui-t5">
 
 <& header.mas, %ARGS &>
 
   <div id="bd">
     <div id="yui-main">
       <div class="yui-b">
+        <& local-nav.mas, %ARGS &>
         <div id="content">
+
 <& .messages &>
 
           <h1><& SELF:title, %ARGS &></h1>

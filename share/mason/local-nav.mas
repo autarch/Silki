@@ -1,0 +1,18 @@
+<div id="local-nav">
+  <ul>
+    <li>
+      <a href="<% $page->uri( view => 'edit_form' ) %>" title="Edit this page">Edit</a>
+    </li>
+    <li>
+      <a href="<% $page->uri( view => 'attachments' ) %>" title="Attachments for this page">Attachments</a>
+    </li>
+  </ul>
+</div>
+
+<%args>
+$page => undef
+</%args>
+
+<%init>
+return unless $page;
+</%init>
