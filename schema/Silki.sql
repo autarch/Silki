@@ -59,6 +59,9 @@ CREATE TABLE "Wiki" (
        CONSTRAINT valid_title CHECK ( title != '' )
 );
 
+CREATE INDEX "Wiki_domain_id" ON "Wiki" (domain_id);
+CREATE INDEX "Wiki_user_id" ON "Wiki" (user_id);
+
 CREATE DOMAIN hostname AS VARCHAR(255)
        CONSTRAINT valid_hostname CHECK ( VALUE ~ E'^[^\\.]+(?:\\.[^\\.]+)+$' );
 
@@ -119,6 +122,8 @@ CREATE TABLE "Page" (
        CONSTRAINT valid_title CHECK ( title != '' )
 );
 
+CREATE INDEX "Page_wiki_id" ON "Page" (wiki_id);
+CREATE INDEX "Page_user_id" ON "Page" (user_id);
 CREATE INDEX "Page_ts_text" ON "Page" USING GIN(ts_text);
 
 CREATE FUNCTION page_tsvector_trigger() RETURNS trigger AS $$
@@ -163,6 +168,8 @@ CREATE TABLE "PageRevision" (
        PRIMARY KEY ( page_id, revision_number )
 );
 
+CREATE INDEX "PageRevision_user_id" ON "PageRevision" (user_id);
+
 CREATE FUNCTION page_revision_tsvector_trigger() RETURNS trigger AS $$
 DECLARE
     existing_title VARCHAR(255);
@@ -190,11 +197,17 @@ CREATE TABLE "PageTag" (
        PRIMARY KEY ( page_id, tag_id )
 );
 
+CREATE INDEX "PageTag_tag_id" ON "PageTag" (tag_id);
+
 CREATE TABLE "Tag" (
        tag_id                   SERIAL8         PRIMARY KEY,
        tag                      VARCHAR(200)    NOT NULL,
-       CONSTRAINT valid_tag CHECK ( tag != '' )
+       wiki_id                  INT8            NOT NULL,
+       CONSTRAINT valid_tag CHECK ( tag != '' ),
+       UNIQUE ( tag, wiki_id )
 );
+
+CREATE INDEX "Tag_wiki_id" ON "Tag" (wiki_id);
 
 CREATE TABLE "PageFile" (
        page_id                  INT8            NOT NULL,
@@ -214,6 +227,9 @@ CREATE TABLE "Comment" (
        CONSTRAINT valid_body CHECK ( body != '' )
 );
 
+CREATE INDEX "Comment_page_id" ON "Comment" (page_id);
+CREATE INDEX "Comment_user_id" ON "Comment" (user_id);
+
 -- This is a cache, since the same information could be retrieved by
 -- looking at the latest revision content for each page as
 -- needed. Obviously, that would be prohibitively expensive.
@@ -222,6 +238,8 @@ CREATE TABLE "PageLink" (
        to_page_id               INT8            NOT NULL,
        PRIMARY KEY ( from_page_id, to_page_id )
 );
+
+CREATE INDEX "PageLink_to_page_id" ON "PageLink" (to_page_id);
 
 -- This stores links to pages which do not yet exist. When a page is created,
 -- any pending links can be removed and put into the PageLink table
@@ -232,6 +250,8 @@ CREATE TABLE "PendingPageLink" (
        to_page_title            VARCHAR(255)    NOT NULL,
        PRIMARY KEY ( from_page_id, to_wiki_id, to_page_title )
 );
+
+CREATE INDEX "PendingPageLink_to_wiki_id_to_page_title" ON "PendingPageLink" (to_wiki_id, to_page_title);
 
 CREATE DOMAIN file_name AS VARCHAR(255)
        CONSTRAINT no_slashes CHECK ( VALUE ~ E'^[^\\\\/]+$' );
@@ -318,6 +338,10 @@ ALTER TABLE "PageTag" ADD CONSTRAINT "PageTag_page_id_revision_number"
 
 ALTER TABLE "PageTag" ADD CONSTRAINT "PageTag_tag_id"
   FOREIGN KEY ("tag_id") REFERENCES "Tag" ("tag_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "Tag" ADD CONSTRAINT "Tag_wiki_id"
+  FOREIGN KEY ("wiki_id") REFERENCES "Wiki" ("wiki_id")
   ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE "PageFile" ADD CONSTRAINT "PageFile_page_id"
