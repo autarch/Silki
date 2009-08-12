@@ -84,8 +84,8 @@ body {
 /* This makes sure that the header is the same height with our without
    tabs */
 #tabs li.invisible {
-    border: 1px 1px 0px 1px solid black;
-    padding: 0.3em 1em;
+    background-color: transparent;
+    padding: 0.3em 1em 0.11em 1em;
 }
 
 #tabs li a:hover {
