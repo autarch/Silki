@@ -198,24 +198,6 @@ table.standard-table th {
     text-align: left;
 }
 
-table.standard-table tr.even {
-
-}
-
-table.standard-table tr.note {
-    padding-top: 0;
-}
-
-table.standard-table tr.note td {
-    padding-top: 0;
-}
-
-table.standard-table tr.note td p {
-    font-size: 90%;
-    margin-bottom: 0;
-    margin-left: 0.2em;
-}
-
 /* === Forms === */
 
 fieldset {
