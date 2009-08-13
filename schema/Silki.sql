@@ -34,9 +34,10 @@ CREATE TABLE "User" (
        is_system_user           BOOLEAN         NOT NULL DEFAULT FALSE,
        creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
        last_modified_datetime   TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-       timezone                 VARCHAR(50)     NOT NULL DEFAULT 'UTC',
-       date_format              VARCHAR(12)     NOT NULL DEFAULT '%m/%d/%Y',
-       time_format              VARCHAR(12)     NOT NULL DEFAULT '%I:%M %P',
+       time_zone                VARCHAR(50)     NOT NULL DEFAULT 'UTC',
+       date_format              VARCHAR(12)     NOT NULL DEFAULT 'MMM d, yyy',
+       date_format_without_year VARCHAR(12)     NOT NULL DEFAULT 'MMM d',
+       time_format              VARCHAR(12)     NOT NULL DEFAULT 'h:mm a',
        created_by_user_id       INT8            NULL,
        CONSTRAINT valid_user_record
            CHECK ( ( password != '' OR openid_uri != '' )

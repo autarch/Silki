@@ -4,15 +4,19 @@ use strict;
 use warnings;
 
 use Authen::Passphrase::BlowfishCrypt;
+use DateTime;
 use List::AllUtils qw( first );
 use Silki::Schema;
 use Silki::Schema::Domain;
+use Silki::Types qw( Str );
 
 use Fey::ORM::Table;
 use MooseX::ClassAttribute;
 use MooseX::Params::Validate qw( pos_validated_list );
 
 my $Schema = Silki::Schema->Schema();
+
+with 'Silki::Role::Schema::URIMaker';
 
 has_policy 'Silki::Schema::Policy';
 
@@ -26,6 +30,13 @@ has_many 'pages' =>
 
 has_many 'wikis' =>
     ( table => $Schema->table('Wiki') );
+
+has best_name =>
+    ( is      => 'ro',
+      isa     => Str,
+      lazy    => 1,
+      builder => '_build_best_name',
+    );
 
 class_has 'SystemUser' =>
     ( is      => 'ro',
@@ -69,6 +80,13 @@ around 'insert' => sub
 
     return $class->$orig(%p);
 };
+
+sub _base_uri_path
+{
+    my $self = shift;
+
+    return '/user/' . $self->user_id();
+}
 
 sub EnsureRequiredUsersExist
 {
@@ -170,6 +188,32 @@ sub role_in_wiki
           $row              ? $row->[0]
         : $self->is_guest() ? 'Guest'
         :                     'Authenticated';
+}
+
+sub format_datetime
+{
+    my $self = shift;
+    my $dt   = shift;
+
+    my $format_dt = $dt->clone()->set_time_zone( $self->time_zone() );
+
+    my $today = DateTime->today( time_zone => $self->time_zone() );
+
+    my $format =
+          $format_dt->year() == $today->year()
+        ? $self->date_format_without_year()
+        : $self->date_format();
+
+    $format .= q{ } . $self->time_format();
+
+    return $format_dt->format_cldr($format);
+}
+
+sub _build_best_name
+{
+    my $self = shift;
+
+    return first { defined && length } $self->display_name(), $self->username();
 }
 
 no Fey::ORM::Table;

@@ -59,6 +59,27 @@ sub dashboard : Chained('_set_wiki') : PathPart('dashboard') : Args(0)
     $c->stash()->{template} = '/wiki/dashboard';
 }
 
+sub recent : Chained('_set_wiki') : PathPart('recent') : Args(0)
+{
+    my $self = shift;
+    my $c    = shift;
+
+    $c->tab_by_label('Recent Changes')->set_is_selected(1);
+
+    my $limit = 20;
+    my $offset = $limit * ( $c->request()->params()->{page} ? $c->request()->params()->{page} - 1 : 0 );
+
+    my $wiki = $c->stash()->{wiki};
+
+    $c->stash()->{pages} =
+        $wiki->recently_changed_pages( limit  => $limit,
+                                       offset => $offset,
+                                     );
+
+    $c->stash()->{title} = 'Recent Changes in ' . $wiki->title();
+    $c->stash()->{template} = '/wiki/recent';
+}
+
 sub new_page_form : Chained('_set_wiki') : PathPart('new_page_form') : Args(0)
 {
     my $self = shift;

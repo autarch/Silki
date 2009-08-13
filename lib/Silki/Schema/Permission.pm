@@ -12,7 +12,7 @@ has_policy 'Silki::Schema::Policy';
 
 has_table( Silki::Schema->Schema()->table('Permission') );
 
-for my $role ( qw( Read Edit Archive Attachment Invite Manage ) )
+for my $role ( qw( Read Edit Delete Upload Invite Manage ) )
 {
     class_has $role =>
         ( is      => 'ro',

@@ -13,10 +13,11 @@ use Silki::Schema::Page;
 use Silki::Schema::Permission;
 use Silki::Schema::Role;
 use Silki::Schema::WikiRolePermission;
-use Silki::Types qw( Bool HashRef ValidPermissionType );
+use Silki::Types qw( Bool HashRef Int ValidPermissionType );
 
 use Fey::ORM::Table;
-use MooseX::Params::Validate qw( pos_validated_list );
+use MooseX::ClassAttribute;
+use MooseX::Params::Validate qw( pos_validated_list validated_list );
 
 with 'Silki::Role::Schema::URIMaker';
 
@@ -37,6 +38,27 @@ has permissions =>
       lazy     => 1,
       builder  => '_build_permissions',
       init_arg => undef,
+    );
+
+class_has _RecentChangesSelect =>
+    ( is      => 'ro',
+      isa     => 'Fey::SQL::Select',
+      lazy    => 1,
+      builder => '_BuildRecentChangesSelect',
+    );
+
+class_has _PublicWikiCountSelect =>
+    ( is      => 'ro',
+      isa     => 'Fey::SQL::Select',
+      lazy    => 1,
+      builder => '_BuildPublicWikiCountSelect',
+    );
+
+class_has _PublicWikiSelect =>
+    ( is      => 'ro',
+      isa     => 'Fey::SQL::Select',
+      lazy    => 1,
+      builder => '_BuildPublicWikiSelect',
     );
 
 my $FrontPage = <<'EOF';
@@ -122,26 +144,26 @@ sub _build_permissions
     my %Sets = ( 'public' =>
                      { Guest         => [qw( Read Edit )],
                        Authenticated => [qw( Read Edit )],
-                       Member        => [qw( Read Edit Archive Attachment )],
-                       Admin         => [qw( Read Edit Archive Attachment Invite Manage )],
+                       Member        => [qw( Read Edit Delete Upload )],
+                       Admin         => [qw( Read Edit Delete Upload Invite Manage )],
                      },
                  'public-authenticate-to-edit' =>
                      { Guest         => [qw( Read )],
                        Authenticated => [qw( Read Edit )],
-                       Member        => [qw( Read Edit Archive Attachment )],
-                       Admin         => [qw( Read Edit Archive Attachment Invite Manage )],
+                       Member        => [qw( Read Edit Delete Upload )],
+                       Admin         => [qw( Read Edit Delete Upload Invite Manage )],
                      },
                  'public-read-only' =>
                      { Guest         => [qw( Read )],
                        Authenticated => [qw( Read )],
-                       Member        => [qw( Read Edit Archive Attachment )],
-                       Admin         => [qw( Read Edit Archive Attachment Invite Manage )],
+                       Member        => [qw( Read Edit Delete Upload )],
+                       Admin         => [qw( Read Edit Delete Upload Invite Manage )],
                      },
                  'private' =>
                      { Guest         => [],
                        Authenticated => [],
-                       Member        => [qw( Read Edit Archive Attachment Invite )],
-                       Admin         => [qw( Read Edit Archive Attachment Invite Manage )],
+                       Member        => [qw( Read Edit Delete Upload Invite )],
+                       Admin         => [qw( Read Edit Delete Upload Invite Manage )],
                      },
                );
 
@@ -172,17 +194,60 @@ sub _build_permissions
     }
 }
 
+sub recently_changed_pages
+{
+    my $self = shift;
+    my ( $limit, $offset ) =
+        validated_list( \@_,
+                        limit  => { isa => Int, optional => 1 },
+                        offset => { isa => Int, default => 0 },
+                      );
+
+    my $select = $self->_RecentChangesSelect()->clone();
+    $select->limit( $limit, $offset );
+
+    return
+        Fey::Object::Iterator::FromSelect->new
+            ( classes     => [ 'Silki::Schema::Page', 'Silki::Schema::PageRevision' ],
+              select      => $select,
+              dbh         => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
+              bind_params => [ $self->wiki_id() ],
+            );
+}
+
+sub _BuildRecentChangesSelect
+{
+    my $class = shift;
+
+    my $page_t = $Schema->table('Page');
+
+    my $max_func =
+        Fey::Literal::Function->new( 'MAX', $Schema->table('PageRevision')->column('revision_number') );
+
+    my $max_revision = Silki::Schema->SQLFactoryClass()->new_select();
+    $max_revision->select($max_func)
+                 ->from( $Schema->table('PageRevision') )
+                 ->where( $Schema->table('PageRevision')->column('page_id'),
+                          '=', $page_t->column('page_id') );
+
+    my $pages_select = Silki::Schema->SQLFactoryClass()->new_select();
+    $pages_select->select( $page_t, $Schema->table('PageRevision') )
+                 ->from( $page_t, $Schema->table('PageRevision') )
+                 ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
+                 ->and( $Schema->table('PageRevision')->column('revision_number'),
+                        '=', $max_revision )
+                 ->order_by( $Schema->table('PageRevision')->column('creation_datetime'), 'DESC',
+                             $Schema->table('Page')->column('title'), 'ASC',
+                           );
+    warn $pages_select->sql('Fey::FakeDBI');
+    return $pages_select;
+}
+
 sub PublicWikiCount
 {
     my $class = shift;
 
-    my $select = Silki::Schema->SQLFactoryClass()->new_select();
-
-    my $distinct = Fey::Literal::Term->new( 'DISTINCT ', $class->Table()->column('wiki_id') );
-    my $count = Fey::Literal::Function->new( 'COUNT', $distinct );
-    $select->select($count);
-
-    $class->_PublicWikiSelect($select);
+    my $select = $class->_PublicWikiCountSelect();
 
     my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
 
@@ -191,16 +256,32 @@ sub PublicWikiCount
     return $vals ? $vals->[0] : 0;
 }
 
+sub _BuildPublicWikiCountSelect
+{
+    my $class  = shift;
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $distinct = Fey::Literal::Term->new( 'DISTINCT ', $class->Table()->column('wiki_id') );
+    my $count = Fey::Literal::Function->new( 'COUNT', $distinct );
+
+    $select->select($count);
+
+    $class->_PublicWikiSelectBase($select);
+
+    return $select;
+}
+
 sub PublicWikis
 {
     my $class = shift;
+    my ( $limit, $offset ) =
+        validated_list( \@_,
+                        limit  => { isa => Int, optional => 1 },
+                        offset => { isa => Int, default => 0 },
+                      );
 
-    my $select = Silki::Schema->SQLFactoryClass()->new_select();
-
-    $select->select( $class->Table() );
-    $class->_PublicWikiSelect($select);
-    $select->order_by( $class->Table()->column('title') );
-    $select->limit( 20, 0 );
+    my $select = $class->_PublicWikiSelect()->clone();
+    $select->limit( $limit, $offset );
 
     my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
 
@@ -213,7 +294,21 @@ sub PublicWikis
             );
 }
 
-sub _PublicWikiSelect
+
+sub _BuildPublicWikiSelect
+{
+    my $class  = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    $select->select( $class->Table() )->distinct();
+    $class->_PublicWikiSelectBase($select);
+    $select->order_by( $class->Table()->column('title') );
+
+    return $select;
+}
+
+sub _PublicWikiSelectBase
 {
     my $class  = shift;
     my $select = shift;

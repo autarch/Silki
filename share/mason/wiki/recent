@@ -1,0 +1,37 @@
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Date</th>
+      <th>Who</th>
+      <th></th>
+    </tr>
+  </thead>
+% while ( my ( $page, $revision ) = $pages->next() ) {
+  <tbody>
+    <tr>
+      <td><a href="<% $page->uri() %>"><% $page->title() %></a> (revision <% $revision->revision_number() %>)</td>
+      <td><% $c->user()->format_datetime( $revision->creation_datetime() ) %></td>
+      <td><a href="<% $c->user()->uri() %>"><% $c->user()->best_name() %></a></td>
+      <td>
+%   if ( $revision->revision_number() > 1 ) {
+        <a href="<% $page->uri( view => 'diff', query => { from => $revision->revision_number() - 1, to => $revision->revision_number() } ) %>">see changes</a>
+%   }
+      </td>
+    </tr>
+  </tbody>
+% }
+</table>
+
+<%args>
+$title
+$pages
+</%args>
+
+<%method title>
+<% $title %>
+<%args>
+$title
+</%args>
+</%method>
