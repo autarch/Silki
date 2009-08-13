@@ -78,6 +78,7 @@ body {
 #tabs li.selected a {
     background-color: #13708f;
     color: white;
+    font-size: 110%;
     padding: 0.5em 1.2em 0.15em 1.2em;
 }
 
