@@ -1,0 +1,32 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use lib './lib';
+
+use Silki::Schema::Page;
+use Silki::Schema::User;
+
+
+my $user_id = Silki::Schema::User->GuestUser()->user_id();
+
+for my $p ( 1..200 )
+{
+    my $title = 'Page ' . $p;
+
+    print "$title\n";
+
+    my $page = Silki::Schema::Page->insert_with_content( title   => $title,
+                                                         content => 'Contents of page ' . $p,
+                                                         wiki_id => 1,
+                                                         user_id => $user_id,
+                                                       );
+
+    for my $pr ( 2..51 )
+    {
+        $page->add_revision( content => 'This is revision ' . $pr,
+                             user_id => $user_id,
+                           );
+    }
+}
