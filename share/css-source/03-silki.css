@@ -148,7 +148,7 @@ h1 {
 }
 
 #attribution {
-    background-color: #f0f0f0;
+    border-top: 2px solid #11a844;
     font-size: 90%;
     font-style: italic;
     padding: 0.1em 0.5em;
