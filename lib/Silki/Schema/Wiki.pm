@@ -47,6 +47,13 @@ class_has _RecentChangesSelect =>
       builder => '_BuildRecentChangesSelect',
     );
 
+class_has _DistinctRecentChangesSelect =>
+    ( is      => 'ro',
+      isa     => 'Fey::SQL::Select',
+      lazy    => 1,
+      builder => '_BuildDistinctRecentChangesSelect',
+    );
+
 class_has _PublicWikiCountSelect =>
     ( is      => 'ro',
       isa     => 'Fey::SQL::Select',
@@ -224,6 +231,28 @@ sub _BuildRecentChangesSelect
     my $max_func =
         Fey::Literal::Function->new( 'MAX', $Schema->table('PageRevision')->column('revision_number') );
 
+    my $pages_select = Silki::Schema->SQLFactoryClass()->new_select();
+    $pages_select->select( $page_t, $Schema->table('PageRevision') )
+                 ->from( $page_t, $Schema->table('PageRevision') )
+                 ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
+                 ->order_by( $Schema->table('PageRevision')->column('creation_datetime'), 'DESC',
+                             $Schema->table('Page')->column('title'), 'ASC',
+                           );
+
+    return $pages_select;
+}
+
+# This gets recently changed pages but only shows each page once, in its most
+# recent revision.
+sub _BuildDistinctRecentChangesSelect
+{
+    my $class = shift;
+
+    my $page_t = $Schema->table('Page');
+
+    my $max_func =
+        Fey::Literal::Function->new( 'MAX', $Schema->table('PageRevision')->column('revision_number') );
+
     my $max_revision = Silki::Schema->SQLFactoryClass()->new_select();
     $max_revision->select($max_func)
                  ->from( $Schema->table('PageRevision') )
@@ -239,7 +268,7 @@ sub _BuildRecentChangesSelect
                  ->order_by( $Schema->table('PageRevision')->column('creation_datetime'), 'DESC',
                              $Schema->table('Page')->column('title'), 'ASC',
                            );
-    warn $pages_select->sql('Fey::FakeDBI');
+
     return $pages_select;
 }
 
