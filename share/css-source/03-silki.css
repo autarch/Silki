@@ -163,8 +163,24 @@ table.standard-table td {
 }
 
 table.standard-table thead tr {
-    background-color: #A1BA6C;
+    background-color: #21379d;
+    border-left: 8px solid #21379d;
+    border-right: 8px solid #21379d;
     color: white;
+}
+
+table.standard-table tbody tr {
+    border-bottom: 1px solid #21379d;
+}
+
+table.standard-table tbody tr.odd {
+    border-left: 8px solid #323a62;
+    border-right: 8px solid #323a62;
+}
+
+table.standard-table tbody tr.even {
+    border-left: 8px solid #21379d;
+    border-right: 8px solid #21379d;
 }
 
 table.standard-table tbody:hover tr {
@@ -176,7 +192,7 @@ table.standard-table th {
 }
 
 table.standard-table tr.even {
-    background-color: #F6FFE4;
+
 }
 
 table.standard-table tr.note {
