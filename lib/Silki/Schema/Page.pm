@@ -3,6 +3,7 @@ package Silki::Schema::Page;
 use strict;
 use warnings;
 
+use Fey::Object::Iterator::FromSelect;
 use Fey::Placeholder;
 use List::AllUtils qw( first );
 use Silki::Config;
@@ -14,6 +15,7 @@ use URI::Escape qw( uri_escape_utf8 );
 
 use Fey::ORM::Table;
 use MooseX::ClassAttribute;
+use MooseX::Params::Validate qw( validated_list );
 
 with 'Silki::Role::Schema::URIMaker';
 
@@ -27,10 +29,19 @@ has_one( $Schema->table('User') );
 
 has_one( $Schema->table('Wiki') );
 
-has_many revisions =>
-    ( table    => $Schema->table('PageRevision'),
-      order_by =>
-      [ $Schema->table('PageRevision')->column('revision_number'), 'DESC' ],
+has revision_count =>
+    ( metaclass   => 'FromSelect',
+      is          => 'ro',
+      isa         => Int,
+      select      => __PACKAGE__->_RevisionCountSelect(),
+      bind_params => sub { $_[0]->page_id() },
+    );
+
+class_has _RevisionsSelect =>
+    ( is      => 'ro',
+      isa     => 'Fey::SQL::Select',
+      lazy    => 1,
+      builder => '_BuildRevisionsSelect',
     );
 
 has_one most_recent_revision =>
@@ -287,6 +298,56 @@ sub _IncomingLinkSelect
            ->from( $page_t, $page_link_t, $fk )
            ->where( $page_link_t->column('to_page_id'), '=', Fey::Placeholder->new() )
            ->order_by( $page_t->column('title') );
+
+    return $select;
+}
+
+sub _RevisionCountSelect
+{
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $page_revision_t = $Schema->table('PageRevision');
+
+    my $count = Fey::Literal::Function->new( 'COUNT', $page_revision_t->column('page_id') );
+
+    $select->select($count)
+           ->from($page_revision_t)
+           ->where( $page_revision_t->column('page_id'), '=', Fey::Placeholder->new() );
+
+    return $select;
+}
+
+sub revisions
+{
+    my $self = shift;
+    my ( $limit, $offset ) =
+        validated_list( \@_,
+                        limit  => { isa => Int, optional => 1 },
+                        offset => { isa => Int, default => 0 },
+                      );
+
+    my $select = $self->_RevisionsSelect()->clone();
+    $select->limit( $limit, $offset );
+
+    return
+        Fey::Object::Iterator::FromSelect->new
+            ( classes     => [ 'Silki::Schema::PageRevision' ],
+              select      => $select,
+              dbh         => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
+              bind_params => [ $self->page_id() ],
+            );
+}
+
+sub _BuildRevisionsSelect
+{
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $page_revision_t = $Schema->table('PageRevision');
+
+    $select->select($page_revision_t)
+           ->from($page_revision_t)
+           ->where( $page_revision_t->column('page_id'), '=', Fey::Placeholder->new() )
+           ->order_by( $page_revision_t->column('revision_number'), 'DESC' );
 
     return $select;
 }

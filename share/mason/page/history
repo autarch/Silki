@@ -1,0 +1,47 @@
+<p>
+This page has <% $current_rev %> revision<% $current_rev == 1 ? q{} : 's' %>.
+</p>
+
+<table class="standard-table">
+  <thead>
+    <tr>
+      <th>Revision #</th>
+      <th>Date</th>
+      <th>Who</th>
+      <th></th>
+    </tr>
+  </thead>
+% while ( my $revision = $revisions->next() ) {
+  <tbody>
+    <tr class="<% $revisions->index() % 2 ? 'odd' : 'even' %>">
+      <td>
+        <a href="<% $page->uri( view => '/revision/') %>">Revision <% $revision->revision_number() %></a>
+%   if ( $revision->revision_number() == $current_rev ) {
+        (current)
+%   }
+      </td>
+      <td><% $c->user()->format_datetime( $revision->creation_datetime() ) %></td>
+      <td><a href="<% $revision->user()->uri() %>"><% $revision->user()->best_name() %></a></td>
+      <td>
+        compare
+      </td>
+    </tr>
+  </tbody>
+% }
+</table>
+
+<%args>
+$page
+$revisions
+</%args>
+
+<%init>
+my $current_rev = $page->most_recent_revision()->revision_number();
+</%init>
+
+<%method title>
+History of Changes to <% $page->title() %>
+<%args>
+$page
+</%args>
+</%method>

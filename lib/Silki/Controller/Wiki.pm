@@ -181,6 +181,20 @@ sub _page_content_as_html : Private
     return $formatter->wikitext_to_html( $page->content() );
 }
 
+sub page_history : Chained('_set_page') : PathPart('history') : Args(0)
+{
+    my $self      = shift;
+    my $c         = shift;
+
+    my $limit = 20;
+    my $offset = $limit * ( $c->request()->params()->{page} ? $c->request()->params()->{page} - 1 : 0 );
+
+    $c->stash()->{revisions} =
+        $c->stash()->{page}->revisions( limit => $limit, offset => $offset );
+
+    $c->stash()->{template} = '/page/history';
+}
+
 no Moose;
 
 __PACKAGE__->meta()->make_immutable();

@@ -12,10 +12,10 @@
     <tr class="<% $pages->index() % 2 ? 'odd' : 'even' %>">
       <td><a href="<% $page->uri() %>"><% $page->title() %></a> (revision <% $revision->revision_number() %>)</td>
       <td><% $c->user()->format_datetime( $revision->creation_datetime() ) %></td>
-      <td><a href="<% $c->user()->uri() %>"><% $c->user()->best_name() %></a></td>
+      <td><a href="<% $revision->user()->uri() %>"><% $revision->user()->best_name() %></a></td>
       <td>
 %   if ( $revision->revision_number() > 1 ) {
-        <a href="<% $page->uri( view => 'diff', query => { from => $revision->revision_number() - 1, to => $revision->revision_number() } ) %>">see changes</a>
+        <a href="<% $page->uri( view => 'diff', query => { revisions => [ $revision->revision_number() - 1, $revision->revision_number() ] } ) %>">see changes</a>
 %   }
       </td>
     </tr>
