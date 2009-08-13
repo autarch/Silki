@@ -181,8 +181,8 @@ table.standard-table tbody tr {
 }
 
 table.standard-table tbody tr.odd {
-    border-left: 8px solid #323a62;
-    border-right: 8px solid #323a62;
+    border-left: 8px solid #04104a;
+    border-right: 8px solid #04104a;
 }
 
 table.standard-table tbody tr.even {
