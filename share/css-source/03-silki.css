@@ -147,6 +147,13 @@ h1 {
     font-size: 170%;
 }
 
+#attribution {
+    background-color: #f0f0f0;
+    font-size: 90%;
+    font-style: italic;
+    padding: 0.1em 0.5em;
+}
+
 /* === Tables === */
 
 table.standard-table {

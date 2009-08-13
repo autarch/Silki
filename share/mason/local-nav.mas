@@ -6,6 +6,9 @@
     <li>
       <a href="<% $page->uri( view => 'attachments' ) %>" title="Attachments for this page">Attachments</a>
     </li>
+    <li>
+      <a href="<% $page->uri( view => 'history' ) %>" title="This page's history of revisions">History</a>
+    </li>
   </ul>
 </div>
 

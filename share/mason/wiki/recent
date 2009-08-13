@@ -1,5 +1,4 @@
-
-<table>
+<table class="standard-table">
   <thead>
     <tr>
       <th>Title</th>
@@ -10,7 +9,7 @@
   </thead>
 % while ( my ( $page, $revision ) = $pages->next() ) {
   <tbody>
-    <tr>
+    <tr class="<% $pages->index() % 2 ? 'odd' : 'even' %>">
       <td><a href="<% $page->uri() %>"><% $page->title() %></a> (revision <% $revision->revision_number() %>)</td>
       <td><% $c->user()->format_datetime( $revision->creation_datetime() ) %></td>
       <td><a href="<% $c->user()->uri() %>"><% $c->user()->best_name() %></a></td>

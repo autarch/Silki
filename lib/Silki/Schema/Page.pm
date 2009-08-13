@@ -37,7 +37,17 @@ has_one most_recent_revision =>
     ( table       => $Schema->table('PageRevision'),
       select      => __PACKAGE__->_MostRecentRevisionSelect(),
       bind_params => sub { $_[0]->page_id() },
-      handles     => [ qw( content content_as_html ) ],
+      handles     => { content                => 'content',
+                       last_modified_datetime => 'creation_datetime',
+                     },
+    );
+
+has_one first_revision =>
+    ( table       => $Schema->table('PageRevision'),
+      select      => __PACKAGE__->_FirstRevisionSelect(),
+      bind_params => sub { $_[0]->page_id(), 1 },
+      handles     => { creation_datetime => 'creation_datetime',
+                     },
     );
 
 has incoming_link_count =>
@@ -228,6 +238,22 @@ sub _MostRecentRevisionSelect
                     '=', Fey::Placeholder->new() )
            ->order_by( $Schema->table('PageRevision')->column('revision_number'), 'DESC' )
            ->limit(1);
+
+    return $select;
+}
+
+sub _FirstRevisionSelect
+{
+    my $self = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    $select->select( $Schema->table('PageRevision') )
+           ->from( $Schema->table('PageRevision') )
+           ->where( $Schema->table('PageRevision')->column('page_id'),
+                    '=', Fey::Placeholder->new() )
+           ->and( $Schema->table('PageRevision')->column('revision_number'),
+                  '=', Fey::Placeholder->new() );
 
     return $select;
 }

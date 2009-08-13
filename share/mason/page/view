@@ -1,9 +1,23 @@
 <% $html | n %>
 
+<p id="attribution">
+% if ( $revision->revision_number() > 1 ) {
+Last changed by <a href="<% $revision->user()->uri() %>"><% $revision->user()->best_name() %></a>
+on <% $c->user()->format_datetime( $revision->creation_datetime() ) %>.
+<br />
+% }
+Created by <a href="<% $page->user()->uri() %>"><% $page->user()->best_name() %></a>
+on <% $c->user()->format_datetime( $page->creation_datetime() ) %>.
+</p>
+
 <%args>
 $page
 $html
 </%args>
+
+<%init>
+my $revision = $page->most_recent_revision();
+</%init>
 
 <%attr>
 sidebar => [ 'incoming-links' ]
