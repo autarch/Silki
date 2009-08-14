@@ -1,9 +1,9 @@
 <table class="revision-diff">
   <thead>
     <tr>
-      <th class="rev1">Revision <% $rev1->revision_number() %></th>
+      <th class="rev1"><% loc( 'Revision [_1]', $rev1->revision_number() ) %></th>
       <th class="marker"></th>
-      <th class="rev2">Revision <% $rev2->revision_number() %></th>
+      <th class="rev2"><% loc( 'Revision [_1]', $rev2->revision_number() ) %></th>
     </tr>
   </thead>
 % for my $diff (@diff) {
@@ -36,7 +36,7 @@ $rev2
 % }
       </td>
       <td class="marker">
-        <span title="a paragraph was changed">*</span>
+        <span title="<% loc('paragraph was changed') %>">*</span>
       </td>
       <td>
 % for my $diff (@diff) {
@@ -60,7 +60,7 @@ $rev2
       </td>
       <td class="marker">
 % if ( $diff[0] ne 'u' ) {
-        <span title="a paragraph was <% $diff[0] eq '-' ? 'removed' : 'added' %>"><% $diff[0] %></span>
+        <span title="<% $diff[0] eq '-' ? loc('paragraph was removed') : loc('paragraph was added') %>"><% $diff[0] %></span>
 % }
       </td>
       <td class="<% $diff[0] eq q{+} ? 'diff-added' : q{} %>">
@@ -73,7 +73,7 @@ $rev2
 </%def>
 
 <%method title>
-<% $page->title() %> - Revision <% $rev1->revision_number() %> versus <% $rev2->revision_number() %>
+<% $page->title() %> - <% loc( 'Revision [_1] versus [_2]', $rev1->revision_number(), $rev2->revision_number() ) %>
 <%args>
 $page
 $rev1

@@ -1,7 +1,7 @@
 <& /lib/forms/page.mas, %ARGS &>
 
 <%method title>
-Edit <% $page->title() %>
+<% loc( 'Edit %1', $page->title() ) %>
 <%args>
 $page
 </%args>

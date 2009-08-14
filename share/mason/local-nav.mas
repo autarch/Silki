@@ -2,13 +2,16 @@
 <&| /lib/filter/unlink-current.mas &>
   <ul>
     <li>
-      <a href="<% $page->uri( view => 'edit_form' ) %>" title="Edit this page">Edit</a>
+      <a href="<% $page->uri( view => 'edit_form' ) %>"
+         title="<% loc('Edit this page') %>"><% loc('Edit') %></a>
     </li>
     <li>
-      <a href="<% $page->uri( view => 'attachments' ) %>" title="Attachments for this page">Attachments</a>
+      <a href="<% $page->uri( view => 'attachments' ) %>"
+         title="<% loc('Attachments for this page') %>"><% loc('Attachments') %></a>
     </li>
     <li>
-      <a href="<% $page->uri( view => 'history' ) %>" title="This page's history of revisions">History</a>
+      <a href="<% $page->uri( view => 'history' ) %>"
+         title="<% loc( q{This page's history of revisions} ) %>"><% loc('History') %></a> 
     </li>
 </&>
   </ul>

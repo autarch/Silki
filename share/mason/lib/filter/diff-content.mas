@@ -1,9 +1,0 @@
-<%init>
-my $html = $m->content();
-
-$html =~ s{&lt;&lt;(/?(?:ins|del))&gt;&gt;}{<$1>}g;
-
-$m->print($html);
-
-return;
-</%init>

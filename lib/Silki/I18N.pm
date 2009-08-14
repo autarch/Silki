@@ -9,22 +9,24 @@ our @EXPORT = qw( loc );
 
 use Data::Localize;
 use Path::Class qw( file );
-use Silki::Config;
 
-my $Loc = Data::Localize->new();
-$Loc->add_localizer
-    ( class => 'Gettext',
-      path  => file( Silki::Config->new()->share_dir, 'i18n', '*.po' ),
-    );
 
-sub SetLanguage
 {
-    $Loc->set_languages(@_);
-}
+    my $DL = Data::Localize->new();
+    $DL->add_localizer( class => '+Silki::Gettext',
+                        path  => file( Silki::Config->new()->share_dir, 'i18n', '*.po' ),
+                      );
 
-sub loc
-{
-    $Loc->localize(@_);
+    sub SetLanguage
+    {
+        shift;
+        $DL->set_languages(@_);
+    }
+
+    sub loc
+    {
+        $DL->localize(@_);
+    }
 }
 
 1;

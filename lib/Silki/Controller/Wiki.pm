@@ -25,12 +25,12 @@ sub _set_wiki : Chained('/') : PathPart('wiki') : CaptureArgs(1)
     $c->add_tab($_)
         for map { Silki::Web::Tab->new( %{ $_ } ) }
             ( { uri     => $wiki->uri(),
-                label   => 'Dashboard',
-                tooltip => 'Wiki overview',
+                label   => $c->loc( 'Dashboard' ),
+                tooltip => $c->loc( 'Wiki overview' ),
               },
               { uri     => $wiki->uri( view => 'recent' ),
-                label   => 'Recent Changes',
-                tooltip => 'Recent activity in this wiki',
+                label   => $c->loc( 'Recent Changes' ),
+                tooltip => $c->loc( 'Recent activity in this wiki' ),
               },
             );
 
@@ -64,7 +64,7 @@ sub recent : Chained('_set_wiki') : PathPart('recent') : Args(0)
     my $self = shift;
     my $c    = shift;
 
-    $c->tab_by_label('Recent Changes')->set_is_selected(1);
+    $c->tab_by_label( $c->loc('Recent Changes') )->set_is_selected(1);
 
     my $limit = 20;
     my $offset = $limit * ( $c->request()->params()->{page} ? $c->request()->params()->{page} - 1 : 0 );
@@ -123,9 +123,9 @@ sub _set_page : Chained('_set_wiki') : PathPart('page') : CaptureArgs(1)
         unless $page;
 
     $c->add_tab( Silki::Web::Tab->new
-                     ( uri     => $page->uri(),
-                       label   => $page->title(),
-                       tooltip => 'View this page',
+                     ( uri         => $page->uri(),
+                       label       => $page->title(),
+                       tooltip     => $c->loc( 'View this page' ),
                        is_selected => 1,
                      )
                );

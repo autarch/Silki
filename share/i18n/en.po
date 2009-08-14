@@ -15,9 +15,90 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: share/mason/local-nav.mas:10
+msgid "Attachments"
+msgstr ""
+
+#: share/mason/local-nav.mas:10
+msgid "Attachments for this page"
+msgstr ""
+
+#: lib/Silki/Controller/Wiki.pm:28
+msgid "Dashboard"
+msgstr ""
+
+#: share/mason/local-nav.mas:6
+msgid "Edit"
+msgstr ""
+
+#. ($page->title()
+#: share/mason/page/edit_form:4
+msgid "Edit %1"
+msgstr ""
+
+#: share/mason/local-nav.mas:6
+msgid "Edit this page"
+msgstr ""
+
+#: share/mason/local-nav.mas:14
+msgid "History"
+msgstr ""
+
+#: share/mason/incoming-links.mas:2
+msgid "Incoming Links"
+msgstr ""
+
+#: share/mason/header.mas:3
+msgid "Log in"
+msgstr ""
+
+#: share/mason/incoming-links.mas:12
+msgid "No other pages link to this page. Orphan pages can be confusing, so you may want to add a link to this page."
+msgstr ""
+
+#: share/mason/lib/forms/page.mas:15
+msgid "Preview"
+msgstr ""
+
+#: lib/Silki/Controller/Wiki.pm:32 lib/Silki/Controller/Wiki.pm:67
+msgid "Recent Changes"
+msgstr ""
+
 #. ($wiki->title()
 #: share/mason/wiki/recent:31
 msgid "Recent Changes in %1"
+msgstr ""
+
+#: lib/Silki/Controller/Wiki.pm:33
+msgid "Recent activity in this wiki"
+msgstr ""
+
+#: share/mason/header.mas:4
+msgid "Register"
+msgstr ""
+
+#. ($rev1->revision_number()
+#. ($rev2->revision_number()
+#: share/mason/page/diff:4 share/mason/page/diff:6
+msgid "Revision %1"
+msgstr ""
+
+#. ($rev1->revision_number()
+#: share/mason/page/diff:76
+msgid "Revision %1 versus %2"
+msgstr ""
+
+#: share/mason/lib/forms/page.mas:12
+msgid "Submit"
+msgstr ""
+
+#. ($current_rev)
+#: share/mason/page/history:2
+msgid "This page has %quant(%1,revision,revisions)"
+msgstr ""
+
+#: share/mason/local-nav.mas:14
+msgid "This page's history of revisions"
 msgstr ""
 
 #: lib/Silki/Controller/Base.pm:104 lib/Silki/Controller/Base.pm:111
@@ -26,6 +107,26 @@ msgstr ""
 
 #: lib/Silki/Controller/Base.pm:100
 msgid "This wiki requires you to log in to perform this action."
+msgstr ""
+
+#: lib/Silki/Controller/Wiki.pm:128
+msgid "View this page"
+msgstr ""
+
+#: lib/Silki/Controller/Wiki.pm:29
+msgid "Wiki overview"
+msgstr ""
+
+#: share/mason/page/diff:63
+msgid "paragraph was added"
+msgstr ""
+
+#: share/mason/page/diff:39
+msgid "paragraph was changed"
+msgstr ""
+
+#: share/mason/page/diff:63
+msgid "paragraph was removed"
 msgstr ""
 
 #: share/mason/wiki/recent:18

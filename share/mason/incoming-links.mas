@@ -1,5 +1,5 @@
       <div id="backlinks">
-        <h2>Incoming Links</h2>
+        <h2><% loc('Incoming Links') %></h2>
 
 % if ($links) {
         <ul>
@@ -9,8 +9,7 @@
         </ul>
 % } elsif ( ! $page->is_front_page() ) {
         <p>
-          No other pages link to this page. Orphan pages can be confusing, so
-          you may want to add a link to this page.
+          <% loc('No other pages link to this page. Orphan pages can be confusing, so you may want to add a link to this page.') %>
         </p>
 % }
         

@@ -1,5 +1,5 @@
 <p>
-This page has <% $current_rev %> revision<% $current_rev == 1 ? q{} : 's' %>.
+<% loc( 'This page has %quant(%1,revision,revisions)', $current_rev ) %>
 </p>
 
 <table class="standard-table">

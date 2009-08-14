@@ -1,7 +1,7 @@
   <div id="hd">
     <ul id="global-nav">
-      <li><a href="">log in</a></li>
-      <li><a href="">register</a></li>
+      <li><a href=""><% loc('Log in') %></a></li>
+      <li><a href=""><% loc('Register') %></a></li>
     </ul>
 
 <!--
