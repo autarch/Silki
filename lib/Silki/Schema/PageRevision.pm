@@ -3,6 +3,8 @@ package Silki::Schema::PageRevision;
 use strict;
 use warnings;
 
+use Algorithm::Diff qw( sdiff );
+use String::Diff qw( diff );
 use Silki::Config;
 use Silki::Formatter;
 use Silki::Schema;
@@ -11,6 +13,7 @@ use Silki::Schema::PageLink;
 use Silki::Schema::PendingPageLink;
 
 use Fey::ORM::Table;
+use MooseX::Params::Validate qw( validated_list );
 
 my $Schema = Silki::Schema->Schema();
 
@@ -96,8 +99,33 @@ sub _update_page_links
     Silki::Schema->RunInTransaction($updates);
 }
 
+sub Diff
+{
+    my $class = shift;
+    my ( $rev1, $rev2 ) = validated_list( \@_,
+                                          rev1 => { isa => 'Silki::Schema::PageRevision' },
+                                          rev2 => { isa => 'Silki::Schema::PageRevision' },
+                                        );
+
+    return [ map { $_->[0] eq 'c'
+                   ? [ 'c',
+                       @{ diff( $_->[1], $_->[2],
+                                remove_open  => '<<del>>',
+                                remove_close => '<</del>>',
+                                append_open  => '<<ins>>',
+                                append_close => '<</ins>>',
+                              )
+                        }
+                     ]
+                   : $_
+                 }
+             sdiff( [ split /\n\n+/, $rev1->content() ],
+                    [ split /\n\n+/, $rev2->content() ],
+                  )
+           ];
+}
+
 no Fey::ORM::Table;
-no Moose;
 
 __PACKAGE__->meta()->make_immutable();
 

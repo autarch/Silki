@@ -199,6 +199,38 @@ table.standard-table th {
     text-align: left;
 }
 
+table.revision-diff {
+    border: 1px solid black;
+    width: 100%;
+}
+
+table.revision-diff tbody tr {
+    border: 0;
+}
+
+table.revision-diff tbody tr td {
+    border: 1px dashed #ccc;
+    width: 50%;
+}
+
+table.revision-diff tbody tr.diff-changed del {
+    color: #900;
+    font-style: normal;
+}
+
+table.revision-diff tbody tr.diff-changed ins {
+    color: #090;
+    font-style: normal;
+}
+
+table.revision-diff tbody tr td.diff-removed {
+    background-color: #fdd;
+}
+
+table.revision-diff tbody tr td.diff-added {
+    background-color: #dfd;
+}
+
 /* === Forms === */
 
 fieldset {

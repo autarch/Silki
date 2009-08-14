@@ -195,6 +195,35 @@ sub page_history : Chained('_set_page') : PathPart('history') : Args(0)
     $c->stash()->{template} = '/page/history';
 }
 
+sub page_history : Chained('_set_page') : PathPart('diff') : Args(0)
+{
+    my $self = shift;
+    my $c    = shift;
+
+    my $page = $c->stash()->{page};
+
+    my $nums = $c->request()->params()->{revisions};
+
+    unless ( ref $nums && ref $nums eq 'ARRAY' && @{ $nums } == 2 )
+    {
+        $c->redirect_and_detch( $page->uri( with_host => 1 ) );
+    }
+
+    my @revisions =
+        map { Silki::Schema::PageRevision->new( page_id         => $page->page_id(),
+                                                revision_number => $_ ) }
+        sort
+        @{ $nums };
+
+    $c->stash()->{rev1} = $revisions[0];
+    $c->stash()->{rev2} = $revisions[1];
+    $c->stash()->{diff} = Silki::Schema::PageRevision->Diff( rev1 => $revisions[0],
+                                                             rev2 => $revisions[1],
+                                                           );
+
+    $c->stash()->{template} = '/page/diff';
+}
+
 no Moose;
 
 __PACKAGE__->meta()->make_immutable();

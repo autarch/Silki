@@ -1,0 +1,36 @@
+<table class="revision-diff">
+  <thead>
+    <tr>
+      <th>Revision <% $rev1->revision_number() %></th>
+      <th>Revision <% $rev2->revision_number() %></th>
+    </tr>
+  </thead>
+% for my $diff (@diff) {
+  <tbody>
+    <tr class="<% $diff->[0] eq 'c' ? 'diff-changed' : q{} %>">
+      <td class="<% $diff->[0] eq q{-} ? 'diff-removed' : q{} %>">
+        <&| /lib/filter/diff-content.mas &><% $diff->[1] %></&>
+      </td>
+      <td class="<% $diff->[0] eq q{+} ? 'diff-added' : q{} %>">
+        <&| /lib/filter/diff-content.mas &><% $diff->[2] %></&>
+      </td>
+    </tr>
+  </tbody>
+% }
+</table>
+
+<%args>
+$page
+$rev1
+$rev2
+@diff
+</%args>
+
+<%method title>
+<% $page->title() %> - Revision <% $rev1->revision_number() %> versus <% $rev2->revision_number() %>
+<%args>
+$page
+$rev1
+$rev2
+</%args>
+</%method>
