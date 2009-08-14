@@ -6,9 +6,9 @@
 </ul>
 % } else {
 <p>
-This Silki site has no public wikis available.
-Please <a href="<% $c->domain()->uri( view => '/user/login_form' ) %>">login</a>
-if you have an account.
+<% loc( 'This Silki site has no public wikis available.
+Please <a href="%html(%1)">login</a>
+if you have an account.', $c->domain()->uri( view => '/user/login_form' ) ) %>
 </p>
 % }
 

@@ -1,16 +1,16 @@
 <table class="standard-table">
   <thead>
     <tr>
-      <th>Title</th>
-      <th>Date</th>
-      <th>Who</th>
+      <th><% loc('Title') %></th>
+      <th><% loc('Date') %></th>
+      <th><% loc('Who') %></th>
       <th></th>
     </tr>
   </thead>
 % while ( my ( $page, $revision ) = $pages->next() ) {
   <tbody>
     <tr class="<% $pages->index() % 2 ? 'odd' : 'even' %>">
-      <td><a href="<% $page->uri() %>"><% $page->title() %></a> (revision <% $revision->revision_number() %>)</td>
+      <td><a href="<% $page->uri() %>"><% $page->title() %></a> (<% loc( 'revision %1', $revision->revision_number() ) %>)</td>
       <td><% $c->user()->format_datetime( $revision->creation_datetime() ) %></td>
       <td><a href="<% $revision->user()->uri() %>"><% $revision->user()->best_name() %></a></td>
       <td>

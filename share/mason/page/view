@@ -2,12 +2,16 @@
 
 <p id="attribution">
 % if ( $revision->revision_number() > 1 ) {
-Last changed by <a href="<% $revision->user()->uri() %>"><% $revision->user()->best_name() %></a>
-on <% $c->user()->format_datetime( $revision->creation_datetime() ) %>.
+<% loc( 'Last edited by <a href="%html(%1)">%html(%2)</a> on %3.',
+        $revision->user()->uri(),
+        $revision->user()->best_name(),
+        $c->user()->format_datetime( $revision->creation_datetime() ) ) | n %>
 <br />
 % }
-Created by <a href="<% $page->user()->uri() %>"><% $page->user()->best_name() %></a>
-on <% $c->user()->format_datetime( $page->creation_datetime() ) %>.
+<% loc( 'Created by <a href="%html(%1)">%html(%2)</a> on %3.',
+        $revision->user()->uri(),
+        $revision->user()->best_name(),
+        $c->user()->format_datetime( $revision->creation_datetime() ) ) | n %>
 </p>
 
 <%args>

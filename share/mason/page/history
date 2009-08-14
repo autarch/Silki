@@ -5,9 +5,9 @@
 <table class="standard-table">
   <thead>
     <tr>
-      <th>Revision #</th>
-      <th>Date</th>
-      <th>Who</th>
+      <th><% loc('Revision #') %></th>
+      <th><% loc('Date') %></th>
+      <th><% loc('Who') %></th>
       <th></th>
     </tr>
   </thead>
@@ -15,9 +15,9 @@
   <tbody>
     <tr class="<% $revisions->index() % 2 ? 'odd' : 'even' %>">
       <td>
-        <a href="<% $page->uri( view => '/revision/') %>">Revision <% $revision->revision_number() %></a>
+        <a href="<% $page->uri( view => '/revision/') %>"><% loc( 'Revision %1', $revision->revision_number() ) %></a>
 %   if ( $revision->revision_number() == $current_rev ) {
-        (current)
+        (<% loc('current') %>)
 %   }
       </td>
       <td><% $c->user()->format_datetime( $revision->creation_datetime() ) %></td>

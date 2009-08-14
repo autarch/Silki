@@ -3,6 +3,7 @@ package Silki::Gettext;
 use strict;
 use warnings;
 
+use HTML::Entities qw( encode_entities );
 use Moose;
 
 extends 'Data::Localize::Gettext';
@@ -23,6 +24,8 @@ my $KeepFuzzy = 0;
 my $AllowEmpty = 1; # XXX - overridden
 my @fuzzy;
     my $process    = sub {
+        $var{msgid} =~ s/\\\"/\"/g
+            if defined $var{msgid};
         if ( length( $var{msgid} ) and length( $var{msgstr} ) and ( $UseFuzzy or !$var{fuzzy} ) ) {
             $lexicon{ $var{msgid} } = $var{msgstr};
         }
@@ -118,6 +121,15 @@ sub _method
     my @embedded_args = split /,/, $embedded;
 
     return $self->$method( $args, \@embedded_args );
+}
+
+sub html
+{
+    my $self = shift;
+    my $args = shift;
+    my $data = shift;
+
+    return encode_entities( $data->[0] );
 }
 
 sub quant
