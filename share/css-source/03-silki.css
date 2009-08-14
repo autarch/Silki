@@ -171,8 +171,7 @@ table.standard-table td {
 
 table.standard-table thead tr {
     background-color: #21379d;
-    border-left: 8px solid #21379d;
-    border-right: 8px solid #21379d;
+    border-left: 5px solid #21379d;
     color: white;
 }
 
@@ -181,13 +180,11 @@ table.standard-table tbody tr {
 }
 
 table.standard-table tbody tr.odd {
-    border-left: 8px solid #04104a;
-    border-right: 8px solid #04104a;
+    border-left: 5px solid #999;
 }
 
 table.standard-table tbody tr.even {
-    border-left: 8px solid #21379d;
-    border-right: 8px solid #21379d;
+    border-left: 5px solid #21379d;
 }
 
 table.standard-table tbody:hover tr {
