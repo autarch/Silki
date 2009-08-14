@@ -109,13 +109,10 @@ sub Diff
 
     return [ map { $_->[0] eq 'c'
                    ? [ 'c',
-                       @{ diff( $_->[1], $_->[2],
-                                remove_open  => '<<del>>',
-                                remove_close => '<</del>>',
-                                append_open  => '<<ins>>',
-                                append_close => '<</ins>>',
+                       [ sdiff( [ split /\s+/, $_->[1] ],
+                                [ split /\s+/, $_->[2] ],
                               )
-                        }
+                       ]
                      ]
                    : $_
                  }

@@ -7,14 +7,11 @@
   </thead>
 % for my $diff (@diff) {
   <tbody>
-    <tr class="<% $diff->[0] eq 'c' ? 'diff-changed' : q{} %>">
-      <td class="<% $diff->[0] eq q{-} ? 'diff-removed' : q{} %>">
-        <&| /lib/filter/diff-content.mas &><% $diff->[1] %></&>
-      </td>
-      <td class="<% $diff->[0] eq q{+} ? 'diff-added' : q{} %>">
-        <&| /lib/filter/diff-content.mas &><% $diff->[2] %></&>
-      </td>
-    </tr>
+%   if ( $diff->[0] eq 'c' ) {
+<& .word_diff, diff => $diff->[1] &>
+%   } else {
+<& .para_diff, diff => $diff &>
+%   }
   </tbody>
 % }
 </table>
@@ -25,6 +22,46 @@ $rev1
 $rev2
 @diff
 </%args>
+
+<%def .word_diff>
+    <tr class="diff-changed">
+      <td>
+% for my $diff (@diff) {
+%   if ( $diff->[0] eq '-' || $diff->[0] eq 'c' ) {
+        <del><% $diff->[1] %></del>
+%   } elsif ( $diff->[0] eq 'u' ) {
+        <% $diff->[1] %>
+%   }
+% }
+      </td>
+      <td>
+% for my $diff (@diff) {
+%   if ( $diff->[0] eq '+' || $diff->[0] eq 'c' ) {
+        <ins><% $diff->[2] %></ins>
+%   } elsif ( $diff->[0] eq 'u' ) {
+        <% $diff->[1] %>
+%   }
+% }
+      </td>
+    </tr>
+<%args>
+@diff
+</%args>
+</%def>
+
+<%def .para_diff>
+    <tr>
+      <td class="<% $diff[0] eq q{-} ? 'diff-removed' : q{} %>">
+        <% $diff[1] %>
+      </td>
+      <td class="<% $diff[0] eq q{+} ? 'diff-added' : q{} %>">
+        <% $diff[2] %>
+      </td>
+    </tr>
+<%args>
+@diff
+</%args>
+</%def>
 
 <%method title>
 <% $page->title() %> - Revision <% $rev1->revision_number() %> versus <% $rev2->revision_number() %>
