@@ -1,4 +1,5 @@
 <div id="local-nav">
+<&| /lib/filter/unlink-current.mas &>
   <ul>
     <li>
       <a href="<% $page->uri( view => 'edit_form' ) %>" title="Edit this page">Edit</a>
@@ -9,6 +10,7 @@
     <li>
       <a href="<% $page->uri( view => 'history' ) %>" title="This page's history of revisions">History</a>
     </li>
+</&>
   </ul>
 </div>
 
