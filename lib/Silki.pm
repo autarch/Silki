@@ -10,6 +10,7 @@ use Catalyst::Runtime 5.8;
 use Catalyst::App::RoleApplicator;
 use Catalyst::Request::REST::ForBrowsers;
 use Silki::Config;
+use Silki::I18N ();
 use Silki::Request;
 use Silki::Schema;
 use Silki::Web::Session;
@@ -41,6 +42,14 @@ __PACKAGE__->apply_request_class_roles( 'Silki::Request' );
 Silki::Schema->EnableObjectCaches();
 
 __PACKAGE__->setup();
+
+
+sub loc
+{
+    shift;
+    Silki::I18N::loc(@_);
+}
+
 
 no Moose;
 

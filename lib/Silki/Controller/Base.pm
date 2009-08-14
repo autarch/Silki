@@ -33,6 +33,8 @@ sub begin : Private
             for qw( Silki::Web::CSS Silki::Web::Javascript );
     }
 
+    Silki::I18N->SetLanguage();
+
     return 1;
 }
 
@@ -95,18 +97,18 @@ sub _require_permission_for_wiki
     {
         if ( $perms->{Authenticated}{$perm} )
         {
-            $c->session_object()->add_message('This wiki requires you to log in to perform this action.');
+            $c->session_object()->add_message( $c->loc('This wiki requires you to log in to perform this action.') );
         }
         else
         {
-            $c->session_object()->add_message('This wiki requires to be a member to perform this action.');
+            $c->session_object()->add_message( $c->loc('This wiki requires you to be a member to perform this action.') );
         }
 
         $c->redirect_and_detach( '/user/login_form' );
     }
     else
     {
-        $c->session_object()->add_message('This wiki requires to be a member to perform this action.');
+        $c->session_object()->add_message( $c->loc( 'This wiki requires you to be a member to perform this action.' ) );
 
         my $uri;
         if ( $perms->{$role}{Read} )

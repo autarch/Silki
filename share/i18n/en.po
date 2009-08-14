@@ -1,0 +1,33 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. ($wiki->title()
+#: share/mason/wiki/recent:31
+msgid "Recent Changes in %1"
+msgstr ""
+
+#: lib/Silki/Controller/Base.pm:104 lib/Silki/Controller/Base.pm:111
+msgid "This wiki requires you to be a member to perform this action."
+msgstr ""
+
+#: lib/Silki/Controller/Base.pm:100
+msgid "This wiki requires you to log in to perform this action."
+msgstr ""
+
+#: share/mason/wiki/recent:18
+msgid "see changes"
+msgstr ""

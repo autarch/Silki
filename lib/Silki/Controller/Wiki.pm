@@ -76,7 +76,6 @@ sub recent : Chained('_set_wiki') : PathPart('recent') : Args(0)
                                        offset => $offset,
                                      );
 
-    $c->stash()->{title} = 'Recent Changes in ' . $wiki->title();
     $c->stash()->{template} = '/wiki/recent';
 }
 

@@ -9,6 +9,7 @@ use base 'Catalyst::View::Mason';
     package Silki::Mason;
 
     use Lingua::EN::Inflect qw( PL_N );
+    use Silki::I18N qw( loc );
     use Silki::Util qw( string_is_empty english_list );
     use Silki::URI qw( static_uri );
 }
