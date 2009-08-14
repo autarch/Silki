@@ -195,7 +195,7 @@ sub page_history : Chained('_set_page') : PathPart('history') : Args(0)
     $c->stash()->{template} = '/page/history';
 }
 
-sub page_history : Chained('_set_page') : PathPart('diff') : Args(0)
+sub page_diff : Chained('_set_page') : PathPart('diff') : Args(0)
 {
     my $self = shift;
     my $c    = shift;
