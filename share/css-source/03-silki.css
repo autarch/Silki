@@ -204,13 +204,16 @@ table.revision-diff {
     width: 100%;
 }
 
+table.revision-diff th.rev1, table.revision-diff th.rev2 {
+    width: 49%;
+}
+
 table.revision-diff tbody tr {
     border: 0;
 }
 
-table.revision-diff tbody tr td {
+table.revision-diff tbody td {
     border: 1px dashed #ccc;
-    width: 50%;
 }
 
 table.revision-diff tbody tr.diff-changed del {
@@ -223,12 +226,17 @@ table.revision-diff tbody tr.diff-changed ins {
     font-style: normal;
 }
 
-table.revision-diff tbody tr td.diff-removed {
+table.revision-diff tbody td.diff-removed {
     background-color: #fdd;
 }
 
-table.revision-diff tbody tr td.diff-added {
+table.revision-diff tbody td.diff-added {
     background-color: #dfd;
+}
+
+table.revision-diff td.marker {
+    font-weight: bold;
+    text-align: center;
 }
 
 /* === Forms === */

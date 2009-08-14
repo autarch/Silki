@@ -1,8 +1,9 @@
 <table class="revision-diff">
   <thead>
     <tr>
-      <th>Revision <% $rev1->revision_number() %></th>
-      <th>Revision <% $rev2->revision_number() %></th>
+      <th class="rev1">Revision <% $rev1->revision_number() %></th>
+      <th class="marker"></th>
+      <th class="rev2">Revision <% $rev2->revision_number() %></th>
     </tr>
   </thead>
 % for my $diff (@diff) {
@@ -34,6 +35,9 @@ $rev2
 %   }
 % }
       </td>
+      <td class="marker">
+        <span title="a paragraph was changed">*</span>
+      </td>
       <td>
 % for my $diff (@diff) {
 %   if ( $diff->[0] eq '+' || $diff->[0] eq 'c' ) {
@@ -53,6 +57,11 @@ $rev2
     <tr>
       <td class="<% $diff[0] eq q{-} ? 'diff-removed' : q{} %>">
         <% $diff[1] %>
+      </td>
+      <td class="marker">
+% if ( $diff[0] ne 'u' ) {
+        <span title="a paragraph was <% $diff[0] eq '-' ? 'removed' : 'added' %>"><% $diff[0] %></span>
+% }
       </td>
       <td class="<% $diff[0] eq q{+} ? 'diff-added' : q{} %>">
         <% $diff[2] %>
