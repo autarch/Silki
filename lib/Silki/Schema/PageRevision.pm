@@ -107,7 +107,10 @@ sub Diff
                                           rev2 => { isa => 'Silki::Schema::PageRevision' },
                                         );
 
-    return [ map { $_->[0] eq 'c'
+    my @rev1 = map { s/^\s+|\s+$//; $_ } split /\n\n+/, $rev1->content();
+    my @rev2 = map { s/^\s+|\s+$//; $_ } split /\n\n+/, $rev2->content();
+
+    return [ map {$_->[0] eq 'c'
                    ? [ 'c',
                        [ $class->_merged_sdiff
                              ( [ split /\s+/, $_->[1] ],
@@ -118,8 +121,8 @@ sub Diff
                      ]
                    : $_
                  }
-             sdiff( [ split /\n\n+/, $rev1->content() ],
-                    [ split /\n\n+/, $rev2->content() ],
+             sdiff( \@rev1,
+                    \@rev2,
                   )
            ];
 }
