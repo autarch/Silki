@@ -3,6 +3,12 @@ package Silki::Controller::Wiki;
 use strict;
 use warnings;
 
+use Data::Page;
+use Data::Page::FlickrLike;
+use Silki::Formatter;
+use Silki::Schema::Page;
+use Silki::Schema::PageRevision;
+use Silki::Schema::Wiki;
 use Silki::Web::Tab;
 
 use Moose;
@@ -186,10 +192,19 @@ sub page_history : Chained('_set_page') : PathPart('history') : Args(0)
     my $c         = shift;
 
     my $limit = 20;
-    my $offset = $limit * ( $c->request()->params()->{page} ? $c->request()->params()->{page} - 1 : 0 );
+    my $page_num = $c->request()->params()->{page} || 1;
+    my $offset = $limit * ( $page_num - 1 );
 
-    $c->stash()->{revisions} =
-        $c->stash()->{page}->revisions( limit => $limit, offset => $offset );
+    my $page = $c->stash()->{page};
+
+    my $pager = Data::Page->new();
+    $pager->total_entries( $page->most_recent_revision()->revision_number());
+    $pager->entries_per_page($limit);
+    $pager->current_page($page_num);
+
+    $c->stash()->{pager} = $pager;
+
+    $c->stash()->{revisions} = $page->revisions( limit => $limit, offset => $offset );
 
     $c->stash()->{template} = '/page/history';
 }

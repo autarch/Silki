@@ -171,6 +171,10 @@ table.standard-table td {
     border: none;
 }
 
+table.standard-table th {
+    text-align: left;
+}
+
 table.standard-table td {
     padding: 0.3em 0.5em;
 }
@@ -185,20 +189,16 @@ table.standard-table tbody tr {
     border-bottom: 1px solid #21379d;
 }
 
-table.standard-table tbody tr.odd {
+table.standard-table tr.odd {
     border-left: 5px solid #999;
 }
 
-table.standard-table tbody tr.even {
+table.standard-table tr.even {
     border-left: 5px solid #21379d;
 }
 
 table.standard-table tbody:hover tr {
     background-color: #EEE;
-}
-
-table.standard-table th {
-    text-align: left;
 }
 
 table.revision-diff {

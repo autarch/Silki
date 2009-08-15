@@ -33,7 +33,7 @@ msgstr ""
 msgid "Created by <a href=\"%html(%1)\">%html(%2)</a> on %3."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:28
+#: lib/Silki/Controller/Wiki.pm:34
 msgid "Dashboard"
 msgstr ""
 
@@ -75,11 +75,20 @@ msgstr ""
 msgid "No other pages link to this page. Orphan pages can be confusing, so you may want to add a link to this page."
 msgstr ""
 
+#. ($page_num)
+#: share/mason/page/history:41
+msgid "Page %1 of history"
+msgstr ""
+
+#: share/mason/page/history:35
+msgid "Page:"
+msgstr ""
+
 #: share/mason/lib/forms/page.mas:15
 msgid "Preview"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:32 lib/Silki/Controller/Wiki.pm:67
+#: lib/Silki/Controller/Wiki.pm:38 lib/Silki/Controller/Wiki.pm:73
 msgid "Recent Changes"
 msgstr ""
 
@@ -88,7 +97,7 @@ msgstr ""
 msgid "Recent Changes in %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:33
+#: lib/Silki/Controller/Wiki.pm:39
 msgid "Recent activity in this wiki"
 msgstr ""
 
@@ -144,7 +153,7 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:128
+#: lib/Silki/Controller/Wiki.pm:134
 msgid "View this page"
 msgstr ""
 
@@ -152,7 +161,7 @@ msgstr ""
 msgid "Who"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:29
+#: lib/Silki/Controller/Wiki.pm:35
 msgid "Wiki overview"
 msgstr ""
 
