@@ -214,6 +214,11 @@ table.revision-diff tbody tr {
     border: 0;
 }
 
+table.revision-diff tbody tr.attribution {
+    font-size: 90%;
+    font-style: italic;
+}    
+
 table.revision-diff tbody td {
     border: 1px dashed #ccc;
     vertical-align: top;
