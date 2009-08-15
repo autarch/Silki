@@ -41,7 +41,7 @@ sidebar => [ 'incoming-links' ]
 <%method title>
 <% $page->title() %>
 % unless ($is_current_revision) {
-(<% loc( 'Revision %1', $revision->revision_number() ) %>)
+(<% loc( 'Revision %1 of %2', $revision->revision_number(), $page->most_recent_revision()->revision_number() ) %>)
 % }
 <%args>
 $page
