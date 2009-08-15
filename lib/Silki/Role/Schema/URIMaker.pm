@@ -58,7 +58,12 @@ sub _host_params_for_uri
 
     return unless $_[0];
 
-    return %{ $self->domain()->uri_params() } ;
+    return ( %{ $self->domain()->uri_params() } ,
+             (   $ENV{SERVER_PORT}
+               ? ( port => $ENV{SERVER_PORT} )
+               : ()
+             )
+           );
 }
 
 no Moose::Role;
