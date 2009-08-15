@@ -15,7 +15,7 @@
       <td><a href="<% $revision->user()->uri() %>"><% $revision->user()->best_name() %></a></td>
       <td>
 %   if ( $revision->revision_number() > 1 ) {
-        <a href="<% $page->uri( view => 'diff', query => { revisions => [ $revision->revision_number() - 1, $revision->revision_number() ] } ) %>"><% loc('see changes') %></a>
+        <a href="<% $page->uri( view => 'diff', query => { revision1 => $revision->revision_number() - 1, revision2 => $revision->revision_number() } ) %>"><% loc('see changes') %></a>
 %   }
       </td>
     </tr>

@@ -27,7 +27,10 @@ has_table( $Schema->table('Page') );
 
 has_one( $Schema->table('User') );
 
-has_one( $Schema->table('Wiki') );
+has_one wiki =>
+    ( table   => $Schema->table('Wiki'),
+      handles => [ 'domain' ],
+    );
 
 has revision_count =>
     ( metaclass   => 'FromSelect',

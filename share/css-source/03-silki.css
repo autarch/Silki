@@ -216,6 +216,7 @@ table.revision-diff tbody tr {
 
 table.revision-diff tbody td {
     border: 1px dashed #ccc;
+    vertical-align: top;
 }
 
 table.revision-diff tbody tr.diff-changed del {

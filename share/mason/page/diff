@@ -1,3 +1,7 @@
+<p>
+  <a href="<% $page->uri() %>"><% loc('Back to current revision') %></a>
+</p>
+
 <table class="revision-diff">
   <thead>
     <tr>

@@ -2,13 +2,18 @@
 <% loc( 'This page has %quant(%1,revision,revisions)', $current_rev ) %>
 </p>
 
+<form action="<% $page->uri( view => 'diff' ) %>" method="get">
 <table class="standard-table">
   <thead>
     <tr>
       <th><% loc('Revision #') %></th>
       <th><% loc('Date') %></th>
       <th><% loc('Who') %></th>
-      <th></th>
+      <th>
+% if ( $current_rev > 1 ) {
+        <input type="submit" value="<% loc('Compare') %>" />
+% }
+      </th>
     </tr>
   </thead>
 % while ( my $revision = $revisions->next() ) {
@@ -23,7 +28,12 @@
       <td><% $c->user()->format_datetime( $revision->creation_datetime() ) %></td>
       <td><a href="<% $revision->user()->uri() %>"><% $revision->user()->best_name() %></a></td>
       <td>
-        compare
+%   if ( $current_rev > 1 ) {
+        <input type="radio" name="revision1" value="<% $revision->revision_number() %>"
+               <% $revisions->index() == 2 ? 'checked="checked"' : q{} | n %> />
+        <input type="radio" name="revision2" value="<% $revision->revision_number() %>"
+               <% $revisions->index() == 1 ? 'checked="checked"' : q{} | n %> />
+%   }
       </td>
     </tr>
   </tbody>
@@ -33,6 +43,7 @@
    pager     => $pager,
    uri_maker => sub { $page->uri( view => 'history', @_ ) } &>
 </table>
+</form>
 
 <%args>
 $page

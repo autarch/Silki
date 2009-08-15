@@ -5,6 +5,7 @@ use warnings;
 
 use Data::Page;
 use Data::Page::FlickrLike;
+use List::AllUtils qw( all );
 use Silki::Formatter;
 use Silki::Schema::Page;
 use Silki::Schema::PageRevision;
@@ -216,18 +217,18 @@ sub page_diff : Chained('_set_page') : PathPart('diff') : Args(0)
 
     my $page = $c->stash()->{page};
 
-    my $nums = $c->request()->params()->{revisions};
+    my @nums = ( $c->request()->params()->{revision1}, $c->request()->params()->{revision2} );
 
-    unless ( ref $nums && ref $nums eq 'ARRAY' && @{ $nums } == 2 )
+    unless ( ( @nums == 2 ) && all { defined && /^\d+$/ } @nums )
     {
-        $c->redirect_and_detch( $page->uri( with_host => 1 ) );
+        $c->redirect_and_detach( $page->uri( with_host => 1 ) );
     }
 
     my @revisions =
         map { Silki::Schema::PageRevision->new( page_id         => $page->page_id(),
                                                 revision_number => $_ ) }
         sort
-        @{ $nums };
+        @nums;
 
     $c->stash()->{rev1} = $revisions[0];
     $c->stash()->{rev2} = $revisions[1];
