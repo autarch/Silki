@@ -20,9 +20,11 @@
   <tbody>
     <tr class="<% $revisions->index() % 2 ? 'odd' : 'even' %>">
       <td>
-        <a href="<% $page->uri( view => 'revision/' . $revision->revision_number() ) %>"><% loc( 'Revision %1', $revision->revision_number() ) %></a>
 %   if ( $revision->revision_number() == $current_rev ) {
+        <a href="<% $page->uri( ) %>"><% loc( 'Revision %1', $revision->revision_number() ) %></a>
         (<% loc('current') %>)
+%   } else {
+        <a href="<% $page->uri( view => 'revision/' . $revision->revision_number() ) %>"><% loc( 'Revision %1', $revision->revision_number() ) %></a>
 %   }
       </td>
       <td><% $c->user()->format_datetime( $revision->creation_datetime() ) %></td>
