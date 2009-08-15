@@ -109,9 +109,11 @@ sub Diff
 
     return [ map { $_->[0] eq 'c'
                    ? [ 'c',
-                       [ sdiff( [ split /\s+/, $_->[1] ],
-                                [ split /\s+/, $_->[2] ],
-                              )
+                       [ $class->_merged_sdiff
+                             ( [ split /\s+/, $_->[1] ],
+                               [ split /\s+/, $_->[2] ],
+                               q{ },
+                             )
                        ]
                      ]
                    : $_
@@ -120,6 +122,29 @@ sub Diff
                     [ split /\n\n+/, $rev2->content() ],
                   )
            ];
+}
+
+sub _merged_sdiff
+{
+    my $class    = shift;
+    my $seq1     = shift;
+    my $seq2     = shift;
+    my $split_on = shift;
+
+    my @diff = sdiff( $seq1, $seq2 );
+
+    for ( my $x = $#diff; $x > 0; $x-- )
+    {
+        if ( $diff[$x][0] eq $diff[ $x - 1 ][0] )
+        {
+            $diff[ $x - 1 ][1] .= $split_on . $diff[$x][1];
+            $diff[ $x - 1 ][2] .= $split_on . $diff[$x][2];
+
+            splice @diff, $x, 1;
+        }
+    }
+
+    return @diff;
 }
 
 no Fey::ORM::Table;
