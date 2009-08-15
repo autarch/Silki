@@ -6,7 +6,7 @@
 
 <% $html | n %>
 
-<p id="attribution">
+<div id="attribution">
 % if ( $revision->revision_number() > 1 ) {
 %   if ($is_current_revision) {
 <% loc( 'Last edited by <a href="%html(%1)">%html(%2)</a> on %3.',
@@ -25,12 +25,13 @@
         $page->user()->uri(),
         $page->user()->best_name(),
         $c->user()->format_datetime( $revision->creation_datetime() ) ) | n %>
+</div>
 
 % if ( $revision->revision_number() > 1 ) {
-<br />
-<a href="<% $page->uri( view => 'diff', query => { revision1 => $revision->revision_number() - 1, revision2 => $revision->revision_number() } ) %>"><% loc('Compare to previous revision') %></a>
+<div id="compare-to-previous">
+  <a href="<% $page->uri( view => 'diff', query => { revision1 => $revision->revision_number() - 1, revision2 => $revision->revision_number() } ) %>"><% loc('Compare to previous revision') %></a>
+</div>
 % }
-</p>
 
 <%args>
 $page

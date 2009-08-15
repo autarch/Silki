@@ -151,6 +151,11 @@ h1 {
     font-size: 170%;
 }
 
+#compare-to-previous {
+    font-size: 90%;
+    padding: 0.1em 0.5em;
+}
+
 #attribution {
     border-top: 2px solid #11a844;
     font-size: 90%;
