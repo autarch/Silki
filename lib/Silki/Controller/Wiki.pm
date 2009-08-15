@@ -147,7 +147,14 @@ sub page_GET_html
     my $self      = shift;
     my $c         = shift;
 
-    $c->stash()->{html} = $self->_page_content_as_html( $c, $c->stash()->{page} );
+    my $page = $c->stash()->{page};
+    my $revision = $page->most_recent_revision();
+
+    $c->stash()->{page} = $page;
+    $c->stash()->{revision} = $revision;
+    $c->stash()->{is_current_revision} = 1;
+    $c->stash()->{html} = $self->_rev_content_as_html( $c, $revision, $page );
+
     $c->stash()->{template} = '/page/view';
 }
 
@@ -173,10 +180,11 @@ sub page_PUT
     $c->redirect_and_detach( $page->uri() );
 }
 
-sub _page_content_as_html : Private
+sub _rev_content_as_html : Private
 {
     my $self = shift;
     my $c    = shift;
+    my $rev  = shift;
     my $page = shift;
 
     my $formatter =
@@ -184,7 +192,36 @@ sub _page_content_as_html : Private
                                wiki => $page->wiki(),
                              );
 
-    return $formatter->wikitext_to_html( $page->content() );
+    return $formatter->wikitext_to_html( $rev->content() );
+}
+
+sub page_revision : Chained('_set_page') : PathPart('revision') : Args(1)
+{
+    my $self            = shift;
+    my $c               = shift;
+    my $revision_number = shift;
+
+    my $page = $c->stash()->{page};
+
+    my $revision;
+    if ( $revision_number =~ /^\d+$/ )
+    {
+        $revision = Silki::Schema::PageRevision->new( page_id         => $page->page_id(),
+                                                      revision_number => $revision_number,
+                                                    );
+    }
+
+    unless ($revision)
+    {
+        $c->redirect_and_detch( $page->uri( with_host => 1 ) );
+    }
+
+    $c->stash()->{page} = $page;
+    $c->stash()->{revision} = $revision;
+    $c->stash()->{is_current_revision} = 0;
+    $c->stash()->{html} = $self->_rev_content_as_html( $c, $revision, $page );
+
+    $c->stash()->{template} = '/page/view';
 }
 
 sub page_history : Chained('_set_page') : PathPart('history') : Args(0)
