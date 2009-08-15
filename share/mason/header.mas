@@ -1,7 +1,7 @@
   <div id="hd">
     <ul id="global-nav">
-      <li><a href=""><% loc('Log in') %></a></li>
-      <li><a href=""><% loc('Register') %></a></li>
+      <li><a href="<% $c->domain()->application_uri( path => '/user/login_form' ) %>"><% loc('Log in') %></a></li>
+      <li><a href="<% $c->domain()->application_uri( path => '/user/new_user_form' ) %>"><% loc('Register') %></a></li>
     </ul>
 
 <!--

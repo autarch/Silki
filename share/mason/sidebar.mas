@@ -1,9 +1,5 @@
     <div class="yui-b">
       <div id="sidebar">
-        <form action="/contact/search" method="get">
-          <input name="search" type="text" class="text" value="Quick Search" />
-        </form>
-      
 
 % for my $comp ( @{ $m->request_comp()->attr('sidebar') } ) {
       <& $comp . '.mas', %ARGS &>

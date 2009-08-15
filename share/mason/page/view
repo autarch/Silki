@@ -41,7 +41,7 @@ $html
 </%args>
 
 <%attr>
-sidebar => [ 'incoming-links' ]
+sidebar => [ 'quick-search', 'incoming-links' ]
 </%attr>
 
 <%method title>

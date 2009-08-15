@@ -5,11 +5,12 @@ use warnings;
 
 use Silki::Config;
 use Silki::Schema;
-use Silki::Types qw( HashRef );
+use Silki::Types qw( Bool HashRef Str );
 use URI;
 
 use Fey::ORM::Table;
 use MooseX::ClassAttribute;
+use MooseX::Params::Validate qw( validated_hash );
 
 with 'Silki::Role::Schema::URIMaker';
 
@@ -67,6 +68,19 @@ sub _build_uri_params
     return { scheme => ( $self->requires_ssl() ? 'https' : 'http' ),
              host   => $self->web_hostname(),
            };
+}
+
+sub application_uri
+{
+    my $self = shift;
+    my %p    = validated_hash( \@_,
+                               path      => { isa => Str, optional => 1 },
+                               fragment  => { isa => Str, optional => 1 },
+                               query     => { isa => HashRef, default => {} },
+                               with_host => { isa => Bool, default => 0 },
+                             );
+
+    return $self->_make_uri(%p);
 }
 
 no Fey::ORM::Table;

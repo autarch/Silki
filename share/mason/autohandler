@@ -28,7 +28,9 @@
 
 <& .messages &>
 
+% if ( $m->request_comp()->attr('has_title') ) {
           <h1><& SELF:title, %ARGS &></h1>
+% }
 
 % $m->call_next();
         </div>
@@ -47,7 +49,8 @@
 </html>
 
 <%attr>
-sidebar => []
+has_title => 1
+sidebar => [ 'quick-search' ]
 </%attr>
 
 <%def .messages>

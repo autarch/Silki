@@ -1,0 +1,3 @@
+        <form action="/contact/search" method="get">
+          <input name="search" type="text" class="text" value="Quick Search" />
+        </form>

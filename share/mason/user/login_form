@@ -1,0 +1,31 @@
+<form action="/user/authentication" method="post">
+  <fieldset>
+    <legend>Credentials</legend>
+
+    <div class="form-item">
+      <label for="username" class="for-field"><% loc('Username') %></label>
+      <input type="text" class="text" name="username" id="username" />
+      <div class="help-text">
+        <p>
+          <% loc('For most people, this will be your email address.') %>
+        </p>
+      </div>
+    </div>
+
+    <div class="form-item">
+      <label for="password" class="for-field"><% loc('Password') %></label>
+      <input type="password" class="text" name="password" id="password" />
+    </div>
+
+    <input type="submit" class="submit" value="<% loc('Submit') %>" />
+  </fieldset>
+</form>
+
+<%attr>
+has_title => 0
+sidebar => []
+</%attr>
+
+<%method title>
+Log in
+</%method>

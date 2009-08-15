@@ -255,8 +255,8 @@ table.revision-diff td.marker {
 /* === Forms === */
 
 fieldset {
-    background-color: #F6FFE4;
-    border-top: 1px solid #A1BA6C;
+    background-color: #f9d5b0;
+    border-top: 1px solid #e68117;
     margin-right: 2em;
     padding: 0.5em;
     padding-bottom: 1em;
@@ -267,7 +267,7 @@ fieldset.last {
 }
 
 fieldset legend {
-    background-color: #A1BA6C;
+    background-color: #8f683f;
     color: white;
     font-weight: bold;
     padding: 0.4em;
@@ -424,13 +424,14 @@ input.wide {
 }
 
 input.submit {
-    background-color: #5B824C;
-    border-bottom: 2px solid #39602A;
-    border-left: 1px solid #D9FFCA;
-    border-right: 2px solid #39602A;
-    border-top: 1px solid #D9FFCA;
+    background-color: #8f683f;
+    border-bottom: 2px solid #6d3903;
+    border-left: 1px solid #e68117;
+    border-right: 2px solid #6d3903;
+    border-top: 1px solid #e68117;
     color: white;
     font-weight: bold;
+    margin-left: 12.5em;
     margin-top: 0.5em;
     padding: 0.1em;
 }

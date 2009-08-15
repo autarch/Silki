@@ -57,6 +57,10 @@ $revisions
 my $current_rev = $page->most_recent_revision()->revision_number();
 </%init>
 
+<%attr>
+sidebar => [ 'quick-search', 'incoming-links' ]
+</%attr>
+
 <%method title>
 History of Changes to <% $page->title() %>
 <%args>
