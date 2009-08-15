@@ -15,7 +15,7 @@
   <tbody>
     <tr class="<% $revisions->index() % 2 ? 'odd' : 'even' %>">
       <td>
-        <a href="<% $page->uri( view => '/revision/') %>"><% loc( 'Revision %1', $revision->revision_number() ) %></a>
+        <a href="<% $page->uri( view => 'revision/' . $revision->revision_number() ) %>"><% loc( 'Revision %1', $revision->revision_number() ) %></a>
 %   if ( $revision->revision_number() == $current_rev ) {
         (<% loc('current') %>)
 %   }
