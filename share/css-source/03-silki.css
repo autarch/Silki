@@ -161,6 +161,8 @@ h1 {
 /* === Tables === */
 
 table.standard-table {
+    border-bottom: 1px solid #21379d;
+    border-right: 1px solid #21379d;
     width: 100%;
 }
 
