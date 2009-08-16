@@ -313,19 +313,41 @@ sub role_in_wiki
         :                     'Authenticated';
 }
 
+sub format_date
+{
+    my $self = shift;
+    my $dt   = shift;
+
+    $self->_format_dt( $dt, 'date' );
+}
+
 sub format_datetime
 {
     my $self = shift;
     my $dt   = shift;
 
-    my $format_dt = $dt->clone()->set_time_zone( $self->time_zone() );
+    $self->_format_dt( $dt, 'datetime' );
+}
+
+sub _format_dt
+{
+    my $self = shift;
+    my $dt   = shift;
+    my $type = shift;
+
+    my $format_dt = $dt->clone()->set( locale => $self->locale_code() )->set_time_zone( $self->time_zone() );
 
     my $today = DateTime->today( time_zone => $self->time_zone() );
 
+    my ( $without_year, $with_year ) =
+        ( $type . '_format_without_year',
+          $type . '_format'
+        );
+
     my $format =
           $format_dt->year() == $today->year()
-        ? $self->datetime_format_without_year()
-        : $self->datetime_format();
+        ? $self->$without_year()
+        : $self->$with_year();
 
     return $format_dt->format_cldr($format);
 }
