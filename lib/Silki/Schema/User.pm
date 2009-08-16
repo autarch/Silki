@@ -324,10 +324,8 @@ sub format_datetime
 
     my $format =
           $format_dt->year() == $today->year()
-        ? $self->date_format_without_year()
-        : $self->date_format();
-
-    $format .= q{ } . $self->time_format();
+        ? $self->datetime_format_without_year()
+        : $self->datetime_format();
 
     return $format_dt->format_cldr($format);
 }
