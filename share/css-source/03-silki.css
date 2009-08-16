@@ -153,14 +153,14 @@ h1 {
 
 #compare-to-previous {
     font-size: 90%;
-    padding: 0.1em 0.5em;
+    padding: 0.1em 0em;
 }
 
 #attribution {
     border-top: 2px solid #11a844;
     font-size: 90%;
     font-style: italic;
-    padding: 0.1em 0.5em;
+    padding: 0.1em 0;
 }
 
 /* === Tables === */
