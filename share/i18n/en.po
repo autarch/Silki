@@ -31,7 +31,7 @@ msgstr ""
 msgid "Compare"
 msgstr ""
 
-#: share/mason/page/view:31
+#: share/mason/page/view:32
 msgid "Compare to previous revision"
 msgstr ""
 
@@ -67,6 +67,10 @@ msgstr ""
 msgid "Edit this page"
 msgstr ""
 
+#: share/mason/user/login_form:11
+msgid "For most people, this will be your email address."
+msgstr ""
+
 #: share/mason/local-nav.mas:14
 msgid "History"
 msgstr ""
@@ -80,8 +84,12 @@ msgstr ""
 msgid "Last edited by <a href=\"%html(%1)\">%html(%2)</a> on %3."
 msgstr ""
 
-#: share/mason/header.mas:3
+#: share/mason/header.mas:6
 msgid "Log in"
+msgstr ""
+
+#: share/mason/header.mas:4
+msgid "Log out"
 msgstr ""
 
 #: share/mason/incoming-links.mas:12
@@ -93,13 +101,17 @@ msgstr ""
 msgid "Page %1 of history"
 msgstr ""
 
-#. ($revision->user()
+#. ($page->user()
 #: share/mason/page/view:25
 msgid "Page created by <a href=\"%html(%1)\">%html(%2)</a> on %3."
 msgstr ""
 
 #: share/mason/lib/table/pager.mas:5
 msgid "Page:"
+msgstr ""
+
+#: share/mason/user/login_form:17
+msgid "Password"
 msgstr ""
 
 #: share/mason/lib/forms/page.mas:15
@@ -119,7 +131,7 @@ msgstr ""
 msgid "Recent activity in this wiki"
 msgstr ""
 
-#: share/mason/header.mas:4
+#: share/mason/header.mas:7
 msgid "Register"
 msgstr ""
 
@@ -134,7 +146,7 @@ msgid "Revision %1"
 msgstr ""
 
 #. ($revision->revision_number()
-#: share/mason/page/view:49
+#: share/mason/page/view:50
 msgid "Revision %1 of %2"
 msgstr ""
 
@@ -143,7 +155,7 @@ msgstr ""
 msgid "Revision %1 versus %2"
 msgstr ""
 
-#: share/mason/lib/forms/page.mas:12
+#: share/mason/lib/forms/page.mas:12 share/mason/user/login_form:21
 msgid "Submit"
 msgstr ""
 
@@ -179,6 +191,10 @@ msgstr ""
 
 #: share/mason/wiki/recent:4
 msgid "Title"
+msgstr ""
+
+#: share/mason/user/login_form:7
+msgid "Username"
 msgstr ""
 
 #: lib/Silki/Controller/Wiki.pm:135

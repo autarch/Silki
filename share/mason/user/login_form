@@ -1,3 +1,4 @@
+<&| /lib/filter/form.mas &>
 <form action="/user/authentication" method="post">
   <fieldset>
     <legend>Credentials</legend>
@@ -20,6 +21,7 @@
     <input type="submit" class="submit" value="<% loc('Submit') %>" />
   </fieldset>
 </form>
+</&>
 
 <%attr>
 has_title => 0

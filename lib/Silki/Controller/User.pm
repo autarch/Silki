@@ -76,6 +76,39 @@ sub authentication_POST
     $self->_login_user( $c, $user );
 }
 
+sub _login_user
+{
+    my $self = shift;
+    my $c    = shift;
+    my $user = shift;
+
+    my %expires = $c->request()->param('remember') ? ( expires => '+1y' ) : ();
+    $c->set_authen_cookie( value => { user_id => $user->user_id() },
+                           %expires,
+                         );
+
+    $c->session_object()->add_message( 'Welcome to the site, ' . $user->best_name() );
+
+    my $redirect_to =
+           $c->request()->params()->{return_to}
+        || $c->domain()->application_uri( path => q{} );
+
+    $c->redirect_and_detach($redirect_to);
+}
+
+sub authentication_DELETE
+{
+    my $self = shift;
+    my $c    = shift;
+
+    $c->unset_authen_cookie();
+
+    $c->session_object()->add_message( 'You have been logged out.' );
+
+    my $redirect = $c->request()->params()->{return_to} || $c->domain()->application_uri( path => q{} );
+    $c->redirect_and_detach($redirect);
+}
+
 no Moose;
 
 __PACKAGE__->meta()->make_immutable();

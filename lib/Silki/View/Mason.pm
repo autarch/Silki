@@ -18,8 +18,8 @@ use base 'Catalyst::View::Mason';
 use HTML::FillInForm;
 use Path::Class;
 use Silki::Config;
-#use Silki::Web::Form;
-#use Silki::Web::FormData;
+use Silki::Web::Form;
+use Silki::Web::FormData;
 use Silki::Util qw( string_is_empty );
 
 __PACKAGE__->config( Silki::Config->new()->mason_config() );
