@@ -35,7 +35,7 @@ CREATE TABLE "User" (
        creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
        last_modified_datetime   TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
        time_zone                VARCHAR(50)     NOT NULL DEFAULT 'UTC',
-       locale_code              VARCHAR(10)     NOT NULL DEFAULT 'en_US',
+       locale_code              VARCHAR(20)     NOT NULL DEFAULT 'en_US',
        date_format              VARCHAR(12)     NOT NULL,
        date_format_without_year VARCHAR(12)     NOT NULL,
        datetime_format          VARCHAR(24)     NOT NULL,
@@ -57,7 +57,7 @@ CREATE TABLE "Wiki" (
        -- or as a hostname prefix (short-name.wiki.example.com)
        short_name               uri_path_piece  UNIQUE  NOT NULL,
        domain_id                INT8            NOT NULL,
-       default_locale_code      VARCHAR(10)     NOT NULL DEFAULT 'en_US',
+       default_locale_code      VARCHAR(20)     NOT NULL DEFAULT 'en_US',
        email_addresses_are_hidden               BOOLEAN    DEFAULT TRUE,
        user_id                  INT8            NULL,
        CONSTRAINT valid_title CHECK ( title != '' )
@@ -80,13 +80,13 @@ CREATE TABLE "Domain" (
 );
 
 CREATE TABLE "Locale" (
-       locale_code        VARCHAR(10)        PRIMARY KEY
+       locale_code        VARCHAR(20)        PRIMARY KEY
 );
 
 CREATE TABLE "Country" (
        iso_code           CHAR(2)            PRIMARY KEY,
        name               VARCHAR(255)       UNIQUE  NOT NULL,
-       locale_code        VARCHAR(10)        NOT NULL,
+       locale_code        VARCHAR(20)        NOT NULL,
        CONSTRAINT valid_iso_code CHECK ( iso_code != '' ),
        CONSTRAINT valid_name CHECK ( name != '' )
 );

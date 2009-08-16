@@ -3,6 +3,7 @@ package Silki::Schema::Locale;
 use strict;
 use warnings;
 
+use DateTime::Locale;
 use Silki::Schema;
 
 use Fey::ORM::Table;
@@ -24,7 +25,7 @@ sub CreateDefaultLocales
 {
     my $class = shift;
 
-    for my $code ( qw( en_US en_CA ) )
+    for my $code ( DateTime::Locale->ids() )
     {
         next if $class->new( locale_code => $code );
 
