@@ -61,7 +61,7 @@ sub dashboard : Chained('_set_wiki') : PathPart('dashboard') : Args(0)
     my $self = shift;
     my $c    = shift;
 
-    $c->tab_by_label('Dashboard')->set_is_selected(1);
+    $c->tab_by_id('Dashboard')->set_is_selected(1);
 
     $c->stash()->{template} = '/wiki/dashboard';
 }
@@ -71,7 +71,7 @@ sub recent : Chained('_set_wiki') : PathPart('recent') : Args(0)
     my $self = shift;
     my $c    = shift;
 
-    $c->tab_by_label( $c->loc('Recent Changes') )->set_is_selected(1);
+    $c->tab_by_id( $c->loc('Recent Changes') )->set_is_selected(1);
 
     my $limit = 20;
     my $offset = $limit * ( $c->request()->params()->{page} ? $c->request()->params()->{page} - 1 : 0 );

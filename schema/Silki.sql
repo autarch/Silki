@@ -29,19 +29,22 @@ CREATE TABLE "User" (
        display_name             VARCHAR(255)    NOT NULL DEFAULT '',
        -- RFC2307 Blowfish crypt
        password                 VARCHAR(67)     NOT NULL,
-       openid_uri               VARCHAR(255)    UNIQUE  NOT NULL,
+       openid_uri               VARCHAR(255)    UNIQUE  NULL,
        is_admin                 BOOLEAN         NOT NULL DEFAULT FALSE,
        is_system_user           BOOLEAN         NOT NULL DEFAULT FALSE,
        creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
        last_modified_datetime   TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
        time_zone                VARCHAR(50)     NOT NULL DEFAULT 'UTC',
-       date_format              VARCHAR(12)     NOT NULL DEFAULT 'MMM d, yyy',
-       date_format_without_year VARCHAR(12)     NOT NULL DEFAULT 'MMM d',
-       time_format              VARCHAR(12)     NOT NULL DEFAULT 'h:mm a',
+       locale_code              VARCHAR(10)     NOT NULL DEFAULT 'en_US',
+       date_format              VARCHAR(12)     NOT NULL,
+       date_format_without_year VARCHAR(12)     NOT NULL,
+       datetime_format          VARCHAR(24)     NOT NULL,
+       datetime_format_without_year  VARCHAR(24)     NOT NULL,
        created_by_user_id       INT8            NULL,
        CONSTRAINT valid_user_record
-           CHECK ( ( password != '' OR openid_uri != '' )
-                    OR is_system_user )
+           CHECK ( ( password != ''
+                     OR ( openid_uri IS NOT NULL AND openid_uri != '' ) )
+                     OR is_system_user )
 );
 
 CREATE DOMAIN uri_path_piece AS VARCHAR(255)
@@ -54,7 +57,7 @@ CREATE TABLE "Wiki" (
        -- or as a hostname prefix (short-name.wiki.example.com)
        short_name               uri_path_piece  UNIQUE  NOT NULL,
        domain_id                INT8            NOT NULL,
-       locale_code              VARCHAR(10)     NOT NULL DEFAULT 'en_US',
+       default_locale_code      VARCHAR(10)     NOT NULL DEFAULT 'en_US',
        email_addresses_are_hidden               BOOLEAN    DEFAULT TRUE,
        user_id                  INT8            NULL,
        CONSTRAINT valid_title CHECK ( title != '' )
@@ -77,7 +80,30 @@ CREATE TABLE "Domain" (
 );
 
 CREATE TABLE "Locale" (
-       locale_code              VARCHAR(10)     PRIMARY KEY
+       locale_code        VARCHAR(10)        PRIMARY KEY
+);
+
+CREATE TABLE "Country" (
+       iso_code           CHAR(2)            PRIMARY KEY,
+       name               VARCHAR(255)       UNIQUE  NOT NULL,
+       locale_code        VARCHAR(10)        NOT NULL,
+       CONSTRAINT valid_iso_code CHECK ( iso_code != '' ),
+       CONSTRAINT valid_name CHECK ( name != '' )
+);
+
+CREATE TABLE "TimeZone" (
+       olson_name         VARCHAR(255)       PRIMARY KEY,
+       iso_code           CHAR(2)            NOT NULL,
+       description        VARCHAR(100)       NOT NULL,
+       display_order      INTEGER            NOT NULL,
+       CONSTRAINT valid_olson_name CHECK ( olson_name != '' ),
+       CONSTRAINT valid_iso_code CHECK ( iso_code != '' ),
+       CONSTRAINT valid_description CHECK ( description != '' ),
+       CONSTRAINT valid_display_order CHECK ( display_order > 0 )
+-- unique constraints are not deferrable
+--       CONSTRAINT TimeZone_id_display_order_ck
+--                  UNIQUE ( iso_code, display_order )
+--                  INITIALLY DEFERRED
 );
 
 CREATE TABLE "Role" (
@@ -285,12 +311,28 @@ ALTER TABLE "User" ADD CONSTRAINT "User_created_by_user_id"
   FOREIGN KEY ("created_by_user_id") REFERENCES "User" ("user_id")
   ON DELETE SET NULL ON UPDATE CASCADE;
 
+ALTER TABLE "User" ADD CONSTRAINT "User_locale_code"
+  FOREIGN KEY ("locale_code") REFERENCES "Locale" ("locale_code")
+  ON DELETE RESTRICT ON UPDATE CASCADE;
+
 ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_domain_id"
   FOREIGN KEY ("domain_id") REFERENCES "Domain" ("domain_id")
   ON DELETE SET DEFAULT ON UPDATE CASCADE;
 
 ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_user_id"
   FOREIGN KEY ("user_id") REFERENCES "User" ("user_id")
+  ON DELETE RESTRICT ON UPDATE CASCADE;
+
+ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_default_locale_code"
+  FOREIGN KEY ("default_locale_code") REFERENCES "Locale" ("locale_code")
+  ON DELETE RESTRICT ON UPDATE CASCADE;
+
+ALTER TABLE "Country" ADD CONSTRAINT "Country_locale_code"
+  FOREIGN KEY ("locale_code") REFERENCES "Locale" ("locale_code")
+  ON DELETE RESTRICT ON UPDATE CASCADE;
+
+ALTER TABLE "TimeZone" ADD CONSTRAINT "TimeZone_iso_code"
+  FOREIGN KEY ("iso_code") REFERENCES "Country" ("iso_code")
   ON DELETE RESTRICT ON UPDATE CASCADE;
 
 ALTER TABLE "UserWikiRole" ADD CONSTRAINT "UserWikiRole_user_id"

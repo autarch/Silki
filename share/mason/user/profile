@@ -1,0 +1,23 @@
+% if ( $c->user()->is_admin() || $c->user()->user_id() == $user->user_id() ) {
+<p>
+<a href="mailto:<% $user->email_address() %>"><% $user->email_address() %></a>
+</p>
+% }
+<p>
+Time zone: <% $user->time_zone() %>
+</p>
+
+<%args>
+$user
+</%args>
+
+<%attr>
+sidebar => []
+</%attr>
+
+<%method title>
+<% $user->best_name() %>
+<%args>
+$user
+</%args>
+</%method>

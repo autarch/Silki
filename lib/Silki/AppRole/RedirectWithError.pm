@@ -5,10 +5,11 @@ use warnings;
 
 use HTTP::Status qw( RC_OK );
 use JSON::XS;
+use Scalar::Util qw( blessed );
+use Silki::Types qw( ErrorForSession URIStr HashRef );
 
 use Moose::Role;
 use MooseX::Params::Validate qw( validated_hash );
-use Silki::Types qw( ErrorForSession URIStr HashRef );
 
 # These are not available yet?
 #requires qw( redirect_and_detach session_object );

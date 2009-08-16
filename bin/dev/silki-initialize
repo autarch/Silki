@@ -11,6 +11,18 @@ system( 'psql', 'template1', '-f', './schema/Silki.sql' )
     and die 'Cannot create Silki database with psql';
 
 
+require Silki::Schema::Locale;
+
+Silki::Schema::Locale->CreateDefaultLocales();
+
+require Silki::Schema::Country;
+
+Silki::Schema::Country->CreateDefaultCountries();
+
+require Silki::Schema::TimeZone;
+
+Silki::Schema::TimeZone->CreateDefaultZones();
+
 require Silki::Schema::Domain;
 
 Silki::Schema::Domain->EnsureRequiredDomainsExist();
@@ -35,7 +47,6 @@ sub make_admin_user
         Silki::Schema::User->insert( display_name       => 'Angela D. Min',
                                      email_address      => $email,
                                      password           => $pw,
-                                     openid_uri         => q{},
                                      is_admin           => 1,
                                      created_by_user_id => Silki::Schema::User->SystemUser()->user_id(),
                                    );

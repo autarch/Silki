@@ -5,10 +5,14 @@ use warnings;
 
 use Authen::Passphrase::BlowfishCrypt;
 use DateTime;
+use Fey::Literal::Function;
+use Fey::ORM::Exceptions qw( no_such_row );
 use List::AllUtils qw( first );
+use Silki::I18N qw( loc );
 use Silki::Schema;
 use Silki::Schema::Domain;
 use Silki::Types qw( Str );
+use Silki::Util qw( string_is_empty );
 
 use Fey::ORM::Table;
 use MooseX::ClassAttribute;
@@ -17,6 +21,13 @@ use MooseX::Params::Validate qw( pos_validated_list );
 my $Schema = Silki::Schema->Schema();
 
 with 'Silki::Role::Schema::URIMaker';
+
+with 'Silki::Role::Schema::DataValidator'
+    => { steps => [ '_email_address_is_unique',
+                    '_normalize_and_validate_openid_uri',
+                    '_openid_uri_is_unique',
+                  ],
+       };
 
 has_policy 'Silki::Schema::Policy';
 
@@ -52,7 +63,7 @@ class_has 'GuestUser' =>
       default => sub { __PACKAGE__->_FindOrCreateGuestUser() },
     );
 
-around 'insert' => sub
+around insert => sub
 {
     my $orig  = shift;
     my $class = shift;
@@ -78,8 +89,121 @@ around 'insert' => sub
 
     $p{username} ||= $p{email_address};
 
+    my $locale = DateTime::Locale->load( $p{locale_code} || 'en_US' );
+    $p{date_format} ||= $locale->date_format_default();
+    $p{datetime_format} ||= $locale->datetime_format_default();
+
+    $p{date_format_without_year} ||= $locale->format_for('MMMd');
+
+    my $time_format =
+          $locale->prefers_24_hour_time()
+        ? $locale->format_for('Hms')
+        : $locale->format_for('hms');
+
+    $p{datetime_format_without_year} ||=
+          $locale->date_before_time()
+        ? $locale->format_for('MMMd') . q { } . $time_format
+        : $time_format . q{ } . $locale->format_for('MMMd');
+
     return $class->$orig(%p);
 };
+
+around update => sub
+{
+    my $orig = shift;
+    my $self = shift;
+    my %p    = @_;
+
+    if ( ! string_is_empty( $p{email_address} )
+         && string_is_empty( $p{username} )
+         && $self->username() eq $self->email_address() )
+    {
+        $p{username} = $p{email_address};
+    }
+
+    $p{last_modified_datetime} = Fey::Literal::Function->new('NOW');
+
+    return $self->$orig(%p);
+};
+
+sub _load_from_dbms
+{
+    my $self = shift;
+    my $p    = shift;
+
+    # This gets set to the unhashed value in the constructor
+    $self->_clear_password();
+
+    $self->SUPER::_load_from_dbms($p);
+
+    return unless $p->{password};
+
+    no_such_row 'User cannot login'
+        if $self->password() eq '*disabled*';
+
+    my $pass =
+        Authen::Passphrase::BlowfishCrypt->from_rfc2307( $self->password() );
+
+    no_such_row 'Invalid password'
+        unless $pass->match( $p->{password} );
+}
+
+sub _email_address_is_unique
+{
+    my $self      = shift;
+    my $p         = shift;
+    my $is_insert = shift;
+
+    return if string_is_empty( $p->{email_address} );
+
+    return if ! $is_insert && $self->email_address() eq $p->{email_address};
+
+    return unless __PACKAGE__->new( email_address => $p->{email_address} );
+
+    return { field   => 'email_address',
+             message => loc('The email address you provided is already in use by another account.'),
+           };
+}
+
+sub _normalize_and_validate_openid_uri
+{
+    my $self      = shift;
+    my $p         = shift;
+    my $is_insert = shift;
+
+    return if string_is_empty( $p->{openid_uri} );
+
+    my $uri = URI->new( $p->{openid_uri} );
+
+    unless ( defined $uri->scheme()
+             && $uri->scheme() =~ /^https?/ )
+    {
+        return { field   => 'openid_uri',
+                 message => loc('The OpenID URI you provided is not a valid URI.'),
+               };
+    }
+
+    $p->{openid_uri} = $uri->canonical() . q{};
+
+    return;
+}
+
+sub _openid_uri_is_unique
+{
+    my $self      = shift;
+    my $p         = shift;
+    my $is_insert = shift;
+
+    return if string_is_empty( $p->{openid_uri} );
+
+    return if ! $is_insert && $self->openid_uri() eq $p->{openid_uri};
+
+    return unless __PACKAGE__->new( openid_uri => $p->{openid_uri} );
+
+    return { field   => 'openid_uri',
+             message => loc('The OpenID URI you provided is already in use by another account.'),
+           };
+}
 
 sub _base_uri_path
 {
@@ -160,7 +284,6 @@ sub _CreateSpecialUser
                            username       => $username,
                            email_address  => $email,
                            password       => q{},
-                           openid_uri     => q{},
                            disable_login  => 1,
                            is_system_user => 1,
                          );
@@ -214,6 +337,18 @@ sub _build_best_name
     my $self = shift;
 
     return first { defined && length } $self->display_name(), $self->username();
+}
+
+sub can_edit_user
+{
+    my $self = shift;
+    my $user = shift;
+
+    return 1 if $self->is_admin();
+
+    return 1 if $self->user_id() == $user->user_id();
+
+    return 0;
 }
 
 no Fey::ORM::Table;

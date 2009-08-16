@@ -1,0 +1,72 @@
+<&| /lib/filter/form.mas, objects => [$user], exclude => [ qw( password password2 ) ] &>
+<form action="<% $user->uri() %>" method="post">
+  <input type="hidden" name="x-tunneled-method" value="PUT" />
+
+  <fieldset>
+    <legend>Preferences</legend>
+
+    <div class="form-item">
+      <label for="display_name" class="for-field"><% loc('Your name:') %></label>
+      <input type="text" class="text" name="display_name" id="display_name" />
+      <div class="help-text">
+        <p>
+          <% loc('This name identifies you to other users of this wiki.') %>
+        </p>
+      </div>
+    </div>
+
+    <div class="form-item">
+      <label for="email_address" class="for-field">Email:</label>
+      <input type="text" class="text medium" name="email_address" id="email_address" />
+    </div>
+
+    <div class="form-item">
+      <label for="openid_uri" class="for-field">OpenID:</label>
+      <input type="text" class="text medium" name="openid_uri" id="openid_uri" />
+    </div>
+
+    <div class="form-item">
+      <label for="password" class="for-field"><% loc('Password:') %></label>
+      <input type="password" class="text" name="password" id="password" />
+    </div>
+
+    <div class="form-item">
+      <label for="password2" class="for-field"><% loc('Password (again):') %></label>
+      <input type="password" class="text" name="password2" id="password2" />
+    </div>
+
+    <div class="form-item">
+      <label for="time_zone" class="for-field"><% loc('Time Zone:') %></label>
+      <select name="time_zone">
+% for my $country ( qw( us ca ) ) {
+%   my $country = Silki::Schema::Country->new( iso_code => $country );
+%   my $zones = $country->time_zones();
+        <optgroup label="<% $country->name() %>">
+%   while ( my $zone = $zones->next() ) {
+          <option value="<% $zone->olson_name() %>"><% $zone->description() %></option>
+%   }
+        </optgroup>
+% }
+      </select>
+    </div>
+
+    <input type="submit" class="submit" value="<% loc('Submit') %>" />
+  </fieldset>
+</form>
+</&>
+
+<%args>
+$user
+</%args>
+
+<%attr>
+show_title => 0
+sidebar => []
+</%attr>
+
+<%method title>
+<% loc( 'Preferences for %1', $user->best_name() ) %>
+<%args>
+$user
+</%args>
+</%method>

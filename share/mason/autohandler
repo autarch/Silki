@@ -28,7 +28,7 @@
 
 <& .messages &>
 
-% if ( $m->request_comp()->attr('has_title') ) {
+% if ( $m->request_comp()->attr('show_title') ) {
           <h1><& SELF:title, %ARGS &></h1>
 % }
 
@@ -49,7 +49,7 @@
 </html>
 
 <%attr>
-has_title => 1
+show_title => 1
 sidebar => [ 'quick-search' ]
 </%attr>
 
