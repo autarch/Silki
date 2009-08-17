@@ -73,15 +73,23 @@ sub recent : Chained('_set_wiki') : PathPart('recent') : Args(0)
 
     $c->tab_by_id( $c->loc('Recent Changes') )->set_is_selected(1);
 
-    my $limit = 20;
-    my $offset = $limit * ( $c->request()->params()->{page} ? $c->request()->params()->{page} - 1 : 0 );
-
     my $wiki = $c->stash()->{wiki};
 
+    my $limit = 50;
+    my $page_num = $c->request()->params()->{page} || 1;
+    my $offset = $limit * ( $page_num - 1 );
+
+    my $pager = Data::Page->new();
+    $pager->total_entries( $wiki->revision_count() );
+    $pager->entries_per_page($limit);
+    $pager->current_page($page_num);
+
+    $c->stash()->{pager} = $pager;
+
     $c->stash()->{pages} =
-        $wiki->recently_changed_pages( limit  => $limit,
-                                       offset => $offset,
-                                     );
+        $wiki->revisions( limit  => $limit,
+                          offset => $offset,
+                        );
 
     $c->stash()->{template} = '/wiki/recent';
 }
@@ -236,7 +244,7 @@ sub page_history : Chained('_set_page') : PathPart('history') : Args(0)
     my $page = $c->stash()->{page};
 
     my $pager = Data::Page->new();
-    $pager->total_entries( $page->most_recent_revision()->revision_number());
+    $pager->total_entries( $page->most_recent_revision()->revision_number() );
     $pager->entries_per_page($limit);
     $pager->current_page($page_num);
 

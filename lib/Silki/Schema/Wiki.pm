@@ -40,6 +40,14 @@ has permissions =>
       init_arg => undef,
     );
 
+has revision_count =>
+    ( metaclass   => 'FromSelect',
+      is          => 'ro',
+      isa         => Int,
+      select      => __PACKAGE__->_RevisionCountSelect(),
+      bind_params => sub { $_[0]->wiki_id() },
+    );
+
 class_has _RecentChangesSelect =>
     ( is      => 'ro',
       isa     => 'Fey::SQL::Select',
@@ -201,7 +209,22 @@ sub _build_permissions
     }
 }
 
-sub recently_changed_pages
+sub _RevisionCountSelect
+{
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my ( $page_t, $page_revision_t ) = $Schema->tables( 'Page', 'PageRevision' );
+
+    my $count = Fey::Literal::Function->new( 'COUNT', $page_revision_t->column('page_id') );
+
+    $select->select($count)
+           ->from( $page_t, $page_revision_t )
+           ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() );
+
+    return $select;
+}
+
+sub revisions
 {
     my $self = shift;
     my ( $limit, $offset ) =
