@@ -136,7 +136,7 @@ CREATE TABLE "UserWikiRole" (
        user_id                  INT8            NOT NULL,
        wiki_id                  INT8            NOT NULL,
        role_id                  INT8            NOT NULL,
-       PRIMARY KEY ( user_id, wiki_id, role_id )
+       PRIMARY KEY ( user_id, wiki_id )
 );
 
 CREATE TABLE "WikiRolePermission" (
