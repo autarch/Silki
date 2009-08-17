@@ -77,7 +77,7 @@ sub user_PUT
 
     my $user = $c->stash()->{user};
 
-    $c->redirect_and_detach( $c->domain()->uri( with_host => 1 ) )
+    $c->redirect_and_detach( $self->_make_user_uri( $c, $user ) )
         unless $c->user()->can_edit_user($user);
 
     my %update = $c->request()->user_params();
@@ -131,6 +131,11 @@ sub preferences_form : Chained('_set_user') : PathPart('preferences_form') : Arg
 {
     my $self = shift;
     my $c    = shift;
+
+    my $user = $c->stash()->{user};
+
+    $c->redirect_and_detach( $self->_make_user_uri( $c, $user ) )
+        unless $c->user()->can_edit_user($user);
 
     $c->tab_by_id('preferences')->set_is_selected(1);
 
