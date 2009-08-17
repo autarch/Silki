@@ -144,6 +144,8 @@ sub add_user
 
     return if $user->is_system_user();
 
+    return $role->name() eq 'Guest' || $role->name() eq 'Authenticated';
+
     my $uwr = Silki::Schema::UserWikiRole->new( user_id => $user->user_id(),
                                                 wiki_id => $self->wiki_id(),
                                               );
