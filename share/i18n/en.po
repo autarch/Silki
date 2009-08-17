@@ -15,6 +15,11 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#. ($wiki->title()
+#: lib/Silki/Controller/Wiki.pm:34
+msgid "%1 overview"
+msgstr ""
+
 #: share/mason/local-nav.mas:10
 msgid "Attachments"
 msgstr ""
@@ -46,10 +51,6 @@ msgstr ""
 msgid "Created by <a href=\"%html(%1)\">%html(%2)</a> on %3."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:35
-msgid "Dashboard"
-msgstr ""
-
 #: share/mason/page/history:10 share/mason/wiki/recent:5
 msgid "Date"
 msgstr ""
@@ -75,12 +76,16 @@ msgstr ""
 msgid "History"
 msgstr ""
 
+#: lib/Silki/Controller/Base.pm:39
+msgid "Home"
+msgstr ""
+
 #: share/mason/incoming-links.mas:2
 msgid "Incoming Links"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/User.pm:129
+#: lib/Silki/Controller/User.pm:32
 msgid "Information about %1"
 msgstr ""
 
@@ -115,11 +120,11 @@ msgstr ""
 msgid "Page:"
 msgstr ""
 
-#: share/mason/user/preferences_form:28
+#: share/mason/user/preferences_form:34
 msgid "Password (again):"
 msgstr ""
 
-#: share/mason/user/login_form:17 share/mason/user/preferences_form:23
+#: share/mason/user/login_form:17 share/mason/user/preferences_form:29
 msgid "Password:"
 msgstr ""
 
@@ -128,7 +133,12 @@ msgid "Preferences"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/User.pm:145 share/mason/user/preferences_form:47
+#: lib/Silki/Controller/User.pm:108
+msgid "Preferences for "
+msgstr ""
+
+#. ($user->best_name()
+#: lib/Silki/Controller/User.pm:48 share/mason/user/preferences_form:68
 msgid "Preferences for %1"
 msgstr ""
 
@@ -136,16 +146,16 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:39 lib/Silki/Controller/Wiki.pm:74
+#: lib/Silki/Controller/Wiki.pm:38 lib/Silki/Controller/Wiki.pm:73
 msgid "Recent Changes"
 msgstr ""
 
 #. ($wiki->title()
-#: share/mason/wiki/recent:31
+#: share/mason/wiki/recent:37
 msgid "Recent Changes in %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:40
+#: lib/Silki/Controller/Wiki.pm:39
 msgid "Recent activity in this wiki"
 msgstr ""
 
@@ -157,9 +167,8 @@ msgstr ""
 msgid "Revision #"
 msgstr ""
 
-#. ($rev1->revision_number()
-#. ($rev2->revision_number()
-#: share/mason/page/diff:14 share/mason/page/diff:9
+#. ($revision->revision_number()
+#: share/mason/page/history:24 share/mason/page/history:27
 msgid "Revision %1"
 msgstr ""
 
@@ -173,12 +182,32 @@ msgstr ""
 msgid "Revision %1 versus %2"
 msgstr ""
 
-#: lib/Silki/Controller/User.pm:143
+#: lib/Silki/Controller/User.pm:46
 msgid "Set your preferences"
 msgstr ""
 
-#: share/mason/lib/forms/page.mas:12 share/mason/user/login_form:21 share/mason/user/preferences_form:32
+#: share/mason/lib/forms/page.mas:12 share/mason/user/login_form:21 share/mason/user/preferences_form:53
 msgid "Submit"
+msgstr ""
+
+#: lib/Silki/Schema/User.pm:204
+msgid "The OpenID URI you provided is already in use by another account."
+msgstr ""
+
+#: lib/Silki/Schema/User.pm:182
+msgid "The OpenID URI you provided is not a valid URI."
+msgstr ""
+
+#: lib/Silki/Schema/User.pm:164
+msgid "The email address you provided is already in use by another account."
+msgstr ""
+
+#: lib/Silki/Controller/User.pm:91
+msgid "The two passwords you provided did not match"
+msgstr ""
+
+#: lib/Silki/Controller/Site.pm:76
+msgid "The username or password you provided was not valid."
 msgstr ""
 
 #. ($c->domain()
@@ -189,7 +218,7 @@ msgid ""
 "if you have an account."
 msgstr ""
 
-#: share/mason/user/preferences_form:12
+#: share/mason/user/preferences_form:13
 msgid "This name identifies you to other users of this wiki."
 msgstr ""
 
@@ -207,12 +236,16 @@ msgstr ""
 msgid "This revision was created by <a href=\"%html(%1)\">%html(%2)</a> on %3."
 msgstr ""
 
-#: lib/Silki/Controller/Base.pm:104 lib/Silki/Controller/Base.pm:111
+#: lib/Silki/Controller/Base.pm:110 lib/Silki/Controller/Base.pm:117
 msgid "This wiki requires you to be a member to perform this action."
 msgstr ""
 
-#: lib/Silki/Controller/Base.pm:100
+#: lib/Silki/Controller/Base.pm:106
 msgid "This wiki requires you to log in to perform this action."
+msgstr ""
+
+#: share/mason/user/preferences_form:39
+msgid "Time Zone:"
 msgstr ""
 
 #: share/mason/wiki/recent:4
@@ -224,15 +257,15 @@ msgid "Username:"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/User.pm:146
+#: lib/Silki/Controller/User.pm:49
 msgid "View and change preferences for %1"
 msgstr ""
 
-#: lib/Silki/Controller/User.pm:126
+#: lib/Silki/Controller/User.pm:29
 msgid "View details about your profile"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:135
+#: lib/Silki/Controller/Wiki.pm:141
 msgid "View this page"
 msgstr ""
 
@@ -240,19 +273,23 @@ msgstr ""
 msgid "Who"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:36
-msgid "Wiki overview"
+#: lib/Silki/Controller/Site.pm:66
+msgid "You must provide a password."
 msgstr ""
 
-#: share/mason/user/preferences_form:8
+#: share/mason/user/preferences_form:9
 msgid "Your name:"
 msgstr ""
 
-#: lib/Silki/Controller/User.pm:142
+#: lib/Silki/Controller/User.pm:45
 msgid "Your preferences"
 msgstr ""
 
-#: lib/Silki/Controller/User.pm:125
+#: lib/Silki/Controller/User.pm:107
+msgid "Your preferences have been updated."
+msgstr ""
+
+#: lib/Silki/Controller/User.pm:28
 msgid "Your profile"
 msgstr ""
 

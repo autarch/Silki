@@ -47,6 +47,20 @@ CREATE TABLE "User" (
                      OR is_system_user )
 );
 
+CREATE TABLE "Account" (
+       account_id               SERIAL8         PRIMARY KEY,
+       name                     VARCHAR(255)    UNIQUE  NOT NULL,
+       CONSTRAINT valid_name CHECK ( name != '' )
+);
+
+CREATE TABLE "AccountAdmin" (
+       account_id               INT8            NOT NULL,
+       user_id                  INT8            NOT NULL,
+       PRIMARY KEY ( account_id, user_id )
+);
+
+CREATE INDEX "AccountAdmin_user_id" ON "AccountAdmin" (user_id);
+
 CREATE DOMAIN uri_path_piece AS VARCHAR(255)
        CONSTRAINT valid_uri_path_piece CHECK ( VALUE ~ E'^[a-zA-Z0-9_\-]+$' );
 
@@ -59,11 +73,13 @@ CREATE TABLE "Wiki" (
        domain_id                INT8            NOT NULL,
        default_locale_code      VARCHAR(20)     NOT NULL DEFAULT 'en_US',
        email_addresses_are_hidden               BOOLEAN    DEFAULT TRUE,
-       user_id                  INT8            NULL,
+       account_id               INT8            NOT NULL,
+       user_id                  INT8            NOT NULL,
        CONSTRAINT valid_title CHECK ( title != '' )
 );
 
 CREATE INDEX "Wiki_domain_id" ON "Wiki" (domain_id);
+CREATE INDEX "Wiki_account_id" ON "Wiki" (account_id);
 CREATE INDEX "Wiki_user_id" ON "Wiki" (user_id);
 
 CREATE DOMAIN hostname AS VARCHAR(255)
@@ -315,9 +331,21 @@ ALTER TABLE "User" ADD CONSTRAINT "User_locale_code"
   FOREIGN KEY ("locale_code") REFERENCES "Locale" ("locale_code")
   ON DELETE RESTRICT ON UPDATE CASCADE;
 
+ALTER TABLE "AccountAdmin" ADD CONSTRAINT "AccountAdmin_account_id"
+  FOREIGN KEY ("account_id") REFERENCES "Account" ("account_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "AccountAdmin" ADD CONSTRAINT "AccountAdmin_user_id"
+  FOREIGN KEY ("user_id") REFERENCES "User" ("user_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
 ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_domain_id"
   FOREIGN KEY ("domain_id") REFERENCES "Domain" ("domain_id")
   ON DELETE SET DEFAULT ON UPDATE CASCADE;
+
+ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_account_id"
+  FOREIGN KEY ("user_id") REFERENCES "Account" ("account_id")
+  ON DELETE RESTRICT ON UPDATE CASCADE;
 
 ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_user_id"
   FOREIGN KEY ("user_id") REFERENCES "User" ("user_id")

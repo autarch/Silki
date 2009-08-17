@@ -12,6 +12,7 @@ use Silki::Schema::Domain;
 use Silki::Schema::Page;
 use Silki::Schema::Permission;
 use Silki::Schema::Role;
+use Silki::Schema::UserWikiRole;
 use Silki::Schema::WikiRolePermission;
 use Silki::Types qw( Bool HashRef Int ValidPermissionType );
 
@@ -128,6 +129,27 @@ sub _base_uri_path
     my $self = shift;
 
     return '/wiki/' . $self->short_name();
+}
+
+sub add_user
+{
+    my $self = shift;
+    my ( $user, $role ) =
+        validated_list( \@_,
+                        user => { isa => 'Silki::Schema::User' },
+                        role => { isa => 'Silki::Schema::Role',
+                                  default => Silki::Schema::Role->Member(),
+                                },
+                      );
+
+    return if $user->is_system_user();
+
+    Silki::Schema::UserWikiRole->insert( user_id => $user->user_id,
+                                         wiki_id => $self->wiki_id(),
+                                         role_id => $role->role_id(),
+                                       );
+
+    return;
 }
 
 sub _build_permissions

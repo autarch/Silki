@@ -31,15 +31,24 @@ require Silki::Schema::User;
 
 Silki::Schema::User->EnsureRequiredUsersExist();
 
+require Silki::Schema::Account;
 require Silki::Schema::Role;
 
 print "\n";
 
-my $admin = make_admin_user();
-make_first_wiki($admin);
+my $account = make_account();
+my $admin = make_admin_user($account);
+make_first_wiki( $admin, $account );
+
+sub make_account
+{
+    return Silki::Schema::Account->insert( name => 'Default Account' );
+}
 
 sub make_admin_user
 {
+    my $account = shift;
+
     my $email = 'admin@' . Silki::Schema::Domain->DefaultDomain()->email_hostname();
     my $pw = 'changeme';
 
@@ -51,6 +60,8 @@ sub make_admin_user
                                      created_by_user_id => Silki::Schema::User->SystemUser()->user_id(),
                                    );
 
+    $account->add_admin($admin);
+
     print <<"EOF";
 Created the admin user:
 
@@ -58,11 +69,14 @@ Created the admin user:
   password: $pw
 
 EOF
+
+    return $admin;
 }
 
 sub make_first_wiki
 {
-    my $admin = shift;
+    my $admin   = shift;
+    my $account = shift;
 
     require Silki::Schema::Wiki;
 
@@ -71,9 +85,12 @@ sub make_first_wiki
                                      short_name => 'first-wiki',
                                      domain_id  => Silki::Schema::Domain->DefaultDomain()->domain_id(),
                                      user_id    => Silki::Schema::User->SystemUser()->user_id(),
+                                     account_id => $account->account_id(),
                                    );
 
     $wiki->set_permissions('public');
+
+    $wiki->add_user( user => $admin, role => Silki::Schema::Role->Admin() );
 
     my $uri = $wiki->uri( with_host => 1 );
 

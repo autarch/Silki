@@ -1,10 +1,10 @@
 % if ( $c->user()->is_admin() || $c->user()->user_id() == $user->user_id() ) {
 <p>
-<a href="mailto:<% $user->email_address() %>"><% $user->email_address() %></a>
+  <a href="mailto:<% $user->email_address() %>"><% $user->email_address() %></a>
 </p>
 % }
 <p>
-Time zone: <% $user->time_zone() %>
+  Time zone: <% $user->time_zone() %>
 </p>
 
 <%args>
