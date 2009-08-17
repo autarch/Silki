@@ -144,10 +144,21 @@ sub add_user
 
     return if $user->is_system_user();
 
-    Silki::Schema::UserWikiRole->insert( user_id => $user->user_id,
-                                         wiki_id => $self->wiki_id(),
-                                         role_id => $role->role_id(),
-                                       );
+    my $uwr = Silki::Schema::UserWikiRole->new( user_id => $user->user_id(),
+                                                wiki_id => $self->wiki_id(),
+                                              );
+
+    if ($uwr)
+    {
+        $uwr->update( role_id => $role->role_id() );
+    }
+    else
+    {
+        Silki::Schema::UserWikiRole->insert( user_id => $user->user_id(),
+                                             wiki_id => $self->wiki_id(),
+                                             role_id => $role->role_id(),
+                                           );
+    }
 
     return;
 }
