@@ -32,10 +32,10 @@ sub _set_user : Chained('/') : PathPart('user') : CaptureArgs(1)
             tooltip => $c->loc( 'Information about %1', $user->best_name() ),
           );
 
-    $c->add_tab( Silki::Web::Tab->new( uri => $user->uri(),
-                                       id  => 'profile',
-                                       %profile,
-                                     )
+    $c->add_tab( { uri => $user->uri(),
+                   id  => 'profile',
+                   %profile,
+                 }
                );
 
     if ( $c->user()->can_edit_user($user) )
@@ -49,10 +49,10 @@ sub _set_user : Chained('/') : PathPart('user') : CaptureArgs(1)
                 tooltip => $c->loc( 'View and change preferences for %1', $user->best_name() ),
               );
 
-        $c->add_tab( Silki::Web::Tab->new( uri => $user->uri( view => 'preferences_form' ),
-                                           id  => 'preferences',
-                                           %prefs,
-                                         )
+        $c->add_tab( { uri => $user->uri( view => 'preferences_form' ),
+                       id  => 'preferences',
+                       %prefs,
+                     }
                    );
     }
 

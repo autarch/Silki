@@ -3,6 +3,8 @@ package Silki::AppRole::Tabs;
 use strict;
 use warnings;
 
+use Scalar::Util qw( blessed );
+use Silki::Web::Tab;
 use Tie::IxHash;
 
 use Moose::Role;
@@ -23,6 +25,9 @@ sub add_tab
 {
     my $self = shift;
     my $tab  = shift;
+
+    $tab = Silki::Web::Tab->new( %{ $tab } )
+        unless blessed $tab;
 
     $self->_add_tab( $tab->id() => $tab );
 }

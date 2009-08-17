@@ -10,7 +10,6 @@ use Silki::Formatter;
 use Silki::Schema::Page;
 use Silki::Schema::PageRevision;
 use Silki::Schema::Wiki;
-use Silki::Web::Tab;
 
 use Moose;
 
@@ -30,10 +29,10 @@ sub _set_wiki : Chained('/') : PathPart('wiki') : CaptureArgs(1)
     $self->_require_permission_for_wiki( $c, $wiki );
 
     $c->add_tab($_)
-        for map { Silki::Web::Tab->new( %{ $_ } ) }
-            ( { uri     => $wiki->uri(),
-                label   => $c->loc( 'Dashboard' ),
-                tooltip => $c->loc( 'Wiki overview' ),
+        for ( { uri     => $wiki->uri(),
+                label   => $wiki->title(),
+                tooltip => $c->loc( '%1 overview', $wiki->title() ),
+                id      => 'dashboard',
               },
               { uri     => $wiki->uri( view => 'recent' ),
                 label   => $c->loc( 'Recent Changes' ),
@@ -61,7 +60,7 @@ sub dashboard : Chained('_set_wiki') : PathPart('dashboard') : Args(0)
     my $self = shift;
     my $c    = shift;
 
-    $c->tab_by_id('Dashboard')->set_is_selected(1);
+    $c->tab_by_id('dashboard')->set_is_selected(1);
 
     $c->stash()->{template} = '/wiki/dashboard';
 }
@@ -137,12 +136,11 @@ sub _set_page : Chained('_set_wiki') : PathPart('page') : CaptureArgs(1)
     $c->redirect_and_detach( $wiki->uri( with_host => 1 ) )
         unless $page;
 
-    $c->add_tab( Silki::Web::Tab->new
-                     ( uri         => $page->uri(),
-                       label       => $page->title(),
-                       tooltip     => $c->loc( 'View this page' ),
-                       is_selected => 1,
-                     )
+    $c->add_tab( { uri         => $page->uri(),
+                   label       => $page->title(),
+                   tooltip     => $c->loc( 'View this page' ),
+                   is_selected => 1,
+                 }
                );
 
     $c->stash()->{page} = $page;

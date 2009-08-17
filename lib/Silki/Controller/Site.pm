@@ -15,6 +15,8 @@ sub site : Path('/') : Args(0)
     my $self = shift;
     my $c    = shift;
 
+    $c->tab_by_id('Home')->set_is_selected(1);
+
     # XXX - if user is logged in, show all wikis they can see
     $c->stash()->{wiki_count} = Silki::Schema::Wiki->PublicWikiCount();
     $c->stash()->{wikis} = Silki::Schema::Wiki->PublicWikis();
