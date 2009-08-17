@@ -62,6 +62,7 @@ body {
 #tabs li {
     background-color: white;
     display: inline;
+    font-variant: small-caps;
     list-style: none;
     margin-right: 0.3em;
     padding: 0;
