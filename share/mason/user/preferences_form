@@ -1,5 +1,5 @@
 <&| /lib/filter/form.mas, objects => [$user], exclude => [ qw( password password2 ) ] &>
-<form action="<% $user->uri() %>" method="post">
+<form action="<% $action %>" method="post">
   <input type="hidden" name="x-tunneled-method" value="PUT" />
 
   <fieldset>
@@ -57,7 +57,12 @@
 
 <%args>
 $user
+$wiki => undef
 </%args>
+
+<%init>
+my $action = $wiki ? $wiki->uri( view => 'user/' . $user->user_id() ) : $user->uri();
+</%init>
 
 <%attr>
 show_title => 0

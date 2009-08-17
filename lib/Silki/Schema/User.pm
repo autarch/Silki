@@ -363,7 +363,12 @@ sub _build_best_name
 
     my $username = $self->username();
 
-    return $username =~ s/\@.+/@.../;
+    if ( $username =~ /\@/ )
+    {
+        $username =~ s/\.\w+$//;
+    }
+
+    return $username;
 }
 
 sub can_edit_user

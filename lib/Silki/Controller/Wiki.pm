@@ -15,6 +15,8 @@ use Moose;
 
 BEGIN { extends 'Silki::Controller::Base' }
 
+with 'Silki::Role::Controller::User';
+
 sub _set_wiki : Chained('/') : PathPart('wiki') : CaptureArgs(1)
 {
     my $self      = shift;
@@ -280,6 +282,21 @@ sub page_diff : Chained('_set_page') : PathPart('diff') : Args(0)
                                                            );
 
     $c->stash()->{template} = '/page/diff';
+}
+
+sub _set_user : Chained('_set_wiki') : PathPart('user') : CaptureArgs(1) { }
+
+sub _make_user_uri
+{
+    my $self = shift;
+    my $c    = shift;
+    my $user = shift;
+    my $view = shift || undef;
+
+    my $real_view = 'user/' . $user->user_id();
+    $real_view .= q{/} . $view if defined $view;
+
+    return $c->stash()->{wiki}->uri( view => $real_view );
 }
 
 no Moose;

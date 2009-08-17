@@ -10,7 +10,7 @@
 % if ( $revision->revision_number() > 1 ) {
 %   if ($is_current_revision) {
 <% loc( 'Last edited by <a href="%html(%1)">%html(%2)</a> on %3.',
-        $revision->user()->uri(),
+        $wiki->uri( view => 'user/' . $revision->user_id() ),
         $revision->user()->best_name(),
         $c->user()->format_datetime( $revision->creation_datetime() ) ) | n %>
 %   } else {
@@ -22,7 +22,7 @@
 <br />
 % }
 <% loc( 'Page created by <a href="%html(%1)">%html(%2)</a> on %3.',
-        $page->user()->uri(),
+        $wiki->uri( view => 'user/' . $page->user_id() ),
         $page->user()->best_name(),
         $c->user()->format_datetime( $revision->creation_datetime() ) ) | n %>
 </div>
@@ -36,6 +36,7 @@
 <%args>
 $page
 $revision
+$wiki
 $is_current_revision
 $html
 </%args>
