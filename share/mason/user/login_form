@@ -1,5 +1,5 @@
 <&| /lib/filter/form.mas &>
-<form action="/user/authentication" method="post">
+<form action="<% $c->domain()->application_uri( path => '/site/authentication' ) %>" method="post">
   <fieldset>
     <legend>Credentials</legend>
 
