@@ -359,7 +359,11 @@ sub _build_best_name
 {
     my $self = shift;
 
-    return first { defined && length } $self->display_name(), $self->username();
+    return $self->display_name() if length $self->display_name;
+
+    my $username = $self->username();
+
+    return $username =~ s/\@.+/@.../;
 }
 
 sub can_edit_user
