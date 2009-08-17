@@ -335,7 +335,10 @@ sub _format_dt
     my $dt   = shift;
     my $type = shift;
 
-    my $format_dt = $dt->clone()->set( locale => $self->locale_code() )->set_time_zone( $self->time_zone() );
+    my $format_dt =
+        $dt->clone()
+           ->set( locale => $self->locale_code() )
+           ->set_time_zone( $self->time_zone() );
 
     my $today = DateTime->today( time_zone => $self->time_zone() );
 
