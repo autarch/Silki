@@ -11,12 +11,13 @@ use List::AllUtils qw( first );
 use Silki::I18N qw( loc );
 use Silki::Schema;
 use Silki::Schema::Domain;
+use Silki::Schema::Role;
 use Silki::Types qw( Str );
 use Silki::Util qw( string_is_empty );
 
 use Fey::ORM::Table;
 use MooseX::ClassAttribute;
-use MooseX::Params::Validate qw( pos_validated_list );
+use MooseX::Params::Validate qw( pos_validated_list validated_list );
 
 my $Schema = Silki::Schema->Schema();
 
@@ -289,30 +290,6 @@ sub _CreateSpecialUser
                          );
 }
 
-sub role_in_wiki
-{
-    my $self   = shift;
-    my ($wiki) = pos_validated_list( \@_, { isa => 'Silki::Schema::Wiki' } );
-
-    my $select = Silki::Schema->SQLFactoryClass()->new_select();
-
-    $select->select( $Schema->table('Role')->column('name') )
-           ->from( $Schema->table('Role'), $Schema->table('UserWikiRole') )
-           ->where( $Schema->table('UserWikiRole')->column('wiki_id'),
-                    '=', $wiki->wiki_id() )
-           ->and( $Schema->table('UserWikiRole')->column('user_id'),
-                    '=', $self->user_id() );
-
-    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
-
-    my $row = $dbh->selectrow_arrayref( $select->sql($dbh), {}, $select->bind_params() );
-
-    return
-          $row              ? $row->[0]
-        : $self->is_guest() ? 'Guest'
-        :                     'Authenticated';
-}
-
 sub format_date
 {
     my $self = shift;
@@ -381,6 +358,48 @@ sub can_edit_user
     return 1 if $self->user_id() == $user->user_id();
 
     return 0;
+}
+
+sub has_permission_in_wiki
+{
+    my $self = shift;
+    my ( $wiki, $perm ) =
+        validated_list( \@_,
+                        wiki       => { isa => 'Silki::Schema::Wiki' },
+                        permission => { isa => 'Silki::Schema::Permission' },
+                      );
+
+    my $perms = $wiki->permissions();
+
+    my $role = $self->role_in_wiki($wiki);
+
+    return $perms->{ $role->name() }{ $perm->name() };
+}
+
+sub role_in_wiki
+{
+    my $self   = shift;
+    my ($wiki) = pos_validated_list( \@_, { isa => 'Silki::Schema::Wiki' } );
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    $select->select( $Schema->table('Role')->column('name') )
+           ->from( $Schema->table('Role'), $Schema->table('UserWikiRole') )
+           ->where( $Schema->table('UserWikiRole')->column('wiki_id'),
+                    '=', $wiki->wiki_id() )
+           ->and( $Schema->table('UserWikiRole')->column('user_id'),
+                    '=', $self->user_id() );
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
+
+    my $row = $dbh->selectrow_arrayref( $select->sql($dbh), {}, $select->bind_params() );
+
+    my $name =
+          $row              ? $row->[0]
+        : $self->is_guest() ? 'Guest'
+        :                     'Authenticated';
+
+    return Silki::Schema::Role->$name();
 }
 
 no Fey::ORM::Table;

@@ -91,13 +91,13 @@ sub _require_permission_for_wiki
     croak 'No permission specified in call to _require_permission_for_wiki'
         unless $perm;
 
-    my $perms = $wiki->permissions();
-
     my $user = $c->user();
 
-    my $role = $user->role_in_wiki($wiki);
+    return if $user->has_permission_in_wiki( wiki       => $wiki,
+                                             permission => Silki::Schema::Permission->$perm(),
+                                           );
 
-    return if $perms->{$role}{$perm};
+    my $perms = $wiki->permissions();
 
     if ( $user->is_guest() )
     {
@@ -115,6 +115,8 @@ sub _require_permission_for_wiki
     else
     {
         $c->session_object()->add_message( $c->loc( 'This wiki requires you to be a member to perform this action.' ) );
+
+        my $role = $user->role_in_wiki($wiki);
 
         my $uri;
         if ( $perms->{$role}{Read} )
