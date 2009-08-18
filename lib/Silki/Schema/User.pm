@@ -50,6 +50,13 @@ has best_name =>
       builder => '_build_best_name',
     );
 
+class_has _RoleInWikiSelect =>
+    ( is      => 'ro',
+      isa     => 'Fey::SQL::Select',
+      lazy    => 1,
+      builder => '_BuildRoleInWikiSelect',
+    );
+
 class_has 'SystemUser' =>
     ( is      => 'ro',
       isa     => __PACKAGE__,
@@ -381,18 +388,15 @@ sub role_in_wiki
     my $self   = shift;
     my ($wiki) = pos_validated_list( \@_, { isa => 'Silki::Schema::Wiki' } );
 
-    my $select = Silki::Schema->SQLFactoryClass()->new_select();
-
-    $select->select( $Schema->table('Role')->column('name') )
-           ->from( $Schema->table('Role'), $Schema->table('UserWikiRole') )
-           ->where( $Schema->table('UserWikiRole')->column('wiki_id'),
-                    '=', $wiki->wiki_id() )
-           ->and( $Schema->table('UserWikiRole')->column('user_id'),
-                    '=', $self->user_id() );
+    my $select = $self->_RoleInWikiSelect();
 
     my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
 
-    my $row = $dbh->selectrow_arrayref( $select->sql($dbh), {}, $select->bind_params() );
+    my $row = $dbh->selectrow_arrayref( $select->sql($dbh),
+                                        {},
+                                        $wiki->wiki_id(),
+                                        $self->user_id(),
+                                      );
 
     my $name =
           $row              ? $row->[0]
@@ -400,6 +404,18 @@ sub role_in_wiki
         :                     'Authenticated';
 
     return Silki::Schema::Role->$name();
+}
+
+sub _BuildRoleInWikiSelect
+{
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    $select->select( $Schema->table('Role')->column('name') )
+           ->from( $Schema->table('Role'), $Schema->table('UserWikiRole') )
+           ->where( $Schema->table('UserWikiRole')->column('wiki_id'),
+                    '=', Fey::Placeholder->new() )
+           ->and( $Schema->table('UserWikiRole')->column('user_id'),
+                    '=', Fey::Placeholder->new() );
 }
 
 no Fey::ORM::Table;
