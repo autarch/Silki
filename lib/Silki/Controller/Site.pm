@@ -17,9 +17,14 @@ sub site : Path('/') : Args(0)
 
     $c->tab_by_id('Home')->set_is_selected(1);
 
-    # XXX - if user is logged in, show all wikis they can see
-    $c->stash()->{wiki_count} = Silki::Schema::Wiki->PublicWikiCount();
-    $c->stash()->{wikis} = Silki::Schema::Wiki->PublicWikis();
+    if ( $c->user()->is_authenticated() )
+    {
+        $c->stash()->{user_wiki_count} = $c->user()->private_wiki_count();
+        $c->stash()->{user_wikis} = $c->user()->private_wikis();
+    }
+
+    $c->stash()->{public_wiki_count} = Silki::Schema::Wiki->PublicWikiCount();
+    $c->stash()->{public_wikis} = Silki::Schema::Wiki->PublicWikis();
 
     $c->stash()->{template} = '/site/wikis';
 }

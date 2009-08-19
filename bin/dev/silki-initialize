@@ -38,7 +38,10 @@ print "\n";
 
 my $account = make_account();
 my $admin = make_admin_user($account);
-make_first_wiki( $admin, $account );
+my $regular = make_regular_user($account);
+make_first_wiki( $admin, $regular, $account );
+make_second_wiki( $admin, $regular, $account );
+make_third_wiki( $admin, $regular, $account );
 
 sub make_account
 {
@@ -73,9 +76,36 @@ EOF
     return $admin;
 }
 
+sub make_regular_user
+{
+    my $account = shift;
+
+    my $email = 'joe@' . Silki::Schema::Domain->DefaultDomain()->email_hostname();
+    my $pw = 'changeme';
+
+    my $regular =
+        Silki::Schema::User->insert( display_name       => 'Joe Schmoe',
+                                     email_address      => $email,
+                                     password           => $pw,
+                                     is_admin           => 1,
+                                     created_by_user_id => Silki::Schema::User->SystemUser()->user_id(),
+                                   );
+
+    print <<"EOF";
+Created a regular user:
+
+  email:    $email
+  password: $pw
+
+EOF
+
+    return $regular;
+}
+
 sub make_first_wiki
 {
     my $admin   = shift;
+    my $regular = shift;
     my $account = shift;
 
     require Silki::Schema::Wiki;
@@ -91,6 +121,7 @@ sub make_first_wiki
     $wiki->set_permissions('public');
 
     $wiki->add_user( user => $admin, role => Silki::Schema::Role->Admin() );
+    $wiki->add_user( user => $regular, role => Silki::Schema::Role->Member() );
 
     my $uri = $wiki->uri( with_host => 1 );
 
@@ -100,6 +131,66 @@ Created the first wiki:
   URI: $uri
 
 EOF
+}
 
+sub make_second_wiki
+{
+    my $admin   = shift;
+    my $regular = shift;
+    my $account = shift;
+
+    require Silki::Schema::Wiki;
+
+    my $wiki =
+        Silki::Schema::Wiki->insert( title      => 'The Second Wiki',
+                                     short_name => 'second-wiki',
+                                     domain_id  => Silki::Schema::Domain->DefaultDomain()->domain_id(),
+                                     user_id    => Silki::Schema::User->SystemUser()->user_id(),
+                                     account_id => $account->account_id(),
+                                   );
+
+    $wiki->set_permissions('private');
+
+    $wiki->add_user( user => $admin, role => Silki::Schema::Role->Admin() );
+    $wiki->add_user( user => $regular, role => Silki::Schema::Role->Member() );
+
+    my $uri = $wiki->uri( with_host => 1 );
+
+    print <<"EOF";
+Created the second wiki:
+
+  URI: $uri
+
+EOF
+}
+
+sub make_third_wiki
+{
+    my $admin   = shift;
+    my $regular = shift;
+    my $account = shift;
+
+    require Silki::Schema::Wiki;
+
+    my $wiki =
+        Silki::Schema::Wiki->insert( title      => 'The Third Wiki',
+                                     short_name => 'third-wiki',
+                                     domain_id  => Silki::Schema::Domain->DefaultDomain()->domain_id(),
+                                     user_id    => Silki::Schema::User->SystemUser()->user_id(),
+                                     account_id => $account->account_id(),
+                                   );
+
+    $wiki->set_permissions('private');
+
+    $wiki->add_user( user => $regular, role => Silki::Schema::Role->Member() );
+
+    my $uri = $wiki->uri( with_host => 1 );
+
+    print <<"EOF";
+Created the third wiki:
+
+  URI: $uri
+
+EOF
 }
 

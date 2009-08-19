@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:34
+#: lib/Silki/Controller/Wiki.pm:36
 msgid "%1 overview"
 msgstr ""
 
@@ -85,11 +85,11 @@ msgid "Incoming Links"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/User.pm:32
+#: lib/Silki/Role/Controller/User.pm:31
 msgid "Information about %1"
 msgstr ""
 
-#. ($revision->user()
+#. ($wiki->uri( view => 'user/' . $revision->user_id()
 #: share/mason/page/view:13
 msgid "Last edited by <a href=\"%html(%1)\">%html(%2)</a> on %3."
 msgstr ""
@@ -111,7 +111,7 @@ msgstr ""
 msgid "Page %1 of history"
 msgstr ""
 
-#. ($page->user()
+#. ($wiki->uri( view => 'user/' . $page->user_id()
 #: share/mason/page/view:25
 msgid "Page created by <a href=\"%html(%1)\">%html(%2)</a> on %3."
 msgstr ""
@@ -133,12 +133,12 @@ msgid "Preferences"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/User.pm:108
+#: lib/Silki/Role/Controller/User.pm:113
 msgid "Preferences for "
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/User.pm:48 share/mason/user/preferences_form:68
+#: lib/Silki/Role/Controller/User.pm:47 share/mason/user/preferences_form:73
 msgid "Preferences for %1"
 msgstr ""
 
@@ -146,7 +146,7 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:38 lib/Silki/Controller/Wiki.pm:73
+#: lib/Silki/Controller/Wiki.pm:40 lib/Silki/Controller/Wiki.pm:75
 msgid "Recent Changes"
 msgstr ""
 
@@ -155,7 +155,7 @@ msgstr ""
 msgid "Recent Changes in %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:39
+#: lib/Silki/Controller/Wiki.pm:41
 msgid "Recent activity in this wiki"
 msgstr ""
 
@@ -173,7 +173,7 @@ msgid "Revision %1"
 msgstr ""
 
 #. ($revision->revision_number()
-#: share/mason/page/view:50
+#: share/mason/page/view:51
 msgid "Revision %1 of %2"
 msgstr ""
 
@@ -182,7 +182,7 @@ msgstr ""
 msgid "Revision %1 versus %2"
 msgstr ""
 
-#: lib/Silki/Controller/User.pm:46
+#: lib/Silki/Role/Controller/User.pm:45
 msgid "Set your preferences"
 msgstr ""
 
@@ -190,32 +190,32 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:204
+#: lib/Silki/Schema/User.pm:255
 msgid "The OpenID URI you provided is already in use by another account."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:182
+#: lib/Silki/Schema/User.pm:233
 msgid "The OpenID URI you provided is not a valid URI."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:164
+#: lib/Silki/Schema/User.pm:215
 msgid "The email address you provided is already in use by another account."
 msgstr ""
 
-#: lib/Silki/Controller/User.pm:91
+#: lib/Silki/Role/Controller/User.pm:96
 msgid "The two passwords you provided did not match"
 msgstr ""
 
-#: lib/Silki/Controller/Site.pm:76
+#: lib/Silki/Controller/Site.pm:81
 msgid "The username or password you provided was not valid."
 msgstr ""
 
 #. ($c->domain()
-#: share/mason/site/wikis:9
+#: share/mason/site/wikis:16
 msgid ""
 "This Silki site has no public wikis available.\n"
-"Please <a href=\"%html(%1)\">login</a>\n"
-"if you have an account."
+"           Please <a href=\"%html(%1)\">login</a>\n"
+"           if you have an account."
 msgstr ""
 
 #: share/mason/user/preferences_form:13
@@ -257,15 +257,15 @@ msgid "Username:"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/User.pm:49
+#: lib/Silki/Role/Controller/User.pm:48
 msgid "View and change preferences for %1"
 msgstr ""
 
-#: lib/Silki/Controller/User.pm:29
+#: lib/Silki/Role/Controller/User.pm:28
 msgid "View details about your profile"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:141
+#: lib/Silki/Controller/Wiki.pm:143
 msgid "View this page"
 msgstr ""
 
@@ -273,7 +273,16 @@ msgstr ""
 msgid "Who"
 msgstr ""
 
-#: lib/Silki/Controller/Site.pm:66
+#. ($user->best_name()
+#: share/mason/user/profile:8
+msgid "Wikis You and %1 Both Use"
+msgstr ""
+
+#: share/mason/site/wikis:7
+msgid "You are not a member of any wikis."
+msgstr ""
+
+#: lib/Silki/Controller/Site.pm:71
 msgid "You must provide a password."
 msgstr ""
 
@@ -281,15 +290,15 @@ msgstr ""
 msgid "Your name:"
 msgstr ""
 
-#: lib/Silki/Controller/User.pm:45
+#: lib/Silki/Role/Controller/User.pm:44
 msgid "Your preferences"
 msgstr ""
 
-#: lib/Silki/Controller/User.pm:107
+#: lib/Silki/Role/Controller/User.pm:112
 msgid "Your preferences have been updated."
 msgstr ""
 
-#: lib/Silki/Controller/User.pm:28
+#: lib/Silki/Role/Controller/User.pm:27
 msgid "Your profile"
 msgstr ""
 

@@ -3,13 +3,22 @@
   <a href="mailto:<% $user->email_address() %>"><% $user->email_address() %></a>
 </p>
 % }
-<p>
-  Time zone: <% $user->time_zone() %>
-</p>
+
+% if ($shared_wikis) {
+<h2><% loc('Wikis You and %1 Both Use', $user->best_name() ) %></h2>
+
+<& /lib/wiki-list.mas, wikis => $shared_wikis &>
+% }
 
 <%args>
 $user
+$wiki => undef
+$shared_wikis => undef
 </%args>
+
+<%init>
+
+</%init>
 
 <%attr>
 sidebar => []

@@ -1,20 +1,29 @@
-% if ($wiki_count) {
-<ul>
-%   while ( my $wiki = $wikis->next() ) {
-  <li><a href="<% $wiki->uri() %>"><% $wiki->title() %></a></li>
-%   }
-</ul>
+% if ($user_wiki_count) {
+<h2>Your Private Wikis</h2>
+
+<& /lib/wiki-list.mas, wikis => $user_wikis &>
+% } elsif ( $c->user()->is_authenticated() ) {
+<p>
+  <% loc( 'You are not a member of any wikis.' ) %>
+</p>
+% }
+% if ($public_wiki_count) {
+<h2>Public Wikis</h2>
+
+<& /lib/wiki-list.mas, wikis => $public_wikis &>
 % } else {
 <p>
-<% loc( 'This Silki site has no public wikis available.
-Please <a href="%html(%1)">login</a>
-if you have an account.', $c->domain()->uri( view => '/user/login_form' ) ) %>
+  <% loc( 'This Silki site has no public wikis available.
+           Please <a href="%html(%1)">login</a>
+           if you have an account.', $c->domain()->uri( view => '/user/login_form' ) ) %>
 </p>
 % }
 
 <%args>
-$wikis
-$wiki_count
+$user_wiki_count => 0
+$user_wikis => undef
+$public_wikis
+$public_wiki_count
 </%args>
 
 <%attr>

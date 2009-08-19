@@ -13,8 +13,9 @@ use List::AllUtils qw( first first_index );
 use Silki::I18N qw( loc );
 use Silki::Schema;
 use Silki::Schema::Domain;
+use Silki::Schema::Permission;
 use Silki::Schema::Role;
-use Silki::Types qw( Str );
+use Silki::Types qw( Int Str );
 use Silki::Util qw( string_is_empty );
 
 use Fey::ORM::Table;
@@ -42,9 +43,6 @@ has_one 'creator' =>
 has_many 'pages' =>
     ( table => $Schema->table('Page') );
 
-has_many 'wikis' =>
-    ( table => $Schema->table('Wiki') );
-
 has best_name =>
     ( is      => 'ro',
       isa     => Str,
@@ -57,6 +55,20 @@ class_has _RoleInWikiSelect =>
       isa     => 'Fey::SQL::Select',
       lazy    => 1,
       builder => '_BuildRoleInWikiSelect',
+    );
+
+class_has _PrivateWikiCountSelect =>
+    ( is      => 'ro',
+      isa     => 'Fey::SQL::Select',
+      lazy    => 1,
+      builder => '_BuildPrivateWikiCountSelect',
+    );
+
+class_has _PrivateWikiSelect =>
+    ( is      => 'ro',
+      isa     => 'Fey::SQL::Select',
+      lazy    => 1,
+      builder => '_BuildPrivateWikiSelect',
     );
 
 class_has _SharedWikiSelect =>
@@ -79,6 +91,28 @@ class_has 'GuestUser' =>
       lazy    => 1,
       default => sub { __PACKAGE__->_FindOrCreateGuestUser() },
     );
+
+{
+    my $select = __PACKAGE__->_PrivateWikiCountSelect();
+
+    has private_wiki_count =>
+        ( metaclass   => 'FromSelect',
+          is          => 'ro',
+          isa         => Int,
+          select      => $select,
+          bind_params => sub { $_[0]->user_id(), $select->bind_params() },
+        );
+}
+
+{
+    my $select = __PACKAGE__->_PrivateWikiSelect();
+
+    has_many private_wikis =>
+        ( table       => $Schema->table('Wiki'),
+          select      => $select,
+          bind_params => sub { $_[0]->user_id(), $select->bind_params() },
+        );
+}
 
 around insert => sub
 {
@@ -427,13 +461,69 @@ sub _BuildRoleInWikiSelect
                     '=', Fey::Placeholder->new() );
 }
 
+sub _BuildPrivateWikiCountSelect
+{
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $distinct = Fey::Literal::Term->new( 'DISTINCT ', $Schema->table('Wiki')->column('wiki_id') );
+    my $count = Fey::Literal::Function->new( 'COUNT', $distinct );
+
+    $select->select($count);
+
+    $class->_PrivateWikiSelectBase($select);
+
+    return $select;
+}
+
+sub _BuildPrivateWikiSelect
+{
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    $select->select( $Schema->table('Wiki') );
+    $class->_PrivateWikiSelectBase($select);
+    $select->order_by( $Schema->table('Wiki')->column('title') );
+
+    return $select;
+}
+
+sub _PrivateWikiSelectBase
+{
+    my $class  = shift;
+    my $select = shift;
+
+    my $guest  = Silki::Schema::Role->Guest();
+    my $authed = Silki::Schema::Role->Authenticated();
+    my $read   = Silki::Schema::Permission->Read();
+
+    my $public_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    $public_select->select( $Schema->table('WikiRolePermission')->column('wiki_id') )
+                  ->from( $Schema->table('WikiRolePermission') )
+                  ->where( $Schema->table('WikiRolePermission')->column('role_id'),
+                           'IN', $guest->role_id(), $authed->role_id() )
+                  ->and( $Schema->table('WikiRolePermission')->column('permission_id'),
+                         '=', $read->permission_id() );
+
+    $select->from( $Schema->table('Wiki'), $Schema->table('UserWikiRole') )
+           ->where( $Schema->table('UserWikiRole')->column('user_id'),
+                    '=', Fey::Placeholder->new() )
+           ->and( $Schema->table('Wiki')->column('wiki_id'),
+                    'NOT IN', $public_select );
+
+    return;
+}
+
 sub wikis_shared_with
 {
     my $self = shift;
     my $user = shift;
 
     my $select = $self->_SharedWikiSelect();
-    warn $select->sql( Silki::Schema->DBIManager()->source_for_sql($select)->dbh() );
+
     return
         Fey::Object::Iterator::FromSelect->new
             ( classes     => [ 'Silki::Schema::Wiki' ],

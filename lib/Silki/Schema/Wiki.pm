@@ -144,7 +144,7 @@ sub add_user
 
     return if $user->is_system_user();
 
-    return $role->name() eq 'Guest' || $role->name() eq 'Authenticated';
+    return if $role->name() eq 'Guest' || $role->name() eq 'Authenticated';
 
     my $uwr = Silki::Schema::UserWikiRole->new( user_id => $user->user_id(),
                                                 wiki_id => $self->wiki_id(),
@@ -400,12 +400,12 @@ sub _PublicWikiSelectBase
     my $class  = shift;
     my $select = shift;
 
-    my $anon = Silki::Schema::Role->Guest();
-    my $read = Silki::Schema::Permission->Read();
+    my $guest = Silki::Schema::Role->Guest();
+    my $read  = Silki::Schema::Permission->Read();
 
     $select->from( $Schema->tables( 'Wiki', 'WikiRolePermission' ) )
            ->where( $Schema->table('WikiRolePermission')->column('role_id'),
-                    '=', $anon->role_id() )
+                    '=', $guest->role_id() )
            ->and( $Schema->table('WikiRolePermission')->column('permission_id'),
                   '=', $read->permission_id() );
 
