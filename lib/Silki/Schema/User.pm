@@ -52,23 +52,37 @@ has best_name =>
 
 class_has _RoleInWikiSelect =>
     ( is      => 'ro',
-      isa     => 'Fey::SQL::Select',
+      does    => 'Fey::Role::SQL::ReturnsData',
       lazy    => 1,
       builder => '_BuildRoleInWikiSelect',
     );
 
 class_has _PrivateWikiCountSelect =>
     ( is      => 'ro',
-      isa     => 'Fey::SQL::Select',
+      does    => 'Fey::Role::SQL::ReturnsData',
       lazy    => 1,
       builder => '_BuildPrivateWikiCountSelect',
     );
 
 class_has _PrivateWikiSelect =>
     ( is      => 'ro',
-      isa     => 'Fey::SQL::Select',
+      does    => 'Fey::Role::SQL::ReturnsData',
       lazy    => 1,
       builder => '_BuildPrivateWikiSelect',
+    );
+
+class_has _AllWikiCountSelect =>
+    ( is      => 'ro',
+      does    => 'Fey::Role::SQL::ReturnsData',
+      lazy    => 1,
+      builder => '_BuildAllWikiCountSelect',
+    );
+
+class_has _AllWikiSelect =>
+    ( is      => 'ro',
+      does    => 'Fey::Role::SQL::ReturnsData',
+      lazy    => 1,
+      builder => '_BuildAllWikiSelect',
     );
 
 class_has _SharedWikiSelect =>
@@ -111,6 +125,28 @@ class_has 'GuestUser' =>
         ( table       => $Schema->table('Wiki'),
           select      => $select,
           bind_params => sub { $_[0]->user_id(), $select->bind_params() },
+        );
+}
+
+{
+    my $select = __PACKAGE__->_AllWikiCountSelect();
+
+    has all_wiki_count =>
+        ( metaclass   => 'FromSelect',
+          is          => 'ro',
+          isa         => Int,
+          select      => $select,
+          bind_params => sub { ( $_[0]->user_id() ) x 2 },
+        );
+}
+
+{
+    my $select = __PACKAGE__->_AllWikiSelect();
+
+    has_many all_wikis =>
+        ( table       => $Schema->table('Wiki'),
+          select      => $select,
+          bind_params => sub { ( $_[0]->user_id() ) x 2 },
         );
 }
 
@@ -471,7 +507,6 @@ sub _BuildPrivateWikiCountSelect
     my $count = Fey::Literal::Function->new( 'COUNT', $distinct );
 
     $select->select($count);
-
     $class->_PrivateWikiSelectBase($select);
 
     return $select;
@@ -535,22 +570,17 @@ sub wikis_shared_with
 
 sub _BuildSharedWikiSelect
 {
+    my $class = shift;
+
     my $explicit_wiki_select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    $explicit_wiki_select
-        ->select( $Schema->table('Wiki') )
-        ->from( $Schema->tables( 'Wiki', 'UserWikiRole' ) )
-        ->where( $Schema->table('UserWikiRole')->column('user_id'),
-                 '=', Fey::Placeholder->new() );
+    $explicit_wiki_select->select( $Schema->table('Wiki') );
+    $class->_ExplicitWikiSelectBase($explicit_wiki_select);
 
     my $implicit_wiki_select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    $implicit_wiki_select
-        ->select( $Schema->table('Wiki') )
-        ->from( $Schema->tables( 'Wiki', 'Page' ) )
-        ->from( $Schema->tables( 'Page', 'PageRevision' ) )
-        ->where( $Schema->table('PageRevision')->column('user_id'),
-                 '=', Fey::Placeholder->new() );
+    $implicit_wiki_select->select( $Schema->table('Wiki') );
+    $class->_ImplicitWikiSelectBase($implicit_wiki_select);
 
     my $intersect1 = Silki::Schema->SQLFactoryClass()->new_intersect;
     $intersect1->intersect( $explicit_wiki_select, $explicit_wiki_select );
@@ -568,6 +598,87 @@ sub _BuildSharedWikiSelect
           ->order_by( Fey::Literal::Term->new($title_idx) );
 
     return $union;
+}
+
+sub _BuildAllWikiCountSelect
+{
+    my $class = shift;
+
+    my $explicit_wiki_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    $explicit_wiki_select->select( $Schema->table('Wiki')->column('wiki_id') );
+    $class->_ExplicitWikiSelectBase($explicit_wiki_select);
+
+    my $implicit_wiki_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    $implicit_wiki_select->select( $Schema->table('Wiki')->column('wiki_id') );
+    $class->_ImplicitWikiSelectBase($implicit_wiki_select);
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $distinct = Fey::Literal::Term->new( 'DISTINCT ', $Schema->table('Wiki')->column('wiki_id') );
+    my $count = Fey::Literal::Function->new( 'COUNT', $distinct );
+
+    $select->select($count)
+           ->from( $Schema->table('Wiki') )
+           ->where( $Schema->table('Wiki')->column('wiki_id'),
+                    'IN', $explicit_wiki_select )
+           ->where( 'or' )
+           ->where( $Schema->table('Wiki')->column('wiki_id'),
+                    'IN', $implicit_wiki_select );
+
+    return $select;
+}
+
+sub _BuildAllWikiSelect
+{
+    my $class = shift;
+
+    my $explicit_wiki_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    $explicit_wiki_select->select( $Schema->table('Wiki') );
+    $class->_ExplicitWikiSelectBase($explicit_wiki_select);
+
+    my $implicit_wiki_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    $implicit_wiki_select->select( $Schema->table('Wiki') );
+    $class->_ImplicitWikiSelectBase($implicit_wiki_select);
+
+    my $union = Silki::Schema->SQLFactoryClass()->new_union;
+
+    # To use an ORDER BY with a UNION in Pg, you specify the column as a
+    # number (ORDER BY 5).
+    my $title_idx =
+        first_index { $_->name() eq 'title' } $Schema->table('Wiki')->columns();
+    $union->union( $explicit_wiki_select, $implicit_wiki_select )
+          ->order_by( Fey::Literal::Term->new($title_idx) );
+
+    return $union;
+}
+
+sub _ExplicitWikiSelectBase
+{
+    my $class = shift;
+    my $select = shift;
+
+    $select->from( $Schema->tables( 'Wiki', 'UserWikiRole' ) )
+           ->where( $Schema->table('UserWikiRole')->column('user_id'),
+                    '=', Fey::Placeholder->new() );
+
+    return;
+}
+
+sub _ImplicitWikiSelectBase
+{
+    my $class = shift;
+    my $select = shift;
+
+    $select->from( $Schema->tables( 'Wiki', 'Page' ) )
+           ->from( $Schema->tables( 'Page', 'PageRevision' ) )
+           ->where( $Schema->table('PageRevision')->column('user_id'),
+                    '=', Fey::Placeholder->new() );
+
+    return;
 }
 
 no Fey::ORM::Table;

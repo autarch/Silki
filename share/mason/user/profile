@@ -4,6 +4,12 @@
 </p>
 % }
 
+% if ($user_wikis) {
+<h2><% loc('Your Wikis' ) %></h2>
+
+<& /lib/wiki-list.mas, wikis => $user_wikis &>
+% }
+
 % if ($shared_wikis) {
 <h2><% loc('Wikis You and %1 Both Use', $user->best_name() ) %></h2>
 
@@ -13,6 +19,7 @@
 <%args>
 $user
 $wiki => undef
+$user_wikis => undef
 $shared_wikis => undef
 </%args>
 
