@@ -87,7 +87,7 @@ sub make_regular_user
         Silki::Schema::User->insert( display_name       => 'Joe Schmoe',
                                      email_address      => $email,
                                      password           => $pw,
-                                     is_admin           => 1,
+                                     is_admin           => 0,
                                      created_by_user_id => Silki::Schema::User->SystemUser()->user_id(),
                                    );
 
