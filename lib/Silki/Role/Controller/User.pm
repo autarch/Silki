@@ -68,15 +68,19 @@ sub user_GET_html
     $c->tab_by_id('profile')->set_is_selected(1);
 
     my $user = $c->stash()->{user};
-    if ( $user->user_id() == $c->user()->user_id() )
+
+    unless ( $user->is_system_user() )
     {
-        $c->stash()->{user_wikis} = $user->all_wikis()
-            if $user->all_wiki_count();
-    }
-    elsif ( ! $c->user()->is_system_user() )
-    {
-        $c->stash()->{shared_wikis} =
-            $user->wikis_shared_with( $c->user() );
+        if ( $user->user_id() == $c->user()->user_id() )
+        {
+            $c->stash()->{user_wikis} = $user->all_wikis()
+                if $user->all_wiki_count();
+        }
+        elsif ( ! $c->user()->is_system_user() )
+        {
+            $c->stash()->{shared_wikis} =
+                $user->wikis_shared_with( $c->user() );
+        }
     }
 
     $c->stash()->{template} = '/user/profile';
