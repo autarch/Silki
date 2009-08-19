@@ -6,8 +6,10 @@ use warnings;
 use Authen::Passphrase::BlowfishCrypt;
 use DateTime;
 use Fey::Literal::Function;
+use Fey::Object::Iterator::FromSelect;
 use Fey::ORM::Exceptions qw( no_such_row );
-use List::AllUtils qw( first );
+use Fey::Placeholder;
+use List::AllUtils qw( first first_index );
 use Silki::I18N qw( loc );
 use Silki::Schema;
 use Silki::Schema::Domain;
@@ -55,6 +57,13 @@ class_has _RoleInWikiSelect =>
       isa     => 'Fey::SQL::Select',
       lazy    => 1,
       builder => '_BuildRoleInWikiSelect',
+    );
+
+class_has _SharedWikiSelect =>
+    ( is      => 'ro',
+      isa     => 'Fey::SQL::Union',
+      lazy    => 1,
+      builder => '_BuildSharedWikiSelect',
     );
 
 class_has 'SystemUser' =>
@@ -416,6 +425,59 @@ sub _BuildRoleInWikiSelect
                     '=', Fey::Placeholder->new() )
            ->and( $Schema->table('UserWikiRole')->column('user_id'),
                     '=', Fey::Placeholder->new() );
+}
+
+sub wikis_shared_with
+{
+    my $self = shift;
+    my $user = shift;
+
+    my $select = $self->_SharedWikiSelect();
+    warn $select->sql( Silki::Schema->DBIManager()->source_for_sql($select)->dbh() );
+    return
+        Fey::Object::Iterator::FromSelect->new
+            ( classes     => [ 'Silki::Schema::Wiki' ],
+              select      => $select,
+              dbh         => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
+              bind_params => [ ( $self->user_id(), $user->user_id() ) x 2 ],
+            );
+}
+
+sub _BuildSharedWikiSelect
+{
+    my $explicit_wiki_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    $explicit_wiki_select
+        ->select( $Schema->table('Wiki') )
+        ->from( $Schema->tables( 'Wiki', 'UserWikiRole' ) )
+        ->where( $Schema->table('UserWikiRole')->column('user_id'),
+                 '=', Fey::Placeholder->new() );
+
+    my $implicit_wiki_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    $implicit_wiki_select
+        ->select( $Schema->table('Wiki') )
+        ->from( $Schema->tables( 'Wiki', 'Page' ) )
+        ->from( $Schema->tables( 'Page', 'PageRevision' ) )
+        ->where( $Schema->table('PageRevision')->column('user_id'),
+                 '=', Fey::Placeholder->new() );
+
+    my $intersect1 = Silki::Schema->SQLFactoryClass()->new_intersect;
+    $intersect1->intersect( $explicit_wiki_select, $explicit_wiki_select );
+
+    my $intersect2 = Silki::Schema->SQLFactoryClass()->new_intersect;
+    $intersect2->intersect( $implicit_wiki_select, $implicit_wiki_select );
+
+    my $union = Silki::Schema->SQLFactoryClass()->new_union;
+
+    # To use an ORDER BY with a UNION in Pg, you specify the column as a
+    # number (ORDER BY 5).
+    my $title_idx =
+        first_index { $_->name() eq 'title' } $Schema->table('Wiki')->columns();
+    $union->union( $intersect1, $intersect2 )
+          ->order_by( Fey::Literal::Term->new($title_idx) );
+
+    return $union;
 }
 
 no Fey::ORM::Table;
