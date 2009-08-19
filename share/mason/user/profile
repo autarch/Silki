@@ -4,6 +4,12 @@
 </p>
 % }
 
+% if ( $user->is_system_user() ) {
+<p>
+  <% loc('This is a system user, created for use by the wiki software.') %>
+</p>
+% }
+
 % if ($user_wikis) {
 <h2><% loc('Your Wikis' ) %></h2>
 

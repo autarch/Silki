@@ -133,7 +133,7 @@ msgid "Preferences"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Role/Controller/User.pm:113
+#: lib/Silki/Role/Controller/User.pm:123
 msgid "Preferences for "
 msgstr ""
 
@@ -190,19 +190,19 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:255
+#: lib/Silki/Schema/User.pm:291
 msgid "The OpenID URI you provided is already in use by another account."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:233
+#: lib/Silki/Schema/User.pm:269
 msgid "The OpenID URI you provided is not a valid URI."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:215
+#: lib/Silki/Schema/User.pm:251
 msgid "The email address you provided is already in use by another account."
 msgstr ""
 
-#: lib/Silki/Role/Controller/User.pm:96
+#: lib/Silki/Role/Controller/User.pm:106
 msgid "The two passwords you provided did not match"
 msgstr ""
 
@@ -216,6 +216,10 @@ msgid ""
 "This Silki site has no public wikis available.\n"
 "           Please <a href=\"%html(%1)\">login</a>\n"
 "           if you have an account."
+msgstr ""
+
+#: share/mason/user/profile:9
+msgid "This is a system user, created for use by the wiki software."
 msgstr ""
 
 #: share/mason/user/preferences_form:13
@@ -274,7 +278,7 @@ msgid "Who"
 msgstr ""
 
 #. ($user->best_name()
-#: share/mason/user/profile:8
+#: share/mason/user/profile:20
 msgid "Wikis You and %1 Both Use"
 msgstr ""
 
@@ -286,6 +290,10 @@ msgstr ""
 msgid "You must provide a password."
 msgstr ""
 
+#: share/mason/user/profile:14
+msgid "Your Wikis"
+msgstr ""
+
 #: share/mason/user/preferences_form:9
 msgid "Your name:"
 msgstr ""
@@ -294,7 +302,7 @@ msgstr ""
 msgid "Your preferences"
 msgstr ""
 
-#: lib/Silki/Role/Controller/User.pm:112
+#: lib/Silki/Role/Controller/User.pm:122
 msgid "Your preferences have been updated."
 msgstr ""
 
