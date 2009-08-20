@@ -439,6 +439,8 @@ sub can_edit_user
     my $self = shift;
     my $user = shift;
 
+    return 0 if $user->is_system_user();
+
     return 1 if $self->is_admin();
 
     return 1 if $self->user_id() == $user->user_id();
