@@ -1,21 +1,59 @@
 <div id="form-and-preview">
-  <form action="<% $action %>" method="post">
+  <div id="form">
+    <div id="toolbar">
+      <ul>
+        <li>
+          <a href="#" id="h2-button" title="<% loc('Insert a second level heading') %>"><img src="/images/icons/text_heading_2.png" height="16" width="16" /></a>
+        </li>
+        <li>
+          <a href="#" id="h3-button" title="<% loc('Insert a third level heading') %>"><img src="/images/icons/text_heading_3.png" height="16" width="16" /></a>
+        </li>
+        <li>
+          <a href="#" id="bold-button" title="<% loc('Make text bold') %>"><img src="/images/icons/text_bold.png" height="16" width="16" /></a>
+        </li>
+        <li>
+          <a href="#" id="italic-button" title="<% loc('Make text italic') %>"><img src="/images/icons/text_italic.png" height="16" width="16" /></a>
+        </li>
+        <li>
+          <a href="#" id="bullet-list-button" title="<% loc('Insert a bullet list') %>"><img src="/images/icons/text_list_bullets.png" height="16" width="16" /></a>
+        </li>
+        <li>
+          <a href="#" id="number-list-button" title="<% loc('Insert a numbered list') %>"><img src="/images/icons/text_list_numbers.png" height="16" width="16" /></a>
+        </li>
+        <li>
+          <a href="#" id="wiki-link-button" title="<% loc('Insert a link to a wiki page') %>"><img src="/images/icons/link.png" height="16" width="16" /></a>
+        </li>
+        <li>
+          <a href="#" id="web-link--button" title="<% loc('Insert a link to a web page') %>"><img src="/images/icons/world_link.png" height="16" width="16" /></a>
+        </li>
+        <li>
+          <a href="#" id="image-button" title="<% loc('Insert an image') %>"><img src="/images/icons/picture.png" height="16" width="16" /></a>
+        </li>
+        <li>
+          <a href="#" id="attachment-button" title="<% loc('Insert a link to an attachment') %>"><img src="/images/icons/attach.png" height="16" width="16" /></a>
+        </li>
+      </ul>
+    </div>
+    <form action="<% $action %>" method="post">
 % if ($page) {
-    <input type="hidden" name="x-tunneled-method" value="PUT" />
-    <input type="hidden" name="page_id" value="<% $page->page_id() %>" />
+      <input type="hidden" name="x-tunneled-method" value="PUT" />
+      <input type="hidden" name="page_id" value="<% $page->page_id() %>" />
 % } else {
-    <input type="hidden" name="title" value="<% $title %>" />
+      <input type="hidden" name="title" value="<% $title %>" />
 % }
 
-    <textarea id="content" name="content"><% $page ? $page->content() : q{} %></textarea>
+      <textarea id="page-content" name="content"><% $page ? $page->content() : q{} %></textarea>
 
-    <input type="submit" value="<% loc('Submit') %>" />
-  </form>
-
-  <h2><% loc('Preview') %></h2>
-
+      <input type="submit" value="<% loc('Submit') %>" />
+    </form>
+  </div>
   <div id="preview">
 
+    <h2><% loc('Preview') %></h2>
+
+    <div id="preview-content">
+      Preview text here.
+    </div>
   </div>
 </div>
 
