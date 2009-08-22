@@ -9,10 +9,10 @@
           <a href="#" id="h3-button" title="<% loc('Insert a third level heading') %>"><img src="/images/icons/text_heading_3.png" height="16" width="16" /></a>
         </li>
         <li>
-          <a href="#" id="bold-button" title="<% loc('Make text bold') %>"><img src="/images/icons/text_bold.png" height="16" width="16" /></a>
+          <a href="#" id="italic-button" title="<% loc('Make text italic') %>"><img src="/images/icons/text_italic.png" height="16" width="16" /></a>
         </li>
         <li>
-          <a href="#" id="italic-button" title="<% loc('Make text italic') %>"><img src="/images/icons/text_italic.png" height="16" width="16" /></a>
+          <a href="#" id="bold-button" title="<% loc('Make text bold') %>"><img src="/images/icons/text_bold.png" height="16" width="16" /></a>
         </li>
         <li>
           <a href="#" id="bullet-list-button" title="<% loc('Insert a bullet list') %>"><img src="/images/icons/text_list_bullets.png" height="16" width="16" /></a>
@@ -48,9 +48,6 @@
     </form>
   </div>
   <div id="preview">
-
-    <h2><% loc('Preview') %></h2>
-
     <div id="preview-content">
       Preview text here.
     </div>
