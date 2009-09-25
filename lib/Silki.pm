@@ -7,7 +7,7 @@ our $VERSION = '0.01';
 
 use Catalyst::Runtime 5.8;
 
-use Catalyst::App::RoleApplicator;
+use CatalystX::RoleApplicator;
 use Catalyst::Request::REST::ForBrowsers;
 use Silki::Config;
 use Silki::I18N ();
