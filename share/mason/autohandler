@@ -13,6 +13,12 @@
   <script src="<% static_uri( '/js/silki-combined.js' ) %>"
           type="text/javascript"></script>
 
+%# This is so huge we only load it when needed
+% if ( $m->request_comp()->attr('load_ckeditor') ) {
+  <script src="<% static_uri( '/ckeditor/ckeditor.js' ) %>"
+          type="text/javascript"></script>
+% }
+
 </head>
 <body>
 
@@ -49,8 +55,9 @@
 </html>
 
 <%attr>
-show_title => 1
-sidebar => [ 'quick-search' ]
+show_title    => 1
+sidebar       => [ 'quick-search' ]
+load_ckeditor => 0
 </%attr>
 
 <%def .messages>

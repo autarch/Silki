@@ -6,7 +6,8 @@ use warnings;
 use Data::Page;
 use Data::Page::FlickrLike;
 use List::AllUtils qw( all );
-use Silki::Formatter;
+use Silki::Formatter::HTMLToWiki;
+use Silki::Formatter::WikiToHTML;
 use Silki::Schema::Page;
 use Silki::Schema::PageRevision;
 use Silki::Schema::Wiki;
@@ -171,6 +172,11 @@ sub page_edit_form : Chained('_set_page') : PathPart('edit_form') : Args(0)
     my $self      = shift;
     my $c         = shift;
 
+    my $page = $c->stash()->{page};
+
+    $c->stash()->{html} =
+        $self->_rev_content_as_html( $c, $page->most_recent_revision(), $page );
+
     $c->stash()->{template} = '/page/edit_form';
 }
 
@@ -181,9 +187,18 @@ sub page_PUT
 
     my $page = Silki::Schema::Page->new( page_id => $c->request()->params()->{page_id} );
 
-    $page->add_revision( content => $c->request()->params()->{content},
-                         user_id => $c->user()->user_id(),
-                       );
+    my $formatter =
+        Silki::Formatter::HTMLToWiki->new( user => $c->user(),
+                                           wiki => $page->wiki(),
+                                         );
+
+    my $wikitext = $formatter->html_to_wikitext( $c->request()->params()->{content} );
+    warn $wikitext, "\n\n\n";
+
+    $page->add_revision
+        ( content => $wikitext,
+          user_id => $c->user()->user_id(),
+        );
 
     $c->redirect_and_detach( $page->uri() );
 }
@@ -196,9 +211,9 @@ sub _rev_content_as_html : Private
     my $page = shift;
 
     my $formatter =
-        Silki::Formatter->new( user => $c->user(),
-                               wiki => $page->wiki(),
-                             );
+        Silki::Formatter::WikiToHTML->new( user => $c->user(),
+                                           wiki => $page->wiki(),
+                                         );
 
     return $formatter->wikitext_to_html( $rev->content() );
 }

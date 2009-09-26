@@ -1,4 +1,4 @@
-package Silki::Formatter;
+package Silki::Formatter::WikiToHTML;
 
 use strict;
 use warnings;

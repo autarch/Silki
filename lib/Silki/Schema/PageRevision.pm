@@ -6,7 +6,7 @@ use warnings;
 use Algorithm::Diff qw( sdiff );
 use String::Diff qw( diff );
 use Silki::Config;
-use Silki::Formatter;
+use Silki::Formatter::WikiToHTML;
 use Silki::Schema;
 use Silki::Schema::Page;
 use Silki::Schema::PageLink;
@@ -51,10 +51,11 @@ sub _update_page_links
 {
     my $self = shift;
 
-    my $links = Silki::Formatter->new( user => Silki::Schema::User->SystemUser(),
-                                       wiki => $self->page()->wiki(),
-                                     )->links( $self->content() );
-
+    my $links =
+        Silki::Formatter::WikiToHTML->new
+            ( user => Silki::Schema::User->SystemUser(),
+              wiki => $self->page()->wiki(),
+            )->links( $self->content() );
 
     my @existing =
         map { { from_page_id => $self->page_id(),
