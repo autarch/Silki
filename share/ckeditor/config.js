@@ -11,5 +11,8 @@ CKEDITOR.editorConfig = function( config )
     config.toolbar = "Silki";
 
     config.skin = "Silki";
+
+    config.linkShowTargetTab = false;
+    config.linkShowAdvancedTab = false;
 };
 
