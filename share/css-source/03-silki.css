@@ -8,7 +8,6 @@ html {
 body {
     font-family: sans-serif;
     line-height: 1.6em;
-    font-size: 80%;
 }
 
 /* There are two rules in YUI Base that fuck up nesting ol inside ul and vice
