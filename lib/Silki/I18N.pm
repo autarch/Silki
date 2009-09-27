@@ -9,6 +9,7 @@ our @EXPORT = qw( loc );
 
 use Data::Localize;
 use Path::Class qw( file );
+use Silki::Config;
 
 
 {
