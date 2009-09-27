@@ -15,8 +15,15 @@
 
 %# This is so huge we only load it when needed
 % if ( $m->request_comp()->attr('load_ckeditor') ) {
+%   if ( Silki::Config->new()->is_production() ) {
   <script src="<% static_uri( '/ckeditor/ckeditor.js' ) %>"
           type="text/javascript"></script>
+%   } else {
+  <script src="<% static_uri( '/ckeditor/ckeditor_source.js' ) %>"
+          type="text/javascript"></script>
+  <script src="<% static_uri( '/ckeditor/_source/core/ckeditor.js' ) %>"
+          type="text/javascript"></script>
+%  }
 % }
 
 </head>

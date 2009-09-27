@@ -1,0 +1,1 @@
+../../../CKEditor/_source/core/ckeditor.js
