@@ -23,13 +23,29 @@ sub rules {
     };
 }
 
+sub attributes {
+    my $self = shift;
+
+    return {
+        %{ $self->SUPER::attributes() },
+        wiki => { isa => 'Silki::Schema::Wiki', required => 1 },
+    };
+}
+
 sub _link {
     my ( $self, $node, $rules ) = @_;
 
     my $url = $node->attr('href') || '';
 
     if ( my $title = $self->get_wiki_page($url) ) {
-        return '[[' . $title . ']]';
+        my ( $wiki, $title ) = $title =~ m{/wiki/([^/]+)/page/([^/]+)};
+
+        if ( $self->wiki()->short_name() eq $wiki ) {
+            return '[[' . $title . ']]';
+        }
+        else {
+            return '[[' . $wiki . q{/} . $title . ']]';
+        }
     }
     else {
         return $self->SUPER::_link( $node, $rules );

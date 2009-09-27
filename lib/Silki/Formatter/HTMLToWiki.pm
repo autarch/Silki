@@ -36,13 +36,11 @@ sub html_to_wikitext {
     my $self = shift;
     my $html = shift;
 
-    my $wiki_uri = URI->new( $self->_wiki()->domain()->uri() )->path();
-    $wiki_uri .= '/page';
+    my $wiki_uri = URI->new( $self->_wiki()->uri( view => 'page' ) )->path();
 
     my $wikitext = $self->_converter->html2wiki(
         $html,
-        wiki_uri   => [qr{\Q$wiki_uri\E([^/]+)}],
-        link_style => 'inline',
+        wiki_uri   => [qr{^(\Q$wiki_uri\E/[^/]+)}],
     );
 
     $wikitext =~ s{<br\s*/?>}{}g;
@@ -53,7 +51,11 @@ sub html_to_wikitext {
 sub _build_converter {
     my $self = shift;
 
-    return HTML::WikiConverter->new( dialect => 'SilkiMM' );
+    return HTML::WikiConverter->new(
+        dialect    => 'SilkiMM',
+        wiki       => $self->_wiki(),
+        link_style => 'inline',
+    );
 }
 
 no Moose;
