@@ -45,6 +45,9 @@ sub html_to_wikitext {
 
     $wikitext =~ s{<br\s*/?>}{}g;
 
+    $wikitext .= "\n"
+        unless $wikitext =~ /\n$/s;
+
     return $wikitext;
 }
 
