@@ -193,7 +193,6 @@ sub page_PUT
                                          );
 
     my $wikitext = $formatter->html_to_wikitext( $c->request()->params()->{content} );
-    warn $wikitext, "\n\n\n";
 
     $page->add_revision
         ( content => $wikitext,
