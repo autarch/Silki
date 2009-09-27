@@ -53,25 +53,29 @@ $rev2
 <%def .word_diff>
     <tr class="diff-changed">
       <td>
+<pre>\
 % for my $diff (@diff) {
 %   if ( $diff->[0] eq '-' || $diff->[0] eq 'c' ) {
-        <del><% $diff->[1] %></del>
+ <del><% $diff->[1] %></del>\
 %   } elsif ( $diff->[0] eq 'u' ) {
-        <% $diff->[1] %>
+ <% $diff->[1] %>\
 %   }
 % }
+</pre>
       </td>
       <td class="marker">
         <span title="<% loc('paragraph was changed') %>">*</span>
       </td>
       <td>
+<pre>\
 % for my $diff (@diff) {
 %   if ( $diff->[0] eq '+' || $diff->[0] eq 'c' ) {
-        <ins><% $diff->[2] %></ins>
+ <ins><% $diff->[2] %></ins>\
 %   } elsif ( $diff->[0] eq 'u' ) {
-        <% $diff->[1] %>
+ <% $diff->[1] %>\
 %   }
 % }
+</pre>
       </td>
     </tr>
 <%args>
@@ -82,7 +86,7 @@ $rev2
 <%def .para_diff>
     <tr>
       <td class="<% $diff[0] eq q{-} ? 'diff-removed' : q{} %>">
-        <% $diff[1] %>
+        <pre><% $diff[1] %></pre>
       </td>
       <td class="marker">
 % if ( $diff[0] ne 'u' ) {
@@ -90,7 +94,7 @@ $rev2
 % }
       </td>
       <td class="<% $diff[0] eq q{+} ? 'diff-added' : q{} %>">
-        <% $diff[2] %>
+        <pre><% $diff[2] %></pre>
       </td>
     </tr>
 <%args>
