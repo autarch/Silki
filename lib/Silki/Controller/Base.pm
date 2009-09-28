@@ -65,6 +65,7 @@ sub _set_entity {
     my $c      = shift;
     my $entity = shift;
 
+    $c->response()->content_type('application/json');
     $c->response()->body( Silki::JSON->Encode($entity) );
 
     return 1;
