@@ -135,7 +135,7 @@ class_has 'GuestUser' => (
         is          => 'ro',
         isa         => Int,
         select      => $select,
-        bind_params => sub { ( $_[0]->user_id() ) x 2 },
+        bind_params => sub { ( $_[0]->user_id() ) x 3 },
     );
 }
 
@@ -145,7 +145,7 @@ class_has 'GuestUser' => (
     has_many all_wikis => (
         table       => $Schema->table('Wiki'),
         select      => $select,
-        bind_params => sub { ( $_[0]->user_id() ) x 2 },
+        bind_params => sub { ( $_[0]->user_id() ) x 3 },
     );
 }
 
@@ -622,22 +622,33 @@ sub _BuildAllWikiSelect {
 
     my $explicit_wiki_select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    $explicit_wiki_select->select( $Schema->table('Wiki') );
+    my $is_explicit1 = Fey::Literal::Term->new('1');
+    $is_explicit1->set_alias_name('is_explicit');
+    $explicit_wiki_select->select( $Schema->table('Wiki'), $is_explicit1 );
     $class->_ExplicitWikiSelectBase($explicit_wiki_select);
 
     my $implicit_wiki_select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    $implicit_wiki_select->select( $Schema->table('Wiki') );
+    my $is_explicit0 = Fey::Literal::Term->new('0');
+    $is_explicit0->set_alias_name('is_explicit');
+    $implicit_wiki_select->select( $Schema->table('Wiki'), $is_explicit0 );
     $class->_ImplicitWikiSelectBase($implicit_wiki_select);
 
     my $union = Silki::Schema->SQLFactoryClass()->new_union;
 
     # To use an ORDER BY with a UNION in Pg, you specify the column as a
     # number (ORDER BY 5).
+    my $is_explicit_idx = ( scalar $Schema->table('Wiki')->columns() ) + 1;
+
     my $title_idx = first_index { $_->name() eq 'title' }
-    $Schema->table('Wiki')->columns();
-    $union->union( $explicit_wiki_select, $implicit_wiki_select )
-        ->order_by( Fey::Literal::Term->new($title_idx) );
+        $Schema->table('Wiki')->columns();
+
+    $union->union( $explicit_wiki_select, $implicit_wiki_select )->order_by(
+        Fey::Literal::Term->new($is_explicit_idx),
+        'DESC',
+        Fey::Literal::Term->new($title_idx),
+        'ASC',
+    );
 
     return $union;
 }
@@ -658,11 +669,17 @@ sub _ImplicitWikiSelectBase {
     my $class  = shift;
     my $select = shift;
 
+    my $explicit = Silki::Schema->SQLFactoryClass()->new_select();
+    $explicit->select( $Schema->table('Wiki')->column('wiki_id') );
+    $class->_ExplicitWikiSelectBase($explicit);
+
     $select->from( $Schema->tables( 'Wiki', 'Page' ) )
-        ->from( $Schema->tables( 'Page', 'PageRevision' ) )->where(
-        $Schema->table('PageRevision')->column('user_id'),
-        '=', Fey::Placeholder->new()
-        );
+           ->from( $Schema->tables( 'Page', 'PageRevision' ) )
+           ->where( $Schema->table('PageRevision')->column('user_id'),
+                    '=', Fey::Placeholder->new()
+                  )
+           ->and( $Schema->table('Wiki')->column('wiki_id'), 'NOT IN',
+                  $explicit );
 
     return;
 }
