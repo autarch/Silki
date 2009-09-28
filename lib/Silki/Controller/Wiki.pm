@@ -48,8 +48,7 @@ sub _set_wiki : Chained('/') : PathPart('wiki') : CaptureArgs(1) {
     $c->stash()->{wiki} = $wiki;
 }
 
-sub no_page : Chained('_set_wiki') : PathPart('') : Args(0) :
-    ActionClass('+Silki::Action::REST') {
+sub no_page : Chained('_set_wiki') : PathPart('') : Args(0) : ActionClass('+Silki::Action::REST') {
 }
 
 sub no_page_GET_html {
@@ -106,8 +105,7 @@ sub new_page_form : Chained('_set_wiki') : PathPart('new_page_form') : Args(0)
     $c->stash()->{template} = '/wiki/new_page_form';
 }
 
-sub page_collection : Chained('_set_wiki') : PathPart('page') : Args(0) :
-    ActionClass('+Silki::Action::REST') {
+sub page_collection : Chained('_set_wiki') : PathPart('page') : Args(0) : ActionClass('+Silki::Action::REST') {
 }
 
 sub page_collection_POST {
@@ -151,8 +149,7 @@ sub _set_page : Chained('_set_wiki') : PathPart('page') : CaptureArgs(1) {
     $c->stash()->{page} = $page;
 }
 
-sub page : Chained('_set_page') : PathPart('') : Args(0) :
-    ActionClass('+Silki::Action::REST') {
+sub page : Chained('_set_page') : PathPart('') : Args(0) : ActionClass('+Silki::Action::REST') {
 }
 
 sub page_GET_html {

@@ -12,9 +12,14 @@ after '_set_user' => sub {
     my $c       = shift;
     my $user_id = shift;
 
-    return unless $user_id =~ /^\d+$/;
+    my $user;
 
-    my $user = Silki::Schema::User->new( user_id => $user_id );
+    if ( $user_id eq 'guest' ) {
+        $user = Silki::Schema::User->GuestUser();
+    }
+    else {
+        $user = Silki::Schema::User->new( user_id => $user_id );
+    }
 
     $c->redirect_and_detach( $c->domain()->uri( with_host => 1 ) )
         unless $user;

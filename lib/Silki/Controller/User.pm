@@ -24,6 +24,28 @@ sub _make_user_uri {
     return $user->uri( view => $view );
 }
 
+sub wikis  : Chained('_set_user') : PathPart('wikis') : Args(0) : ActionClass('+Silki::Action::REST') {
+}
+
+sub wikis_GET {
+    my $self = shift;
+    my $c    = shift;
+
+    my $user = $c->stash()->{user};
+
+    my $wikis = $user->all_wikis();
+
+    my @entity = map {
+        {
+            wiki_id    => $_->wiki_id(),
+            title      => $_->title(),
+            short_name => $_->short_name(),
+        }
+    } $wikis->all();
+
+    return $self->status_ok( $c, entity => \@entity );
+}
+
 no Moose;
 
 __PACKAGE__->meta()->make_immutable();
