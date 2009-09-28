@@ -27,88 +27,88 @@ has_table( $Schema->table('Page') );
 
 has_one( $Schema->table('User') );
 
-has_one wiki =>
-    ( table   => $Schema->table('Wiki'),
-      handles => [ 'domain' ],
-    );
+has_one wiki => (
+    table   => $Schema->table('Wiki'),
+    handles => ['domain'],
+);
 
-has revision_count =>
-    ( metaclass   => 'FromSelect',
-      is          => 'ro',
-      isa         => Int,
-      select      => __PACKAGE__->_RevisionCountSelect(),
-      bind_params => sub { $_[0]->page_id() },
-    );
+has revision_count => (
+    metaclass   => 'FromSelect',
+    is          => 'ro',
+    isa         => Int,
+    select      => __PACKAGE__->_RevisionCountSelect(),
+    bind_params => sub { $_[0]->page_id() },
+);
 
-class_has _RevisionsSelect =>
-    ( is      => 'ro',
-      isa     => 'Fey::SQL::Select',
-      lazy    => 1,
-      builder => '_BuildRevisionsSelect',
-    );
+class_has _RevisionsSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildRevisionsSelect',
+);
 
-has_one most_recent_revision =>
-    ( table       => $Schema->table('PageRevision'),
-      select      => __PACKAGE__->_MostRecentRevisionSelect(),
-      bind_params => sub { $_[0]->page_id() },
-      handles     => { content                => 'content',
-                       last_modified_datetime => 'creation_datetime',
-                     },
-    );
+has_one most_recent_revision => (
+    table       => $Schema->table('PageRevision'),
+    select      => __PACKAGE__->_MostRecentRevisionSelect(),
+    bind_params => sub { $_[0]->page_id() },
+    handles     => {
+        content                => 'content',
+        last_modified_datetime => 'creation_datetime',
+    },
+);
 
-has_one first_revision =>
-    ( table       => $Schema->table('PageRevision'),
-      select      => __PACKAGE__->_FirstRevisionSelect(),
-      bind_params => sub { $_[0]->page_id(), 1 },
-      handles     => { creation_datetime => 'creation_datetime',
-                     },
-    );
+has_one first_revision => (
+    table       => $Schema->table('PageRevision'),
+    select      => __PACKAGE__->_FirstRevisionSelect(),
+    bind_params => sub { $_[0]->page_id(), 1 },
+    handles     => {
+        creation_datetime => 'creation_datetime',
+    },
+);
 
-has incoming_link_count =>
-    ( metaclass   => 'FromSelect',
-      is          => 'ro',
-      isa         => Int,
-      select      => __PACKAGE__->_IncomingLinkCountSelect(),
-      bind_params => sub { $_[0]->page_id() },
-    );
+has incoming_link_count => (
+    metaclass   => 'FromSelect',
+    is          => 'ro',
+    isa         => Int,
+    select      => __PACKAGE__->_IncomingLinkCountSelect(),
+    bind_params => sub { $_[0]->page_id() },
+);
 
-has_many incoming_links =>
-    ( table       => $Schema->table('Page'),
-      select      => __PACKAGE__->_IncomingLinkSelect(),
-      bind_params => sub { $_[0]->page_id() },
-    );
+has_many incoming_links => (
+    table       => $Schema->table('Page'),
+    select      => __PACKAGE__->_IncomingLinkSelect(),
+    bind_params => sub { $_[0]->page_id() },
+);
 
-has is_front_page =>
-    ( is       => 'ro',
-      isa      => Bool,
-      lazy     => 1,
-      default  => sub { $_[0]->title() eq 'Front Page' },
-      init_arg => undef,
-    );
+has is_front_page => (
+    is       => 'ro',
+    isa      => Bool,
+    lazy     => 1,
+    default  => sub { $_[0]->title() eq 'Front Page' },
+    init_arg => undef,
+);
 
-class_has _PendingPageLinkSelectSQL =>
-    ( is      => 'ro',
-      isa     => 'Fey::SQL::Select',
-      lazy    => 1,
-      builder => '_BuildPendingPageLinkSelectSQL',
-    );
+class_has _PendingPageLinkSelectSQL => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildPendingPageLinkSelectSQL',
+);
 
-class_has _PendingPageLinkDeleteSQL =>
-    ( is      => 'ro',
-      isa     => 'Fey::SQL::Delete',
-      lazy    => 1,
-      builder => '_BuildPendingPageLinkDeleteSQL',
-    );
+class_has _PendingPageLinkDeleteSQL => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Delete',
+    lazy    => 1,
+    builder => '_BuildPendingPageLinkDeleteSQL',
+);
 
-sub _base_uri_path
-{
+sub _base_uri_path {
     my $self = shift;
 
     return $self->wiki()->_base_uri_path() . '/page/' . $self->uri_path();
 }
 
-around insert => sub
-{
+around insert => sub {
     my $orig  = shift;
     my $class = shift;
 
@@ -123,26 +123,26 @@ around insert => sub
 
     my $delete = $class->_PendingPageLinkDeleteSQL();
 
-    my $update_links = sub
-    {
-        my $links =
-            $dbh->selectcol_arrayref( $select_sql,
-                                      {},
-                                      $page->wiki_id(),
-                                      $page->title(),
-                                    );
+    my $update_links = sub {
+        my $links = $dbh->selectcol_arrayref(
+            $select_sql,
+            {},
+            $page->wiki_id(),
+            $page->title(),
+        );
 
         return unless @{$links};
 
-        $dbh->do( $delete->sql($dbh),
-                  {},
-                  $page->wiki_id(),
-                  $page->title(),
-                );
+        $dbh->do(
+            $delete->sql($dbh),
+            {},
+            $page->wiki_id(),
+            $page->title(),
+        );
 
-        my @new_links = map { { from_page_id => $_,
-                                to_page_id   => $page->page_id(),
-                              } } @{ $links };
+        my @new_links
+            = map { { from_page_id => $_, to_page_id => $page->page_id(), } }
+            @{$links};
 
         Silki::Schema::PageLink->insert_many(@new_links);
     };
@@ -152,63 +152,62 @@ around insert => sub
     return $page;
 };
 
-sub _BuildPendingPageLinkSelectSQL
-{
+sub _BuildPendingPageLinkSelectSQL {
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
-    $select->select( $Schema->table('PendingPageLink')->column('from_page_id') )
-           ->from( $Schema->table('PendingPageLink') )
-           ->where( $Schema->table('PendingPageLink')->column('to_wiki_id'),
-                    '=', Fey::Placeholder->new() )
-           ->and( $Schema->table('PendingPageLink')->column('to_page_title'),
-                    '=', Fey::Placeholder->new() );
+    $select->select(
+        $Schema->table('PendingPageLink')->column('from_page_id') )
+        ->from( $Schema->table('PendingPageLink') )->where(
+        $Schema->table('PendingPageLink')->column('to_wiki_id'),
+        '=', Fey::Placeholder->new()
+        )->and(
+        $Schema->table('PendingPageLink')->column('to_page_title'),
+        '=', Fey::Placeholder->new()
+        );
 
     return $select;
 }
 
-sub _BuildPendingPageLinkDeleteSQL
-{
+sub _BuildPendingPageLinkDeleteSQL {
     my $delete = Silki::Schema->SQLFactoryClass()->new_delete();
-    $delete->delete()
-           ->from( $Schema->table('PendingPageLink') )
-           ->where( $Schema->table('PendingPageLink')->column('to_wiki_id'),
-                    '=', Fey::Placeholder->new() )
-           ->and( $Schema->table('PendingPageLink')->column('to_page_title'),
-                    '=', Fey::Placeholder->new() );
+    $delete->delete()->from( $Schema->table('PendingPageLink') )->where(
+        $Schema->table('PendingPageLink')->column('to_wiki_id'),
+        '=', Fey::Placeholder->new()
+        )->and(
+        $Schema->table('PendingPageLink')->column('to_page_title'),
+        '=', Fey::Placeholder->new()
+        );
 
     return $delete;
 }
 
-sub insert_with_content
-{
+sub insert_with_content {
     my $class = shift;
     my %p     = @_;
 
-    my %page_p =
-        ( map { $_ => delete $p{$_} }
-          grep { exists $p{$_} }
-          map { $_->name() }
-          $class->Table()->columns()
-        );
+    my %page_p = (
+        map { $_ => delete $p{$_} }
+            grep { exists $p{$_} }
+            map  { $_->name() } $class->Table()->columns()
+    );
 
     $page_p{uri_path} = $class->_title_to_uri_path( $page_p{title} );
 
     my $page;
-    $class->SchemaClass()->RunInTransaction
-        ( sub
-          {
-              $page = $class->insert(%page_p);
+    $class->SchemaClass()->RunInTransaction(
+        sub {
+            $page = $class->insert(%page_p);
 
-              $page->add_revision( %p,
-                                   user_id => $page->user_id(),
-                                 );
-          }
-        );
+            $page->add_revision(
+                %p,
+                user_id => $page->user_id(),
+            );
+        }
+    );
 
     return $page;
 }
 
-sub add_revision
-{
+sub add_revision {
     my $self = shift;
     my %p    = @_;
 
@@ -217,16 +216,14 @@ sub add_revision
 
     $self->_clear_most_recent_revision();
 
-    return
-        Silki::Schema::PageRevision->insert
-            ( %p,
-              revision_number => $revision_number,
-              page_id         => $self->page_id(),
-            );
+    return Silki::Schema::PageRevision->insert(
+        %p,
+        revision_number => $revision_number,
+        page_id         => $self->page_id(),
+    );
 }
 
-sub _title_to_uri_path
-{
+sub _title_to_uri_path {
     my $self  = shift;
     my $title = shift;
 
@@ -240,117 +237,113 @@ sub _title_to_uri_path
     return $escaped;
 }
 
-sub _MostRecentRevisionSelect
-{
+sub _MostRecentRevisionSelect {
     my $self = shift;
 
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
     $select->select( $Schema->table('PageRevision') )
-           ->from( $Schema->table('PageRevision') )
-           ->where( $Schema->table('PageRevision')->column('page_id'),
-                    '=', Fey::Placeholder->new() )
-           ->order_by( $Schema->table('PageRevision')->column('revision_number'), 'DESC' )
-           ->limit(1);
+        ->from( $Schema->table('PageRevision') )->where(
+        $Schema->table('PageRevision')->column('page_id'),
+        '=', Fey::Placeholder->new()
+        )
+        ->order_by( $Schema->table('PageRevision')->column('revision_number'),
+        'DESC' )->limit(1);
 
     return $select;
 }
 
-sub _FirstRevisionSelect
-{
+sub _FirstRevisionSelect {
     my $self = shift;
 
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
     $select->select( $Schema->table('PageRevision') )
-           ->from( $Schema->table('PageRevision') )
-           ->where( $Schema->table('PageRevision')->column('page_id'),
-                    '=', Fey::Placeholder->new() )
-           ->and( $Schema->table('PageRevision')->column('revision_number'),
-                  '=', Fey::Placeholder->new() );
+        ->from( $Schema->table('PageRevision') )->where(
+        $Schema->table('PageRevision')->column('page_id'),
+        '=', Fey::Placeholder->new()
+        )->and(
+        $Schema->table('PageRevision')->column('revision_number'),
+        '=', Fey::Placeholder->new()
+        );
 
     return $select;
 }
 
-sub _IncomingLinkCountSelect
-{
+sub _IncomingLinkCountSelect {
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
     my $page_link_t = $Schema->table('PageLink');
 
-    my $count = Fey::Literal::Function->new( 'COUNT', $page_link_t->column('from_page_id') );
+    my $count = Fey::Literal::Function->new( 'COUNT',
+        $page_link_t->column('from_page_id') );
 
-    $select->select($count)
-           ->from($page_link_t)
-           ->where( $page_link_t->column('to_page_id'), '=', Fey::Placeholder->new() );
+    $select->select($count)->from($page_link_t)
+        ->where( $page_link_t->column('to_page_id'), '=',
+        Fey::Placeholder->new() );
 
     return $select;
 }
 
-sub _IncomingLinkSelect
-{
+sub _IncomingLinkSelect {
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
     my ( $page_t, $page_link_t ) = $Schema->tables( 'Page', 'PageLink' );
 
-    my ($fk) =
-        first { $_->has_column( $page_link_t->column('from_page_id') ) }
-              $Schema->foreign_keys_between_tables( $page_t, $page_link_t );
+    my ($fk)
+        = first { $_->has_column( $page_link_t->column('from_page_id') ) }
+    $Schema->foreign_keys_between_tables( $page_t, $page_link_t );
 
-    $select->select($page_t)
-           ->from( $page_t, $page_link_t, $fk )
-           ->where( $page_link_t->column('to_page_id'), '=', Fey::Placeholder->new() )
-           ->order_by( $page_t->column('title') );
+    $select->select($page_t)->from( $page_t, $page_link_t, $fk )
+        ->where( $page_link_t->column('to_page_id'), '=',
+        Fey::Placeholder->new() )->order_by( $page_t->column('title') );
 
     return $select;
 }
 
-sub _RevisionCountSelect
-{
+sub _RevisionCountSelect {
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
     my $page_revision_t = $Schema->table('PageRevision');
 
-    my $count = Fey::Literal::Function->new( 'COUNT', $page_revision_t->column('page_id') );
+    my $count = Fey::Literal::Function->new( 'COUNT',
+        $page_revision_t->column('page_id') );
 
-    $select->select($count)
-           ->from($page_revision_t)
-           ->where( $page_revision_t->column('page_id'), '=', Fey::Placeholder->new() );
+    $select->select($count)->from($page_revision_t)
+        ->where( $page_revision_t->column('page_id'), '=',
+        Fey::Placeholder->new() );
 
     return $select;
 }
 
-sub revisions
-{
+sub revisions {
     my $self = shift;
-    my ( $limit, $offset ) =
-        validated_list( \@_,
-                        limit  => { isa => Int, optional => 1 },
-                        offset => { isa => Int, default => 0 },
-                      );
+    my ( $limit, $offset ) = validated_list(
+        \@_,
+        limit  => { isa => Int, optional => 1 },
+        offset => { isa => Int, default  => 0 },
+    );
 
     my $select = $self->_RevisionsSelect()->clone();
     $select->limit( $limit, $offset );
 
-    return
-        Fey::Object::Iterator::FromSelect->new
-            ( classes     => [ 'Silki::Schema::PageRevision' ],
-              select      => $select,
-              dbh         => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
-              bind_params => [ $self->page_id() ],
-            );
+    return Fey::Object::Iterator::FromSelect->new(
+        classes => ['Silki::Schema::PageRevision'],
+        select  => $select,
+        dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
+        bind_params => [ $self->page_id() ],
+    );
 }
 
-sub _BuildRevisionsSelect
-{
+sub _BuildRevisionsSelect {
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
     my $page_revision_t = $Schema->table('PageRevision');
 
-    $select->select($page_revision_t)
-           ->from($page_revision_t)
-           ->where( $page_revision_t->column('page_id'), '=', Fey::Placeholder->new() )
-           ->order_by( $page_revision_t->column('revision_number'), 'DESC' );
+    $select->select($page_revision_t)->from($page_revision_t)
+        ->where( $page_revision_t->column('page_id'), '=',
+        Fey::Placeholder->new() )
+        ->order_by( $page_revision_t->column('revision_number'), 'DESC' );
 
     return $select;
 }

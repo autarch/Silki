@@ -16,28 +16,29 @@ my $Schema = Silki::Schema->Schema();
 
     has_one( $Schema->table('Locale') );
 
-    has_many time_zones =>
-        ( table    => $Schema->table('TimeZone'),
-          order_by => [ $Schema->table('TimeZone')->column('display_order'), 'ASC' ],
-        );
+    has_many time_zones => (
+        table => $Schema->table('TimeZone'),
+        order_by =>
+            [ $Schema->table('TimeZone')->column('display_order'), 'ASC' ],
+    );
 }
 
-sub CreateDefaultCountries
-{
+sub CreateDefaultCountries {
     my $class = shift;
 
-    my @countries = ( [ 'us', 'United States', 'en_US' ],
-                      [ 'ca', 'Canada', 'en_CA' ],
-                    );
+    my @countries = (
+        [ 'us', 'United States', 'en_US' ],
+        [ 'ca', 'Canada',        'en_CA' ],
+    );
 
-    for my $country (@countries)
-    {
+    for my $country (@countries) {
         next if $class->new( iso_code => $country->[0] );
 
-        $class->insert( iso_code    => $country->[0],
-                        name        => $country->[1],
-                        locale_code => $country->[2],
-                      );
+        $class->insert(
+            iso_code    => $country->[0],
+            name        => $country->[1],
+            locale_code => $country->[2],
+        );
     }
 }
 

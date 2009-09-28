@@ -14,56 +14,57 @@ use Moose::Role;
 
 requires '_base_uri_path';
 
+sub uri {
 
-sub uri
-{
     # MX::P::V doesn't handle class methods
     my $self = shift;
 
-    my %p =
-        validate( \@_,
-                  view      => { isa => Str, optional => 1 },
-                  fragment  => { isa => Str, optional => 1 },
-                  query     => { isa => HashRef, default => {} },
-                  with_host => { isa => Bool, default => 0 },
-                );
+    my %p = validate(
+        \@_,
+        view      => { isa => Str,     optional => 1 },
+        fragment  => { isa => Str,     optional => 1 },
+        query     => { isa => HashRef, default  => {} },
+        with_host => { isa => Bool,    default  => 0 },
+    );
 
     my $path = $self->_base_uri_path();
     $path .= q{/} . $p{view}
         unless string_is_empty( $p{view} );
 
-    $self->_make_uri( path      => $path,
-                      fragment  => $p{fragment},
-                      query     => $p{query},
-                      with_host => $p{with_host},
-                    );
+    $self->_make_uri(
+        path      => $path,
+        fragment  => $p{fragment},
+        query     => $p{query},
+        with_host => $p{with_host},
+    );
 }
 
-sub _make_uri
-{
+sub _make_uri {
     my $self = shift;
     my %p    = @_;
 
     delete $p{fragment}
         if string_is_empty( $p{fragment} );
 
-    return dynamic_uri( $self->_host_params_for_uri( delete $p{with_host} ),
-                        %p,
-                      );
+    return dynamic_uri(
+        $self->_host_params_for_uri( delete $p{with_host} ),
+        %p,
+    );
 }
 
-sub _host_params_for_uri
-{
+sub _host_params_for_uri {
     my $self = shift;
 
     return unless $_[0];
 
-    return ( %{ $self->domain()->uri_params() } ,
-             (   $ENV{SERVER_PORT}
-               ? ( port => $ENV{SERVER_PORT} )
-               : ()
-             )
-           );
+    return (
+        %{ $self->domain()->uri_params() },
+        (
+            $ENV{SERVER_PORT}
+            ? ( port => $ENV{SERVER_PORT} )
+            : ()
+        )
+    );
 }
 
 no Moose::Role;

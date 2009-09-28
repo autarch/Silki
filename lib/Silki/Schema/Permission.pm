@@ -12,18 +12,16 @@ has_policy 'Silki::Schema::Policy';
 
 has_table( Silki::Schema->Schema()->table('Permission') );
 
-for my $role ( qw( Read Edit Delete Upload Invite Manage ) )
-{
-    class_has $role =>
-        ( is      => 'ro',
-          isa     => 'Silki::Schema::Permission',
-          lazy    => 1,
-          default => sub { __PACKAGE__->_CreateOrFindPermission($role) },
-        );
+for my $role (qw( Read Edit Delete Upload Invite Manage )) {
+    class_has $role => (
+        is      => 'ro',
+        isa     => 'Silki::Schema::Permission',
+        lazy    => 1,
+        default => sub { __PACKAGE__->_CreateOrFindPermission($role) },
+    );
 }
 
-sub _CreateOrFindPermission
-{
+sub _CreateOrFindPermission {
     my $class = shift;
     my $name  = shift;
 
@@ -38,7 +36,6 @@ no Fey::ORM::Table;
 no MooseX::ClassAttribute;
 
 __PACKAGE__->meta()->make_immutable();
-
 
 1;
 

@@ -8,68 +8,69 @@ use HTML::Entities qw( encode_entities );
 use HTTP::Status qw( RC_NOT_FOUND RC_INTERNAL_SERVER_ERROR );
 use Silki::JSON;
 
-
 # I'd really rather _not_ copy this whole thing in here, but it's the
 # only way to override how errors are logged. I have to monkey-patch
 # rather than subclassing or else NEXT::finalize() ends up calling the
 # finalize in Catalyst itself before calling finalize() for other
 # plugins (a mess!).
 {
+
     package Catalyst;
 
     no warnings 'redefine';
-sub finalize {
-    my $self = shift;
 
-    for my $error ( @{ $self->error } ) {
-        $self->_log_error($error);
-    }
+    sub finalize {
+        my $self = shift;
 
-    # Allow engine to handle finalize flow (for POE)
-    if ( $self->engine->can('finalize') ) {
-        $self->engine->finalize($self);
-    }
-    else {
-
-        $self->finalize_uploads;
-
-        # Error
-        if ( $#{ $self->error } >= 0 ) {
-            $self->finalize_error;
+        for my $error ( @{ $self->error } ) {
+            $self->_log_error($error);
         }
 
-        $self->finalize_headers;
+        # Allow engine to handle finalize flow (for POE)
+        if ( $self->engine->can('finalize') ) {
+            $self->engine->finalize($self);
+        }
+        else {
 
-        # HEAD request
-        if ( $self->request->method eq 'HEAD' ) {
-            $self->response->body('');
+            $self->finalize_uploads;
+
+            # Error
+            if ( $#{ $self->error } >= 0 ) {
+                $self->finalize_error;
+            }
+
+            $self->finalize_headers;
+
+            # HEAD request
+            if ( $self->request->method eq 'HEAD' ) {
+                $self->response->body('');
+            }
+
+            $self->finalize_body;
         }
 
-        $self->finalize_body;
-    }
-    
-    if ($self->use_stats) {        
-        my $elapsed = sprintf '%f', $self->stats->elapsed;
-        my $av = $elapsed == 0 ? '??' : sprintf '%.3f', 1 / $elapsed;
-        $self->log->info(
-            "Request took ${elapsed}s ($av/s)\n" . $self->stats->report . "\n" );        
-    }
+        if ( $self->use_stats ) {
+            my $elapsed = sprintf '%f', $self->stats->elapsed;
+            my $av = $elapsed == 0 ? '??' : sprintf '%.3f', 1 / $elapsed;
+            $self->log->info( "Request took ${elapsed}s ($av/s)\n"
+                    . $self->stats->report
+                    . "\n" );
+        }
 
-    return $self->response->status;
+        return $self->response->status;
+    }
 }
-}
-sub _log_error
-{
+
+sub _log_error {
     my $self  = shift;
     my $error = shift;
 
     # XXX - change this later to log to the apache log?
-#    if ( $error =~ /unknown resource/ )
+    #    if ( $error =~ /unknown resource/ )
 
     my %error = ( uri => $self->request()->uri() . '' );
 
-    if ( my $user = $self->user() )
-    {
+    if ( my $user = $self->user() ) {
         $error{user} = $user->username();
         $error{user} .= q{ - } . $user->user_id()
             if $user->user_id();
@@ -80,19 +81,19 @@ sub _log_error
     $self->log()->error( Silki::JSON->Encode( \%error ) );
 }
 
-sub finalize_error
-{
+sub finalize_error {
     my $self = shift;
 
     my @errors = @{ $self->error() || [] };
 
-    my $status =
-        ( grep { /unknown resource|no default/i } @errors ) ? RC_NOT_FOUND : RC_INTERNAL_SERVER_ERROR;
+    my $status
+        = ( grep {/unknown resource|no default/i} @errors )
+        ? RC_NOT_FOUND
+        : RC_INTERNAL_SERVER_ERROR;
 
     $self->response()->status($status);
 
-    if ( $self->debug() )
-    {
+    if ( $self->debug() ) {
         $self->_finalize_error_with_debug( $self, @_ );
         return;
     }
@@ -100,7 +101,7 @@ sub finalize_error
     $self->error( [] );
 
     $self->response()->content_type('text/html; charset=utf-8');
-    $self->response()->body( $self->subreq( "/error/$status" ) );
+    $self->response()->body( $self->subreq("/error/$status") );
 }
 
 # copied from Catalyst::Engine->finalize_error just so we can set the
@@ -110,16 +111,16 @@ sub _finalize_error_with_debug {
     my $c    = shift;
 
     $c->res->content_type('text/html; charset=utf-8');
-    my $name = $c->config->{name} || join(' ', split('::', ref $c));
+    my $name = $c->config->{name} || join( ' ', split( '::', ref $c ) );
 
     my ( $title, $error, $infos );
     if ( $c->debug ) {
 
         # For pretty dumps
         $error = join '', map {
-                '<p><code class="error">'
-              . encode_entities($_)
-              . '</code></p>'
+                  '<p><code class="error">'
+                . encode_entities($_)
+                . '</code></p>'
         } @{ $c->error };
         $error ||= 'No output';
         $error = qq{<pre wrap="">$error</pre>};
@@ -139,12 +140,12 @@ sub _finalize_error_with_debug {
         my @infos;
         my $i = 0;
         for my $dump ( $c->dump_these ) {
-            my $name  = $dump->[0];
+            my $name = $dump->[0];
 
             # stored in there for classes with an anon metaclass.
             delete $dump->[1]{__MOP__} if ref $dump->[1];
 
-            my $value = encode_entities( dump( $dump->[1] ));
+            my $value = encode_entities( dump( $dump->[1] ) );
             push @infos, sprintf <<"EOF", $name, $value;
 <h2><a href="#" onclick="toggleDump('dump_$i'); return false">%s</a></h2>
 <div id="dump_$i">

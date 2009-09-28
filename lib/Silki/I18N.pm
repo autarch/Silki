@@ -11,21 +11,19 @@ use Data::Localize;
 use Path::Class qw( file );
 use Silki::Config;
 
-
 {
     my $DL = Data::Localize->new();
-    $DL->add_localizer( class => '+Silki::Gettext',
-                        path  => file( Silki::Config->new()->share_dir, 'i18n', '*.po' ),
-                      );
+    $DL->add_localizer(
+        class => '+Silki::Gettext',
+        path  => file( Silki::Config->new()->share_dir, 'i18n', '*.po' ),
+    );
 
-    sub SetLanguage
-    {
+    sub SetLanguage {
         shift;
         $DL->set_languages(@_);
     }
 
-    sub loc
-    {
+    sub loc {
         $DL->localize(@_);
     }
 }

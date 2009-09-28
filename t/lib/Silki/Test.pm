@@ -9,9 +9,7 @@ our @EXPORT_OK = qw( mock_dbh );
 
 use DBD::Mock 1.36;
 
-
-sub mock_dbh
-{
+sub mock_dbh {
     require Silki::Schema;
 
     my $man = Silki::Schema->DBIManager();

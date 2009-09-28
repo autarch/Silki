@@ -9,8 +9,7 @@ BEGIN { extends 'Silki::Controller::Base' }
 
 __PACKAGE__->config( namespace => q{} );
 
-sub robots_txt : Path('/robots.txt') : Args(0)
-{
+sub robots_txt : Path('/robots.txt') : Args(0) {
     my $self = shift;
     my $c    = shift;
 

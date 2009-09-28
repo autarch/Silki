@@ -10,30 +10,29 @@ use Text::MultiMarkdown;
 use Moose;
 use MooseX::StrictConstructor;
 
-has _user =>
-    ( is       => 'ro',
-      isa      => 'Silki::Schema::User',
-      required => 1,
-      init_arg => 'user',
-    );
+has _user => (
+    is       => 'ro',
+    isa      => 'Silki::Schema::User',
+    required => 1,
+    init_arg => 'user',
+);
 
-has _wiki =>
-    ( is       => 'ro',
-      isa      => 'Silki::Schema::Wiki',
-      required => 1,
-      init_arg => 'wiki',
-    );
+has _wiki => (
+    is       => 'ro',
+    isa      => 'Silki::Schema::Wiki',
+    required => 1,
+    init_arg => 'wiki',
+);
 
-has _tmm =>
-    ( is       => 'ro',
-      isa      => 'Text::MultiMarkdown',
-      lazy     => 1,
-      default  => sub { Text::MultiMarkdown->new() },
-      init_arg => undef,
-    );
+has _tmm => (
+    is       => 'ro',
+    isa      => 'Text::MultiMarkdown',
+    lazy     => 1,
+    default  => sub { Text::MultiMarkdown->new() },
+    init_arg => undef,
+);
 
-sub wikitext_to_html
-{
+sub wikitext_to_html {
     my $self = shift;
     my $text = shift;
 
@@ -43,8 +42,8 @@ sub wikitext_to_html
 }
 
 my $link_re = qr/\[\[([^\]]+?)\]\]/;
-sub _handle_wiki_links
-{
+
+sub _handle_wiki_links {
     my $self = shift;
     my $text = shift;
 
@@ -53,8 +52,7 @@ sub _handle_wiki_links
     return $text;
 }
 
-sub _link_to_page
-{
+sub _link_to_page {
     my $self  = shift;
     my $title = shift;
 
@@ -62,41 +60,39 @@ sub _link_to_page
 
     my $class = $page ? 'existing-page' : 'new-page';
 
-    my $uri =
-          $page
+    my $uri
+        = $page
         ? $page->uri()
         : $self->_wiki()
-               ->uri( view => 'new_page_form', query => { title => $title } );
+        ->uri( view => 'new_page_form', query => { title => $title } );
 
     my $escaped_title = encode_entities($title);
 
     return qq{<a href="$uri" class="$class">$escaped_title</a>};
 }
 
-sub links
-{
+sub links {
     my $self = shift;
     my $text = shift;
 
-    my %links = map { $_ =>
-                          { page => $self->_page_for_title($_),
-                            wiki => $self->_wiki(),
-                          }
-                    } ( $text =~ /$link_re/g );
+    my %links = map {
+        $_ => {
+            page => $self->_page_for_title($_),
+            wiki => $self->_wiki(),
+            }
+    } ( $text =~ /$link_re/g );
 
     return \%links;
 }
 
-sub _page_for_title
-{
+sub _page_for_title {
     my $self  = shift;
     my $title = shift;
 
-    return
-        Silki::Schema::Page->new( title   => $title,
-                                  wiki_id => $self->_wiki()->wiki_id(),
-                                )
-        || undef;
+    return Silki::Schema::Page->new(
+        title   => $title,
+        wiki_id => $self->_wiki()->wiki_id(),
+    ) || undef;
 }
 
 no Moose;

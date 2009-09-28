@@ -53,8 +53,8 @@ sub _link {
 }
 
 sub _p_prefix {
-    my $self = shift;
-    my $node = shift;
+    my $self  = shift;
+    my $node  = shift;
     my $rules = shift;
 
     # CKEditor uses 40px of margin-left per level of indentation

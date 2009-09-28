@@ -26,150 +26,146 @@ my $Schema = Silki::Schema->Schema();
 
 with 'Silki::Role::Schema::URIMaker';
 
-with 'Silki::Role::Schema::DataValidator'
-    => { steps => [ '_email_address_is_unique',
-                    '_normalize_and_validate_openid_uri',
-                    '_openid_uri_is_unique',
-                  ],
-       };
+with 'Silki::Role::Schema::DataValidator' => {
+    steps => [
+        '_email_address_is_unique',
+        '_normalize_and_validate_openid_uri',
+        '_openid_uri_is_unique',
+    ],
+};
 
 has_policy 'Silki::Schema::Policy';
 
 has_table( $Schema->table('User') );
 
-has_one 'creator' =>
-    ( table => $Schema->table('User'));
+has_one 'creator' => ( table => $Schema->table('User') );
 
-has_many 'pages' =>
-    ( table => $Schema->table('Page') );
+has_many 'pages' => ( table => $Schema->table('Page') );
 
-has best_name =>
-    ( is      => 'ro',
-      isa     => Str,
-      lazy    => 1,
-      builder => '_build_best_name',
-    );
+has best_name => (
+    is      => 'ro',
+    isa     => Str,
+    lazy    => 1,
+    builder => '_build_best_name',
+);
 
-class_has _RoleInWikiSelect =>
-    ( is      => 'ro',
-      does    => 'Fey::Role::SQL::ReturnsData',
-      lazy    => 1,
-      builder => '_BuildRoleInWikiSelect',
-    );
+class_has _RoleInWikiSelect => (
+    is      => 'ro',
+    does    => 'Fey::Role::SQL::ReturnsData',
+    lazy    => 1,
+    builder => '_BuildRoleInWikiSelect',
+);
 
-class_has _PrivateWikiCountSelect =>
-    ( is      => 'ro',
-      does    => 'Fey::Role::SQL::ReturnsData',
-      lazy    => 1,
-      builder => '_BuildPrivateWikiCountSelect',
-    );
+class_has _PrivateWikiCountSelect => (
+    is      => 'ro',
+    does    => 'Fey::Role::SQL::ReturnsData',
+    lazy    => 1,
+    builder => '_BuildPrivateWikiCountSelect',
+);
 
-class_has _PrivateWikiSelect =>
-    ( is      => 'ro',
-      does    => 'Fey::Role::SQL::ReturnsData',
-      lazy    => 1,
-      builder => '_BuildPrivateWikiSelect',
-    );
+class_has _PrivateWikiSelect => (
+    is      => 'ro',
+    does    => 'Fey::Role::SQL::ReturnsData',
+    lazy    => 1,
+    builder => '_BuildPrivateWikiSelect',
+);
 
-class_has _AllWikiCountSelect =>
-    ( is      => 'ro',
-      does    => 'Fey::Role::SQL::ReturnsData',
-      lazy    => 1,
-      builder => '_BuildAllWikiCountSelect',
-    );
+class_has _AllWikiCountSelect => (
+    is      => 'ro',
+    does    => 'Fey::Role::SQL::ReturnsData',
+    lazy    => 1,
+    builder => '_BuildAllWikiCountSelect',
+);
 
-class_has _AllWikiSelect =>
-    ( is      => 'ro',
-      does    => 'Fey::Role::SQL::ReturnsData',
-      lazy    => 1,
-      builder => '_BuildAllWikiSelect',
-    );
+class_has _AllWikiSelect => (
+    is      => 'ro',
+    does    => 'Fey::Role::SQL::ReturnsData',
+    lazy    => 1,
+    builder => '_BuildAllWikiSelect',
+);
 
-class_has _SharedWikiSelect =>
-    ( is      => 'ro',
-      isa     => 'Fey::SQL::Union',
-      lazy    => 1,
-      builder => '_BuildSharedWikiSelect',
-    );
+class_has _SharedWikiSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Union',
+    lazy    => 1,
+    builder => '_BuildSharedWikiSelect',
+);
 
-class_has 'SystemUser' =>
-    ( is      => 'ro',
-      isa     => __PACKAGE__,
-      lazy    => 1,
-      default => sub { __PACKAGE__->_FindOrCreateSystemUser() },
-    );
+class_has 'SystemUser' => (
+    is      => 'ro',
+    isa     => __PACKAGE__,
+    lazy    => 1,
+    default => sub { __PACKAGE__->_FindOrCreateSystemUser() },
+);
 
-class_has 'GuestUser' =>
-    ( is      => 'ro',
-      isa     => __PACKAGE__,
-      lazy    => 1,
-      default => sub { __PACKAGE__->_FindOrCreateGuestUser() },
-    );
+class_has 'GuestUser' => (
+    is      => 'ro',
+    isa     => __PACKAGE__,
+    lazy    => 1,
+    default => sub { __PACKAGE__->_FindOrCreateGuestUser() },
+);
 
 {
     my $select = __PACKAGE__->_PrivateWikiCountSelect();
 
-    has private_wiki_count =>
-        ( metaclass   => 'FromSelect',
-          is          => 'ro',
-          isa         => Int,
-          select      => $select,
-          bind_params => sub { $_[0]->user_id(), $select->bind_params() },
-        );
+    has private_wiki_count => (
+        metaclass   => 'FromSelect',
+        is          => 'ro',
+        isa         => Int,
+        select      => $select,
+        bind_params => sub { $_[0]->user_id(), $select->bind_params() },
+    );
 }
 
 {
     my $select = __PACKAGE__->_PrivateWikiSelect();
 
-    has_many private_wikis =>
-        ( table       => $Schema->table('Wiki'),
-          select      => $select,
-          bind_params => sub { $_[0]->user_id(), $select->bind_params() },
-        );
+    has_many private_wikis => (
+        table       => $Schema->table('Wiki'),
+        select      => $select,
+        bind_params => sub { $_[0]->user_id(), $select->bind_params() },
+    );
 }
 
 {
     my $select = __PACKAGE__->_AllWikiCountSelect();
 
-    has all_wiki_count =>
-        ( metaclass   => 'FromSelect',
-          is          => 'ro',
-          isa         => Int,
-          select      => $select,
-          bind_params => sub { ( $_[0]->user_id() ) x 2 },
-        );
+    has all_wiki_count => (
+        metaclass   => 'FromSelect',
+        is          => 'ro',
+        isa         => Int,
+        select      => $select,
+        bind_params => sub { ( $_[0]->user_id() ) x 2 },
+    );
 }
 
 {
     my $select = __PACKAGE__->_AllWikiSelect();
 
-    has_many all_wikis =>
-        ( table       => $Schema->table('Wiki'),
-          select      => $select,
-          bind_params => sub { ( $_[0]->user_id() ) x 2 },
-        );
+    has_many all_wikis => (
+        table       => $Schema->table('Wiki'),
+        select      => $select,
+        bind_params => sub { ( $_[0]->user_id() ) x 2 },
+    );
 }
 
-around insert => sub
-{
+around insert => sub {
     my $orig  = shift;
     my $class = shift;
     my %p     = @_;
 
-    if ( delete $p{disable_login} )
-    {
+    if ( delete $p{disable_login} ) {
         $p{password} = '*disabled*';
     }
-    elsif ( $p{password} )
-    {
+    elsif ( $p{password} ) {
+
         # XXX - require a certain length or complexity? make it
         # configurable?
-        my $pass =
-            Authen::Passphrase::BlowfishCrypt->new
-                ( cost        => 8,
-                  salt_random => 1,
-                  passphrase  => $p{password},
-                );
+        my $pass = Authen::Passphrase::BlowfishCrypt->new(
+            cost        => 8,
+            salt_random => 1,
+            passphrase  => $p{password},
+        );
 
         $p{password} = $pass->as_rfc2307();
     }
@@ -177,13 +173,13 @@ around insert => sub
     $p{username} ||= $p{email_address};
 
     my $locale = DateTime::Locale->load( $p{locale_code} || 'en_US' );
-    $p{date_format} ||= $locale->date_format_default();
+    $p{date_format}     ||= $locale->date_format_default();
     $p{datetime_format} ||= $locale->datetime_format_default();
 
     $p{date_format_without_year} ||= $locale->format_for('MMMd');
 
-    my $time_format =
-          $locale->prefers_24_hour_time()
+    my $time_format
+        = $locale->prefers_24_hour_time()
         ? $locale->format_for('Hms')
         : $locale->format_for('hms');
 
@@ -195,16 +191,14 @@ around insert => sub
     return $class->$orig(%p);
 };
 
-around update => sub
-{
+around update => sub {
     my $orig = shift;
     my $self = shift;
     my %p    = @_;
 
-    if ( ! string_is_empty( $p{email_address} )
-         && string_is_empty( $p{username} )
-         && $self->username() eq $self->email_address() )
-    {
+    if (  !string_is_empty( $p{email_address} )
+        && string_is_empty( $p{username} )
+        && $self->username() eq $self->email_address() ) {
         $p{username} = $p{email_address};
     }
 
@@ -213,8 +207,7 @@ around update => sub
     return $self->$orig(%p);
 };
 
-sub _load_from_dbms
-{
+sub _load_from_dbms {
     my $self = shift;
     my $p    = shift;
 
@@ -228,32 +221,33 @@ sub _load_from_dbms
     no_such_row 'User cannot login'
         if $self->password() eq '*disabled*';
 
-    my $pass =
-        Authen::Passphrase::BlowfishCrypt->from_rfc2307( $self->password() );
+    my $pass = Authen::Passphrase::BlowfishCrypt->from_rfc2307(
+        $self->password() );
 
     no_such_row 'Invalid password'
         unless $pass->match( $p->{password} );
 }
 
-sub _email_address_is_unique
-{
+sub _email_address_is_unique {
     my $self      = shift;
     my $p         = shift;
     my $is_insert = shift;
 
     return if string_is_empty( $p->{email_address} );
 
-    return if ! $is_insert && $self->email_address() eq $p->{email_address};
+    return if !$is_insert && $self->email_address() eq $p->{email_address};
 
     return unless __PACKAGE__->new( email_address => $p->{email_address} );
 
-    return { field   => 'email_address',
-             message => loc('The email address you provided is already in use by another account.'),
-           };
+    return {
+        field   => 'email_address',
+        message => loc(
+            'The email address you provided is already in use by another account.'
+        ),
+    };
 }
 
-sub _normalize_and_validate_openid_uri
-{
+sub _normalize_and_validate_openid_uri {
     my $self      = shift;
     my $p         = shift;
     my $is_insert = shift;
@@ -263,11 +257,11 @@ sub _normalize_and_validate_openid_uri
     my $uri = URI->new( $p->{openid_uri} );
 
     unless ( defined $uri->scheme()
-             && $uri->scheme() =~ /^https?/ )
-    {
-        return { field   => 'openid_uri',
-                 message => loc('The OpenID URI you provided is not a valid URI.'),
-               };
+        && $uri->scheme() =~ /^https?/ ) {
+        return {
+            field   => 'openid_uri',
+            message => loc('The OpenID URI you provided is not a valid URI.'),
+        };
     }
 
     $p->{openid_uri} = $uri->canonical() . q{};
@@ -275,32 +269,32 @@ sub _normalize_and_validate_openid_uri
     return;
 }
 
-sub _openid_uri_is_unique
-{
+sub _openid_uri_is_unique {
     my $self      = shift;
     my $p         = shift;
     my $is_insert = shift;
 
     return if string_is_empty( $p->{openid_uri} );
 
-    return if ! $is_insert && $self->openid_uri() eq $p->{openid_uri};
+    return if !$is_insert && $self->openid_uri() eq $p->{openid_uri};
 
     return unless __PACKAGE__->new( openid_uri => $p->{openid_uri} );
 
-    return { field   => 'openid_uri',
-             message => loc('The OpenID URI you provided is already in use by another account.'),
-           };
+    return {
+        field   => 'openid_uri',
+        message => loc(
+            'The OpenID URI you provided is already in use by another account.'
+        ),
+    };
 }
 
-sub _base_uri_path
-{
+sub _base_uri_path {
     my $self = shift;
 
     return '/user/' . $self->user_id();
 }
 
-sub EnsureRequiredUsersExist
-{
+sub EnsureRequiredUsersExist {
     my $class = shift;
 
     $class->_FindOrCreateSystemUser();
@@ -311,8 +305,7 @@ sub EnsureRequiredUsersExist
 {
     my $SystemUsername = 'system-user';
 
-    sub _FindOrCreateSystemUser
-    {
+    sub _FindOrCreateSystemUser {
         my $class = shift;
 
         return $class->_FindOrCreateSpecialUser($SystemUsername);
@@ -322,30 +315,26 @@ sub EnsureRequiredUsersExist
 {
     my $GuestUsername = 'guest-user';
 
-    sub _FindOrCreateGuestUser
-    {
+    sub _FindOrCreateGuestUser {
         my $class = shift;
 
         return $class->_FindOrCreateSpecialUser($GuestUsername);
     }
 
-    sub is_guest
-    {
+    sub is_guest {
         my $self = shift;
 
         return $self->username() eq $GuestUsername;
     }
 }
 
-sub is_authenticated
-{
+sub is_authenticated {
     my $self = shift;
 
-    return ! $self->is_system_user();
+    return !$self->is_system_user();
 }
 
-sub _FindOrCreateSpecialUser
-{
+sub _FindOrCreateSpecialUser {
     my $class    = shift;
     my $username = shift;
 
@@ -356,8 +345,7 @@ sub _FindOrCreateSpecialUser
     return $class->_CreateSpecialUser($username);
 }
 
-sub _CreateSpecialUser
-{
+sub _CreateSpecialUser {
     my $class    = shift;
     my $username = shift;
 
@@ -365,77 +353,70 @@ sub _CreateSpecialUser
 
     my $email = $username . q{@} . $domain->email_hostname();
 
-    my $display_name = join ' ', map { ucfirst } split /-/, $username;
+    my $display_name = join ' ', map {ucfirst} split /-/, $username;
 
-    return $class->insert( display_name   => $display_name,
-                           username       => $username,
-                           email_address  => $email,
-                           password       => q{},
-                           disable_login  => 1,
-                           is_system_user => 1,
-                         );
+    return $class->insert(
+        display_name   => $display_name,
+        username       => $username,
+        email_address  => $email,
+        password       => q{},
+        disable_login  => 1,
+        is_system_user => 1,
+    );
 }
 
-sub format_date
-{
+sub format_date {
     my $self = shift;
     my $dt   = shift;
 
     $self->_format_dt( $dt, 'date' );
 }
 
-sub format_datetime
-{
+sub format_datetime {
     my $self = shift;
     my $dt   = shift;
 
     $self->_format_dt( $dt, 'datetime' );
 }
 
-sub _format_dt
-{
+sub _format_dt {
     my $self = shift;
     my $dt   = shift;
     my $type = shift;
 
-    my $format_dt =
-        $dt->clone()
-           ->set( locale => $self->locale_code() )
-           ->set_time_zone( $self->time_zone() );
+    my $format_dt = $dt->clone()->set( locale => $self->locale_code() )
+        ->set_time_zone( $self->time_zone() );
 
     my $today = DateTime->today( time_zone => $self->time_zone() );
 
-    my ( $without_year, $with_year ) =
-        ( $type . '_format_without_year',
-          $type . '_format'
-        );
+    my ( $without_year, $with_year ) = (
+        $type . '_format_without_year',
+        $type . '_format'
+    );
 
-    my $format =
-          $format_dt->year() == $today->year()
+    my $format
+        = $format_dt->year() == $today->year()
         ? $self->$without_year()
         : $self->$with_year();
 
     return $format_dt->format_cldr($format);
 }
 
-sub _build_best_name
-{
+sub _build_best_name {
     my $self = shift;
 
     return $self->display_name() if length $self->display_name;
 
     my $username = $self->username();
 
-    if ( $username =~ /\@/ )
-    {
+    if ( $username =~ /\@/ ) {
         $username =~ s/\.\w+$//;
     }
 
     return $username;
 }
 
-sub can_edit_user
-{
+sub can_edit_user {
     my $self = shift;
     my $user = shift;
 
@@ -448,14 +429,13 @@ sub can_edit_user
     return 0;
 }
 
-sub has_permission_in_wiki
-{
+sub has_permission_in_wiki {
     my $self = shift;
-    my ( $wiki, $perm ) =
-        validated_list( \@_,
-                        wiki       => { isa => 'Silki::Schema::Wiki' },
-                        permission => { isa => 'Silki::Schema::Permission' },
-                      );
+    my ( $wiki, $perm ) = validated_list(
+        \@_,
+        wiki       => { isa => 'Silki::Schema::Wiki' },
+        permission => { isa => 'Silki::Schema::Permission' },
+    );
 
     my $perms = $wiki->permissions();
 
@@ -464,48 +444,50 @@ sub has_permission_in_wiki
     return $perms->{ $role->name() }{ $perm->name() };
 }
 
-sub role_in_wiki
-{
-    my $self   = shift;
+sub role_in_wiki {
+    my $self = shift;
     my ($wiki) = pos_validated_list( \@_, { isa => 'Silki::Schema::Wiki' } );
 
     my $select = $self->_RoleInWikiSelect();
 
     my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
 
-    my $row = $dbh->selectrow_arrayref( $select->sql($dbh),
-                                        {},
-                                        $wiki->wiki_id(),
-                                        $self->user_id(),
-                                      );
+    my $row = $dbh->selectrow_arrayref(
+        $select->sql($dbh),
+        {},
+        $wiki->wiki_id(),
+        $self->user_id(),
+    );
 
-    my $name =
-          $row              ? $row->[0]
+    my $name
+        = $row              ? $row->[0]
         : $self->is_guest() ? 'Guest'
         :                     'Authenticated';
 
     return Silki::Schema::Role->$name();
 }
 
-sub _BuildRoleInWikiSelect
-{
+sub _BuildRoleInWikiSelect {
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
     $select->select( $Schema->table('Role')->column('name') )
-           ->from( $Schema->table('Role'), $Schema->table('UserWikiRole') )
-           ->where( $Schema->table('UserWikiRole')->column('wiki_id'),
-                    '=', Fey::Placeholder->new() )
-           ->and( $Schema->table('UserWikiRole')->column('user_id'),
-                    '=', Fey::Placeholder->new() );
+        ->from( $Schema->table('Role'), $Schema->table('UserWikiRole') )
+        ->where(
+        $Schema->table('UserWikiRole')->column('wiki_id'),
+        '=', Fey::Placeholder->new()
+        )->and(
+        $Schema->table('UserWikiRole')->column('user_id'),
+        '=', Fey::Placeholder->new()
+        );
 }
 
-sub _BuildPrivateWikiCountSelect
-{
+sub _BuildPrivateWikiCountSelect {
     my $class = shift;
 
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    my $distinct = Fey::Literal::Term->new( 'DISTINCT ', $Schema->table('Wiki')->column('wiki_id') );
+    my $distinct = Fey::Literal::Term->new( 'DISTINCT ',
+        $Schema->table('Wiki')->column('wiki_id') );
     my $count = Fey::Literal::Function->new( 'COUNT', $distinct );
 
     $select->select($count);
@@ -514,8 +496,7 @@ sub _BuildPrivateWikiCountSelect
     return $select;
 }
 
-sub _BuildPrivateWikiSelect
-{
+sub _BuildPrivateWikiSelect {
     my $class = shift;
 
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
@@ -527,8 +508,7 @@ sub _BuildPrivateWikiSelect
     return $select;
 }
 
-sub _PrivateWikiSelectBase
-{
+sub _PrivateWikiSelectBase {
     my $class  = shift;
     my $select = shift;
 
@@ -538,40 +518,43 @@ sub _PrivateWikiSelectBase
 
     my $public_select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    $public_select->select( $Schema->table('WikiRolePermission')->column('wiki_id') )
-                  ->from( $Schema->table('WikiRolePermission') )
-                  ->where( $Schema->table('WikiRolePermission')->column('role_id'),
-                           'IN', $guest->role_id(), $authed->role_id() )
-                  ->and( $Schema->table('WikiRolePermission')->column('permission_id'),
-                         '=', $read->permission_id() );
+    $public_select->select(
+        $Schema->table('WikiRolePermission')->column('wiki_id') )
+        ->from( $Schema->table('WikiRolePermission') )->where(
+        $Schema->table('WikiRolePermission')->column('role_id'),
+        'IN', $guest->role_id(), $authed->role_id()
+        )->and(
+        $Schema->table('WikiRolePermission')->column('permission_id'),
+        '=', $read->permission_id()
+        );
 
     $select->from( $Schema->table('Wiki'), $Schema->table('UserWikiRole') )
-           ->where( $Schema->table('UserWikiRole')->column('user_id'),
-                    '=', Fey::Placeholder->new() )
-           ->and( $Schema->table('Wiki')->column('wiki_id'),
-                    'NOT IN', $public_select );
+        ->where(
+        $Schema->table('UserWikiRole')->column('user_id'),
+        '=', Fey::Placeholder->new()
+        )->and(
+        $Schema->table('Wiki')->column('wiki_id'),
+        'NOT IN', $public_select
+        );
 
     return;
 }
 
-sub wikis_shared_with
-{
+sub wikis_shared_with {
     my $self = shift;
     my $user = shift;
 
     my $select = $self->_SharedWikiSelect();
 
-    return
-        Fey::Object::Iterator::FromSelect->new
-            ( classes     => [ 'Silki::Schema::Wiki' ],
-              select      => $select,
-              dbh         => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
-              bind_params => [ ( $self->user_id(), $user->user_id() ) x 2 ],
-            );
+    return Fey::Object::Iterator::FromSelect->new(
+        classes => ['Silki::Schema::Wiki'],
+        select  => $select,
+        dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
+        bind_params => [ ( $self->user_id(), $user->user_id() ) x 2 ],
+    );
 }
 
-sub _BuildSharedWikiSelect
-{
+sub _BuildSharedWikiSelect {
     my $class = shift;
 
     my $explicit_wiki_select = Silki::Schema->SQLFactoryClass()->new_select();
@@ -594,46 +577,47 @@ sub _BuildSharedWikiSelect
 
     # To use an ORDER BY with a UNION in Pg, you specify the column as a
     # number (ORDER BY 5).
-    my $title_idx =
-        first_index { $_->name() eq 'title' } $Schema->table('Wiki')->columns();
+    my $title_idx = first_index { $_->name() eq 'title' }
+    $Schema->table('Wiki')->columns();
     $union->union( $intersect1, $intersect2 )
-          ->order_by( Fey::Literal::Term->new($title_idx) );
+        ->order_by( Fey::Literal::Term->new($title_idx) );
 
     return $union;
 }
 
-sub _BuildAllWikiCountSelect
-{
+sub _BuildAllWikiCountSelect {
     my $class = shift;
 
     my $explicit_wiki_select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    $explicit_wiki_select->select( $Schema->table('Wiki')->column('wiki_id') );
+    $explicit_wiki_select->select(
+        $Schema->table('Wiki')->column('wiki_id') );
     $class->_ExplicitWikiSelectBase($explicit_wiki_select);
 
     my $implicit_wiki_select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    $implicit_wiki_select->select( $Schema->table('Wiki')->column('wiki_id') );
+    $implicit_wiki_select->select(
+        $Schema->table('Wiki')->column('wiki_id') );
     $class->_ImplicitWikiSelectBase($implicit_wiki_select);
 
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    my $distinct = Fey::Literal::Term->new( 'DISTINCT ', $Schema->table('Wiki')->column('wiki_id') );
+    my $distinct = Fey::Literal::Term->new( 'DISTINCT ',
+        $Schema->table('Wiki')->column('wiki_id') );
     my $count = Fey::Literal::Function->new( 'COUNT', $distinct );
 
-    $select->select($count)
-           ->from( $Schema->table('Wiki') )
-           ->where( $Schema->table('Wiki')->column('wiki_id'),
-                    'IN', $explicit_wiki_select )
-           ->where( 'or' )
-           ->where( $Schema->table('Wiki')->column('wiki_id'),
-                    'IN', $implicit_wiki_select );
+    $select->select($count)->from( $Schema->table('Wiki') )->where(
+        $Schema->table('Wiki')->column('wiki_id'),
+        'IN', $explicit_wiki_select
+        )->where('or')->where(
+        $Schema->table('Wiki')->column('wiki_id'),
+        'IN', $implicit_wiki_select
+        );
 
     return $select;
 }
 
-sub _BuildAllWikiSelect
-{
+sub _BuildAllWikiSelect {
     my $class = shift;
 
     my $explicit_wiki_select = Silki::Schema->SQLFactoryClass()->new_select();
@@ -650,35 +634,35 @@ sub _BuildAllWikiSelect
 
     # To use an ORDER BY with a UNION in Pg, you specify the column as a
     # number (ORDER BY 5).
-    my $title_idx =
-        first_index { $_->name() eq 'title' } $Schema->table('Wiki')->columns();
+    my $title_idx = first_index { $_->name() eq 'title' }
+    $Schema->table('Wiki')->columns();
     $union->union( $explicit_wiki_select, $implicit_wiki_select )
-          ->order_by( Fey::Literal::Term->new($title_idx) );
+        ->order_by( Fey::Literal::Term->new($title_idx) );
 
     return $union;
 }
 
-sub _ExplicitWikiSelectBase
-{
-    my $class = shift;
+sub _ExplicitWikiSelectBase {
+    my $class  = shift;
     my $select = shift;
 
-    $select->from( $Schema->tables( 'Wiki', 'UserWikiRole' ) )
-           ->where( $Schema->table('UserWikiRole')->column('user_id'),
-                    '=', Fey::Placeholder->new() );
+    $select->from( $Schema->tables( 'Wiki', 'UserWikiRole' ) )->where(
+        $Schema->table('UserWikiRole')->column('user_id'),
+        '=', Fey::Placeholder->new()
+    );
 
     return;
 }
 
-sub _ImplicitWikiSelectBase
-{
-    my $class = shift;
+sub _ImplicitWikiSelectBase {
+    my $class  = shift;
     my $select = shift;
 
     $select->from( $Schema->tables( 'Wiki', 'Page' ) )
-           ->from( $Schema->tables( 'Page', 'PageRevision' ) )
-           ->where( $Schema->table('PageRevision')->column('user_id'),
-                    '=', Fey::Placeholder->new() );
+        ->from( $Schema->tables( 'Page', 'PageRevision' ) )->where(
+        $Schema->table('PageRevision')->column('user_id'),
+        '=', Fey::Placeholder->new()
+        );
 
     return;
 }
@@ -687,7 +671,6 @@ no Fey::ORM::Table;
 no MooseX::ClassAttribute;
 
 __PACKAGE__->meta()->make_immutable();
-
 
 1;
 

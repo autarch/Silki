@@ -6,6 +6,7 @@ use warnings;
 use base 'Catalyst::View::Mason';
 
 {
+
     package Silki::Mason;
 
     use Lingua::EN::Inflect qw( PL_N );
@@ -24,7 +25,6 @@ use Silki::Util qw( string_is_empty );
 
 __PACKAGE__->config( Silki::Config->new()->mason_config() );
 
-
 # sub new
 # {
 #     my $class = shift;
@@ -36,18 +36,15 @@ __PACKAGE__->config( Silki::Config->new()->mason_config() );
 #     return $self;
 # }
 
-sub has_template_for_path
-{
+sub has_template_for_path {
     my $self = shift;
     my $path = shift;
 
-    return -f
-        file
-            ( $self->config()->{comp_root},
-              ( grep { ! string_is_empty($_) } split /\//, $path ),
-            );
+    return -f file(
+        $self->config()->{comp_root},
+        ( grep { !string_is_empty($_) } split /\//, $path ),
+    );
 }
-
 
 1;
 

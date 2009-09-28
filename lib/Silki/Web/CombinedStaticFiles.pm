@@ -18,38 +18,35 @@ use Time::HiRes;
 
 use Moose;
 
-has 'files' =>
-    ( is      => 'ro',
-      isa     => 'ArrayRef[Path::Class::File]',
-      lazy    => 1,
-      builder => '_files',
-    );
+has 'files' => (
+    is      => 'ro',
+    isa     => 'ArrayRef[Path::Class::File]',
+    lazy    => 1,
+    builder => '_files',
+);
 
-has 'target_file' =>
-    ( is      => 'ro',
-      isa     => 'Path::Class::File',
-      lazy    => 1,
-      builder => '_target_file',
-    );
+has 'target_file' => (
+    is      => 'ro',
+    isa     => 'Path::Class::File',
+    lazy    => 1,
+    builder => '_target_file',
+);
 
-has 'header' =>
-    ( is      => 'ro',
-      isa     => 'Str',
-      default => '',
-    );
+has 'header' => (
+    is      => 'ro',
+    isa     => 'Str',
+    default => '',
+);
 
-sub create_single_file
-{
+sub create_single_file {
     my $self = shift;
 
     my ( $fh, $tempfile ) = tempfile( UNLINK => 0 );
 
-    my $now =
-        DateTime->from_epoch
-            ( epoch     => time,
-              time_zone => 'local',
-            )
-                ->strftime( '%Y-%m-%d %H:%M:%S.%{nanosecond} %{time_zone_long_name}' );
+    my $now = DateTime->from_epoch(
+        epoch     => time,
+        time_zone => 'local',
+    )->strftime('%Y-%m-%d %H:%M:%S.%{nanosecond} %{time_zone_long_name}');
 
     print {$fh} "/* Generated at $now */\n\n";
 
@@ -57,8 +54,7 @@ sub create_single_file
     print {$fh} $header
         unless string_is_empty($header);
 
-    for my $file ( @{ $self->files() } )
-    {
+    for my $file ( @{ $self->files() } ) {
         print {$fh} "\n\n/* $file */\n\n";
         print {$fh} $self->_squish( scalar read_file( $file->stringify() ) );
     }

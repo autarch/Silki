@@ -12,10 +12,10 @@ BEGIN { extends 'Silki::Controller::Base' }
 
 with 'Silki::Role::Controller::User';
 
-sub _set_user : Chained('/') : PathPart('user') : CaptureArgs(1) { }
+sub _set_user : Chained('/') : PathPart('user') : CaptureArgs(1) {
+}
 
-sub _make_user_uri
-{
+sub _make_user_uri {
     my $self = shift;
     my $c    = shift;
     my $user = shift;
@@ -23,7 +23,6 @@ sub _make_user_uri
 
     return $user->uri( view => $view );
 }
-
 
 no Moose;
 

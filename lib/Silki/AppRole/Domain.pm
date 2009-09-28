@@ -7,16 +7,14 @@ use Silki::Schema::Domain;
 
 use Moose::Role;
 
-has 'domain' =>
-    ( is      => 'ro',
-      isa     => 'Silki::Schema::Domain',
-      lazy    => 1,
-      builder => '_build_domain',
-    );
+has 'domain' => (
+    is      => 'ro',
+    isa     => 'Silki::Schema::Domain',
+    lazy    => 1,
+    builder => '_build_domain',
+);
 
-
-sub _build_domain
-{
+sub _build_domain {
     my $self = shift;
 
     my $host = $self->request()->uri()->host();

@@ -19,8 +19,7 @@ use Moose;
 
 my $Config;
 
-BEGIN
-{
+BEGIN {
     extends 'Catalyst';
 
     $Config = Silki::Config->new();
@@ -32,24 +31,22 @@ BEGIN
 
 with @{ $Config->catalyst_roles() };
 
-__PACKAGE__->config( name => 'Silki',
-                     %{ $Config->catalyst_config() },
-                   );
+__PACKAGE__->config(
+    name => 'Silki',
+    %{ $Config->catalyst_config() },
+);
 
 __PACKAGE__->request_class('Catalyst::Request::REST::ForBrowsers');
-__PACKAGE__->apply_request_class_roles( 'Silki::Request' );
+__PACKAGE__->apply_request_class_roles('Silki::Request');
 
 Silki::Schema->EnableObjectCaches();
 
 __PACKAGE__->setup();
 
-
-sub loc
-{
+sub loc {
     shift;
     Silki::I18N::loc(@_);
 }
-
 
 no Moose;
 

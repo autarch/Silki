@@ -6,20 +6,17 @@ use warnings;
 use Moose::Role;
 use Silki::Util qw( string_is_empty );
 
-sub user_params
-{
+sub user_params {
     my $self = shift;
 
-    return $self->_params_for_classes( 'Silki::Schema::User' );
+    return $self->_params_for_classes('Silki::Schema::User');
 }
 
-sub _bool
-{
+sub _bool {
     return $_[0] ? 1 : 0;
 }
 
-sub _params_for_classes
-{
+sub _params_for_classes {
     my $self    = shift;
     my $classes = shift;
     my $suffix  = shift || '';
@@ -28,14 +25,12 @@ sub _params_for_classes
 
     my %found;
 
-    for my $class ( @{ ref $classes ? $classes : [ $classes ] } )
-    {
+    for my $class ( @{ ref $classes ? $classes : [$classes] } ) {
         my $table = $class->Table();
 
         my %pk = map { $_->name() => 1 } @{ $table->primary_key() };
 
-        for my $col ( $table->columns() )
-        {
+        for my $col ( $table->columns() ) {
             my $name = $col->name();
 
             next if $pk{$name};
@@ -44,10 +39,8 @@ sub _params_for_classes
             $key .= q{-} . $suffix
                 if $suffix;
 
-            if ( string_is_empty( $params->{$key} ) )
-            {
-                if ( $col->is_nullable() )
-                {
+            if ( string_is_empty( $params->{$key} ) ) {
+                if ( $col->is_nullable() ) {
                     $found{$name} = undef;
                 }
 

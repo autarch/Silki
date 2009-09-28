@@ -15,18 +15,16 @@ my $Schema = Silki::Schema->Schema();
 
     has_table( $Schema->table('Locale') );
 
-    has_many countries =>
-        ( table    => $Schema->table('Country'),
-          order_by => [ $Schema->table('Country')->column('name'), 'ASC' ],
-        );
+    has_many countries => (
+        table    => $Schema->table('Country'),
+        order_by => [ $Schema->table('Country')->column('name'), 'ASC' ],
+    );
 }
 
-sub CreateDefaultLocales
-{
+sub CreateDefaultLocales {
     my $class = shift;
 
-    for my $code ( DateTime::Locale->ids() )
-    {
+    for my $code ( DateTime::Locale->ids() ) {
         next if $class->new( locale_code => $code );
 
         $class->insert( locale_code => $code );

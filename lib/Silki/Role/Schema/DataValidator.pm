@@ -8,23 +8,22 @@ use Silki::Exceptions qw( data_validation_error );
 
 use MooseX::Role::Parameterized;
 
-parameter 'steps' =>
-    ( isa     => 'ArrayRef[Str]',
-      default => sub { [] },
-    );
+parameter 'steps' => (
+    isa     => 'ArrayRef[Str]',
+    default => sub { [] },
+);
 
-parameter 'validate_on_insert' =>
-    ( isa     => 'Bool',
-      default => 1,
-    );
+parameter 'validate_on_insert' => (
+    isa     => 'Bool',
+    default => 1,
+);
 
-parameter 'validate_on_update' =>
-    ( isa     => 'Bool',
-      default => 1,
-    );
+parameter 'validate_on_update' => (
+    isa     => 'Bool',
+    default => 1,
+);
 
-sub _clean_and_validate_data
-{
+sub _clean_and_validate_data {
     my $self      = shift;
     my $p         = shift;
     my $is_insert = shift;
@@ -35,34 +34,34 @@ sub _clean_and_validate_data
         if @errors;
 }
 
-sub _check_non_nullable_columns
-{
+sub _check_non_nullable_columns {
     my $self      = shift;
     my $p         = shift;
     my $is_insert = shift;
 
     my @errors;
-    for my $name ( map { $_->name() }
-                   grep { ! ( $_->is_nullable() || defined $_->default() || $_->is_auto_increment() ) }
-                   $self->Table()->columns() )
-    {
-        if ($is_insert)
-        {
+    for my $name (
+        map { $_->name() }
+        grep {
+            !(     $_->is_nullable()
+                || defined $_->default()
+                || $_->is_auto_increment() )
+        } $self->Table()->columns()
+        ) {
+        if ($is_insert) {
             push @errors, $self->_needs_value_error($name)
                 unless exists $p->{$name} && defined $p->{$name};
         }
-        else
-        {
+        else {
             push @errors, $self->_needs_value_error($name)
-                if exists $p->{$name} && ! defined $p->{$name};
+                if exists $p->{$name} && !defined $p->{$name};
         }
     }
 
     return @errors;
 }
 
-sub _needs_value_error
-{
+sub _needs_value_error {
     my $self = shift;
     my $name = shift;
 
@@ -70,35 +69,32 @@ sub _needs_value_error
 
     my $articled = A($friendly_name);
 
-    return { field   => $name,
-             message => "You must provide $articled." };
+    return {
+        field   => $name,
+        message => "You must provide $articled."
+    };
 }
 
-sub ValidateForInsert
-{
+sub ValidateForInsert {
     my $class = shift;
     my %p     = @_;
 
     return $class->_validation_errors( \%p, 'is insert' );
 }
 
-sub validate_for_update
-{
+sub validate_for_update {
     my $self = shift;
     my %p    = @_;
 
-    return $self->_validation_errors(\%p);
+    return $self->_validation_errors( \%p );
 }
 
-role
-{
+role {
     my $params = shift;
     my %extra  = @_;
 
-    if ( $params->validate_on_insert() )
-    {
-        around 'insert' => sub
-        {
+    if ( $params->validate_on_insert() ) {
+        around 'insert' => sub {
             my $orig  = shift;
             my $class = shift;
             my %p     = @_;
@@ -109,15 +105,13 @@ role
         };
     }
 
-    if ( $params->validate_on_update() )
-    {
-        around 'update' => sub
-        {
+    if ( $params->validate_on_update() ) {
+        around 'update' => sub {
             my $orig = shift;
             my $self = shift;
             my %p    = @_;
 
-            $self->_clean_and_validate_data(\%p);
+            $self->_clean_and_validate_data( \%p );
 
             return unless keys %p;
 
@@ -127,20 +121,17 @@ role
 
     my @steps = @{ $params->steps() };
 
-    if (@steps)
-    {
-        method _validation_errors => sub
-        {
+    if (@steps) {
+        method _validation_errors => sub {
             my $self      = shift;
             my $p         = shift;
             my $is_insert = shift;
 
             return $self->_check_validation_steps( $p, $is_insert ),
-                   $self->_check_non_nullable_columns( $p, $is_insert );
+                $self->_check_non_nullable_columns( $p, $is_insert );
         };
 
-        method _check_validation_steps => sub
-        {
+        method _check_validation_steps => sub {
             my $self      = shift;
             my $p         = shift;
             my $is_insert = shift;
@@ -148,10 +139,8 @@ role
             return map { $self->$_( $p, $is_insert ) } @steps;
         };
     }
-    else
-    {
-        method _validation_errors => sub
-        {
+    else {
+        method _validation_errors => sub {
             my $self      = shift;
             my $p         = shift;
             my $is_insert = shift;

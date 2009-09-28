@@ -10,22 +10,20 @@ our @EXPORT_OK = qw( format_note );
 use Silki::Util qw( string_is_empty );
 use Text::WikiFormat;
 
-
-sub format_note
-{
+sub format_note {
     my $note = shift;
 
     return q{} if string_is_empty($note);
 
-    return
-        Text::WikiFormat::format
-            ( $note,
-              {},
-              { implicit_links => 0,
-                extended       => 1,
-                absolute_links => 1,
-              }
-            );
+    return Text::WikiFormat::format(
+        $note,
+        {},
+        {
+            implicit_links => 0,
+            extended       => 1,
+            absolute_links => 1,
+        }
+    );
 }
 
 1;

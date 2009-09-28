@@ -40,7 +40,7 @@ sub html_to_wikitext {
 
     my $wikitext = $self->_converter->html2wiki(
         $html,
-        wiki_uri   => [qr{^(\Q$wiki_uri\E/[^/]+)}],
+        wiki_uri => [qr{^(\Q$wiki_uri\E/[^/]+)}],
     );
 
     $wikitext =~ s{<br\s*/?>}{}g;

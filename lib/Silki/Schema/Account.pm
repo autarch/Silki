@@ -16,16 +16,16 @@ my $Schema = Silki::Schema->Schema();
 
 has_table( $Schema->table('Account') );
 
-sub add_admin
-{
+sub add_admin {
     my $self = shift;
     my ($user) = pos_validated_list( \@_, { isa => 'Silki::Schema::User' } );
 
     return if $user->is_system_user();
 
-    Silki::Schema::AccountAdmin->insert( account_id => $self->account_id(),
-                                         user_id    => $user->user_id(),
-                                       );
+    Silki::Schema::AccountAdmin->insert(
+        account_id => $self->account_id(),
+        user_id    => $user->user_id(),
+    );
 
     return;
 }
@@ -33,7 +33,6 @@ sub add_admin
 no Fey::ORM::Table;
 
 __PACKAGE__->meta()->make_immutable();
-
 
 1;
 
