@@ -1,6 +1,6 @@
 JSAN.use('DOM.Ready');
 JSAN.use('Silki.PageEdit');
-
+JSAN.use('Silki.User');
 
 if ( typeof Silki == "undefined" ) {
     Silki = {};
