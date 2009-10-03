@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Algorithm::Diff qw( sdiff );
+use List::AllUtils qw( all any );
 use String::Diff qw( diff );
 use Silki::Config;
 use Silki::Formatter::WikiToHTML;
@@ -117,45 +118,115 @@ sub Diff {
     my @rev1 = map { s/^\s+|\s+$//; $_ } split /\n\n+/, $rev1->content();
     my @rev2 = map { s/^\s+|\s+$//; $_ } split /\n\n+/, $rev2->content();
 
-    return [
-        map {
-            $_->[0] eq 'c'
-                ? [
-                'c',
-                [
-                    $class->_merged_sdiff(
-                        [ split /\s+/, $_->[1] ],
-                        [ split /\s+/, $_->[2] ],
-                        q{ },
-                    )
-                ]
-                ]
-                : $_
-            } sdiff(
-            \@rev1,
-            \@rev2,
-            )
-    ];
+    return $class->_SmartDiff( \@rev1, \@rev2 );
 }
 
-sub _merged_sdiff {
+# This is smart because when it sees a block level argument marked as changed,
+# it then breaks down the block into its words and diffs those.
+sub _SmartDiff {
+    my $class = shift;
+    my $rev1  = shift;
+    my $rev2  = shift;
+
+    return $class->_ReorderIfTotalReplacement(
+        [
+            map {
+                $_->[0] eq 'c'
+                    ? $class->_MergedSdiff(
+                    $_->[1],
+                    $_->[2],
+                    q{ },
+                    )
+                    : $_
+                } sdiff(
+                $rev1,
+                $rev2,
+                )
+        ]
+    );
+}
+
+sub _MergedSdiff {
     my $class    = shift;
-    my $seq1     = shift;
-    my $seq2     = shift;
-    my $split_on = shift;
+    my $text1    = shift;
+    my $text2    = shift;
+
+    my ( $seq1, $split1 ) = $class->_CaptureSplitOnWS($text1);
+    my ( $seq2, $split2 ) = $class->_CaptureSplitOnWS($text2);
 
     my @diff = sdiff( $seq1, $seq2 );
 
+    # If every single word has changed, we treat it as a delete of the old
+    # paragraph and insert of the new.
+    if ( all { $_->[0] ne 'u' } @diff ) {
+        return (
+            [ q{-}, $text1, q{} ],
+            [ q{+}, q{},    $text2 ],
+        );
+    }
+
     for ( my $x = $#diff; $x > 0; $x-- ) {
         if ( $diff[$x][0] eq $diff[ $x - 1 ][0] ) {
-            $diff[ $x - 1 ][1] .= $split_on . $diff[$x][1];
-            $diff[ $x - 1 ][2] .= $split_on . $diff[$x][2];
+            $diff[ $x - 1 ][1] .= join q{}, grep { defined } $split1->[ $x - 1 ], $diff[$x][1];
+            $diff[ $x - 1 ][2] .= join q{}, grep { defined } $split2->[ $x - 1 ], $diff[$x][2];
 
             splice @diff, $x, 1;
         }
     }
 
-    return @diff;
+    $class->_AddDiffTags(\@diff);
+
+    return [
+        'c',
+        ( join q{ }, map { $_->[1] } @diff ),
+        ( join q{ }, map { $_->[2] } @diff ),
+    ];
+}
+
+sub _CaptureSplitOnWS {
+    my $class = shift;
+    my $text  = shift;
+
+    my @seq;
+    my @split;
+
+    while ( $text =~ /\G(\S+)(?:(\s+)|\z)/g ) {
+        push @seq, $1;
+        push @split, $2 if defined $2;
+    }
+
+
+    return \@seq, \@split;
+}
+
+sub _AddDiffTags {
+    my $class    = shift;
+    my $diff     = shift;
+
+    for my $chunk (@{$diff} ) {
+        if ( $chunk->[0] =~ /[-c]/ ) {
+            $chunk->[1] = q{<del>} . $chunk->[1] . q{</del>};
+        }
+
+        if ( $chunk->[0] =~ /[+c]/ ) {
+            $chunk->[2] = q{<ins>} . $chunk->[2] . q{</ins>};
+        }
+    }
+}
+
+# If the two revisions have nothing in common, we reorder the diff so all the
+# inserts come first and the deletes come second. This will show all new
+# content first, followed by all the removed old content.
+sub _ReorderIfTotalReplacement {
+    my $class = shift;
+    my $diff  = shift;
+
+    return $diff if any { $_->[0] =~ /[uc]/ } @{$diff};
+
+    return [
+        ( grep { $_->[0] eq q{+} } @{$diff} ),
+        ( grep { $_->[0] eq q{-} } @{$diff} ),
+    ];
 }
 
 no Fey::ORM::Table;

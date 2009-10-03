@@ -227,39 +227,39 @@ table.revision-diff {
     width: 100%;
 }
 
-table.revision-diff th.rev1, table.revision-diff th.rev2 {
+table.revision-diff > thead > th.rev1, table.revision-diff > thead > th.rev2 {
     width: 49%;
 }
 
-table.revision-diff tbody tr {
+table.revision-diff > tbody > tr {
     border: 0;
 }
 
-table.revision-diff tbody tr.attribution {
+table.revision-diff > tbody > tr.attribution {
     font-size: 90%;
     font-style: italic;
 }    
 
-table.revision-diff tbody td {
+table.revision-diff > tbody > tr > td {
     border: 1px dashed #ccc;
     vertical-align: top;
 }
 
-table.revision-diff tbody tr.diff-changed del {
+table.revision-diff > tbody > tr.diff-changed del {
     color: #900;
     font-style: normal;
 }
 
-table.revision-diff tbody tr.diff-changed ins {
+table.revision-diff > tbody > tr.diff-changed ins {
     color: #090;
     font-style: normal;
 }
 
-table.revision-diff tbody td.diff-removed {
+table.revision-diff > tbody > tr > td.diff-removed {
     background-color: #fdd;
 }
 
-table.revision-diff tbody td.diff-added {
+table.revision-diff > tbody > tr > td.diff-added {
     background-color: #dfd;
 }
 
@@ -461,7 +461,6 @@ form.inline input.submit {
 }
 
 /* Page edit form */
-
 
 #form-and-preview {
     width: 98%;

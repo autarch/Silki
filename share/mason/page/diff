@@ -32,15 +32,25 @@
       </td>
     </tr>
   </tbody>
+
 % for my $diff (@diff) {
   <tbody>
-%   if ( $diff->[0] eq 'c' ) {
-<& .word_diff, diff => $diff->[1] &>
-%   } else {
-<& .para_diff, diff => $diff &>
-%   }
+    <tr class="<% $diff->[0] eq 'c' ? 'diff-changed' : q{} %>">
+      <td class="<% $diff->[0] eq q{-} ? 'diff-removed' : q{} %>">
+        <% $formatter->wikitext_to_html( $diff->[1] ) | n %>
+      </td>
+      <td class="marker">
+% if ( $diff->[0] ne 'u' ) {
+        <span title="<% $diff->[0] eq '-' ? loc('text was removed') : $diff->[0] eq '+' ? loc('text was added') : loc('text was changed') %>"><% $diff->[0] eq 'c' ? '*' : $diff->[0] %></span>
+% }
+      </td>
+      <td class="<% $diff->[0] eq q{+} ? 'diff-added' : q{} %>">
+<% $formatter->wikitext_to_html( $diff->[2] ) | n %>
+      </td>
+    </tr>
   </tbody>
 % }
+
 </table>
 
 <%args>
@@ -48,59 +58,8 @@ $page
 $rev1
 $rev2
 @diff
+$formatter
 </%args>
-
-<%def .word_diff>
-    <tr class="diff-changed">
-      <td>
-<pre>\
-% for my $diff (@diff) {
-%   if ( $diff->[0] eq '-' || $diff->[0] eq 'c' ) {
- <del><% $diff->[1] %></del>\
-%   } elsif ( $diff->[0] eq 'u' ) {
- <% $diff->[1] %>\
-%   }
-% }
-</pre>
-      </td>
-      <td class="marker">
-        <span title="<% loc('paragraph was changed') %>">*</span>
-      </td>
-      <td>
-<pre>\
-% for my $diff (@diff) {
-%   if ( $diff->[0] eq '+' || $diff->[0] eq 'c' ) {
- <ins><% $diff->[2] %></ins>\
-%   } elsif ( $diff->[0] eq 'u' ) {
- <% $diff->[1] %>\
-%   }
-% }
-</pre>
-      </td>
-    </tr>
-<%args>
-@diff
-</%args>
-</%def>
-
-<%def .para_diff>
-    <tr>
-      <td class="<% $diff[0] eq q{-} ? 'diff-removed' : q{} %>">
-        <pre><% $diff[1] %></pre>
-      </td>
-      <td class="marker">
-% if ( $diff[0] ne 'u' ) {
-        <span title="<% $diff[0] eq '-' ? loc('paragraph was removed') : loc('paragraph was added') %>"><% $diff[0] %></span>
-% }
-      </td>
-      <td class="<% $diff[0] eq q{+} ? 'diff-added' : q{} %>">
-        <pre><% $diff[2] %></pre>
-      </td>
-    </tr>
-<%args>
-@diff
-</%args>
-</%def>
 
 <%method title>
 <% $page->title() %> - <% loc( 'Revision [_1] versus [_2]', $rev1->revision_number(), $rev2->revision_number() ) %>

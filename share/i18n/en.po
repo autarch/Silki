@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:36
+#: lib/Silki/Controller/Wiki.pm:38
 msgid "%1 overview"
 msgstr ""
 
@@ -60,7 +60,7 @@ msgid "Edit"
 msgstr ""
 
 #. ($page->title()
-#: share/mason/page/edit_form:4
+#: share/mason/page/edit_form:8
 msgid "Edit %1"
 msgstr ""
 
@@ -85,7 +85,7 @@ msgid "Incoming Links"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Role/Controller/User.pm:31
+#: lib/Silki/Role/Controller/User.pm:37
 msgid "Information about %1"
 msgstr ""
 
@@ -133,20 +133,16 @@ msgid "Preferences"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Role/Controller/User.pm:123
+#: lib/Silki/Role/Controller/User.pm:134
 msgid "Preferences for "
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Role/Controller/User.pm:47 share/mason/user/preferences_form:73
+#: lib/Silki/Role/Controller/User.pm:56 share/mason/user/preferences_form:73
 msgid "Preferences for %1"
 msgstr ""
 
-#: share/mason/lib/forms/page.mas:15
-msgid "Preview"
-msgstr ""
-
-#: lib/Silki/Controller/Wiki.pm:40 lib/Silki/Controller/Wiki.pm:75
+#: lib/Silki/Controller/Wiki.pm:43 lib/Silki/Controller/Wiki.pm:76
 msgid "Recent Changes"
 msgstr ""
 
@@ -155,7 +151,7 @@ msgstr ""
 msgid "Recent Changes in %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:41
+#: lib/Silki/Controller/Wiki.pm:44
 msgid "Recent activity in this wiki"
 msgstr ""
 
@@ -178,11 +174,11 @@ msgid "Revision %1 of %2"
 msgstr ""
 
 #. ($rev1->revision_number()
-#: share/mason/page/diff:102
+#: share/mason/page/diff:65
 msgid "Revision %1 versus %2"
 msgstr ""
 
-#: lib/Silki/Role/Controller/User.pm:45
+#: lib/Silki/Role/Controller/User.pm:53
 msgid "Set your preferences"
 msgstr ""
 
@@ -190,23 +186,23 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:291
+#: lib/Silki/Schema/User.pm:286
 msgid "The OpenID URI you provided is already in use by another account."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:269
+#: lib/Silki/Schema/User.pm:263
 msgid "The OpenID URI you provided is not a valid URI."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:251
+#: lib/Silki/Schema/User.pm:245
 msgid "The email address you provided is already in use by another account."
 msgstr ""
 
-#: lib/Silki/Role/Controller/User.pm:106
+#: lib/Silki/Role/Controller/User.pm:117
 msgid "The two passwords you provided did not match"
 msgstr ""
 
-#: lib/Silki/Controller/Site.pm:81
+#: lib/Silki/Controller/Site.pm:80
 msgid "The username or password you provided was not valid."
 msgstr ""
 
@@ -240,11 +236,11 @@ msgstr ""
 msgid "This revision was created by <a href=\"%html(%1)\">%html(%2)</a> on %3."
 msgstr ""
 
-#: lib/Silki/Controller/Base.pm:110 lib/Silki/Controller/Base.pm:117
+#: lib/Silki/Controller/Base.pm:112 lib/Silki/Controller/Base.pm:122
 msgid "This wiki requires you to be a member to perform this action."
 msgstr ""
 
-#: lib/Silki/Controller/Base.pm:106
+#: lib/Silki/Controller/Base.pm:105
 msgid "This wiki requires you to log in to perform this action."
 msgstr ""
 
@@ -261,15 +257,15 @@ msgid "Username:"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Role/Controller/User.pm:48
+#: lib/Silki/Role/Controller/User.pm:58
 msgid "View and change preferences for %1"
 msgstr ""
 
-#: lib/Silki/Role/Controller/User.pm:28
+#: lib/Silki/Role/Controller/User.pm:33
 msgid "View details about your profile"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:143
+#: lib/Silki/Controller/Wiki.pm:144
 msgid "View this page"
 msgstr ""
 
@@ -286,7 +282,7 @@ msgstr ""
 msgid "You are not a member of any wikis."
 msgstr ""
 
-#: lib/Silki/Controller/Site.pm:71
+#: lib/Silki/Controller/Site.pm:68
 msgid "You must provide a password."
 msgstr ""
 
@@ -298,32 +294,20 @@ msgstr ""
 msgid "Your name:"
 msgstr ""
 
-#: lib/Silki/Role/Controller/User.pm:44
+#: lib/Silki/Role/Controller/User.pm:52
 msgid "Your preferences"
 msgstr ""
 
-#: lib/Silki/Role/Controller/User.pm:122
+#: lib/Silki/Role/Controller/User.pm:132
 msgid "Your preferences have been updated."
 msgstr ""
 
-#: lib/Silki/Role/Controller/User.pm:27
+#: lib/Silki/Role/Controller/User.pm:32
 msgid "Your profile"
 msgstr ""
 
 #: share/mason/page/history:25
 msgid "current"
-msgstr ""
-
-#: share/mason/page/diff:89
-msgid "paragraph was added"
-msgstr ""
-
-#: share/mason/page/diff:65
-msgid "paragraph was changed"
-msgstr ""
-
-#: share/mason/page/diff:89
-msgid "paragraph was removed"
 msgstr ""
 
 #. ($revision->revision_number()
@@ -333,4 +317,16 @@ msgstr ""
 
 #: share/mason/wiki/recent:18
 msgid "see changes"
+msgstr ""
+
+#: share/mason/page/diff:44
+msgid "text was added"
+msgstr ""
+
+#: share/mason/page/diff:44
+msgid "text was changed"
+msgstr ""
+
+#: share/mason/page/diff:44
+msgid "text was removed"
 msgstr ""
