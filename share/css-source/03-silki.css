@@ -264,7 +264,7 @@ table.revision-diff > tbody > tr > td.diff-added {
     background-color: #dfd;
 }
 
-table.revision-diff td.marker {
+table.revision-diff > tbody > tr > td.marker {
     font-weight: bold;
     text-align: center;
 }
