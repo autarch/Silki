@@ -227,7 +227,8 @@ table.revision-diff {
     width: 100%;
 }
 
-table.revision-diff > thead > th.rev1, table.revision-diff > thead > th.rev2 {
+table.revision-diff > thead > tr > th.rev1,
+table.revision-diff > thead > tr > th.rev2 {
     width: 49%;
 }
 
