@@ -310,13 +310,6 @@ CREATE TABLE "File" (
        CONSTRAINT valid_file_size CHECK ( file_size > 0 )
 );
 
--- another cache
-CREATE TABLE "FileLink" (
-       page_id                  INT8            NOT NULL,
-       file_id                  INT8            NOT NULL,
-       PRIMARY KEY ( page_id, file_id )
-);
-
 CREATE TABLE "Session" (
        id                 CHAR(72)           PRIMARY KEY,
        session_data       BYTEA              NOT NULL,
@@ -445,14 +438,6 @@ ALTER TABLE "PendingPageLink" ADD CONSTRAINT "PendingPageLink_from_page_id"
 
 ALTER TABLE "PendingPageLink" ADD CONSTRAINT "PendingPageLink_to_wiki_id"
   FOREIGN KEY ("to_wiki_id") REFERENCES "Wiki" ("wiki_id")
-  ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE "FileLink" ADD CONSTRAINT "FileLink_page_id"
-  FOREIGN KEY ("page_id") REFERENCES "Page" ("page_id")
-  ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE "FileLink" ADD CONSTRAINT "FileLink_file_id"
-  FOREIGN KEY ("file_id") REFERENCES "File" ("file_id")
   ON DELETE CASCADE ON UPDATE CASCADE;
 
 
