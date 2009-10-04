@@ -15,7 +15,6 @@ use Moose::Role;
 requires '_base_uri_path';
 
 sub uri {
-
     # MX::P::V doesn't handle class methods
     my $self = shift;
 
