@@ -304,6 +304,7 @@ CREATE TABLE "File" (
        file_name                file_name       NOT NULL,
        mime_type                VARCHAR(255)    NOT NULL,
        file_size                INTEGER         NOT NULL,
+       contents                 BYTEA           NOT NULL,
        creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
        user_id                  INT8            NOT NULL,
        CONSTRAINT valid_file_name CHECK ( file_name != '' ),
