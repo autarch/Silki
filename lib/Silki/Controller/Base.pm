@@ -72,9 +72,10 @@ sub _set_entity {
 }
 
 my %MethodPermission = (
-    GET  => 'Read',
-    POST => 'Edit',
-    PUT  => 'Edit',
+    GET    => 'Read',
+    POST   => 'Edit',
+    PUT    => 'Edit',
+    DELETE => 'Delete',
 );
 
 sub _require_permission_for_wiki {
