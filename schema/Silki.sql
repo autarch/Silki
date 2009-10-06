@@ -307,6 +307,7 @@ CREATE TABLE "File" (
        contents                 BYTEA           NOT NULL,
        creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
        user_id                  INT8            NOT NULL,
+       wiki_id                  INT8            NOT NULL,
        CONSTRAINT valid_file_name CHECK ( file_name != '' ),
        CONSTRAINT valid_file_size CHECK ( file_size > 0 )
 );
@@ -443,6 +444,10 @@ ALTER TABLE "PendingPageLink" ADD CONSTRAINT "PendingPageLink_to_wiki_id"
 
 ALTER TABLE "File" ADD CONSTRAINT "File_user_id"
   FOREIGN KEY ("user_id") REFERENCES "User" ("user_id")
+  ON DELETE RESTRICT ON UPDATE CASCADE;
+
+ALTER TABLE "File" ADD CONSTRAINT "File_wiki_id"
+  FOREIGN KEY ("wiki_id") REFERENCES "Wiki" ("wiki_id")
   ON DELETE RESTRICT ON UPDATE CASCADE;
 
 INSERT INTO "Version" (version) VALUES (1);

@@ -1,0 +1,39 @@
+% if ( $c->user()->has_permission_in_wiki( wiki => $page->wiki(), permission => Silki::Schema::Permission->Upload() ) ) {
+<div id="upload-lightbox" style="display: none">
+  Uploading ...<br />
+  <img src="/images/spinner.gif" height="32" width="32" />
+</div>
+
+<p>
+  <% loc('Upload a new file.') %>
+</p>
+
+<form id="file-upload-form" action="<% $page->uri( view => 'file' ) %>" method="post">
+  <input type="hidden" id="page_id" name="page_id" value="<% $page->page_id() %>" />
+  <div class="form-item">
+    <label for="file"><% loc('File') %>:</label>
+    <input id="file" name="file" type="file" />
+  </div>
+</form>
+% }
+
+% if ($file_count) {
+attachments
+% } else {
+<p>
+  <% loc('This page does not have any attachments.' ) %>
+</p>
+% }
+
+<%args>
+$page
+$files
+$file_count
+</%args>
+
+<%method title>
+<% loc( 'Attachments for %1', $page->title() ) %>
+<%args>
+$page
+</%args>
+</%method>

@@ -8,6 +8,7 @@ use Data::Page::FlickrLike;
 use List::AllUtils qw( all );
 use Silki::Formatter::HTMLToWiki;
 use Silki::Formatter::WikiToHTML;
+use Silki::Schema::File;
 use Silki::Schema::Page;
 use Silki::Schema::PageRevision;
 use Silki::Schema::Wiki;
@@ -301,6 +302,45 @@ sub page_diff : Chained('_set_page') : PathPart('diff') : Args(0) {
     );
 
     $c->stash()->{template} = '/page/diff';
+}
+
+sub attachments : Chained('_set_page') : PathPart('attachments') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $c->stash()->{file_count} = $c->stash()->{page}->file_count();
+    $c->stash()->{files} = $c->stash()->{page}->files();
+
+    $c->stash()->{template} = '/page/attachments';
+}
+
+sub file  : Chained('_set_page') : PathPart('file') : Args(0) : ActionClass('+Silki::Action::REST') {
+}
+
+sub file_POST {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_permission_for_wiki( $c, $c->stash()->{wiki}, 'Upload' );
+
+    my $upload = $c->request()->upload('file');
+
+    Silki::Schema->RunInTransaction(
+        sub {
+            my $file = Silki::Schema::File->insert(
+                file_name => $upload->basename(),
+                mime_type => $upload->type(),
+                file_size => $upload->size(),
+                contents  => do { my $fh = $upload->fh(); local $/; <$fh> },
+                user_id   => $c->user()->user_id(),
+                wiki_id   => $c->stash()->{wiki}->wiki_id(),
+            );
+
+            $c->stash()->{page}->add_file($file);
+        }
+    );
+
+    return $self->status_ok( $c, entity => {} );
 }
 
 sub _set_user : Chained('_set_wiki') : PathPart('user') : CaptureArgs(1) {

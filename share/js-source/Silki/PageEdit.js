@@ -1,7 +1,4 @@
-JSAN.use('DOM.Events');
-JSAN.use('DOM.Find');
 JSAN.use('DOM.Utils');
-JSAN.use('Textarea.Text');
 
 if ( typeof Silki == "undefined" ) {
     Silki = {};

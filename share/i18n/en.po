@@ -24,6 +24,11 @@ msgstr ""
 msgid "Attachments"
 msgstr ""
 
+#. ($page->title()
+#: share/mason/page/attachments:8
+msgid "Attachments for %1"
+msgstr ""
+
 #: share/mason/local-nav.mas:10
 msgid "Attachments for this page"
 msgstr ""
