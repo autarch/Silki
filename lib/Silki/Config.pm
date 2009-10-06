@@ -271,7 +271,7 @@ sub _build_share_dir {
     return $self->_dir(
         ['share'],
         '/usr/local/share/silki',
-        dir('share')->absolute,
+        dir('share')->absolute(),
     );
 }
 
