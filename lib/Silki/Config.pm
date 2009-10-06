@@ -205,7 +205,8 @@ sub _find_config_file {
 }
 
 {
-    my @StandardImports = qw( AuthenCookie
+    my @StandardImports = qw(
+        AuthenCookie
         +Silki::Plugin::ErrorHandling
         Session::AsObject
         Session::State::URI
@@ -230,7 +231,8 @@ sub _find_config_file {
 }
 
 {
-    my @StandardRoles = qw( Silki::AppRole::Domain
+    my @StandardRoles = qw(
+        Silki::AppRole::Domain
         Silki::AppRole::RedirectWithError
         Silki::AppRole::Tabs
         Silki::AppRole::User
@@ -242,7 +244,8 @@ sub _find_config_file {
 }
 
 {
-    my @Profilers = qw( Devel/DProf.pm
+    my @Profilers = qw(
+        Devel/DProf.pm
         Devel/FastProf.pm
         Devel/NYTProf.pm
         Devel/Profile.pm
