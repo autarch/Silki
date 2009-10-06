@@ -6,7 +6,7 @@ use warnings;
 use HTTP::Status qw( RC_OK );
 use JSON::XS;
 use Scalar::Util qw( blessed );
-use Silki::Types qw( ErrorForSession URIStr HashRef );
+use Silki::Types qw( ErrorForSession URIStr HashRef Bool );
 
 use Moose::Role;
 use MooseX::Params::Validate qw( validated_hash );
@@ -19,9 +19,10 @@ $JSON->pretty(1);
 $JSON->utf8(1);
 
 my %spec = (
-    uri       => { isa => URIStr,          coerce   => 1 },
-    error     => { isa => ErrorForSession, optional => 1 },
-    form_data => { isa => HashRef,         optional => 1 },
+    uri        => { isa => URIStr,          coerce   => 1 },
+    error      => { isa => ErrorForSession, optional => 1 },
+    form_data  => { isa => HashRef,         optional => 1 },
+    force_json => { isa => Bool,            default  => 0 },
 );
 
 sub redirect_with_error {
@@ -35,13 +36,14 @@ sub redirect_with_error {
     $self->session_object()->set_form_data( $p{form_data} )
         if $p{form_data};
 
-    if ( $self->request()->looks_like_browser() ) {
+    if ( $self->request()->looks_like_browser() && ! $p{force_json} ) {
         $self->redirect_and_detach( $p{uri} );
     }
     else {
         my $uri = $self->uri_with_sessionid( $p{uri} );
 
         $self->response()->status(RC_OK);
+        $self->response()->content_type('application/json');
         $self->response()->body( $JSON->encode( { uri => $uri } ) );
         $self->detach();
     }
