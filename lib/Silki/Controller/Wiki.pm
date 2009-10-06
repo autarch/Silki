@@ -325,10 +325,16 @@ sub file_POST {
 
     my $upload = $c->request()->upload('file');
 
+    # Copied the logic from Catalyst::Request::Upload without the last step of
+    # removing most characters.
+    my $basename = $upload->filename;
+    $basename =~ s|\\|/|g;
+    $basename = ( File::Spec::Unix->splitpath($basename) )[2];
+
     Silki::Schema->RunInTransaction(
         sub {
             my $file = Silki::Schema::File->insert(
-                file_name => $upload->basename(),
+                file_name => $basename,
                 mime_type => $upload->type(),
                 file_size => $upload->size(),
                 contents  => do { my $fh = $upload->fh(); local $/; <$fh> },
