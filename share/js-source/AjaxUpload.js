@@ -481,17 +481,6 @@ AjaxUpload.prototype = {
                 xhr.send('');
             }
 
-            form.submit();
-
-            d.body.removeChild(form);
-            form = null;
-            this._input = null;
-
-            // create new input
-            this._createInput();
-
-            var toDeleteFlag = false;
-
             addEvent(iframe, 'load', function(e){
                 if (// For Safari
                     iframe.src == "javascript:'%3Chtml%3E%3C/html%3E';" ||
@@ -566,6 +555,16 @@ AjaxUpload.prototype = {
                 iframe.src = "javascript:'<html></html>';";
             });
 
+            form.submit();
+
+            d.body.removeChild(form);
+            form = null;
+            this._input = null;
+
+            // create new input
+            this._createInput();
+
+            var toDeleteFlag = false;
         } else {
             // clear input to allow user to select same file
             // Doesn't work in IE6
