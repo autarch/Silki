@@ -7,6 +7,7 @@ use Config::INI::Reader;
 use File::HomeDir;
 use Net::Interface;
 use Path::Class;
+use Silki::Types qw( Bool Str Int ArrayRef HashRef );
 use Silki::Util qw( string_is_empty );
 use Socket qw( AF_INET );
 use Sys::Hostname qw( hostname );
@@ -15,7 +16,7 @@ use MooseX::Singleton;
 
 has is_production => (
     is      => 'rw',
-    isa     => 'Bool',
+    isa     => Bool,
     lazy    => 1,
     default => sub { $_[0]->_config_hash()->{Silki}{is_production} },
 
@@ -25,7 +26,7 @@ has is_production => (
 
 has is_test => (
     is      => 'rw',
-    isa     => 'Bool',
+    isa     => Bool,
     lazy    => 1,
     default => sub { $_[0]->_config_hash()->{Silki}{is_test} },
 
@@ -33,9 +34,20 @@ has is_test => (
     writer => '_set_is_test',
 );
 
+has max_upload_size => (
+    is      => 'ro',
+    isa     => Int,
+    lazy    => 1,
+    default => sub {
+        exists $_[0]->_config_hash()->{Silki}{max_upload_size}
+            ? $_[0]->_config_hash()->{Silki}{max_upload_size}
+            : ( 10 * 1024 * 1024 );
+    },
+);
+
 has is_profiling => (
     is      => 'rw',
-    isa     => 'Bool',
+    isa     => Bool,
     lazy    => 1,
     builder => '_build_is_profiling',
 
@@ -45,7 +57,7 @@ has is_profiling => (
 
 has _config_hash => (
     is      => 'rw',
-    isa     => 'HashRef',
+    isa     => HashRef,
     lazy    => 1,
     builder => '_build_config_hash',
 
@@ -56,35 +68,35 @@ has _config_hash => (
 
 has catalyst_imports => (
     is      => 'ro',
-    isa     => 'ArrayRef[Str]',
+    isa     => ArrayRef[Str],
     lazy    => 1,
     builder => '_build_catalyst_imports',
 );
 
 has catalyst_roles => (
     is      => 'ro',
-    isa     => 'ArrayRef[Str]',
+    isa     => ArrayRef[Str],
     lazy    => 1,
     builder => '_build_catalyst_roles',
 );
 
 has catalyst_config => (
     is      => 'ro',
-    isa     => 'HashRef',
+    isa     => HashRef,
     lazy    => 1,
     builder => '_build_catalyst_config',
 );
 
 has dbi_config => (
     is      => 'ro',
-    isa     => 'HashRef',
+    isa     => HashRef,
     lazy    => 1,
     builder => '_build_dbi_config',
 );
 
 has mason_config => (
     is      => 'ro',
-    isa     => 'HashRef',
+    isa     => HashRef,
     lazy    => 1,
     builder => '_build_mason_config',
 );
@@ -127,7 +139,7 @@ has cache_dir => (
 
 has static_path_prefix => (
     is      => 'rw',
-    isa     => 'Maybe[Str]',
+    isa     => Str,
     lazy    => 1,
     builder => '_build_static_path_prefix',
 
@@ -138,8 +150,8 @@ has static_path_prefix => (
 
 has path_prefix => (
     is      => 'rw',
-    isa     => 'Maybe[Str]',
-    default => sub { $_[0]->_config_hash()->{Silki}{path_prefix} },
+    isa     => Str,
+    default => sub { $_[0]->_config_hash()->{Silki}{path_prefix} || q{} },
 
     # for testing
     writer => '_set_path_prefix',
@@ -147,14 +159,14 @@ has path_prefix => (
 
 has system_hostname => (
     is      => 'ro',
-    isa     => 'Str',
+    isa     => Str,
     lazy    => 1,
     builder => '_build_system_hostname',
 );
 
 has secret => (
     is      => 'ro',
-    isa     => 'Str',
+    isa     => Str,
     lazy    => 1,
     builder => '_build_secret',
 
