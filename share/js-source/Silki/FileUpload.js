@@ -49,5 +49,7 @@ Silki.FileUpload.prototype._showUploadSpinner = function () {
 Silki.FileUpload.prototype._updateFileList = function ( file, response ) {
     this._lightbox.hide();
 
-    return;
+    if ( response.uri ) {
+        window.location.href = response.uri;
+    }
 };

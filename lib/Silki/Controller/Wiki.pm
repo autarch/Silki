@@ -6,8 +6,10 @@ use warnings;
 use Data::Page;
 use Data::Page::FlickrLike;
 use List::AllUtils qw( all );
+use Silki::Config;
 use Silki::Formatter::HTMLToWiki;
 use Silki::Formatter::WikiToHTML;
+use Silki::I18N qw( loc );
 use Silki::Schema::File;
 use Silki::Schema::Page;
 use Silki::Schema::PageRevision;
@@ -325,15 +327,25 @@ sub file_POST {
 
     my $upload = $c->request()->upload('file');
 
+    if ( $upload->size() > Silki::Config->new()->max_upload_size() ) {
+        $c->redirect_with_error(
+            error      => loc('The file you uploaded was too large.'),
+            uri        => $c->stash()->{page}->uri( view => 'attachments' ),
+            force_json => 1,
+            json_content_type => 'text/plain',
+        );
+    }
+
     # Copied the logic from Catalyst::Request::Upload without the last step of
     # removing most characters.
     my $basename = $upload->filename;
     $basename =~ s|\\|/|g;
     $basename = ( File::Spec::Unix->splitpath($basename) )[2];
 
+    my $file;
     Silki::Schema->RunInTransaction(
         sub {
-            my $file = Silki::Schema::File->insert(
+            $file = Silki::Schema::File->insert(
                 file_name => $basename,
                 mime_type => $upload->type(),
                 file_size => $upload->size(),
@@ -346,7 +358,11 @@ sub file_POST {
         }
     );
 
-    return $self->status_ok( $c, entity => {} );
+    return $self->status_created(
+        $c,
+        location => $file->uri(),
+        entity   => {},
+    );
 }
 
 sub _set_user : Chained('_set_wiki') : PathPart('user') : CaptureArgs(1) {

@@ -6,8 +6,12 @@
 
 <p>
   <% loc('Upload a new file.') %>
+% if ( Silki::Config->new()->max_upload_size() ) {
+  <% loc( 'Files cannot be larger than %1.', format_bytes( Silki::Config->new()->max_upload_size() ) ) %>
+% }
 </p>
 
+<&| /lib/filter/form.mas &>
 <form id="file-upload-form" action="<% $page->uri( view => 'file' ) %>" method="post">
   <input type="hidden" id="page_id" name="page_id" value="<% $page->page_id() %>" />
   <div class="form-item">
@@ -15,6 +19,7 @@
     <input id="file" name="file" type="file" />
   </div>
 </form>
+</&>
 % }
 
 % if ($file_count) {

@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:38
+#: lib/Silki/Controller/Wiki.pm:39
 msgid "%1 overview"
 msgstr ""
 
@@ -25,7 +25,7 @@ msgid "Attachments"
 msgstr ""
 
 #. ($page->title()
-#: share/mason/page/attachments:8
+#: share/mason/page/attachments:38
 msgid "Attachments for %1"
 msgstr ""
 
@@ -60,6 +60,10 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
+#: lib/Silki/Formatter/WikiToHTML.pm:85
+msgid "Download this file"
+msgstr ""
+
 #: share/mason/local-nav.mas:6
 msgid "Edit"
 msgstr ""
@@ -73,6 +77,15 @@ msgstr ""
 msgid "Edit this page"
 msgstr ""
 
+#: share/mason/page/attachments:17
+msgid "File"
+msgstr ""
+
+#. (format_bytes( Silki::Config->new()
+#: share/mason/page/attachments:10
+msgid "Files cannot be larger than %1."
+msgstr ""
+
 #: share/mason/user/login_form:11
 msgid "For most people, this will be your email address."
 msgstr ""
@@ -83,6 +96,10 @@ msgstr ""
 
 #: lib/Silki/Controller/Base.pm:39
 msgid "Home"
+msgstr ""
+
+#: lib/Silki/Formatter/WikiToHTML.pm:77
+msgid "Inaccessible file"
 msgstr ""
 
 #: share/mason/incoming-links.mas:2
@@ -147,7 +164,7 @@ msgstr ""
 msgid "Preferences for %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:43 lib/Silki/Controller/Wiki.pm:76
+#: lib/Silki/Controller/Wiki.pm:44 lib/Silki/Controller/Wiki.pm:77
 msgid "Recent Changes"
 msgstr ""
 
@@ -156,7 +173,7 @@ msgstr ""
 msgid "Recent Changes in %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:44
+#: lib/Silki/Controller/Wiki.pm:45
 msgid "Recent activity in this wiki"
 msgstr ""
 
@@ -227,6 +244,10 @@ msgstr ""
 msgid "This name identifies you to other users of this wiki."
 msgstr ""
 
+#: share/mason/page/attachments:27
+msgid "This page does not have any attachments."
+msgstr ""
+
 #. ($current_rev)
 #: share/mason/page/history:2
 msgid "This page has %quant(%1,revision,revisions)"
@@ -241,11 +262,11 @@ msgstr ""
 msgid "This revision was created by <a href=\"%html(%1)\">%html(%2)</a> on %3."
 msgstr ""
 
-#: lib/Silki/Controller/Base.pm:112 lib/Silki/Controller/Base.pm:122
+#: lib/Silki/Controller/Base.pm:113 lib/Silki/Controller/Base.pm:123
 msgid "This wiki requires you to be a member to perform this action."
 msgstr ""
 
-#: lib/Silki/Controller/Base.pm:105
+#: lib/Silki/Controller/Base.pm:106
 msgid "This wiki requires you to log in to perform this action."
 msgstr ""
 
@@ -255,6 +276,10 @@ msgstr ""
 
 #: share/mason/wiki/recent:4
 msgid "Title"
+msgstr ""
+
+#: share/mason/page/attachments:8
+msgid "Upload a new file."
 msgstr ""
 
 #: share/mason/user/login_form:7
@@ -270,7 +295,7 @@ msgstr ""
 msgid "View details about your profile"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:144
+#: lib/Silki/Controller/Wiki.pm:145
 msgid "View this page"
 msgstr ""
 
