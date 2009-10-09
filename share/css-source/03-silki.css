@@ -274,7 +274,6 @@ table.revision-diff > tbody > tr > td.marker {
 fieldset {
     background-color: #f9d5b0;
     border-top: 1px solid #e68117;
-    margin-right: 2em;
     padding: 0.5em;
     padding-bottom: 1em;
 }
@@ -461,6 +460,15 @@ form.inline input.submit {
     margin-top: 0.1em;
 }
 
+form.flush-left input.submit,
+form.flush-left div.form-item div.help-text { 
+    margin-left: 0;
+}
+
+form.flush-left .for-field {
+    width: auto;
+}
+
 /* Page edit form */
 
 #form-and-preview {
@@ -504,6 +512,11 @@ textarea#page-content {
 }
 
 /* Attachments */
+
+#file-upload-form {
+    /* This makes its left border line up with the table below it */
+    margin-left: -2px;
+}
 
 #upload-lightbox {
     text-align: center;

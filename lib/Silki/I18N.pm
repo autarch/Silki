@@ -23,6 +23,11 @@ use Silki::Config;
         $DL->set_languages(@_);
     }
 
+    sub Language {
+        shift;
+        ( $DL->languages )[0];
+    }
+
     sub loc {
         $DL->localize(@_);
     }

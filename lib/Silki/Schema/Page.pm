@@ -85,6 +85,7 @@ has file_count => (
     metaclass   => 'FromSelect',
     is          => 'ro',
     isa         => Int,
+    lazy        => 1,
     select      => __PACKAGE__->_FileCountSelect(),
     bind_params => sub { $_[0]->page_id() },
 );
@@ -115,13 +116,6 @@ class_has _PendingPageLinkDeleteSQL => (
     isa     => 'Fey::SQL::Delete',
     lazy    => 1,
     builder => '_BuildPendingPageLinkDeleteSQL',
-);
-
-class_has _PageFileInsertSQL => (
-    is      => 'ro',
-    isa     => 'Fey::SQL::Insert',
-    lazy    => 1,
-    builder => '_BuildPageFileInsertSQL',
 );
 
 sub _base_uri_path {
@@ -249,33 +243,17 @@ sub add_file {
     my $self = shift;
     my ($file) = pos_validated_list( \@_, { isa => 'Silki::Schema::File' } );
 
-    my $insert = $self->_PageFileInsertSQL();
-
-    my $dbh = Silki::Schema->DBIManager()->source_for_sql($insert)->dbh();
-
     my $last_rev = $self->most_recent_revision();
     my $new_content = $last_rev->content();
 
     $new_content =~ s/\n*$/\n\n/;
     $new_content .= '[[file:' . $file->file_id() . ']]';
     $new_content .= "\n";
-
-    my $trans = sub {
-        $dbh->do(
-            $insert->sql($dbh),
-            {},
-            $self->page_id(),
-            $file->file_id(),
-        );
-
-        $self->add_revision(
-            content => $new_content,
-            user_id => $file->user_id(),
-        );
-
-    };
-
-    Silki::Schema->RunInTransaction($trans);
+    warn $new_content;
+    $self->add_revision(
+        content => $new_content,
+        user_id => $file->user_id(),
+    );
 
     return;
 }
@@ -361,13 +339,13 @@ sub _IncomingLinkSelect {
 sub _FileCountSelect {
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    my $page_file_t = $Schema->table('PageFile');
+    my $page_file_link_t = $Schema->table('PageFileLink');
     my $count = Fey::Literal::Function->new( 'COUNT',
-        $page_file_t->column('file_id') );
+        $page_file_link_t->column('file_id') );
 
     $select->select($count)
-           ->from($page_file_t)
-           ->where( $page_file_t->column('page_id'), '=',
+           ->from($page_file_link_t)
+           ->where( $page_file_link_t->column('page_id'), '=',
                     Fey::Placeholder->new() );
 
     return $select;
@@ -376,11 +354,11 @@ sub _FileCountSelect {
 sub _FileSelect {
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    my ( $page_file_t, $file_t ) = $Schema->tables( 'PageFile', 'File' );
+    my ( $page_file_link_t, $file_t ) = $Schema->tables( 'PageFileLink', 'File' );
 
     $select->select($file_t)
-           ->from( $page_file_t, $file_t )
-           ->where( $page_file_t->column('page_id'), '=',
+           ->from( $page_file_link_t, $file_t )
+           ->where( $page_file_link_t->column('page_id'), '=',
                     Fey::Placeholder->new() )
            ->order_by( $file_t->column('file_name') );
 
@@ -400,16 +378,6 @@ sub _RevisionCountSelect {
         Fey::Placeholder->new() );
 
     return $select;
-}
-
-sub _BuildPageFileInsertSQL {
-    my $insert = Silki::Schema->SQLFactoryClass()->new_insert();
-
-    $insert->into( $Schema->table('PageFile') )
-           ->values( page_id => Fey::Placeholder->new(),
-                     file_id => Fey::Placeholder->new() );
-
-    return $insert;
 }
 
 sub revisions {

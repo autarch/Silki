@@ -252,7 +252,7 @@ CREATE TABLE "Tag" (
 
 CREATE INDEX "Tag_wiki_id" ON "Tag" (wiki_id);
 
-CREATE TABLE "PageFile" (
+CREATE TABLE "PageFileLink" (
        page_id                  INT8            NOT NULL,
        file_id                  INT8            NOT NULL,
        PRIMARY KEY ( page_id, file_id )
@@ -410,11 +410,11 @@ ALTER TABLE "Tag" ADD CONSTRAINT "Tag_wiki_id"
   FOREIGN KEY ("wiki_id") REFERENCES "Wiki" ("wiki_id")
   ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "PageFile" ADD CONSTRAINT "PageFile_page_id"
+ALTER TABLE "PageFileLink" ADD CONSTRAINT "PageFileLink_page_id"
   FOREIGN KEY ("page_id") REFERENCES "Page" ("page_id")
   ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "PageFile" ADD CONSTRAINT "PageFile_file_id"
+ALTER TABLE "PageFileLink" ADD CONSTRAINT "PageFileLink_file_id"
   FOREIGN KEY ("file_id") REFERENCES "File" ("file_id")
   ON DELETE CASCADE ON UPDATE CASCADE;
 

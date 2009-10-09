@@ -13,6 +13,7 @@ use Silki::Config;
 use Silki::I18N ();
 use Silki::Request;
 use Silki::Schema;
+use Silki::Types qw( Str );
 use Silki::Web::Session;
 
 use Moose;

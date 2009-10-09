@@ -56,22 +56,50 @@ sub _handle_wiki_links {
 }
 
 sub _link {
-    my $self = shift;
-    my $link = shift;
+    my $self      = shift;
+    my $link_text = shift;
 
-    if ( $link =~ /^file:(.+)/ ) {
-        return $self->_link_to_file($1);
+    my $thing = $self->_resolve_link($link_text);
+
+    if ( $thing->{file} ) {
+        return $self->_link_to_file( $thing->{file} );
     }
     else {
-        return $self->_link_to_page($link);
+        return $self->_link_to_page( $thing->{page}, $thing->{title},
+            $thing->{wiki} );
     }
 }
 
-sub _link_to_file {
-    my $self    = shift;
-    my $file_id = shift;
+sub _resolve_link {
+    my $self      = shift;
+    my $link_text = shift;
 
-    my $file = Silki::Schema::File->new( file_id => $file_id );
+    if ( $link_text =~ /^file:(.+)/ ) {
+        return { file => Silki::Schema::File->new( file_id => $1 ) };
+    }
+    else {
+        return {
+            page  => $self->_page_for_title($link_text),
+            title => $link_text,
+            wiki  => $self->_wiki(),
+        };
+    }
+}
+
+sub _page_for_title {
+    my $self  = shift;
+    my $title = shift;
+
+    return Silki::Schema::Page->new(
+        title   => $title,
+        wiki_id => $self->_wiki()->wiki_id(),
+    ) || undef;
+}
+
+sub _link_to_file {
+    my $self = shift;
+    my $file = shift;
+
     return unless $file;
 
     return loc('Inaccessible file')
@@ -90,17 +118,16 @@ sub _link_to_file {
 
 sub _link_to_page {
     my $self  = shift;
+    my $page  = shift;
     my $title = shift;
-
-    my $page = $self->_page_for_title($title);
+    my $wiki  = shift;
 
     my $class = $page ? 'existing-page' : 'new-page';
 
     my $uri
         = $page
         ? $page->uri()
-        : $self->_wiki()
-        ->uri( view => 'new_page_form', query => { title => $title } );
+        : $wiki->uri( view => 'new_page_form', query => { title => $title } );
 
     my $escaped_title = encode_entities($title);
 
@@ -111,24 +138,13 @@ sub links {
     my $self = shift;
     my $text = shift;
 
-    my %links = map {
-        $_ => {
-            page => $self->_page_for_title($_),
-            wiki => $self->_wiki(),
-            }
-    } ( $text =~ /$link_re/g );
+    my %links;
+
+    for my $link_text ( $text =~ /$link_re/g ) {
+        $links{$link_text} = $self->_resolve_link($link_text);
+    }
 
     return \%links;
-}
-
-sub _page_for_title {
-    my $self  = shift;
-    my $title = shift;
-
-    return Silki::Schema::Page->new(
-        title   => $title,
-        wiki_id => $self->_wiki()->wiki_id(),
-    ) || undef;
 }
 
 no Moose;

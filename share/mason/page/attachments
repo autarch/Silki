@@ -4,26 +4,65 @@
   <img src="/images/spinner.gif" height="32" width="32" />
 </div>
 
-<p>
-  <% loc('Upload a new file.') %>
-% if ( Silki::Config->new()->max_upload_size() ) {
-  <% loc( 'Files cannot be larger than %1.', format_bytes( Silki::Config->new()->max_upload_size() ) ) %>
-% }
-</p>
-
 <&| /lib/filter/form.mas &>
-<form id="file-upload-form" action="<% $page->uri( view => 'file' ) %>" method="post">
+<form id="file-upload-form"
+      class="flush-left"
+      action="<% $page->uri( view => 'file' ) %>"
+      method="post"
+      enctype="multipart/form-data">
   <input type="hidden" id="page_id" name="page_id" value="<% $page->page_id() %>" />
-  <div class="form-item">
-    <label for="file"><% loc('File') %>:</label>
-    <input id="file" name="file" type="file" />
-  </div>
+  <fieldset>
+    <legend><% loc('Upload a file for this page') %></legend>
+
+    <div class="form-item">
+      <label class="for-field" for="file"><% loc('File') %>:</label>
+      <input id="file" name="file" type="file" />
+% if ( Silki::Config->new()->max_upload_size() ) {
+      <div class="help-text">
+        <p><% loc( 'Files cannot be larger than %1.', format_bytes( Silki::Config->new()->max_upload_size() ) ) %></p>
+      </div>
+% }
+    </div>
+
+    <input value="Upload" type="submit" />
+  </fieldset>
 </form>
 </&>
 % }
 
 % if ($file_count) {
-attachments
+<table class="standard-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Size</th>
+      <th></th>
+    </tr>
+  </thead>
+%   while ( my $file = $files->next() ) {
+  <tbody>
+    <tr class="<% $files->index() % 2 ? 'odd' : 'even' %>">
+      <td>
+        <a href="<% $file->uri() %>" title="<% loc('Download this file') %>"><% $file->file_name() %></a>
+%     if ( $file->is_browser_displayable_image() ) {
+        <br />
+        <a href="<% $file->uri() %>" title="<% loc('Download this file') %>"><img src="<% $file->uri( view => 'thumbnail' ) %>" /></a>
+%     }
+      </td>
+      <td>
+        <% $file->mime_type_description_for_lang( Silki::I18N->Language() ) %>
+      </td>
+      <td>
+        <% format_bytes( $file->file_size() ) %>
+      </td>
+      <td>
+      </td>
+    </tr>
+  </tbody>
+% }
+</table>
+
 % } else {
 <p>
   <% loc('This page does not have any attachments.' ) %>

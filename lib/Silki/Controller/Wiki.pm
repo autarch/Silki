@@ -5,7 +5,10 @@ use warnings;
 
 use Data::Page;
 use Data::Page::FlickrLike;
+use File::Basename qw( dirname );
+use File::MimeInfo qw( mimetype );
 use List::AllUtils qw( all );
+use Path::Class ();
 use Silki::Config;
 use Silki::Formatter::HTMLToWiki;
 use Silki::Formatter::WikiToHTML;
@@ -316,10 +319,10 @@ sub attachments : Chained('_set_page') : PathPart('attachments') : Args(0) {
     $c->stash()->{template} = '/page/attachments';
 }
 
-sub file  : Chained('_set_page') : PathPart('file') : Args(0) : ActionClass('+Silki::Action::REST') {
+sub page_file_collection : Chained('_set_page') : PathPart('file') : Args(0) : ActionClass('+Silki::Action::REST') {
 }
 
-sub file_POST {
+sub page_file_collection_POST {
     my $self = shift;
     my $c    = shift;
 
@@ -327,12 +330,17 @@ sub file_POST {
 
     my $upload = $c->request()->upload('file');
 
+    unless ($upload) {
+        $c->redirect_with_error(
+            error => loc('You did not select a file to upload.'),
+            uri   => $c->stash()->{page}->uri( view => 'attachments' ),
+        );
+    }
+
     if ( $upload->size() > Silki::Config->new()->max_upload_size() ) {
         $c->redirect_with_error(
-            error      => loc('The file you uploaded was too large.'),
-            uri        => $c->stash()->{page}->uri( view => 'attachments' ),
-            force_json => 1,
-            json_content_type => 'text/plain',
+            error => loc('The file you uploaded was too large.'),
+            uri   => $c->stash()->{page}->uri( view => 'attachments' ),
         );
     }
 
@@ -347,7 +355,7 @@ sub file_POST {
         sub {
             $file = Silki::Schema::File->insert(
                 file_name => $basename,
-                mime_type => $upload->type(),
+                mime_type => mimetype( $upload->tempname() ),
                 file_size => $upload->size(),
                 contents  => do { my $fh = $upload->fh(); local $/; <$fh> },
                 user_id   => $c->user()->user_id(),
@@ -358,11 +366,51 @@ sub file_POST {
         }
     );
 
-    return $self->status_created(
-        $c,
-        location => $file->uri(),
-        entity   => {},
-    );
+    $c->session_object()->add_message( loc('The file has been uploaded, and this page now links to the file.' ) );
+    $c->redirect_and_detach( $c->stash()->{page}->uri( view => 'attachments' ) );
+}
+
+sub _set_file : Chained('_set_wiki') : PathPart('file') : CaptureArgs(1) {
+    my $self    = shift;
+    my $c       = shift;
+    my $file_id = shift;
+
+    my $file = Silki::Schema::File->new( file_id => $file_id );
+
+    my $wiki = $c->stash()->{wiki};
+    $c->redirect_and_detach( $wiki->uri( with_host => 1 ) )
+        unless $file && $file->wiki_id() == $wiki->wiki_id();
+
+    $c->stash()->{file} = $file;
+}
+
+sub file : Chained('_set_file') : PathPart('') : Args(0) : ActionClass('+Silki::Action::REST') {
+}
+
+sub file_GET_html {
+    my $self = shift;
+    my $c    = shift;
+
+    
+}
+
+sub file_thumbnail : Chained('_set_file') : PathPart('thumbnail') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    my $file = $c->stash()->{file};
+
+    $c->status_not_found()
+        unless $file->is_browser_displayable_image();
+
+    my $thumbnail = $file->thumbnail_file();
+
+    $c->response()->status(200);
+    $c->response()->content_type( $file->mime_type() );
+    $c->response()->content_length( -s $thumbnail );
+    $c->response()->header( 'X-Sendfile' => $thumbnail );
+
+    return;
 }
 
 sub _set_user : Chained('_set_wiki') : PathPart('user') : CaptureArgs(1) {
@@ -378,6 +426,57 @@ sub _make_user_uri {
     $real_view .= q{/} . $view if defined $view;
 
     return $c->stash()->{wiki}->uri( view => $real_view );
+}
+
+{
+    use HTTP::Body::MultiPart;
+    package HTTP::Body::MultiPart;
+
+    no warnings 'redefine';
+sub handler {
+    my ( $self, $part ) = @_;
+
+    unless ( exists $part->{name} ) {
+
+        my $disposition = $part->{headers}->{'Content-Disposition'};
+        my ($name)      = $disposition =~ / name="?([^\";]+)"?/;
+        my ($filename)  = $disposition =~ / filename="?([^\"]*)"?/;
+        # Need to match empty filenames above, so this part is flagged as an upload type
+
+        $part->{name} = $name;
+
+        if ( defined $filename ) {
+            $part->{filename} = $filename;
+
+            if ( $filename ne "" ) {
+                my $fh = File::Temp->new( UNLINK => 0, DIR => $self->tmpdir, SUFFIX => q{-} . $filename );
+
+                $part->{fh}       = $fh;
+                $part->{tempname} = $fh->filename;
+            }
+        }
+    }
+
+    if ( $part->{fh} && ( my $length = length( $part->{data} ) ) ) {
+        $part->{fh}->write( substr( $part->{data}, 0, $length, '' ), $length );
+    }
+
+    if ( $part->{done} ) {
+
+        if ( exists $part->{filename} ) {
+            if ( $part->{filename} ne "" ) {
+                $part->{fh}->close if defined $part->{fh};
+
+                delete @{$part}{qw[ data done fh ]};
+
+                $self->upload( $part->{name}, $part );
+            }
+        }
+        else {
+            $self->param( $part->{name}, $part->{data} );
+        }
+    }
+}
 }
 
 no Moose;

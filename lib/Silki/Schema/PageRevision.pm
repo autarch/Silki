@@ -11,6 +11,7 @@ use Silki::Formatter::WikiToHTML;
 use Silki::Schema;
 use Silki::Schema::Page;
 use Silki::Schema::PageLink;
+use Silki::Schema::PageFileLink;
 use Silki::Schema::PendingPageLink;
 
 use Fey::ORM::Table;
@@ -38,16 +39,16 @@ around insert => sub {
 
     my $revision = $class->$orig(@_);
 
-    $revision->_update_page_links();
+    $revision->_update_links();
 };
 
 after update => sub {
     my $self = shift;
 
-    $self->_update_page_links();
+    $self->_update_links();
 };
 
-sub _update_page_links {
+sub _update_links {
     my $self = shift;
 
     my $links = Silki::Formatter::WikiToHTML->new(
@@ -69,11 +70,20 @@ sub _update_page_links {
         = map {
         {
             from_page_id  => $self->page_id(),
-            to_wiki_id    => $links->{$_}{wiki}->wiki_id(),,
-            to_page_title => $_,
+            to_wiki_id    => $links->{$_}{wiki}->wiki_id(),
+            to_page_title => $links->{$_}{title},
         }
         }
-        grep { !$links->{$_}{page} }
+        grep { $links->{$_}{title} && !$links->{$_}{page} }
+        keys %{$links};
+
+    my @files = map {
+        {
+            page_id => $self->page_id(),
+            file_id => $links->{$_}{file}->file_id(),
+        }
+        }
+        grep { $links->{$_}{file} }
         keys %{$links};
 
     my $delete_existing = Silki::Schema->SQLFactoryClass()->new_delete();
@@ -89,6 +99,13 @@ sub _update_page_links {
         '=', $self->page_id()
         );
 
+    my $delete_files = Silki::Schema->SQLFactoryClass()->new_delete();
+    $delete_files->delete()->from( $Schema->table('PageFileLink') )
+        ->where(
+        $Schema->table('PageFileLink')->column('page_id'),
+        '=', $self->page_id()
+        );
+
     my $dbh = Silki::Schema->DBIManager()->source_for_sql($delete_existing)
         ->dbh();
 
@@ -97,11 +114,15 @@ sub _update_page_links {
             $delete_existing->bind_params() );
         $dbh->do( $delete_pending->sql($dbh), {},
             $delete_pending->bind_params() );
+        $dbh->do( $delete_files->sql($dbh), {},
+            $delete_files->bind_params() );
 
         Silki::Schema::PageLink->insert_many(@existing)
             if @existing;
         Silki::Schema::PendingPageLink->insert_many(@pending)
             if @pending;
+        Silki::Schema::PageFileLink->insert_many(@files)
+            if @files;
     };
 
     Silki::Schema->RunInTransaction($updates);

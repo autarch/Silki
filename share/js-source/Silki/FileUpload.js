@@ -1,4 +1,4 @@
-JSAN.use('AjaxUpload');
+JSAN.use('DOM.Events');
 JSAN.use('DOM.Utils');
 JSAN.use('Widget.Lightbox2');
 
@@ -30,26 +30,8 @@ Silki.FileUpload.prototype.instrumentForm = function () {
 
     var self = this;
 
-    new AjaxUpload( '#file',
-                    { "action":       this._form.action,
-                      "name":         $("file").name,
-                      "data":         { "page_id": $("page_id").value },
-                      "autoSubmit":   true,
-                      "responseType": "json",
-                      "onSubmit":     function () { self._showUploadSpinner.apply( self, arguments ); },
-                      "onComplete":   function () { self._updateFileList.apply( self, arguments ); }
-                    }
-                  );
-};
-
-Silki.FileUpload.prototype._showUploadSpinner = function () {
-    this._lightbox.show();
-};
-
-Silki.FileUpload.prototype._updateFileList = function ( file, response ) {
-    this._lightbox.hide();
-
-    if ( response.uri ) {
-        window.location.href = response.uri;
-    }
+    DOM.Events.addListenever( this._form,
+                              "submit",
+                              function () { self._lightbox.show() }
+                            );
 };

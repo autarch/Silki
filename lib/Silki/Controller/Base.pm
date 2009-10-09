@@ -3,6 +3,7 @@ package Silki::Controller::Base;
 use strict;
 use warnings;
 
+use autodie;
 use Carp qw( croak );
 use Silki::Config;
 use Silki::JSON;
@@ -50,6 +51,19 @@ sub end : Private {
 
     return $self->next::method($c)
         if $c->stash()->{rest};
+
+    # Catalyst::Plugin::XSendfile seems to be designed to only work with
+    # Lighthttpd, and deletes any file over 16kb, which we don't want to do. I
+    # should probably patch it at some point.
+    if ( my $file = $c->response()->header('X-Sendfile') ) {
+        my ($engine) = ( ref $c->engine() ) =~ /^Catalyst::Engine::(.+)$/;
+
+        if ( $engine =~ /^HTTP/ ) {
+            open my $fh, '<', $file;
+            $c->response()->body($fh);
+            return;
+        }
+    }
 
     if (   ( !$c->response()->status() || $c->response()->status() == 200 )
         && !$c->response()->body()
