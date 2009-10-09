@@ -14,7 +14,7 @@ use Silki::Schema::Permission;
 use Silki::Schema::Role;
 use Silki::Schema::UserWikiRole;
 use Silki::Schema::WikiRolePermission;
-use Silki::Types qw( Bool HashRef Int ValidPermissionType );
+use Silki::Types qw( Bool HashRef Int Str ValidPermissionType );
 
 use Fey::ORM::Table;
 use MooseX::ClassAttribute;
@@ -35,7 +35,7 @@ has_many pages => (
 
 has permissions => (
     is       => 'ro',
-    isa      => HashRef [ HashRef [Bool] ],
+    isa      => HashRef[HashRef[Bool]],
     lazy     => 1,
     builder  => '_build_permissions',
     init_arg => undef,
@@ -47,6 +47,14 @@ has revision_count => (
     isa         => Int,
     select      => __PACKAGE__->_RevisionCountSelect(),
     bind_params => sub { $_[0]->wiki_id() },
+);
+
+has front_page_title => (
+    is       => 'ro',
+    isa      => Str,
+    lazy     => 1,
+    init_arg => 1,
+    builder  => '_build_front_page_title',
 );
 
 class_has _RecentChangesSelect => (
@@ -61,6 +69,13 @@ class_has _DistinctRecentChangesSelect => (
     isa     => 'Fey::SQL::Select',
     lazy    => 1,
     builder => '_BuildDistinctRecentChangesSelect',
+);
+
+class_has _OrphanedPagesSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildOrphanedPagesSelect',
 );
 
 class_has _PublicWikiCountSelect => (
@@ -250,6 +265,13 @@ sub _build_permissions {
     }
 }
 
+sub _build_front_page_title {
+    my $self = shift;
+
+    # XXX - needs i18n
+    return 'Front Page';
+}
+
 sub _RevisionCountSelect {
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
@@ -288,9 +310,6 @@ sub _BuildRecentChangesSelect {
     my $class = shift;
 
     my $page_t = $Schema->table('Page');
-
-    my $max_func = Fey::Literal::Function->new( 'MAX',
-        $Schema->table('PageRevision')->column('revision_number') );
 
     my $pages_select = Silki::Schema->SQLFactoryClass()->new_select();
     $pages_select->select( $page_t, $Schema->table('PageRevision') )
@@ -334,6 +353,49 @@ sub _BuildDistinctRecentChangesSelect {
         );
 
     return $pages_select;
+}
+
+sub orphaned_pages {
+    my $self = shift;
+    my ( $limit, $offset ) = validated_list(
+        \@_,
+        limit  => { isa => Int, optional => 1 },
+        offset => { isa => Int, default  => 0 },
+    );
+
+    my $select = $self->_OrphanedPagesSelect()->clone();
+    $select->limit( $limit, $offset );
+
+    return Fey::Object::Iterator::FromSelect->new(
+        classes => [ 'Silki::Schema::Page', 'Silki::Schema::PageRevision' ],
+        select  => $select,
+        dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
+        bind_params => [ $self->wiki_id(), $self->front_page_title() ],
+    );
+}
+
+sub _BuildOrphanedPagesSelect {
+    my $class = shift;
+
+    my $page_link_t = $Schema->table('PageLink');
+
+    my $linked_pages = Silki::Schema->SQLFactoryClass()->new_select();
+    $linked_pages
+        ->select( $page_link_t->column('to_page_id') )
+        ->from( $page_link_t );
+
+    my $page_t = $Schema->table('Page');
+
+    my $pages_select = Silki::Schema->SQLFactoryClass()->new_select();
+    $pages_select
+        ->select($page_t)->from($page_t)
+        ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
+        ->and( $page_t->column( 'title' ), '!=', Fey::Placeholder->new() )
+        ->and( $page_t->column('page_id'), 'NOT IN', $linked_pages )
+        ->order_by(
+            $Schema->table('Page')->column('title'), 'ASC',
+        );
+
 }
 
 sub PublicWikiCount {

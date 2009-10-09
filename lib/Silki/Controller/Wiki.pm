@@ -102,6 +102,13 @@ sub recent : Chained('_set_wiki') : PathPart('recent') : Args(0) {
     $c->stash()->{template} = '/wiki/recent';
 }
 
+sub orphans : Chained('_set_wiki') : PathPart('orphans') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $c->stash()->{orphans} = $c->stash()->{wiki}->orphaned_pages();
+}
+
 sub new_page_form : Chained('_set_wiki') : PathPart('new_page_form') : Args(0)
 {
     my $self = shift;

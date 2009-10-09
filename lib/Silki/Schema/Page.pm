@@ -100,8 +100,8 @@ has is_front_page => (
     is       => 'ro',
     isa      => Bool,
     lazy     => 1,
-    default  => sub { $_[0]->title() eq 'Front Page' },
     init_arg => undef,
+    default  => sub { $_[0]->title() eq $_[0]->wiki()->front_page_title() },
 );
 
 class_has _PendingPageLinkSelectSQL => (
@@ -249,7 +249,7 @@ sub add_file {
     $new_content =~ s/\n*$/\n\n/;
     $new_content .= '[[file:' . $file->file_id() . ']]';
     $new_content .= "\n";
-    warn $new_content;
+
     $self->add_revision(
         content => $new_content,
         user_id => $file->user_id(),
