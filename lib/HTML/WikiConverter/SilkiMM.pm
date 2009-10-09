@@ -38,13 +38,27 @@ sub _link {
     my $url = $node->attr('href') || '';
 
     if ( my $title = $self->get_wiki_page($url) ) {
-        my ( $wiki, $title ) = $title =~ m{/wiki/([^/]+)/page/([^/]+)};
+        my ( $wiki, $title, $file_id )
+            = $title =~ m{/wiki/([^/]+)(?:/page/([^/]+)|/file/([^/]+))};
 
-        if ( $self->wiki()->short_name() eq $wiki ) {
-            return '[[' . $title . ']]';
+        if ( defined $title ) {
+            if ( $self->wiki()->short_name() eq $wiki ) {
+                return '[[' . $title . ']]';
+            }
+            else {
+                return '[[' . $wiki . q{/} . $title . ']]';
+            }
+        }
+        elsif ( defined $file_id ) {
+            if ( $self->wiki()->short_name() eq $wiki ) {
+                return '[[file:' . $file_id . ']]';
+            }
+            else {
+                return '[[file:' . $wiki . q{/} . $file_id . ']]';
+            }
         }
         else {
-            return '[[' . $wiki . q{/} . $title . ']]';
+            die 'wtf';
         }
     }
     else {

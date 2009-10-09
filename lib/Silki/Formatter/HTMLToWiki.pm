@@ -36,11 +36,12 @@ sub html_to_wikitext {
     my $self = shift;
     my $html = shift;
 
-    my $wiki_uri = URI->new( $self->_wiki()->uri( view => 'page' ) )->path();
+    my $page_path = URI->new( $self->_wiki()->uri( view => 'page' ) )->path();
+    my $file_path = URI->new( $self->_wiki()->uri( view => 'file' ) )->path();
 
     my $wikitext = $self->_converter->html2wiki(
         $html,
-        wiki_uri => [qr{^(\Q$wiki_uri\E/[^/]+)}],
+        wiki_uri => [qr{^(\Q$page_path\E/[^/]+|\Q$file_path\E/[^/]+)}],
     );
 
     $wikitext =~ s{<br\s*/?>}{}g;
