@@ -137,6 +137,20 @@ has cache_dir => (
     builder => '_build_cache_dir',
 );
 
+has files_dir => (
+    is      => 'ro',
+    isa     => 'Path::Class::Dir',
+    lazy    => 1,
+    builder => '_build_files_dir',
+);
+
+has thumbnails_dir => (
+    is      => 'ro',
+    isa     => 'Path::Class::Dir',
+    lazy    => 1,
+    builder => '_build_thumbnails_dir',
+);
+
 has static_path_prefix => (
     is      => 'rw',
     isa     => Str,
@@ -308,7 +322,41 @@ sub _build_cache_dir {
     );
 }
 
+sub _build_files_dir {
+    my $self = shift;
+
+    my $cache = $self->cache_dir();
+
+    my $files_dir = $cache->subdir('files');
+
+    $self->_ensure_dir($files_dir);
+
+    return $files_dir;
+}
+
+sub _build_thumbnails_dir {
+    my $self = shift;
+
+    my $cache = $self->cache_dir();
+
+    my $thumbnails_dir = $cache->subdir('thumbnails');
+
+    $self->_ensure_dir($thumbnails_dir);
+
+    return $thumbnails_dir;
+}
+
 sub _dir {
+    my $self = shift;
+
+    my $dir = $self->_pick_dir(@_);
+
+    $self->_ensure_dir($dir);
+
+    return $dir;
+}
+
+sub _pick_dir {
     my $self         = shift;
     my $pieces       = shift;
     my $prod_default = shift;
@@ -328,6 +376,18 @@ sub _dir {
         if defined $dev_default;
 
     return dir( $self->_home_dir(), '.silki', @{$pieces} );
+}
+
+sub _ensure_dir {
+    my $self = shift;
+    my $dir  = shift;
+
+    return if -d $dir;
+
+    $dir->mkpath( 0, 0755 )
+        or die "Cannot make $dir: $!";
+
+    return;
 }
 
 sub _build_catalyst_config {

@@ -59,8 +59,15 @@ sub end : Private {
         my ($engine) = ( ref $c->engine() ) =~ /^Catalyst::Engine::(.+)$/;
 
         if ( $engine =~ /^HTTP/ ) {
-            open my $fh, '<', $file;
-            $c->response()->body($fh);
+            if ( -f $file ) {
+                open my $fh, '<', $file;
+                $c->response()->body($fh);
+            }
+            else {
+                $c->log()->error( "X-sendfile pointed at nonexistent file - $file\n" );
+                $c->response()->status(404);
+            }
+
             return;
         }
     }

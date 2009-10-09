@@ -4,11 +4,14 @@ use strict;
 use warnings;
 
 use autodie;
+use Digest::SHA qw( sha256_hex );
 use File::MimeInfo qw( describe );
+use File::stat;
 use Image::Magick;
 use Image::Thumbnail;
+use Silki::Config;
 use Silki::Schema;
-use Silki::Types qw( HashRef Str Bool );
+use Silki::Types qw( Str Bool File Maybe );
 
 use Fey::ORM::Table;
 
@@ -30,6 +33,30 @@ has is_browser_displayable_image => (
     init_arg => undef,
     lazy     => 1,
     builder  => '_build_is_browser_displayable_image',
+);
+
+has file_on_disk => (
+    is       => 'ro',
+    isa      => File,
+    init_arg => undef,
+    lazy     => 1,
+    builder  => '_build_file_on_disk',
+);
+
+has thumbnail_file => (
+    is       => 'ro',
+    isa      => Maybe[File],
+    init_arg => undef,
+    lazy     => 1,
+    builder  => '_build_thumbnail_file',
+);
+
+has _file_name_with_hash => (
+    is       => 'ro',
+    isa      => Str,
+    init_arg => undef,
+    lazy     => 1,
+    builder  => '_build_file_name_with_hash',
 );
 
 sub _base_uri_path {
@@ -56,40 +83,54 @@ sub mime_type_description_for_lang {
     }
 }
 
-sub thumbnail_file {
+sub _build_file_on_disk {
     my $self = shift;
 
-    use File::Temp qw( tempdir );
-    my $dir = tempdir( CLEANUP => 1 );
+    my $dir = Silki::Config->new()->files_dir();
 
-    my $file = "$dir/" . $self->file_name();
+    my $file = $dir->file( $self->_file_name_with_hash() );
 
-    return $file if -f $file;
-
-    Image::Thumbnail->new(
-        module     => 'Image::Magick',
-        size       => '75x200',
-        create     => 1,
-        input      => $self->file_on_disk(),
-        outputpath => $file,
-    );
-
-    return $file;
-}
-
-sub file_on_disk {
-    my $self = shift;
-
-    use File::Temp qw( tempdir );
-    my $dir = tempdir( CLEANUP => 1 );
-
-    my $file = "$dir/" . $self->file_name();
+    return $file
+        if -f $file
+            && ( File::stat::populate( CORE::stat(_) ) )->mtime()
+            >= $self->creation_datetime()->epoch();
 
     open my $fh, '>', $file;
     print {$fh} $self->contents();
     close $fh;
 
     return $file;
+}
+
+sub _build_thumbnail_file {
+    my $self = shift;
+
+    my $dir = Silki::Config->new()->thumbnails_dir();
+
+    my $file = $dir->file( $self->_file_name_with_hash() );
+
+    return $file
+        if -f $file
+            && ( File::stat::populate( CORE::stat(_) ) )->mtime()
+            >= $self->creation_datetime()->epoch();
+
+    Image::Thumbnail->new(
+        module     => 'Image::Magick',
+        size       => '75x200',
+        create     => 1,
+        inputpath  => $self->file_on_disk()->stringify(),
+        outputpath => $file->stringify(),
+    );
+
+    return $file;
+}
+
+sub _build_file_name_with_hash {
+    my $self = shift;
+
+    return join q{-},
+        sha256_hex( $self->file_id(), Silki::Config->new()->secret() ),
+        $self->file_name();
 }
 
 no Fey::ORM::Table;
