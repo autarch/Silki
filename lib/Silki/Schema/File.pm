@@ -27,6 +27,14 @@ has_one( $Schema->table('User') );
 
 has_one( $Schema->table('Wiki') );
 
+has is_displayable_in_browser => (
+    is       => 'ro',
+    isa      => Bool,
+    init_arg => undef,
+    lazy     => 1,
+    builder  => '_build_is_displayable_in_browser',
+);
+
 has is_browser_displayable_image => (
     is       => 'ro',
     isa      => Bool,
@@ -80,6 +88,15 @@ sub mime_type_description_for_lang {
 
     sub _build_is_browser_displayable_image {
         return $browser_image{ $_[0]->mime_type() };
+    }
+}
+
+{
+    sub _build_is_displayable_in_browser {
+        my $self = shift;
+
+        return $self->is_browser_displayable_image()
+            || $self->mime_type() =~ m{^text/};
     }
 }
 

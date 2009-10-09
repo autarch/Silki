@@ -29,7 +29,7 @@
 </head>
 <body>
 
-<div id="doc3" class="yui-t5">
+<div id="doc3" class="<% $show_nav ? 'yui-t5' : q{} %>">
 
 <& header.mas, %ARGS &>
 
@@ -50,7 +50,9 @@
       </div>
     </div>
 
+% if ($show_nav) {
 <& sidebar.mas, %ARGS &>
+% }
 	
   </div>
 
@@ -61,8 +63,13 @@
 </body>
 </html>
 
+<%init>
+my $show_nav = $m->request_comp()->attr('show_nav');
+</%init>
+
 <%attr>
 show_title    => 1
+show_nav      => 1
 sidebar       => [ 'quick-search' ]
 load_ckeditor => 0
 </%attr>

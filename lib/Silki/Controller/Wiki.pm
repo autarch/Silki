@@ -391,7 +391,42 @@ sub file_GET_html {
     my $self = shift;
     my $c    = shift;
 
-    
+    my $file = $c->stash()->{file};
+
+    if ( $file->is_displayable_in_browser() ) {
+        $c->stash()->{template} = '/file/view-in-frame';
+    }
+    else {
+        $self->_file_download( $c, $file );
+    }
+
+    return;
+}
+
+sub file_download : Chained('_set_file') : PathPart('download') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_file_download( $c, $c->stash()->{file}, 'inline' );
+
+    return;
+}
+
+sub _file_download {
+    my $self        = shift;
+    my $c           = shift;
+    my $file        = shift;
+    my $disposition = shift || 'attachment';
+
+    $c->response()->content_type( $file->mime_type() );
+
+    my $name = $file->file_name();
+    $name =~ s/\"/\\"/g;
+
+    $c->response()
+        ->header( 'Content-Disposition' => qq{$disposition; filename="$name"} );
+    $c->response()->content_length( $file->file_size() );
+    $c->response()->header( 'X-Sendfile' => $file->file_on_disk() );
 }
 
 sub file_thumbnail : Chained('_set_file') : PathPart('thumbnail') : Args(0) {
