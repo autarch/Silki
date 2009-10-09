@@ -1,0 +1,24 @@
+<%init>
+return $m->call_next();
+</%init>
+
+<%method local_nav>
+  <ul>
+    <li>
+      <a href="<% $wiki->uri( view => 'attachments' ) %>"
+         title="<% loc('All attachments in this wiki') %>"><% loc('All Attachments') %></a>
+    </li>
+    <li>
+      <a href="<% $wiki->uri( view => 'orphans' ) %>"
+         title="<% loc('Pages with no incoming links') %>"><% loc('Orphans') %></a>
+    </li>
+    <li>
+      <a href="<% $wiki->uri( view => 'wanted' ) %>"
+         title="<% loc( 'Links to pages which do not yet exist' ) %>"><% loc('Wanted Pages') %></a> 
+    </li>
+  </ul>
+
+<%args>
+$wiki
+</%args>
+</%method>

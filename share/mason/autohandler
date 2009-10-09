@@ -36,7 +36,13 @@
   <div id="bd">
     <div id="yui-main">
       <div class="yui-b">
-        <& local-nav.mas, %ARGS &>
+% if ( $m->request_comp()->method_exists('local_nav') ) {
+        <div id="local-nav">
+<&| /lib/filter/unlink-current.mas &>
+        <& SELF:local_nav, %ARGS &>
+</&>
+</div>
+% }
         <div id="content">
 
 <& .messages &>

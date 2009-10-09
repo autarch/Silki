@@ -1,5 +1,8 @@
-<div id="local-nav">
-<&| /lib/filter/unlink-current.mas &>
+<%init>
+return $m->call_next();
+</%init>
+
+<%method local_nav>
   <ul>
     <li>
       <a href="<% $page->uri( view => 'edit_form' ) %>"
@@ -13,14 +16,9 @@
       <a href="<% $page->uri( view => 'history' ) %>"
          title="<% loc( q{This page's history of revisions} ) %>"><% loc('History') %></a> 
     </li>
-</&>
   </ul>
-</div>
 
 <%args>
-$page => undef
+$page
 </%args>
-
-<%init>
-return unless $page;
-</%init>
+</%method>
