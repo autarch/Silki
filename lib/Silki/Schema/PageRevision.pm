@@ -85,7 +85,7 @@ sub _update_links {
         }
         grep { $links->{$_}{file} }
         keys %{$links};
-
+    use Data::Dumper; warn Dumper [ \@existing, \@pending, \@files ];
     my $delete_existing = Silki::Schema->SQLFactoryClass()->new_delete();
     $delete_existing->delete()->from( $Schema->table('PageLink') )->where(
         $Schema->table('PageLink')->column('from_page_id'),

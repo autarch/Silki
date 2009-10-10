@@ -12,7 +12,7 @@ use Silki::Schema;
 use Silki::Schema::File;
 use Silki::Schema::Wiki;
 use Silki::Types qw( Bool Int );
-use URI::Escape qw( uri_escape_utf8 );
+use URI::Escape qw( uri_escape_utf8 uri_unescape );
 
 use Fey::ORM::Table;
 use MooseX::ClassAttribute;
@@ -206,7 +206,7 @@ sub insert_with_content {
             map  { $_->name() } $class->Table()->columns()
     );
 
-    $page_p{uri_path} = $class->_title_to_uri_path( $page_p{title} );
+    $page_p{uri_path} = $class->TitleToURIPath( $page_p{title} );
 
     my $page;
     $class->SchemaClass()->RunInTransaction(
@@ -258,8 +258,8 @@ sub add_file {
     return;
 }
 
-sub _title_to_uri_path {
-    my $self  = shift;
+sub TitleToURIPath {
+    my $class = shift;
     my $title = shift;
 
     # This is the default list of safe characters, except we also escape
@@ -270,6 +270,15 @@ sub _title_to_uri_path {
     $escaped =~ s/%20/_/;
 
     return $escaped;
+}
+
+sub URIPathToTitle {
+    my $class = shift;
+    my $path  = shift;
+
+    $path =~ s/_/%20/g;
+
+    return uri_unescape($path);
 }
 
 sub _MostRecentRevisionSelect {

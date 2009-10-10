@@ -37,25 +37,12 @@ sub _link {
 
     my $url = $node->attr('href') || '';
 
-    if ( my $title = $self->get_wiki_page($url) ) {
-        my ( $wiki, $title, $file_id )
-            = $title =~ m{/wiki/([^/]+)(?:/page/([^/]+)|/file/([^/]+))};
-
-        if ( defined $title ) {
-            if ( $self->wiki()->short_name() eq $wiki ) {
-                return '[[' . $title . ']]';
-            }
-            else {
-                return '[[' . $wiki . q{/} . $title . ']]';
-            }
+    if ( my $path = $self->get_wiki_page($url) ) {
+        if ( $path =~ m{ /wiki/([^/]+)/page/([^/]+) }x ) {
+            return $self->_link_to_page( $1, Silki::Schema::Page->URIPathToTitle($2) );
         }
-        elsif ( defined $file_id ) {
-            if ( $self->wiki()->short_name() eq $wiki ) {
-                return '[[file:' . $file_id . ']]';
-            }
-            else {
-                return '[[file:' . $wiki . q{/} . $file_id . ']]';
-            }
+        elsif ( $path =~ m{ /wiki/([^/]+)/file/([^/]+)}x ) {
+            return $self->_link_to_file( $1, $2 );
         }
         else {
             die 'wtf';
@@ -63,6 +50,32 @@ sub _link {
     }
     else {
         return $self->SUPER::_link( $node, $rules );
+    }
+}
+
+sub _link_to_page {
+    my $self  = shift;
+    my $wiki  = shift;
+    my $title = shift;
+
+    if ( $self->wiki()->short_name() eq $wiki ) {
+        return '[[' . $title . ']]';
+    }
+    else {
+        return '[[' . $wiki . q{/} . $title . ']]';
+    }
+}
+
+sub _link_to_file {
+    my $self    = shift;
+    my $wiki    = shift;
+    my $file_id = shift;
+
+    if ( $self->wiki()->short_name() eq $wiki ) {
+        return '[[file:' . $file_id . ']]';
+    }
+    else {
+        return '[[file:' . $wiki . q{/} . $file_id . ']]';
     }
 }
 

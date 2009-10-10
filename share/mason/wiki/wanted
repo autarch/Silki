@@ -1,0 +1,31 @@
+<p>
+<% loc( q{A wanted page is a link to a page that doesn't exist.} ) %>
+</p>
+
+<table class="standard-table">
+  <thead>
+    <tr>
+      <th><% loc('Title') %></th>
+      <th><% loc('Wanted by X other pages') %></th>
+    </tr>
+  </thead>
+% while ( my $page = $wanted->next() ) {
+  <tbody>
+    <tr class="<% $wanted->index() % 2 ? 'odd' : 'even' %>">
+      <td><a href="<% $page->uri() %>"><% $page->title() %></td>
+      <td>
+        <% $page->wanted_count() %>
+      </td>
+    </tr>
+  </tbody>
+% }
+</table>
+
+<%args>
+$wanted
+$wiki
+</%args>
+
+<%method title>
+<% loc('Wanted Pages') %>
+</%method>

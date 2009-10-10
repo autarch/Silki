@@ -8,10 +8,17 @@ use Silki::I18N qw( loc );
 use Silki::Schema::File;
 use Silki::Schema::Page;
 use Silki::Schema::Permission;
+use Silki::Types qw( Bool );
 use Text::MultiMarkdown;
 
 use Moose;
 use MooseX::StrictConstructor;
+
+has for_editor => (
+    is      => 'ro',
+    isa     => Bool,
+    default => 0,
+);
 
 has _user => (
     is       => 'ro',
@@ -122,7 +129,15 @@ sub _link_to_page {
     my $title = shift;
     my $wiki  = shift;
 
-    my $class = $page ? 'existing-page' : 'new-page';
+    if ( $self->for_editor() ) {
+        $page ||= Silki::Schema::Page->new(
+            page_id     => 0,
+            wiki_id     => $wiki->wiki_id(),
+            title       => $title,
+            uri_path    => Silki::Schema::Page->TitleToURIPath($title),
+            _from_query => 1,
+        );
+    }
 
     my $uri
         = $page
@@ -130,6 +145,8 @@ sub _link_to_page {
         : $wiki->uri( view => 'new_page_form', query => { title => $title } );
 
     my $escaped_title = encode_entities($title);
+
+    my $class = $page ? 'existing-page' : 'new-page';
 
     return qq{<a href="$uri" class="$class">$escaped_title</a>};
 }

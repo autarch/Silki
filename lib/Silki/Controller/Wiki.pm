@@ -109,6 +109,13 @@ sub orphans : Chained('_set_wiki') : PathPart('orphans') : Args(0) {
     $c->stash()->{orphans} = $c->stash()->{wiki}->orphaned_pages();
 }
 
+sub wanted : Chained('_set_wiki') : PathPart('wanted') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $c->stash()->{wanted} = $c->stash()->{wiki}->wanted_pages();
+}
+
 sub new_page_form : Chained('_set_wiki') : PathPart('new_page_form') : Args(0)
 {
     my $self = shift;
@@ -186,9 +193,12 @@ sub page_edit_form : Chained('_set_page') : PathPart('edit_form') : Args(0) {
 
     my $page = $c->stash()->{page};
 
-    $c->stash()->{html}
-        = $self->_rev_content_as_html( $c, $page->most_recent_revision(),
-        $page );
+    $c->stash()->{html} = $self->_rev_content_as_html(
+        $c,
+        $page->most_recent_revision(),
+        $page,
+        1,
+    );
 
     $c->stash()->{template} = '/page/edit_form';
 }
@@ -217,14 +227,16 @@ sub page_PUT {
 }
 
 sub _rev_content_as_html : Private {
-    my $self = shift;
-    my $c    = shift;
-    my $rev  = shift;
-    my $page = shift;
+    my $self       = shift;
+    my $c          = shift;
+    my $rev        = shift;
+    my $page       = shift;
+    my $for_editor = shift;
 
     my $formatter = Silki::Formatter::WikiToHTML->new(
-        user => $c->user(),
-        wiki => $page->wiki(),
+        user       => $c->user(),
+        wiki       => $page->wiki(),
+        for_editor => $for_editor,
     );
 
     return $formatter->wikitext_to_html( $rev->content() );
