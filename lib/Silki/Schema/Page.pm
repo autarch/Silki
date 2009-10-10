@@ -3,6 +3,7 @@ package Silki::Schema::Page;
 use strict;
 use warnings;
 
+use Encode qw( decode );
 use Fey::Object::Iterator::FromSelect;
 use Fey::Placeholder;
 use List::AllUtils qw( first );
@@ -278,7 +279,7 @@ sub URIPathToTitle {
 
     $path =~ s/_/%20/g;
 
-    return uri_unescape($path);
+    return decode( 'utf-8', uri_unescape($path) );
 }
 
 sub _MostRecentRevisionSelect {
