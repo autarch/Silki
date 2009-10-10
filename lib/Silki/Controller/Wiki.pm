@@ -145,7 +145,11 @@ sub page_collection_POST {
 sub _set_page : Chained('_set_wiki') : PathPart('page') : CaptureArgs(1) {
     my $self      = shift;
     my $c         = shift;
-    my $page_path = shift;
+
+    # Catalyst URI-unescapes the path pieces when passing them to controller
+    # methods, which is really annoying. Fortunately, the request still has
+    # the original form.
+    my $page_path = ( split /\//, $c->request()->path_info() )[3];
 
     my $wiki = $c->stash()->{wiki};
 
