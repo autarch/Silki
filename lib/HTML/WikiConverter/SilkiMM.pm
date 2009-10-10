@@ -5,6 +5,21 @@ use warnings;
 
 use base 'HTML::WikiConverter::MultiMarkdown';
 
+sub html2wiki {
+    my $self = shift;
+
+    # For some reason, HTML::WikiConvert insists on calling decode and encode
+    # on the data you pass into it, which is just dumb, since if you _already_
+    # have utf8 this breaks. We could call encode on the data before passing
+    # it in, but that seems like a waste of work, so we just disable these
+    # subs temporarily.
+    no warnings 'redefine';
+    local *HTML::WikiConverter::encode = sub { $_[1] };
+    local *HTML::WikiConverter::decode = sub { $_[1] };
+
+    return $self->SUPER::html2wiki(@_);
+}
+
 sub rules {
     my $self = shift;
 
