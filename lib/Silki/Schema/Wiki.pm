@@ -97,6 +97,13 @@ class_has _DistinctRecentChangesSelect => (
     builder => '_BuildDistinctRecentChangesSelect',
 );
 
+class_has _FilesSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildFilesSelect',
+);
+
 class_has _OrphanedPagesSelect => (
     is      => 'ro',
     isa     => 'Fey::SQL::Select',

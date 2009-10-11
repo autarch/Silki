@@ -102,6 +102,16 @@ sub recent : Chained('_set_wiki') : PathPart('recent') : Args(0) {
     $c->stash()->{template} = '/wiki/recent';
 }
 
+sub attachments : Chained('_set_wiki') : PathPart('attachments') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $c->stash()->{file_count} = $c->stash()->{wiki}->file_count();
+    $c->stash()->{files} = $c->stash()->{wiki}->files();
+
+    $c->stash()->{template} = '/wiki/attachments';
+}
+
 sub orphans : Chained('_set_wiki') : PathPart('orphans') : Args(0) {
     my $self = shift;
     my $c    = shift;
@@ -338,7 +348,7 @@ sub page_diff : Chained('_set_page') : PathPart('diff') : Args(0) {
     $c->stash()->{template} = '/page/diff';
 }
 
-sub attachments : Chained('_set_page') : PathPart('attachments') : Args(0) {
+sub page_attachments : Chained('_set_page') : PathPart('attachments') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
