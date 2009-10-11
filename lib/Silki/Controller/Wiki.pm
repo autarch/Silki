@@ -112,6 +112,71 @@ sub attachments : Chained('_set_wiki') : PathPart('attachments') : Args(0) {
     $c->stash()->{template} = '/wiki/attachments';
 }
 
+sub file_collection : Chained('_set_wiki') : PathPart('file') : Args(0) : ActionClass('+Silki::Action::REST') {
+}
+
+sub file_collection_POST {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_permission_for_wiki( $c, $c->stash()->{wiki}, 'Upload' );
+
+    my $upload = $c->request()->upload('file');
+
+    $self->_handle_upload(
+        $c,
+        $upload,
+        $c->stash()->{wiki}->uri( view => 'attachments' ),
+    );
+
+    $c->session_object()->add_message( loc('The file has been uploaded.' ) );
+    $c->redirect_and_detach( $c->stash()->{wiki}->uri( view => 'attachments' ) );
+}
+
+sub _handle_upload {
+    my $self   = shift;
+    my $c      = shift;
+    my $upload = shift;
+    my $on_error = shift;
+
+    unless ($upload) {
+        $c->redirect_with_error(
+            error => loc('You did not select a file to upload.'),
+            uri   => $on_error,
+        );
+    }
+
+    if ( $upload->size() > Silki::Config->new()->max_upload_size() ) {
+        $c->redirect_with_error(
+            error => loc('The file you uploaded was too large.'),
+            uri   => $on_error,
+        );
+    }
+
+    # Copied the logic from Catalyst::Request::Upload without the last step of
+    # removing most characters.
+    my $basename = $upload->filename;
+    $basename =~ s|\\|/|g;
+    $basename = ( File::Spec::Unix->splitpath($basename) )[2];
+
+    my $file;
+    Silki::Schema->RunInTransaction(
+        sub {
+            $file = Silki::Schema::File->insert(
+                file_name => $basename,
+                mime_type => mimetype( $upload->tempname() ),
+                file_size => $upload->size(),
+                contents  => do { my $fh = $upload->fh(); local $/; <$fh> },
+                user_id   => $c->user()->user_id(),
+                wiki_id   => $c->stash()->{wiki}->wiki_id(),
+            );
+
+            $c->stash()->{page}->add_file($file)
+                if $c->stash()->{page};
+        }
+    );
+}
+
 sub orphans : Chained('_set_wiki') : PathPart('orphans') : Args(0) {
     my $self = shift;
     my $c    = shift;
@@ -369,40 +434,10 @@ sub page_file_collection_POST {
 
     my $upload = $c->request()->upload('file');
 
-    unless ($upload) {
-        $c->redirect_with_error(
-            error => loc('You did not select a file to upload.'),
-            uri   => $c->stash()->{page}->uri( view => 'attachments' ),
-        );
-    }
-
-    if ( $upload->size() > Silki::Config->new()->max_upload_size() ) {
-        $c->redirect_with_error(
-            error => loc('The file you uploaded was too large.'),
-            uri   => $c->stash()->{page}->uri( view => 'attachments' ),
-        );
-    }
-
-    # Copied the logic from Catalyst::Request::Upload without the last step of
-    # removing most characters.
-    my $basename = $upload->filename;
-    $basename =~ s|\\|/|g;
-    $basename = ( File::Spec::Unix->splitpath($basename) )[2];
-
-    my $file;
-    Silki::Schema->RunInTransaction(
-        sub {
-            $file = Silki::Schema::File->insert(
-                file_name => $basename,
-                mime_type => mimetype( $upload->tempname() ),
-                file_size => $upload->size(),
-                contents  => do { my $fh = $upload->fh(); local $/; <$fh> },
-                user_id   => $c->user()->user_id(),
-                wiki_id   => $c->stash()->{wiki}->wiki_id(),
-            );
-
-            $c->stash()->{page}->add_file($file);
-        }
+    $self->_handle_upload(
+        $c,
+        $upload,
+        $c->stash()->{page}->uri( view => 'attachments' ),
     );
 
     $c->session_object()->add_message( loc('The file has been uploaded, and this page now links to the file.' ) );
