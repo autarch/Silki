@@ -271,11 +271,15 @@ msgstr ""
 msgid "The email address you provided is already in use by another account."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:408
+#: lib/Silki/Controller/Wiki.pm:443
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:381
+#: lib/Silki/Controller/Wiki.pm:132
+msgid "The file has been uploaded."
+msgstr ""
+
+#: lib/Silki/Controller/Wiki.pm:151
 msgid "The file you uploaded was too large."
 msgstr ""
 
@@ -370,7 +374,7 @@ msgstr ""
 msgid "View details about your profile"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:184
+#: lib/Silki/Controller/Wiki.pm:249
 msgid "View this page"
 msgstr ""
 
@@ -400,7 +404,7 @@ msgstr ""
 msgid "You are not a member of any wikis."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:374
+#: lib/Silki/Controller/Wiki.pm:144
 msgid "You did not select a file to upload."
 msgstr ""
 
