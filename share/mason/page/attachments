@@ -31,38 +31,7 @@
 % }
 
 % if ($file_count) {
-<table class="standard-table">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Size</th>
-      <th></th>
-    </tr>
-  </thead>
-%   while ( my $file = $files->next() ) {
-  <tbody>
-    <tr class="<% $files->index() % 2 ? 'odd' : 'even' %>">
-      <td>
-        <a href="<% $file->uri() %>" title="<% loc('Download this file') %>"><% $file->file_name() %></a>
-%     if ( $file->is_browser_displayable_image() ) {
-        <br />
-        <a href="<% $file->uri() %>" title="<% loc('Download this file') %>"><img src="<% $file->uri( view => 'thumbnail' ) %>" /></a>
-%     }
-      </td>
-      <td>
-        <% $file->mime_type_description_for_lang( Silki::I18N->Language() ) %>
-      </td>
-      <td>
-        <% format_bytes( $file->file_size() ) %>
-      </td>
-      <td>
-      </td>
-    </tr>
-  </tbody>
-% }
-</table>
-
+<& /lib/table/attachments-table.mas, files => $files &>
 % } else {
 <p>
   <% loc('This page does not have any attachments.' ) %>
