@@ -33,6 +33,11 @@ msgstr ""
 msgid "All Attachments (%1)"
 msgstr ""
 
+#. ($wiki->title()
+#: share/mason/wiki/attachments:47
+msgid "All Attachments in the %1 wiki"
+msgstr ""
+
 #: share/mason/wiki/autohandler:9
 msgid "All attachments in this wiki"
 msgstr ""
@@ -42,7 +47,7 @@ msgid "Attachments"
 msgstr ""
 
 #. ($page->title()
-#: share/mason/page/attachments:79
+#: share/mason/page/attachments:48
 msgid "Attachments for %1"
 msgstr ""
 
@@ -81,7 +86,7 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: lib/Silki/Formatter/WikiToHTML.pm:120 share/mason/page/attachments:47 share/mason/page/attachments:50
+#: lib/Silki/Formatter/WikiToHTML.pm:120 share/mason/lib/table/attachments-table.mas:14 share/mason/lib/table/attachments-table.mas:17
 msgid "Download this file"
 msgstr ""
 
@@ -98,12 +103,12 @@ msgstr ""
 msgid "Edit this page"
 msgstr ""
 
-#: share/mason/page/attachments:18
+#: share/mason/page/attachments:18 share/mason/wiki/attachments:17
 msgid "File"
 msgstr ""
 
 #. (format_bytes( Silki::Config->new()
-#: share/mason/page/attachments:22
+#: share/mason/page/attachments:22 share/mason/wiki/attachments:21
 msgid "Files cannot be larger than %1."
 msgstr ""
 
@@ -266,11 +271,11 @@ msgstr ""
 msgid "The email address you provided is already in use by another account."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:398
+#: lib/Silki/Controller/Wiki.pm:408
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:371
+#: lib/Silki/Controller/Wiki.pm:381
 msgid "The file you uploaded was too large."
 msgstr ""
 
@@ -302,7 +307,7 @@ msgstr ""
 msgid "This name identifies you to other users of this wiki."
 msgstr ""
 
-#: share/mason/page/attachments:68
+#: share/mason/page/attachments:37
 msgid "This page does not have any attachments."
 msgstr ""
 
@@ -318,6 +323,10 @@ msgstr ""
 #. ($revision->user()
 #: share/mason/page/view:18
 msgid "This revision was created by <a href=\"%html(%1)\">%html(%2)</a> on %3."
+msgstr ""
+
+#: share/mason/wiki/attachments:36
+msgid "This wiki does not have any attachments."
 msgstr ""
 
 #: share/mason/wiki/orphans:34
@@ -344,6 +353,10 @@ msgstr ""
 msgid "Upload a file for this page"
 msgstr ""
 
+#: share/mason/wiki/attachments:14
+msgid "Upload a file to this wiki"
+msgstr ""
+
 #: share/mason/user/login_form:7
 msgid "Username:"
 msgstr ""
@@ -357,7 +370,7 @@ msgstr ""
 msgid "View details about your profile"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:174
+#: lib/Silki/Controller/Wiki.pm:184
 msgid "View this page"
 msgstr ""
 
@@ -387,7 +400,7 @@ msgstr ""
 msgid "You are not a member of any wikis."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:364
+#: lib/Silki/Controller/Wiki.pm:374
 msgid "You did not select a file to upload."
 msgstr ""
 
