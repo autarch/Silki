@@ -106,14 +106,20 @@ sub orphans : Chained('_set_wiki') : PathPart('orphans') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
-    $c->stash()->{orphans} = $c->stash()->{wiki}->orphaned_pages();
+    my $wiki = $c->stash()->{wiki};
+
+    $c->stash()->{orphan_count} = $wiki->orphaned_page_count();
+    $c->stash()->{orphans} = $wiki->orphaned_pages();
 }
 
 sub wanted : Chained('_set_wiki') : PathPart('wanted') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
-    $c->stash()->{wanted} = $c->stash()->{wiki}->wanted_pages();
+    my $wiki = $c->stash()->{wiki};
+
+    $c->stash()->{wanted_count} = $wiki->wanted_page_count();
+    $c->stash()->{wanted} = $wiki->wanted_pages();
 }
 
 sub new_page_form : Chained('_set_wiki') : PathPart('new_page_form') : Args(0)
