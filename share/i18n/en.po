@@ -15,21 +15,38 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: share/mason/wiki/orphans:11
+msgid "# of Revisions"
+msgstr ""
+
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:39
+#: lib/Silki/Controller/Wiki.pm:44
 msgid "%1 overview"
 msgstr ""
 
-#: share/mason/local-nav.mas:10
+#: share/mason/wiki/wanted:2
+msgid "A wanted page is a link to a page that doesn't exist."
+msgstr ""
+
+#. ($wiki->file_count()
+#: share/mason/wiki/autohandler:9
+msgid "All Attachments (%1)"
+msgstr ""
+
+#: share/mason/wiki/autohandler:9
+msgid "All attachments in this wiki"
+msgstr ""
+
+#: share/mason/page/autohandler:13
 msgid "Attachments"
 msgstr ""
 
 #. ($page->title()
-#: share/mason/page/attachments:38
+#: share/mason/page/attachments:79
 msgid "Attachments for %1"
 msgstr ""
 
-#: share/mason/local-nav.mas:10
+#: share/mason/page/autohandler:13
 msgid "Attachments for this page"
 msgstr ""
 
@@ -50,6 +67,10 @@ msgstr ""
 msgid "Create %1"
 msgstr ""
 
+#: share/mason/wiki/orphans:10
+msgid "Created By"
+msgstr ""
+
 #. ($rev1->user()
 #. ($rev2->user()
 #: share/mason/page/diff:22 share/mason/page/diff:29
@@ -60,11 +81,11 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: lib/Silki/Formatter/WikiToHTML.pm:85
+#: lib/Silki/Formatter/WikiToHTML.pm:120 share/mason/page/attachments:47 share/mason/page/attachments:50
 msgid "Download this file"
 msgstr ""
 
-#: share/mason/local-nav.mas:6
+#: share/mason/page/autohandler:9
 msgid "Edit"
 msgstr ""
 
@@ -73,16 +94,16 @@ msgstr ""
 msgid "Edit %1"
 msgstr ""
 
-#: share/mason/local-nav.mas:6
+#: share/mason/page/autohandler:9
 msgid "Edit this page"
 msgstr ""
 
-#: share/mason/page/attachments:17
+#: share/mason/page/attachments:18
 msgid "File"
 msgstr ""
 
 #. (format_bytes( Silki::Config->new()
-#: share/mason/page/attachments:10
+#: share/mason/page/attachments:22
 msgid "Files cannot be larger than %1."
 msgstr ""
 
@@ -90,15 +111,15 @@ msgstr ""
 msgid "For most people, this will be your email address."
 msgstr ""
 
-#: share/mason/local-nav.mas:14
+#: share/mason/page/autohandler:17
 msgid "History"
 msgstr ""
 
-#: lib/Silki/Controller/Base.pm:39
+#: lib/Silki/Controller/Base.pm:40
 msgid "Home"
 msgstr ""
 
-#: lib/Silki/Formatter/WikiToHTML.pm:77
+#: lib/Silki/Formatter/WikiToHTML.pm:112
 msgid "Inaccessible file"
 msgstr ""
 
@@ -111,9 +132,17 @@ msgstr ""
 msgid "Information about %1"
 msgstr ""
 
+#: share/mason/wiki/orphans:12
+msgid "Last Edited By"
+msgstr ""
+
 #. ($wiki->uri( view => 'user/' . $revision->user_id()
 #: share/mason/page/view:13
 msgid "Last edited by <a href=\"%html(%1)\">%html(%2)</a> on %3."
+msgstr ""
+
+#: share/mason/wiki/autohandler:17
+msgid "Links to pages which do not yet exist"
 msgstr ""
 
 #: share/mason/header.mas:7
@@ -128,6 +157,19 @@ msgstr ""
 msgid "No other pages link to this page. Orphan pages can be confusing, so you may want to add a link to this page."
 msgstr ""
 
+#: share/mason/wiki/orphans:45
+msgid "Orphaned Pages"
+msgstr ""
+
+#: share/mason/wiki/orphans:2
+msgid "Orphaned pages are pages which no other page in the system links to, making them harder to discover. You might want to consider linking them."
+msgstr ""
+
+#. ($wiki->orphaned_page_count()
+#: share/mason/wiki/autohandler:13
+msgid "Orphans (%1)"
+msgstr ""
+
 #. ($page_num)
 #: share/mason/lib/table/pager.mas:11
 msgid "Page %1 of history"
@@ -140,6 +182,10 @@ msgstr ""
 
 #: share/mason/lib/table/pager.mas:5
 msgid "Page:"
+msgstr ""
+
+#: share/mason/wiki/autohandler:13
+msgid "Pages with no incoming links"
 msgstr ""
 
 #: share/mason/user/preferences_form:34
@@ -164,7 +210,7 @@ msgstr ""
 msgid "Preferences for %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:44 lib/Silki/Controller/Wiki.pm:77
+#: lib/Silki/Controller/Wiki.pm:49 lib/Silki/Controller/Wiki.pm:82
 msgid "Recent Changes"
 msgstr ""
 
@@ -173,7 +219,7 @@ msgstr ""
 msgid "Recent Changes in %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:45
+#: lib/Silki/Controller/Wiki.pm:50
 msgid "Recent activity in this wiki"
 msgstr ""
 
@@ -220,12 +266,24 @@ msgstr ""
 msgid "The email address you provided is already in use by another account."
 msgstr ""
 
+#: lib/Silki/Controller/Wiki.pm:398
+msgid "The file has been uploaded, and this page now links to the file."
+msgstr ""
+
+#: lib/Silki/Controller/Wiki.pm:371
+msgid "The file you uploaded was too large."
+msgstr ""
+
 #: lib/Silki/Role/Controller/User.pm:117
 msgid "The two passwords you provided did not match"
 msgstr ""
 
 #: lib/Silki/Controller/Site.pm:80
 msgid "The username or password you provided was not valid."
+msgstr ""
+
+#: share/mason/wiki/wanted:26
+msgid "There are no wanted pages in this wiki."
 msgstr ""
 
 #. ($c->domain()
@@ -244,7 +302,7 @@ msgstr ""
 msgid "This name identifies you to other users of this wiki."
 msgstr ""
 
-#: share/mason/page/attachments:27
+#: share/mason/page/attachments:68
 msgid "This page does not have any attachments."
 msgstr ""
 
@@ -253,7 +311,7 @@ msgstr ""
 msgid "This page has %quant(%1,revision,revisions)"
 msgstr ""
 
-#: share/mason/local-nav.mas:14
+#: share/mason/page/autohandler:17
 msgid "This page's history of revisions"
 msgstr ""
 
@@ -262,11 +320,15 @@ msgstr ""
 msgid "This revision was created by <a href=\"%html(%1)\">%html(%2)</a> on %3."
 msgstr ""
 
-#: lib/Silki/Controller/Base.pm:113 lib/Silki/Controller/Base.pm:123
+#: share/mason/wiki/orphans:34
+msgid "This wiki has no orphaned pages. Well done!"
+msgstr ""
+
+#: lib/Silki/Controller/Base.pm:134 lib/Silki/Controller/Base.pm:144
 msgid "This wiki requires you to be a member to perform this action."
 msgstr ""
 
-#: lib/Silki/Controller/Base.pm:106
+#: lib/Silki/Controller/Base.pm:127
 msgid "This wiki requires you to log in to perform this action."
 msgstr ""
 
@@ -274,12 +336,12 @@ msgstr ""
 msgid "Time Zone:"
 msgstr ""
 
-#: share/mason/wiki/recent:4
+#: share/mason/wiki/orphans:9 share/mason/wiki/recent:4 share/mason/wiki/wanted:9
 msgid "Title"
 msgstr ""
 
-#: share/mason/page/attachments:8
-msgid "Upload a new file."
+#: share/mason/page/attachments:15
+msgid "Upload a file for this page"
 msgstr ""
 
 #: share/mason/user/login_form:7
@@ -295,8 +357,21 @@ msgstr ""
 msgid "View details about your profile"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:145
+#: lib/Silki/Controller/Wiki.pm:174
 msgid "View this page"
+msgstr ""
+
+#: share/mason/wiki/wanted:37
+msgid "Wanted Pages"
+msgstr ""
+
+#. ($wiki->wanted_page_count()
+#: share/mason/wiki/autohandler:17
+msgid "Wanted Pages (%1)"
+msgstr ""
+
+#: share/mason/wiki/wanted:10
+msgid "Wanted by X other pages"
 msgstr ""
 
 #: share/mason/page/history:11 share/mason/wiki/recent:6
@@ -310,6 +385,10 @@ msgstr ""
 
 #: share/mason/site/wikis:7
 msgid "You are not a member of any wikis."
+msgstr ""
+
+#: lib/Silki/Controller/Wiki.pm:364
+msgid "You did not select a file to upload."
 msgstr ""
 
 #: lib/Silki/Controller/Site.pm:68
