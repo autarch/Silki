@@ -10,7 +10,7 @@
       action="<% $page->uri( view => 'file' ) %>"
       method="post"
       enctype="multipart/form-data">
-  <input type="hidden" id="page_id" name="page_id" value="<% $page->page_id() %>" />
+
   <fieldset>
     <legend><% loc('Upload a file for this page') %></legend>
 
