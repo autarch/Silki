@@ -9,6 +9,7 @@ use Fey::SQL;
 use Silki::Config;
 use Silki::Schema;
 use Silki::Schema::Domain;
+use Silki::Schema::File;
 use Silki::Schema::Page;
 use Silki::Schema::Permission;
 use Silki::Schema::Role;
@@ -71,6 +72,14 @@ has wanted_page_count => (
     is          => 'ro',
     isa         => Int,
     select      => __PACKAGE__->_WantedPageCountSelect(),
+    bind_params => sub { $_[0]->wiki_id() },
+);
+
+has file_count => (
+    metaclass   => 'FromSelect',
+    is          => 'ro',
+    isa         => Int,
+    select      => __PACKAGE__->_FileCountSelect(),
     bind_params => sub { $_[0]->wiki_id() },
 );
 
@@ -525,6 +534,59 @@ sub _BuildWantedPagesSelect {
             $count, 'DESC',
             $pending_page_link_t->column('to_page_title'), 'ASC',
         );
+
+    return $wanted_select;
+}
+
+sub _FileCountSelect {
+    my $class = shift;
+
+    my $file_t = $Schema->table('File');
+
+    my $count
+        = Fey::Literal::Function->new( 'COUNT', $file_t->column('file_id') );
+
+    my $file_count_select = Silki::Schema->SQLFactoryClass()->new_select();
+    $file_count_select
+        ->select($count)
+        ->from($file_t)
+        ->where( $file_t->column('wiki_id'), '=', Fey::Placeholder->new() );
+
+    return $file_count_select;
+}
+
+sub files {
+    my $self = shift;
+    my ( $limit, $offset ) = validated_list(
+        \@_,
+        limit  => { isa => Int, optional => 1 },
+        offset => { isa => Int, default  => 0 },
+    );
+
+    my $select = $self->_FilesSelect()->clone();
+    $select->limit( $limit, $offset );
+
+    return Fey::Object::Iterator::FromSelect->new(
+        classes => ['Silki::Schema::File'],
+        select  => $select,
+        dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
+        bind_params   => [ $self->wiki_id() ],
+    );
+}
+
+sub _BuildFilesSelect {
+    my $class = shift;
+
+    my $file_t = $Schema->table('File');
+
+    my $files_select = Silki::Schema->SQLFactoryClass()->new_select();
+    $files_select
+        ->select($file_t)
+        ->from($file_t)
+        ->where( $file_t->column('wiki_id'), '=', Fey::Placeholder->new() )
+        ->order_by( $file_t->column('file_name'), 'ASC' );
+
+    return $files_select;
 }
 
 sub PublicWikiCount {
