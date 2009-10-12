@@ -172,22 +172,6 @@ around insert => sub {
 
     $p{username} ||= $p{email_address};
 
-    my $locale = DateTime::Locale->load( $p{locale_code} || 'en_US' );
-    $p{date_format}     ||= $locale->date_format_default();
-    $p{datetime_format} ||= $locale->datetime_format_default();
-
-    $p{date_format_without_year} ||= $locale->format_for('MMMd');
-
-    my $time_format
-        = $locale->prefers_24_hour_time()
-        ? $locale->format_for('Hms')
-        : $locale->format_for('hms');
-
-    $p{datetime_format_without_year} ||=
-          $locale->date_before_time()
-        ? $locale->format_for('MMMd') . q { } . $time_format
-        : $time_format . q{ } . $locale->format_for('MMMd');
-
     return $class->$orig(%p);
 };
 
@@ -365,41 +349,11 @@ sub _CreateSpecialUser {
     );
 }
 
-sub format_date {
+sub set_time_zone_for_dt {
     my $self = shift;
     my $dt   = shift;
 
-    $self->_format_dt( $dt, 'date' );
-}
-
-sub format_datetime {
-    my $self = shift;
-    my $dt   = shift;
-
-    $self->_format_dt( $dt, 'datetime' );
-}
-
-sub _format_dt {
-    my $self = shift;
-    my $dt   = shift;
-    my $type = shift;
-
-    my $format_dt = $dt->clone()->set( locale => $self->locale_code() )
-        ->set_time_zone( $self->time_zone() );
-
-    my $today = DateTime->today( time_zone => $self->time_zone() );
-
-    my ( $without_year, $with_year ) = (
-        $type . '_format_without_year',
-        $type . '_format'
-    );
-
-    my $format
-        = $format_dt->year() == $today->year()
-        ? $self->$without_year()
-        : $self->$with_year();
-
-    return $format_dt->format_cldr($format);
+    return $dt->clone()->set_time_zone( $self->time_zone() );
 }
 
 sub _build_best_name {

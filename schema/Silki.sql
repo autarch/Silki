@@ -36,10 +36,6 @@ CREATE TABLE "User" (
        last_modified_datetime   TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
        time_zone                VARCHAR(50)     NOT NULL DEFAULT 'UTC',
        locale_code              VARCHAR(20)     NOT NULL DEFAULT 'en_US',
-       date_format              VARCHAR(12)     NOT NULL,
-       date_format_without_year VARCHAR(12)     NOT NULL,
-       datetime_format          VARCHAR(24)     NOT NULL,
-       datetime_format_without_year  VARCHAR(24)     NOT NULL,
        created_by_user_id       INT8            NULL,
        CONSTRAINT valid_user_record
            CHECK ( ( password != ''

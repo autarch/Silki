@@ -32,7 +32,10 @@ sub begin : Private {
             for qw( Silki::Web::CSS Silki::Web::Javascript );
     }
 
-    Silki::I18N->SetLanguage();
+    my $user = $c->user();
+    my @langs = $user->is_system_user() ? () : $user->locale_code();
+
+    Silki::I18N->SetLanguage(@langs);
 
     $c->add_tab(
         {
