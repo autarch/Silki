@@ -27,11 +27,9 @@ sub CreateDefaultZones {
             [ 'America/Chicago',       'Midwest' ],
             [ 'America/Denver',        'Mountain' ],
             [ 'America/Los_Angeles',   'West Coast' ],
-            [ 'America/Anchorage',     'Alaska (Anchorage, Juneau, Nome)' ],
-            [ 'America/Adak',          'Alaska (Adak)' ],
+            [ 'America/Anchorage',     'Alaska' ],
             [ 'Pacific/Honolulu',      'Hawaii' ],
             [ 'America/Santo_Domingo', 'Puerto Rico' ],
-            [ 'Pacific/Guam',          'Guam' ],
         ],
 
         ca => [
