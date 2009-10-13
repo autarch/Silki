@@ -11,7 +11,7 @@
   <tbody>
     <tr class="<% $pages->index() % 2 ? 'odd' : 'even' %>">
       <td><a href="<% $page->uri() %>"><% $page->title() %></a> (<% loc( 'revision %1', $revision->revision_number() ) %>)</td>
-      <td><% $c->user()->format_datetime( $revision->creation_datetime() ) %></td>
+      <td><% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $revision->creation_datetime() ) ) %></td>
       <td><a href="<% $revision->user()->uri() %>"><% $revision->user()->best_name() %></a></td>
       <td>
 %   if ( $revision->revision_number() > 1 ) {

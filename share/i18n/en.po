@@ -28,8 +28,13 @@ msgstr ""
 msgid "%date(%1)"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:266
+#: lib/Silki/Gettext.pm:347
 msgid "%date(%1) %at_time(%1)"
+msgstr ""
+
+#. ($c->user()
+#: share/mason/page/history:30 share/mason/wiki/recent:14
+msgid "%datetime(%1)"
 msgstr ""
 
 #: share/mason/wiki/wanted:2
@@ -87,7 +92,7 @@ msgstr ""
 #. ($rev1->user()
 #. ($rev2->user()
 #: share/mason/page/diff:22 share/mason/page/diff:29
-msgid "Created by <a href=\"%html(%1)\">%html(%2)</a> on %3."
+msgid "Created by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
 #: share/mason/page/history:10 share/mason/wiki/recent:5
@@ -357,7 +362,7 @@ msgstr ""
 msgid "Three days ago"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:265
+#: lib/Silki/Gettext.pm:265 lib/Silki/Gettext.pm:346
 msgid "Three days ago %at_time(%1)"
 msgstr ""
 
@@ -373,7 +378,7 @@ msgstr ""
 msgid "Today"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:262
+#: lib/Silki/Gettext.pm:262 lib/Silki/Gettext.pm:343
 msgid "Today %at_time(%1)"
 msgstr ""
 
@@ -381,7 +386,7 @@ msgstr ""
 msgid "Two days ago"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:264
+#: lib/Silki/Gettext.pm:264 lib/Silki/Gettext.pm:345
 msgid "Two days ago %at_time(%1)"
 msgstr ""
 
@@ -436,7 +441,7 @@ msgstr ""
 msgid "Yesterday"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:263
+#: lib/Silki/Gettext.pm:263 lib/Silki/Gettext.pm:344
 msgid "Yesterday %at_time(%1)"
 msgstr ""
 
@@ -478,6 +483,10 @@ msgstr ""
 
 #: share/mason/page/history:25
 msgid "current"
+msgstr ""
+
+#: lib/Silki/Gettext.pm:266
+msgid "on %date(%1) %at_time(%1)"
 msgstr ""
 
 #. ($revision->revision_number()

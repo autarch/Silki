@@ -27,7 +27,7 @@
         <a href="<% $page->uri( view => 'revision/' . $revision->revision_number() ) %>"><% loc( 'Revision %1', $revision->revision_number() ) %></a>
 %   }
       </td>
-      <td><% $c->user()->format_datetime( $revision->creation_datetime() ) %></td>
+      <td><% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $revision->creation_datetime() ) ) %></td>
       <td><a href="<% $revision->user()->uri() %>"><% $revision->user()->best_name() %></a></td>
       <td>
 %   if ( $current_rev > 1 ) {

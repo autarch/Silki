@@ -263,7 +263,7 @@ sub on_datetime {
         when ('yesterday')      { $id = loc('Yesterday %at_time(%1)') }
         when ('two_days_ago')   { $id = loc('Two days ago %at_time(%1)') }
         when ('three_days_ago') { $id = loc('Three days ago %at_time(%1)') }
-        when ('any')            { $id = loc('%date(%1) %at_time(%1)') }
+        when ('any')            { $id = loc('on %date(%1) %at_time(%1)') }
         default                 { die "Unknown day key: $day_key" }
     }
 
@@ -328,6 +328,31 @@ sub date {
         : $locale->date_format_default();
 
     return $format_dt->format_cldr($cldr);
+}
+
+sub datetime {
+    my $self = shift;
+    my $lang = shift;
+    my $dt   = shift;
+
+    my $day_key = $self->_day_key_for_dt($dt);
+
+    my $id;
+
+    given ($day_key) {
+        when ('today')          { $id = loc('Today %at_time(%1)') }
+        when ('yesterday')      { $id = loc('Yesterday %at_time(%1)') }
+        when ('two_days_ago')   { $id = loc('Two days ago %at_time(%1)') }
+        when ('three_days_ago') { $id = loc('Three days ago %at_time(%1)') }
+        when ('any')            { $id = loc('%date(%1) %at_time(%1)') }
+        default                 { die "Unknown day key: $day_key" }
+    }
+
+    return $self->localize_for(
+        lang => $lang,
+        id   => $id,
+        args => [$dt],
+    );
 }
 
 sub time {
