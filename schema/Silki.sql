@@ -67,7 +67,6 @@ CREATE TABLE "Wiki" (
        -- or as a hostname prefix (short-name.wiki.example.com)
        short_name               uri_path_piece  UNIQUE  NOT NULL,
        domain_id                INT8            NOT NULL,
-       default_locale_code      VARCHAR(20)     NOT NULL DEFAULT 'en_US',
        email_addresses_are_hidden               BOOLEAN    DEFAULT TRUE,
        account_id               INT8            NOT NULL,
        user_id                  INT8            NOT NULL,
@@ -340,10 +339,6 @@ ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_account_id"
 
 ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_user_id"
   FOREIGN KEY ("user_id") REFERENCES "User" ("user_id")
-  ON DELETE RESTRICT ON UPDATE CASCADE;
-
-ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_default_locale_code"
-  FOREIGN KEY ("default_locale_code") REFERENCES "Locale" ("locale_code")
   ON DELETE RESTRICT ON UPDATE CASCADE;
 
 ALTER TABLE "Country" ADD CONSTRAINT "Country_locale_code"
