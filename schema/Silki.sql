@@ -67,7 +67,6 @@ CREATE TABLE "Wiki" (
        -- or as a hostname prefix (short-name.wiki.example.com)
        short_name               uri_path_piece  UNIQUE  NOT NULL,
        domain_id                INT8            NOT NULL,
-       email_addresses_are_hidden               BOOLEAN    DEFAULT TRUE,
        account_id               INT8            NOT NULL,
        user_id                  INT8            NOT NULL,
        CONSTRAINT valid_title CHECK ( title != '' )
