@@ -59,6 +59,7 @@ sub make_admin_user
         Silki::Schema::User->insert( display_name       => 'Angela D. Min',
                                      email_address      => $email,
                                      password           => $pw,
+                                     time_zone          => 'America/Chicago',
                                      is_admin           => 1,
                                      created_by_user_id => Silki::Schema::User->SystemUser()->user_id(),
                                    );
@@ -87,6 +88,7 @@ sub make_regular_user
         Silki::Schema::User->insert( display_name       => 'Joe Schmoe',
                                      email_address      => $email,
                                      password           => $pw,
+                                     time_zone          => 'America/Chicago',
                                      is_admin           => 0,
                                      created_by_user_id => Silki::Schema::User->SystemUser()->user_id(),
                                    );
