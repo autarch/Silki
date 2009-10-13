@@ -1,1 +1,1 @@
-../../../CKEditor/ckeditor_source.js
+CKEditor/ckeditor_source.js
