@@ -3,6 +3,7 @@ package Silki::Schema::Wiki;
 use strict;
 use warnings;
 
+use Data::Dumper qw( Dumper );
 use Fey::Literal;
 use Fey::Object::Iterator::FromSelect;
 use Fey::SQL;
@@ -40,6 +41,14 @@ has permissions => (
     isa      => HashRef[HashRef[Bool]],
     lazy     => 1,
     builder  => '_build_permissions',
+    init_arg => undef,
+);
+
+has permissions_name => (
+    is       => 'ro',
+    isa      => Str,
+    lazy     => 1,
+    builder  => '_build_permissions_name',
     init_arg => undef,
 );
 
@@ -278,6 +287,14 @@ sub _build_permissions {
         },
     );
 
+    my $Delete = Silki::Schema->SQLFactoryClass()->new_delete();
+    $Delete->from( $Schema->table('WikiRolePermission') )
+           ->where(
+            $Schema->table('WikiRolePermission')->column('wiki_id'),
+            '=',
+            Fey::Placeholder->new()
+        );
+
     sub set_permissions {
         my $self = shift;
         my ($type)
@@ -301,7 +318,35 @@ sub _build_permissions {
             }
         }
 
-        Silki::Schema::WikiRolePermission->insert_many(@inserts);
+        my $dbh = Silki::Schema->DBIManager()->source_for_sql($Delete)->dbh();
+        my $trans = sub {
+            $dbh->do( $Delete->sql($dbh), {}, $self->wiki_id() );
+            Silki::Schema::WikiRolePermission->insert_many(@inserts);
+        };
+
+        Silki::Schema->RunInTransaction($trans);
+    }
+
+    my %SetsAsHashes;
+    for my $name ( keys %Sets ) {
+        for my $role ( keys %{ $Sets{$name} } ) {
+            next unless @{ $Sets{$name}{$role} };
+            $SetsAsHashes{$name}{$role}
+                = { map { $_ => 1 } @{ $Sets{$name}{$role} } };
+        }
+    }
+
+    sub _build_permissions_name {
+        my $self = shift;
+
+        local $Data::Dumper::Sortkeys = 1;
+        my $perms = Dumper( $self->permissions() );
+
+        for my $name ( keys %SetsAsHashes ) {
+            return $name if $perms eq Dumper( $SetsAsHashes{$name} );
+        }
+
+        return 'custom';
     }
 }
 

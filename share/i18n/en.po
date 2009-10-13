@@ -33,7 +33,7 @@ msgid "%date(%1) %at_time(%1)"
 msgstr ""
 
 #. ($c->user()
-#: share/mason/page/history:30 share/mason/wiki/recent:14
+#: share/mason/lib/table/attachments-table.mas:29 share/mason/page/history:30 share/mason/wiki/recent:14
 msgid "%datetime(%1)"
 msgstr ""
 
@@ -72,6 +72,10 @@ msgstr ""
 msgid "Back to current revision"
 msgstr ""
 
+#: share/mason/wiki/autohandler:22
+msgid "Change settings for this wiki"
+msgstr ""
+
 #: share/mason/page/history:14
 msgid "Compare"
 msgstr ""
@@ -99,7 +103,7 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: lib/Silki/Formatter/WikiToHTML.pm:120 share/mason/lib/table/attachments-table.mas:14 share/mason/lib/table/attachments-table.mas:17
+#: lib/Silki/Formatter/WikiToHTML.pm:120 share/mason/lib/table/attachments-table.mas:16 share/mason/lib/table/attachments-table.mas:19
 msgid "Download this file"
 msgstr ""
 
@@ -137,6 +141,10 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
+#: share/mason/wiki/settings:13
+msgid "In a public wiki, anyone can read and edit pages without logging in. However, only wiki members can delete pages or upload files."
+msgstr ""
+
 #: lib/Silki/Formatter/WikiToHTML.pm:112
 msgid "Inaccessible file"
 msgstr ""
@@ -159,6 +167,14 @@ msgstr ""
 msgid "Last edited by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
+#: share/mason/wiki/settings:31
+msgid "Like a public wiki, but only explicitly invited members may edit pages."
+msgstr ""
+
+#: share/mason/wiki/settings:22
+msgid "Like a public wiki, but users must log-in to edit. However, users do not have to be explicitly invited to become members."
+msgstr ""
+
 #: share/mason/wiki/autohandler:17
 msgid "Links to pages which do not yet exist"
 msgstr ""
@@ -171,8 +187,16 @@ msgstr ""
 msgid "Log out"
 msgstr ""
 
+#: share/mason/lib/table/attachments-table.mas:4
+msgid "Name"
+msgstr ""
+
 #: share/mason/incoming-links.mas:12
 msgid "No other pages link to this page. Orphan pages can be confusing, so you may want to add a link to this page."
+msgstr ""
+
+#: share/mason/wiki/settings:40
+msgid "Only explicitly invited members may access this wiki."
 msgstr ""
 
 #: share/mason/wiki/orphans:45
@@ -214,6 +238,15 @@ msgstr ""
 msgid "Password:"
 msgstr ""
 
+#: share/mason/wiki/settings:6
+msgid "Permissions"
+msgstr ""
+
+#. ($perms)
+#: lib/Silki/Controller/Wiki.pm:82
+msgid "Permissions for this wiki have been set to %1"
+msgstr ""
+
 #: share/mason/header.mas:5
 msgid "Preferences"
 msgstr ""
@@ -228,7 +261,7 @@ msgstr ""
 msgid "Preferences for %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:49 lib/Silki/Controller/Wiki.pm:82
+#: lib/Silki/Controller/Wiki.pm:100 lib/Silki/Controller/Wiki.pm:49
 msgid "Recent Changes"
 msgstr ""
 
@@ -268,6 +301,19 @@ msgstr ""
 msgid "Set your preferences"
 msgstr ""
 
+#: share/mason/wiki/autohandler:22
+msgid "Settings"
+msgstr ""
+
+#. ($wiki->title()
+#: share/mason/wiki/settings:56
+msgid "Settings for %1"
+msgstr ""
+
+#: share/mason/lib/table/attachments-table.mas:6
+msgid "Size"
+msgstr ""
+
 #: share/mason/lib/forms/page.mas:12 share/mason/user/login_form:21 share/mason/user/preferences_form:53
 msgid "Submit"
 msgstr ""
@@ -284,15 +330,15 @@ msgstr ""
 msgid "The email address you provided is already in use by another account."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:443
+#: lib/Silki/Controller/Wiki.pm:470
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:132
+#: lib/Silki/Controller/Wiki.pm:150
 msgid "The file has been uploaded."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:151
+#: lib/Silki/Controller/Wiki.pm:169
 msgid "The file you uploaded was too large."
 msgstr ""
 
@@ -390,12 +436,24 @@ msgstr ""
 msgid "Two days ago %at_time(%1)"
 msgstr ""
 
+#: share/mason/lib/table/attachments-table.mas:5
+msgid "Type"
+msgstr ""
+
 #: share/mason/page/attachments:15
 msgid "Upload a file for this page"
 msgstr ""
 
 #: share/mason/wiki/attachments:14
 msgid "Upload a file to this wiki"
+msgstr ""
+
+#: share/mason/lib/table/attachments-table.mas:8
+msgid "Uploaded by"
+msgstr ""
+
+#: share/mason/lib/table/attachments-table.mas:7
+msgid "Uploaded on"
 msgstr ""
 
 #: share/mason/user/login_form:7
@@ -411,7 +469,7 @@ msgstr ""
 msgid "View details about your profile"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:249
+#: lib/Silki/Controller/Wiki.pm:276
 msgid "View this page"
 msgstr ""
 
@@ -449,7 +507,7 @@ msgstr ""
 msgid "You are not a member of any wikis."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:144
+#: lib/Silki/Controller/Wiki.pm:162
 msgid "You did not select a file to upload."
 msgstr ""
 
@@ -488,6 +546,22 @@ msgstr ""
 #: lib/Silki/Gettext.pm:266
 msgid "on %date(%1) %at_time(%1)"
 msgstr ""
+
+#: share/mason/wiki/settings:36
+msgid "private"
+msgstr "Members-only"
+
+#: share/mason/wiki/settings:9
+msgid "public"
+msgstr "Public"
+
+#: share/mason/wiki/settings:18
+msgid "public-authenticate-to-edit"
+msgstr "Public, log-in to edit"
+
+#: share/mason/wiki/settings:27
+msgid "public-read-only"
+msgstr "Public can read, log-in to edit"
 
 #. ($revision->revision_number()
 #: share/mason/wiki/recent:13

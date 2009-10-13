@@ -41,13 +41,13 @@ sub _set_wiki : Chained('/') : PathPart('wiki') : CaptureArgs(1) {
         {
             uri     => $wiki->uri(),
             label   => $wiki->title(),
-            tooltip => $c->loc( '%1 overview', $wiki->title() ),
+            tooltip => loc( '%1 overview', $wiki->title() ),
             id      => 'dashboard',
         },
         {
             uri     => $wiki->uri( view => 'recent' ),
-            label   => $c->loc('Recent Changes'),
-            tooltip => $c->loc('Recent activity in this wiki'),
+            label   => loc('Recent Changes'),
+            tooltip => loc('Recent activity in this wiki'),
         },
         );
 
@@ -66,6 +66,24 @@ sub no_page_GET_html {
     $c->redirect_and_detach($uri);
 }
 
+sub no_page_PUT {
+    my $self = shift;
+    my $c    = shift;
+
+    my $wiki = $c->stash()->{wiki};
+
+    $self->_require_permission_for_wiki( $c, $wiki, 'Manage' );
+
+    my $perms = $c->request()->params()->{permissions};
+
+    $wiki->set_permissions($perms);
+
+    my $perm_loc = loc($perms);
+    $c->session_object()->add_message( loc('Permissions for this wiki have been set to %1', $perm_loc ) );
+
+    $c->redirect_and_detach( $wiki->uri( view => 'settings' ) );
+}
+
 sub dashboard : Chained('_set_wiki') : PathPart('dashboard') : Args(0) {
     my $self = shift;
     my $c    = shift;
@@ -79,7 +97,7 @@ sub recent : Chained('_set_wiki') : PathPart('recent') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
-    $c->tab_by_id( $c->loc('Recent Changes') )->set_is_selected(1);
+    $c->tab_by_id( loc('Recent Changes') )->set_is_selected(1);
 
     my $wiki = $c->stash()->{wiki};
 
@@ -197,6 +215,15 @@ sub wanted : Chained('_set_wiki') : PathPart('wanted') : Args(0) {
     $c->stash()->{wanted} = $wiki->wanted_pages();
 }
 
+sub settings : Chained('_set_wiki') : PathPart('settings') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_permission_for_wiki( $c, $c->stash()->{wiki}, 'Manage' );
+
+    $c->stash()->{template} = '/wiki/settings';
+}
+
 sub new_page_form : Chained('_set_wiki') : PathPart('new_page_form') : Args(0)
 {
     my $self = shift;
@@ -246,7 +273,7 @@ sub _set_page : Chained('_set_wiki') : PathPart('page') : CaptureArgs(1) {
         {
             uri         => $page->uri(),
             label       => $page->title(),
-            tooltip     => $c->loc('View this page'),
+            tooltip     => loc('View this page'),
             is_selected => 1,
         }
     );
