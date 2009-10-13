@@ -24,7 +24,7 @@ sub CreateDefaultZones {
     my %zones = (
         us => [
             [ 'America/New_York',      'East Coast' ],
-            [ 'America/Chicago',       'Midwest' ],
+            [ 'America/Chicago',       'Central' ],
             [ 'America/Denver',        'Mountain' ],
             [ 'America/Los_Angeles',   'West Coast' ],
             [ 'America/Anchorage',     'Alaska' ],
