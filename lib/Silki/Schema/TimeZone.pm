@@ -33,14 +33,13 @@ sub CreateDefaultZones {
         ],
 
         ca => [
-            [ 'America/Montreal',  'Quebec' ],
-            [ 'America/Toronto',   'Ontario' ],
+            [ 'America/Halifax',   'Halifax and New Brunswick' ],
+            [ 'America/Toronto',   'Ontario and Quebec' ],
             [ 'America/Winnipeg',  'Manitoba' ],
-            [ 'America/Regina',    'Sakatchewan' ],
+            [ 'America/Regina',    'Saskatchewan' ],
             [ 'America/Edmonton',  'Alberta' ],
             [ 'America/Vancouver', 'British Columbia' ],
             [ 'America/St_Johns',  q{St. John's} ],
-            [ 'America/Halifax',   'Halifax and New Brunswick' ],
         ],
     );
 
