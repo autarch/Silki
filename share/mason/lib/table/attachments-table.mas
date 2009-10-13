@@ -1,9 +1,11 @@
 <table class="standard-table">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Size</th>
+      <th><% loc('Name') %></th>
+      <th><% loc('Type') %></th>
+      <th><% loc('Size') %></th>
+      <th><% loc('Uploaded on') %></th>
+      <th><% loc('Uploaded by') %></th>
       <th></th>
     </tr>
   </thead>
@@ -22,6 +24,11 @@
       </td>
       <td>
         <% format_bytes( $file->file_size() ) %>
+      </td>
+      <td>
+        <% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $file->creation_datetime() ) ) %>
+      <td>
+        <a href="<% $file->user()->uri() %>"><% $file->user()->best_name() %></a>
       </td>
       <td>
       </td>
