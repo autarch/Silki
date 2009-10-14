@@ -94,8 +94,9 @@ sub authentication_POST {
     unless (@errors) {
         $user = Silki::Schema::User->new(
             username => $username,
-            password => $pw,
         );
+
+        undef $user if $user && !$user->check_password($pw);
 
         push @errors,
             $c->loc('The username or password you provided was not valid.')

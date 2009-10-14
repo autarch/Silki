@@ -204,25 +204,16 @@ sub _password_as_rfc2307 {
     return $pass->as_rfc2307();
 }
 
-sub _load_from_dbms {
+sub check_password {
     my $self = shift;
-    my $p    = shift;
+    my $pw   = shift;
 
-    # This gets set to the unhashed value in the constructor
-    $self->_clear_password();
-
-    $self->SUPER::_load_from_dbms($p);
-
-    return unless defined $p->{password};
-
-    no_such_row 'User cannot login'
-        if $self->password() eq '*disabled*';
+    return if $self->password() eq '*disabled*';
 
     my $pass = Authen::Passphrase::BlowfishCrypt->from_rfc2307(
         $self->password() );
-
-    no_such_row 'Invalid password'
-        unless $pass->match( $p->{password} );
+    warn $pass->match($pw);
+    return $pass->match($pw);
 }
 
 sub _has_password_or_openid_uri {
