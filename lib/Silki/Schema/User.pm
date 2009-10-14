@@ -3,13 +3,15 @@ package Silki::Schema::User;
 use strict;
 use warnings;
 
+use feature ':5.10';
+
 use Authen::Passphrase::BlowfishCrypt;
 use DateTime;
 use Fey::Literal::Function;
 use Fey::Object::Iterator::FromSelect;
 use Fey::ORM::Exceptions qw( no_such_row );
 use Fey::Placeholder;
-use List::AllUtils qw( first first_index );
+use List::AllUtils qw( all any first first_index );
 use Silki::I18N qw( loc );
 use Silki::Schema;
 use Silki::Schema::Domain;
@@ -28,6 +30,7 @@ with 'Silki::Role::Schema::URIMaker';
 
 with 'Silki::Role::Schema::DataValidator' => {
     steps => [
+        '_has_password_or_openid_uri',
         '_email_address_is_unique',
         '_normalize_and_validate_openid_uri',
         '_openid_uri_is_unique',
@@ -170,7 +173,7 @@ around insert => sub {
         $p{password} = $pass->as_rfc2307();
     }
 
-    $p{username} ||= $p{email_address};
+    $p{username} //= $p{email_address};
 
     return $class->$orig(%p);
 };
@@ -210,6 +213,39 @@ sub _load_from_dbms {
 
     no_such_row 'Invalid password'
         unless $pass->match( $p->{password} );
+}
+
+sub _has_password_or_openid_uri {
+    my $self      = shift;
+    my $p         = shift;
+    my $is_insert = shift;
+
+    my $error = { message => loc('You must provide a password or OpenID.') };
+
+    if ($is_insert) {
+        return if $p->{disable_login};
+
+        return $error
+            if all { string_is_empty( $p->{$_} ) } qw( password openid_uri );
+
+        return;
+    }
+    else {
+        return $error
+            if all { exists $p->{$_} && string_is_empty( $p->{$_} ) }
+            qw( password openid_uri );
+
+        return if any { ! string_is_empty( $p->{$_} ) } qw( password openid_uri );
+
+        if ( string_is_empty( $p->{password} ) ) {
+            return if $self->has_openid_uri();
+        }
+        elsif ( string_is_empty( $p->{openid_uri} ) ) {
+            return if $self->has_password();
+        }
+
+        return $error;
+    }
 }
 
 sub _email_address_is_unique {

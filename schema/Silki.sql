@@ -28,7 +28,7 @@ CREATE TABLE "User" (
        username                 VARCHAR(255)    UNIQUE  NOT NULL,
        display_name             VARCHAR(255)    NOT NULL DEFAULT '',
        -- RFC2307 Blowfish crypt
-       password                 VARCHAR(67)     NOT NULL,
+       password                 VARCHAR(67)     NULL,
        openid_uri               VARCHAR(255)    UNIQUE  NULL,
        is_admin                 BOOLEAN         NOT NULL DEFAULT FALSE,
        is_system_user           BOOLEAN         NOT NULL DEFAULT FALSE,

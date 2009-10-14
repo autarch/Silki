@@ -141,6 +141,10 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
+#: share/mason/lib/forms/user.mas:30
+msgid "If you provide an OpenID you do not need a password."
+msgstr ""
+
 #: share/mason/wiki/settings:13
 msgid "In a public wiki, anyone can read and edit pages without logging in. However, only wiki members can delete pages or upload files."
 msgstr ""
@@ -230,11 +234,11 @@ msgstr ""
 msgid "Pages with no incoming links"
 msgstr ""
 
-#: share/mason/user/preferences_form:34
+#: share/mason/lib/forms/user.mas:41
 msgid "Password (again):"
 msgstr ""
 
-#: share/mason/user/login_form:17 share/mason/user/preferences_form:29
+#: share/mason/lib/forms/user.mas:36 share/mason/user/login_form:17
 msgid "Password:"
 msgstr ""
 
@@ -242,7 +246,7 @@ msgstr ""
 msgid "Permissions"
 msgstr ""
 
-#. ($perms)
+#. ($perm_loc)
 #: lib/Silki/Controller/Wiki.pm:82
 msgid "Permissions for this wiki have been set to %1"
 msgstr ""
@@ -257,7 +261,7 @@ msgid "Preferences for "
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Role/Controller/User.pm:56 share/mason/user/preferences_form:73
+#: lib/Silki/Role/Controller/User.pm:56 share/mason/user/preferences_form:18
 msgid "Preferences for %1"
 msgstr ""
 
@@ -274,8 +278,12 @@ msgstr ""
 msgid "Recent activity in this wiki"
 msgstr ""
 
-#: share/mason/header.mas:8
+#: share/mason/header.mas:9
 msgid "Register"
+msgstr ""
+
+#: share/mason/user/new_user_form:9
+msgid "Register as a New User"
 msgstr ""
 
 #: share/mason/page/history:9
@@ -314,19 +322,19 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#: share/mason/lib/forms/page.mas:12 share/mason/user/login_form:21 share/mason/user/preferences_form:53
+#: share/mason/lib/forms/page.mas:12 share/mason/lib/forms/user.mas:60 share/mason/user/login_form:21
 msgid "Submit"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:270
+#: lib/Silki/Schema/User.pm:306
 msgid "The OpenID URI you provided is already in use by another account."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:247
+#: lib/Silki/Schema/User.pm:283
 msgid "The OpenID URI you provided is not a valid URI."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:229
+#: lib/Silki/Schema/User.pm:265
 msgid "The email address you provided is already in use by another account."
 msgstr ""
 
@@ -346,7 +354,11 @@ msgstr ""
 msgid "The two passwords you provided did not match"
 msgstr ""
 
-#: lib/Silki/Controller/Site.pm:80
+#: lib/Silki/Controller/User.pm:173
+msgid "The two passwords you supplied did not match."
+msgstr ""
+
+#: lib/Silki/Controller/User.pm:101
 msgid "The username or password you provided was not valid."
 msgstr ""
 
@@ -366,8 +378,8 @@ msgstr ""
 msgid "This is a system user, created for use by the wiki software."
 msgstr ""
 
-#: share/mason/user/preferences_form:13
-msgid "This name identifies you to other users of this wiki."
+#: share/mason/lib/forms/user.mas:15
+msgid "This name identifies you to other users."
 msgstr ""
 
 #: share/mason/page/attachments:37
@@ -412,7 +424,7 @@ msgstr ""
 msgid "Three days ago %at_time(%1)"
 msgstr ""
 
-#: share/mason/user/preferences_form:39
+#: share/mason/lib/forms/user.mas:46
 msgid "Time Zone:"
 msgstr ""
 
@@ -511,7 +523,11 @@ msgstr ""
 msgid "You did not select a file to upload."
 msgstr ""
 
-#: lib/Silki/Controller/Site.pm:68
+#: lib/Silki/Schema/User.pm:223
+msgid "You must provide a password or OpenID."
+msgstr ""
+
+#: lib/Silki/Controller/User.pm:89
 msgid "You must provide a password."
 msgstr ""
 
@@ -519,7 +535,7 @@ msgstr ""
 msgid "Your Wikis"
 msgstr ""
 
-#: share/mason/user/preferences_form:9
+#: share/mason/lib/forms/user.mas:11
 msgid "Your name:"
 msgstr ""
 

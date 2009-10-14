@@ -116,6 +116,7 @@ sub _fill_errors {
             $div->insertBefore( $p, $div->firstChild() );
         }
         else {
+            use Data::Dumper;warn Dumper( $error );
             my $p = $self->_create_error_para(
                 ref $error ? $error->{message} : $error );
 

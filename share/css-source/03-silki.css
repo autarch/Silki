@@ -469,6 +469,16 @@ form.flush-left .for-field {
     width: auto;
 }
 
+form select optgroup {
+    font-size: 110%;
+    font-weight: bold;
+}
+
+form select optgroup option {
+    font-weight: normal;
+    font-size: 91%;
+}
+
 /* Page edit form */
 
 #form-and-preview {
