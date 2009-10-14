@@ -3,6 +3,8 @@ package Silki::Role::Controller::User;
 use strict;
 use warnings;
 
+use Silki::I18N qw( loc );
+
 use Moose::Role -traits => 'MooseX::MethodAttributes::Role::Meta::Role';
 
 requires qw( _set_user _make_user_uri );
@@ -71,15 +73,14 @@ after '_set_user' => sub {
     $c->stash()->{user} = $user;
 };
 
-sub user : Chained('_set_user') : PathPart('') : Args(0) :
-    ActionClass('+Silki::Action::REST') {
+sub user : Chained('_set_user') : PathPart('') : Args(0) : ActionClass('+Silki::Action::REST') {
 }
 
 sub user_GET_html {
     my $self = shift;
     my $c    = shift;
 
-    $c->tab_by_id('profile')->set_is_selected(1);
+    ( $c->tabs() )[0]->set_is_selected(1);
 
     my $user = $c->stash()->{user};
 
@@ -108,23 +109,15 @@ sub user_PUT {
 
     my %update = $c->request()->user_params();
 
-    if ( defined $update{password} ) {
-        unless ( defined $update{password2}
-            && $update{password} eq $update{password2} ) {
-            my @e = {
-                field => 'password',
-                message =>
-                    $c->loc('The two passwords you provided did not match'),
-            };
-
-            $self->_user_update_error( $c, \@e, \%update );
-        }
-    }
-
+    my @errors = $self->_check_passwords_match(\%update);
     eval { $user->update(%update) };
 
-    if ( my $e = $@ ) {
-        $self->_user_update_error( $c, $e, \%update );
+    my $e = $@;
+    die $e if $e && ! ref $e;
+
+    if ( $e || @errors ) {
+        push @errors, @{ $e->errors() } if $e && ref $e;
+        $self->_user_update_error( $c, \@errors, \%update );
     }
 
     my $message
@@ -136,6 +129,23 @@ sub user_PUT {
     $c->session_object()->add_message($message);
 
     $c->redirect_and_detach( $self->_make_user_uri( $c, $user ) );
+}
+
+sub _check_passwords_match {
+    my $self   = shift;
+    my $params = shift;
+
+    return unless defined $params->{password};
+
+    my $pw2 = delete $params->{password2};
+    return
+        if defined $pw2 && $params->{password} eq $pw2;
+
+    return {
+        field => 'password',
+        message =>
+            loc('The two passwords you provided did not match'),
+    };
 }
 
 sub _user_update_error {
@@ -155,8 +165,7 @@ sub _user_update_error {
     );
 }
 
-sub preferences_form : Chained('_set_user') : PathPart('preferences_form') :
-    Args(0) {
+sub preferences_form : Chained('_set_user') : PathPart('preferences_form') : Args(0) {
     my $self = shift;
     my $c    = shift;
 

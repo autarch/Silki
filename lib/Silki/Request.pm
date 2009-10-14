@@ -9,7 +9,13 @@ use Silki::Util qw( string_is_empty );
 sub user_params {
     my $self = shift;
 
-    return $self->_params_for_classes('Silki::Schema::User');
+    my $params = $self->params();
+
+    my %p = $self->_params_for_classes('Silki::Schema::User');
+    $p{password2} = $params->{password2}
+        unless string_is_empty( $params->{password2} );
+
+    return %p;
 }
 
 sub _bool {

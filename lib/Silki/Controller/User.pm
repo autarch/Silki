@@ -156,31 +156,25 @@ sub new_user_form : Local {
     $c->stash()->{template} = '/user/new_user_form';
 }
 
-sub user : Path('') : ActionClass('+Silki::Action::REST') {
+sub users_collection : Path('/user') : ActionClass('+Silki::Action::REST') {
 }
 
-sub user_POST {
+sub users_collection_POST {
     my $self = shift;
     my $c    = shift;
 
-    my $params = $c->request()->params();
+    my %insert = $c->request()->user_params();
 
-    my @errors;
-    if ( defined $params->{password} ) {
-        push @errors,
-            {
-            field   => 'password',
-            message => loc('The two passwords you supplied did not match.'),
-            }
-            unless defined $params->{password2}
-                && $params->{password} eq $params->{password2};
-    }
+    my @errors = $self->_check_passwords_match(\%insert);
 
     my $user
-        = eval { Silki::Schema::User->insert( $c->request()->user_params() ) };
+        = eval { Silki::Schema::User->insert(%insert) };
 
-    if ( my $e = $@ ) {
-        push @errors, @{ $e->errors() };
+    my $e = $@;
+    die $e if $e && ! ref $e;
+
+    if ( $e || @errors ) {
+        push @errors, @{ $e->errors() } if $e && ref $e;
 
         $c->redirect_with_error(
             error => \@errors,
@@ -188,7 +182,7 @@ sub user_POST {
                 path      => '/user/new_user_form',
                 with_host => 1
             ),
-            form_data => $params,
+            form_data => \%insert,
         );
     }
 
