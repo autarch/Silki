@@ -107,7 +107,9 @@ sub _fill_errors {
 
     for my $error ( @{$errors} ) {
         if ( ref $error && $error->{field} ) {
-            my $div = $self->_get_div_for_field( $error->{field} );
+            my $div = $self->_get_div_for_field( $error->{field} )
+                or next;
+
             $div->className( $div->className() . ' error' );
 
             my $p = $self->_create_error_para( $error->{message} );
@@ -133,8 +135,7 @@ sub _get_div_for_field {
 
     my $elt = $self->_dom()->getElementById($id);
 
-    die "No such element: $id\n"
-        unless $elt;
+    return unless $elt;
 
     my $node = $elt;
 
