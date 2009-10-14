@@ -26,7 +26,7 @@ sub _make_user_uri {
     return $user->uri( view => $view );
 }
 
-sub wikis  : Chained('_set_user') : PathPart('wikis') : Args(0) : ActionClass('+Silki::Action::REST') {
+sub wikis : Chained('_set_user') : PathPart('wikis') : Args(0) : ActionClass('+Silki::Action::REST') {
 }
 
 sub wikis_GET {
@@ -83,8 +83,7 @@ sub authentication_POST {
 
     my @errors;
 
-    push @errors,
-        {
+    push @errors, {
         field   => 'password',
         message => $c->loc('You must provide a password.')
         }
@@ -107,7 +106,8 @@ sub authentication_POST {
         $c->redirect_with_error(
             error => \@errors,
             uri   => $c->domain()->application_uri(
-                path => '/user/login_form', with_host => 1
+                path      => '/user/login_form',
+                with_host => 1
             ),
             form_data => $c->request()->params(),
         );
