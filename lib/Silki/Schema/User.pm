@@ -161,16 +161,7 @@ around insert => sub {
         $p{password} = '*disabled*';
     }
     elsif ( $p{password} ) {
-
-        # XXX - require a certain length or complexity? make it
-        # configurable?
-        my $pass = Authen::Passphrase::BlowfishCrypt->new(
-            cost        => 8,
-            salt_random => 1,
-            passphrase  => $p{password},
-        );
-
-        $p{password} = $pass->as_rfc2307();
+        $p{password} = $class->_password_as_rfc2307( $p{password} );
     }
 
     $p{username} //= $p{email_address};
@@ -189,10 +180,29 @@ around update => sub {
         $p{username} = $p{email_address};
     }
 
+    if ( exists $p{password} ) {
+        $p{password} = $self->_password_as_rfc2307( $p{password} );
+    }
+
     $p{last_modified_datetime} = Fey::Literal::Function->new('NOW');
 
     return $self->$orig(%p);
 };
+
+sub _password_as_rfc2307 {
+    my $self = shift;
+    my $pw   = shift;
+
+    # XXX - require a certain length or complexity? make it
+    # configurable?
+    my $pass = Authen::Passphrase::BlowfishCrypt->new(
+        cost        => 8,
+        salt_random => 1,
+        passphrase  => $pw,
+    );
+
+    return $pass->as_rfc2307();
+}
 
 sub _load_from_dbms {
     my $self = shift;
@@ -203,7 +213,7 @@ sub _load_from_dbms {
 
     $self->SUPER::_load_from_dbms($p);
 
-    return unless $p->{password};
+    return unless defined $p->{password};
 
     no_such_row 'User cannot login'
         if $self->password() eq '*disabled*';
