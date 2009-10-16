@@ -1,5 +1,5 @@
 % if ($user_wiki_count) {
-<h2>Your Private Wikis</h2>
+<h2><% loc('Wikis You Are a Member of') %></h2>
 
 <& /lib/wiki-list.mas, wikis => $user_wikis &>
 % } elsif ( $c->user()->is_authenticated() ) {
@@ -8,7 +8,7 @@
 </p>
 % }
 % if ($public_wiki_count) {
-<h2>Public Wikis</h2>
+<h2><% loc('Public Wikis') %></h2>
 
 <& /lib/wiki-list.mas, wikis => $public_wikis &>
 % } else {
