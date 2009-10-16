@@ -180,7 +180,7 @@ around update => sub {
         $p{username} = $p{email_address};
     }
 
-    if ( exists $p{password} ) {
+    unless ( string_is_empty( $p{password} ) ) {
         $p{password} = $self->_password_as_rfc2307( $p{password} );
     }
 
@@ -212,7 +212,7 @@ sub check_password {
 
     my $pass = Authen::Passphrase::BlowfishCrypt->from_rfc2307(
         $self->password() );
-    warn $pass->match($pw);
+
     return $pass->match($pw);
 }
 
