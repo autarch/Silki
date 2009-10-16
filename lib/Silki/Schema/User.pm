@@ -208,6 +208,8 @@ sub check_password {
     my $self = shift;
     my $pw   = shift;
 
+    return if $self->is_system_user();
+
     return if $self->password() eq '*disabled*';
 
     my $pass = Authen::Passphrase::BlowfishCrypt->from_rfc2307(
