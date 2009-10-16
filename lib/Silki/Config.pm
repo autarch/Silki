@@ -396,7 +396,7 @@ sub _build_catalyst_config {
     my %config = (
         default_view => 'Mason',
 
-        session => {
+        'Plugin::Session' => {
             expires => ( 60 * 5 ),
 
             # Need to quote it for Pg
