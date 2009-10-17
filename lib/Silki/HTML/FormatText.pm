@@ -5,6 +5,9 @@ use warnings;
 
 use base 'HTML::FormatText';
 
+# If these subs don't return true, the formatter won't recurse into the node
+# for text/etc.
+
 sub a_start {
     my $self  = shift;
     my $node  = shift;
