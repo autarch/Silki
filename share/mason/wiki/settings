@@ -2,7 +2,7 @@
   <li>
     <a href="<% $wiki->uri( view => 'permissions_form' ) %>"><strong><% loc('Permissions') %></strong></a>
     <br />
-    <% loc( 'Permissions determine what different classes of users can do in this wiki. Currently this wiki is <strong>%1</strong>.', lc loc( $wiki->permissions_name() ) ) | n %>
+    <% loc( 'This wiki is currently <strong>%1</strong>.', lc loc( $wiki->permissions_name() ) ) | n %>
   </li>
   <li>
     <a href="<% $wiki->uri( view => 'members_form' ) %>"><strong><% loc('Members') %></strong></a>

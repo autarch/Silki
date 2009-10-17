@@ -187,7 +187,7 @@ msgstr ""
 msgid "Guest"
 msgstr ""
 
-#: share/email-templates/invitation.html:2 share/email-templates/invitation.txt:1
+#: share/email-templates/invitation.html:2
 msgid "Hi,"
 msgstr ""
 
@@ -326,11 +326,6 @@ msgstr ""
 msgid "Permissions"
 msgstr ""
 
-#. (lc loc( $wiki->permissions_name()
-#: share/mason/wiki/settings:5
-msgid "Permissions determine what different classes of users can do in this wiki. Currently this wiki is <strong>%1</strong>."
-msgstr ""
-
 #. ($perm_loc)
 #: lib/Silki/Controller/Wiki.pm:236
 msgid "Permissions for this wiki have been set to %1"
@@ -424,11 +419,6 @@ msgstr ""
 msgid "Since you already have an account at %1, you can <a href=\"%html(%2)\">visit the wiki right now</a>."
 msgstr ""
 
-#. ($wiki->domain()
-#: share/email-templates/invitation.txt:3
-msgid "Since you already have an account at %1, you can visit the wiki right now at %2."
-msgstr ""
-
 #: share/mason/lib/table/attachments-table.mas:6
 msgid "Size"
 msgstr ""
@@ -513,6 +503,11 @@ msgstr ""
 
 #: share/mason/wiki/orphans:34
 msgid "This wiki has no orphaned pages. Well done!"
+msgstr ""
+
+#. (lc loc( $wiki->permissions_name()
+#: share/mason/wiki/settings:5
+msgid "This wiki is currently <strong>%1</strong>."
 msgstr ""
 
 #: lib/Silki/Controller/Base.pm:137 lib/Silki/Controller/Base.pm:147
@@ -643,7 +638,7 @@ msgid "You did not select a file to upload."
 msgstr ""
 
 #. ($wiki->title()
-#: share/email-templates/invitation.html:6 share/email-templates/invitation.txt:3
+#: share/email-templates/invitation.html:6
 msgid "You have been invited to join the %1 wiki. "
 msgstr ""
 
