@@ -392,7 +392,7 @@ sub _build_best_name {
     my $username = $self->username();
 
     if ( $username =~ /\@/ ) {
-        $username =~ s/\.\w+$//;
+        $username =~ s/\@.+$//;
     }
 
     return $username;
@@ -450,6 +450,24 @@ sub has_permission_in_wiki {
     my $role = $self->role_in_wiki($wiki);
 
     return $perms->{ $role->name() }{ $perm->name() };
+}
+
+sub is_wiki_member {
+    my $self = shift;
+    my ($wiki) = pos_validated_list( \@_, { isa => 'Silki::Schema::Wiki' } );
+
+    my $select = $self->_RoleInWikiSelect();
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
+
+    my $row = $dbh->selectrow_arrayref(
+        $select->sql($dbh),
+        {},
+        $wiki->wiki_id(),
+        $self->user_id(),
+    );
+
+    return $row && $row->[0];
 }
 
 sub role_in_wiki {

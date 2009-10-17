@@ -327,6 +327,16 @@ sub _process_new_members {
 
         my $user = Silki::Schema::User->new( email_address => $address->address() );
         if ($user) {
+            if ( $user->is_wiki_member($wiki) ) {
+                $c->session_object()->add_message(
+                    loc(
+                        '%1 is already a member of this wiki.',
+                        $user->best_name()
+                    )
+                );
+                next;
+            }
+
             $wiki->add_user(
                 user => $user,
                 role => Silki::Schema::Role->Member(),

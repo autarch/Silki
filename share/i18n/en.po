@@ -20,12 +20,17 @@ msgid "# of Revisions"
 msgstr ""
 
 #. ($user->best_name()
+#: lib/Silki/Controller/Wiki.pm:334
+msgid "%1 is already a member of this wiki."
+msgstr ""
+
+#. ($user->best_name()
 #: lib/Silki/Controller/Wiki.pm:306
 msgid "%1 is no longer an admin for this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:347
+#: lib/Silki/Controller/Wiki.pm:356
 msgid "%1 is now a member of this wiki."
 msgstr ""
 
@@ -58,7 +63,7 @@ msgid "%datetime(%1)"
 msgstr ""
 
 #. ($address->address()
-#: lib/Silki/Controller/Wiki.pm:378
+#: lib/Silki/Controller/Wiki.pm:387
 msgid "A user account for %1 has been created, and this person has been invited to join this wiki."
 msgstr ""
 
@@ -85,7 +90,7 @@ msgid "All attachments in this wiki"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:339
+#: lib/Silki/Controller/Wiki.pm:348
 msgid "An unactived account for %1 already exists. When they activate their account, they will be able to access this wiki."
 msgstr ""
 
@@ -439,7 +444,7 @@ msgstr ""
 msgid "The email address you provided is already in use by another account."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:628
+#: lib/Silki/Controller/Wiki.pm:637
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
@@ -583,7 +588,7 @@ msgstr ""
 msgid "View details about your profile"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:434
+#: lib/Silki/Controller/Wiki.pm:443
 msgid "View this page"
 msgstr ""
 
@@ -643,7 +648,7 @@ msgid "You have been invited to join the %1 wiki. "
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Schema/User.pm:724
+#: lib/Silki/Schema/User.pm:731
 msgid "You have been invited to participate in the %1 wiki at %2"
 msgstr ""
 
