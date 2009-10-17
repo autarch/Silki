@@ -12,6 +12,12 @@ has_policy 'Silki::Schema::Policy';
 
 has_table( Silki::Schema->Schema()->table('Role') );
 
+# For i18n purposes:
+# loc( 'Guest' )
+# loc( 'Authenticated' )
+# loc( 'Member' )
+# loc( 'Admin' )
+
 for my $role (qw( Guest Authenticated Member Admin )) {
     class_has $role => (
         is      => 'ro',

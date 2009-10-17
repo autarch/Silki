@@ -1,0 +1,25 @@
+<p>
+<% loc( 'Hi,') %>
+</p>
+
+<p>
+<% loc( 'You have been invited to join the %1 wiki. ', $wiki->title() ) %>
+<% loc( q{Since you already have an account at %1, you can <a href="%html(%2)">visit the wiki right now</a>.}, $wiki->domain()->web_hostname(), $wiki->uri( with_host => 1 ) ) %>
+</p>
+
+% for my $para ( split /[\r\n]{2,}/, $message ) {
+<p>
+<% $para | h %>
+</p>
+% }
+
+<p>
+<% $sender->best_name() %>
+</p>
+
+<%args>
+$user
+$wiki
+$sender
+$message => undef
+</%args>

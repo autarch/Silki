@@ -7,11 +7,13 @@ use feature ':5.10';
 
 use Authen::Passphrase::BlowfishCrypt;
 use DateTime;
+use Digest::SHA1 qw( sha1_hex );
 use Fey::Literal::Function;
 use Fey::Object::Iterator::FromSelect;
 use Fey::ORM::Exceptions qw( no_such_row );
 use Fey::Placeholder;
 use List::AllUtils qw( all any first first_index );
+use Silki::Email qw( send_email );
 use Silki::I18N qw( loc );
 use Silki::Schema;
 use Silki::Schema::Domain;
@@ -152,13 +154,20 @@ class_has 'GuestUser' => (
     );
 }
 
+my $DisabledPW = '*disabled*';
 around insert => sub {
     my $orig  = shift;
     my $class = shift;
     my %p     = @_;
 
+    if ( delete $p{requires_activation} ) {
+        $p{disable_login} = 1;
+        $p{activation_key}
+            = sha1_hex( $p{email_address}, Silki::Config->new()->secret() );
+    }
+
     if ( delete $p{disable_login} ) {
-        $p{password} = '*disabled*';
+        $p{password} = $DisabledPW;
     }
     elsif ( $p{password} ) {
         $p{password} = $class->_password_as_rfc2307( $p{password} );
@@ -202,20 +211,6 @@ sub _password_as_rfc2307 {
     );
 
     return $pass->as_rfc2307();
-}
-
-sub check_password {
-    my $self = shift;
-    my $pw   = shift;
-
-    return if $self->is_system_user();
-
-    return if $self->password() eq '*disabled*';
-
-    my $pass = Authen::Passphrase::BlowfishCrypt->from_rfc2307(
-        $self->password() );
-
-    return $pass->match($pw);
 }
 
 sub _has_password_or_openid_uri {
@@ -351,12 +346,6 @@ sub EnsureRequiredUsersExist {
     }
 }
 
-sub is_authenticated {
-    my $self = shift;
-
-    return !$self->is_system_user();
-}
-
 sub _FindOrCreateSpecialUser {
     my $class    = shift;
     my $username = shift;
@@ -407,6 +396,32 @@ sub _build_best_name {
     }
 
     return $username;
+}
+
+sub requires_activation {
+    my $self = shift;
+
+    return defined $self->activation_key();
+}
+
+sub check_password {
+    my $self = shift;
+    my $pw   = shift;
+
+    return if $self->is_system_user();
+
+    return if $self->password() eq $DisabledPW;
+
+    my $pass = Authen::Passphrase::BlowfishCrypt->from_rfc2307(
+        $self->password() );
+
+    return $pass->match($pw);
+}
+
+sub is_authenticated {
+    my $self = shift;
+
+    return !$self->is_system_user();
 }
 
 sub can_edit_user {
@@ -673,6 +688,50 @@ sub _ImplicitWikiSelectBase {
                   )
            ->and( $Schema->table('Wiki')->column('wiki_id'), 'NOT IN',
                   $explicit );
+
+    return;
+}
+
+sub send_invitation_email {
+    my $self = shift;
+
+    $self->_send_email( @_, template => 'invitation' );
+}
+
+sub send_activation_email {
+    my $self = shift;
+
+    $self->_send_email( @_, template => 'activation' );
+}
+
+sub _send_email {
+    my $self = shift;
+    my ( $wiki, $sender, $message, $template ) = validated_list(
+        \@_,
+        wiki     => { isa => 'Silki::Schema::Wiki' },
+        sender   => { isa => 'Silki::Schema::User' },
+        message  => { isa => Str, optional => 1 },
+        template => { isa => Str },
+    );
+
+    send_email(
+        from => Email::Address->new(
+            $sender->best_name(), $sender->email_address()
+            )->format(),
+        to      => $self->email_address(),
+        subject => loc(
+            'You have been invited to participate in the %1 wiki at %2',
+            $wiki->title(),
+            $wiki->domain()->web_hostname(),
+        ),
+        template        => $template,
+        template_params => {
+            user    => $self,
+            wiki    => $wiki,
+            sender  => $sender,
+            message => $message,
+        },
+    );
 
     return;
 }

@@ -95,7 +95,16 @@ sub authentication_POST {
             username => $username,
         );
 
-        undef $user if $user && !$user->check_password($pw);
+        if ($user) {
+            $c->redirect_and_detach(
+                $c->domain()->application_uri(
+                    path  => '/user/pending_activation',
+                    query => { user_id => $user->user_id },
+                )
+            ) if $user->requires_activation();
+
+            undef $user unless $user->check_password($pw);
+        }
 
         push @errors,
             $c->loc('The username or password you provided was not valid.')

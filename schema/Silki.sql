@@ -30,6 +30,8 @@ CREATE TABLE "User" (
        -- RFC2307 Blowfish crypt
        password                 VARCHAR(67)     NULL,
        openid_uri               VARCHAR(255)    UNIQUE  NULL,
+       -- SHA1 in hex form
+       activation_key           VARCHAR(40)     UNIQUE  NULL,
        is_admin                 BOOLEAN         NOT NULL DEFAULT FALSE,
        is_system_user           BOOLEAN         NOT NULL DEFAULT FALSE,
        creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,

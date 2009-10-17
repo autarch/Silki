@@ -6,8 +6,7 @@ use warnings;
 use base 'Catalyst::View::Mason';
 
 {
-
-    package Silki::Mason;
+    package Silki::Mason::Web;
 
     use Lingua::EN::Inflect qw( PL_N );
     use Number::Format qw( format_bytes );

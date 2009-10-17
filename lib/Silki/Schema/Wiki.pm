@@ -127,6 +127,13 @@ class_has _WantedPagesSelect => (
     builder => '_BuildWantedPagesSelect',
 );
 
+class_has _MembersSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildMembersSelect',
+);
+
 class_has _PublicWikiCountSelect => (
     is      => 'ro',
     isa     => 'Fey::SQL::Select',
@@ -222,6 +229,25 @@ sub add_user {
             role_id => $role->role_id(),
         );
     }
+
+    return;
+}
+
+sub remove_user {
+    my $self = shift;
+    my ($user) = validated_list(
+        \@_,
+        user => { isa => 'Silki::Schema::User' },
+    );
+
+    return if $user->is_system_user();
+
+    my $uwr = Silki::Schema::UserWikiRole->new(
+        user_id => $user->user_id(),
+        wiki_id => $self->wiki_id(),
+    );
+
+    $uwr->delete() if $uwr;
 
     return;
 }
@@ -639,6 +665,46 @@ sub _BuildFilesSelect {
         ->order_by( $file_t->column('file_name'), 'ASC' );
 
     return $files_select;
+}
+
+sub members {
+    my $self = shift;
+    my ( $limit, $offset ) = validated_list(
+        \@_,
+        limit  => { isa => Int, optional => 1 },
+        offset => { isa => Int, default  => 0 },
+    );
+
+    my $select = $self->_MembersSelect()->clone();
+    $select->limit( $limit, $offset );
+
+    return Fey::Object::Iterator::FromSelect->new(
+        classes => [ 'Silki::Schema::User', 'Silki::Schema::Role' ],
+        select  => $select,
+        dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
+        bind_params => [ $self->wiki_id() ],
+    );
+}
+
+sub _BuildMembersSelect {
+    my $class = shift;
+
+    my $user_t = $Schema->table('User');
+    my $uwr_t  = $Schema->table('UserWikiRole');
+    my $role_t  = $Schema->table('Role');
+
+    my $members_select = Silki::Schema->SQLFactoryClass()->new_select();
+    $members_select
+        ->select( $user_t, $role_t )
+        ->from( $user_t, $uwr_t )
+        ->from( $uwr_t, $role_t )
+        ->where( $uwr_t->column('wiki_id'), '=', Fey::Placeholder->new() )
+        ->order_by( $role_t->column('name'), 'ASC',
+                    $user_t->column('display_name'), 'ASC',
+                    $user_t->column('email_address'), 'ASC',
+                  );
+
+    return $members_select;
 }
 
 sub PublicWikiCount {

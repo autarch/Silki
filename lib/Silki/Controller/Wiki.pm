@@ -5,9 +5,10 @@ use warnings;
 
 use Data::Page;
 use Data::Page::FlickrLike;
+use Email::Address;
 use File::Basename qw( dirname );
 use File::MimeInfo qw( mimetype );
-use List::AllUtils qw( all );
+use List::AllUtils qw( all uniq );
 use Path::Class ();
 use Silki::Config;
 use Silki::Formatter::HTMLToWiki;
@@ -17,6 +18,7 @@ use Silki::Schema::File;
 use Silki::Schema::Page;
 use Silki::Schema::PageRevision;
 use Silki::Schema::Wiki;
+use Silki::Util qw( string_is_empty );
 
 use Moose;
 
@@ -64,24 +66,6 @@ sub no_page_GET_html {
     my $uri = $c->stash()->{wiki}->uri( view => 'dashboard' );
 
     $c->redirect_and_detach($uri);
-}
-
-sub no_page_PUT {
-    my $self = shift;
-    my $c    = shift;
-
-    my $wiki = $c->stash()->{wiki};
-
-    $self->_require_permission_for_wiki( $c, $wiki, 'Manage' );
-
-    my $perms = $c->request()->params()->{permissions};
-
-    $wiki->set_permissions($perms);
-
-    my $perm_loc = loc($perms);
-    $c->session_object()->add_message( loc('Permissions for this wiki have been set to %1', $perm_loc ) );
-
-    $c->redirect_and_detach( $wiki->uri( view => 'settings' ) );
 }
 
 sub dashboard : Chained('_set_wiki') : PathPart('dashboard') : Args(0) {
@@ -222,6 +206,180 @@ sub settings : Chained('_set_wiki') : PathPart('settings') : Args(0) {
     $self->_require_permission_for_wiki( $c, $c->stash()->{wiki}, 'Manage' );
 
     $c->stash()->{template} = '/wiki/settings';
+}
+
+sub permissions_form : Chained('_set_wiki') : PathPart('permissions_form') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_permission_for_wiki( $c, $c->stash()->{wiki}, 'Manage' );
+
+    $c->stash()->{template} = '/wiki/permissions_form';
+}
+
+sub permissions : Chained('_set_wiki') : PathPart('permissions') : Args(0) : ActionClass('+Silki::Action::REST') {
+}
+
+sub permissions_PUT {
+    my $self = shift;
+    my $c    = shift;
+
+    my $wiki = $c->stash()->{wiki};
+
+    $self->_require_permission_for_wiki( $c, $wiki, 'Manage' );
+
+    my $perms = $c->request()->params()->{permissions};
+
+    $wiki->set_permissions($perms);
+
+    my $perm_loc = loc($perms);
+    $c->session_object()->add_message( loc('Permissions for this wiki have been set to %1', $perm_loc ) );
+
+    $c->redirect_and_detach( $wiki->uri( view => 'permissions_form' ) );
+}
+
+sub members_form : Chained('_set_wiki') : PathPart('members_form') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_permission_for_wiki( $c, $c->stash()->{wiki}, 'Manage' );
+
+    $c->stash()->{members} = $c->stash()->{wiki}->members();
+
+    $c->stash()->{template} = '/wiki/members_form';
+}
+
+sub members : Chained('_set_wiki') : PathPart('members') : Args(0) : ActionClass('+Silki::Action::REST') {
+}
+
+sub members_PUT {
+    my $self = shift;
+    my $c    = shift;
+
+    my $wiki = $c->stash()->{wiki};
+
+    $self->_require_permission_for_wiki( $c, $wiki, 'Manage' );
+
+    $self->_process_existing_member_changes($c);
+    $self->_process_new_members($c);
+
+    $c->redirect_and_detach( $wiki->uri( view => 'members_form' ) );
+}
+
+sub _process_existing_member_changes {
+    my $self = shift;
+    my $c    = shift;
+
+    my $wiki = $c->stash()->{wiki};
+
+    for my $user_id ( $c->request()->param('members') ) {
+        next if $user_id == $c->user()->user_id();
+
+        my $role_id = $c->request()->params()->{ 'role_for_' . $user_id };
+
+        my $user = Silki::Schema::User->new( user_id => $user_id );
+        if ( !$role_id ) {
+            $wiki->remove_user( user => $user );
+            $c->session_object()
+                ->add_message(
+                loc( '%1 was removed as a wiki member.', $user->best_name() )
+                );
+        }
+        else {
+            my $role = Silki::Schema::Role->new( role_id => $role_id );
+            my $current_role = $user->role_in_wiki($wiki);
+            next if $role->role_id() == $current_role->role_id();
+
+            $wiki->add_user( user => $user, role => $role );
+            if ( $role->name eq 'Admin' ) {
+                $c->session_object()->add_message(
+                    loc(
+                        '%1 is now an admin for this wiki.',
+                        $user->best_name()
+                    )
+                );
+            }
+            else {
+                $c->session_object()->add_message(
+                    loc(
+                        '%1 is no longer an admin for this wiki.',
+                        $user->best_name()
+                    )
+                );
+            }
+        }
+    }
+}
+
+sub _process_new_members {
+    my $self = shift;
+    my $c    = shift;
+
+    my $wiki = $c->stash()->{wiki};
+
+    my $params = $c->request()->params();
+
+    for my $address ( Email::Address->parse( $params->{new_members} ) ) {
+        my %message
+            = string_is_empty( $params->{message} )
+            ? ()
+            : ( message => $params->{message} );
+
+        my $user = Silki::Schema::User->new( email_address => $address->address() );
+        if ($user) {
+            $wiki->add_user(
+                user => $user,
+                role => Silki::Schema::Role->Member(),
+            );
+
+            if ( $user->requires_activation() ) {
+                $c->session_object()->add_message(
+                    loc(
+                        'An unactived account for %1 already exists. When they activate their account, they will be able to access this wiki.',
+                        $user->best_name()
+                    )
+                );
+            }
+            else {
+                $c->session_object()->add_message(
+                    loc(
+                        '%1 is now a member of this wiki.',
+                        $user->best_name()
+                    )
+                );
+            }
+
+            $user->send_invitation_email(
+                wiki   => $wiki,
+                sender => $c->user(),
+                %message,
+            );
+        }
+        else {
+            $user = Silki::Schema::User->insert(
+                requires_activation => 1,
+                email_address       => $address->address(),
+                (
+                    $address->phrase()
+                    ? ( display_name => $address->phrase() )
+                    : ()
+                ),
+            );
+
+            $user->send_activation_email(
+                wiki   => $wiki,
+                sender => $c->user(),
+                %message,
+            );
+
+            $c->session_object()->add_message(
+                loc(
+                    'A user account for %1 has been created, and this person has been invited to join this wiki.',
+                    $address->address()
+                )
+            );
+        }
+    }
 }
 
 sub new_page_form : Chained('_set_wiki') : PathPart('new_page_form') : Args(0)

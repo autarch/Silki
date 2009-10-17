@@ -439,6 +439,11 @@ input.wide {
     width: 30em;
 }
 
+textarea.medium {
+    height: 7em;
+    width: 24em;
+}
+
 input.submit {
     background-color: #8f683f;
     border-bottom: 2px solid #6d3903;
