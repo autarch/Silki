@@ -456,24 +456,29 @@ sub is_wiki_member {
     my $self = shift;
     my ($wiki) = pos_validated_list( \@_, { isa => 'Silki::Schema::Wiki' } );
 
-    my $select = $self->_RoleInWikiSelect();
+    my $role_name = $self->_role_name_in_wiki($wiki);
 
-    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
-
-    my $row = $dbh->selectrow_arrayref(
-        $select->sql($dbh),
-        {},
-        $wiki->wiki_id(),
-        $self->user_id(),
-    );
-
-    return $row && $row->[0];
+    return defined $role_name;
 }
 
 sub role_in_wiki {
     my $self = shift;
     my ($wiki) = pos_validated_list( \@_, { isa => 'Silki::Schema::Wiki' } );
 
+    my $role_name = $self->_role_name_in_wiki($wiki);
+
+    $role_name ||=
+        $self->is_guest()
+        ? 'Guest'
+        : 'Authenticated';
+
+    return Silki::Schema::Role->$role_name();
+}
+
+sub _role_name_in_wiki {
+    my $self = shift;
+    my $wiki = shift;
+
     my $select = $self->_RoleInWikiSelect();
 
     my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
@@ -485,12 +490,9 @@ sub role_in_wiki {
         $self->user_id(),
     );
 
-    my $name
-        = $row              ? $row->[0]
-        : $self->is_guest() ? 'Guest'
-        :                     'Authenticated';
+    return unless $row;
 
-    return Silki::Schema::Role->$name();
+    return $row->[0];
 }
 
 sub _BuildRoleInWikiSelect {
