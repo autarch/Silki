@@ -657,7 +657,11 @@ sub wikis_shared_with {
         classes => ['Silki::Schema::Wiki'],
         select  => $select,
         dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
-        bind_params => [ ( $self->user_id(), $user->user_id() ) x 2 ],
+        bind_params => [
+            $self->user_id(), $user->user_id(),
+            $self->user_id(), $self->user_id(),
+            $user->user_id(), $user->user_id(),
+        ],
     );
 }
 
