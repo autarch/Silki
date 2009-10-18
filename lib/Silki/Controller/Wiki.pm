@@ -337,11 +337,6 @@ sub _process_new_members {
                 next;
             }
 
-            $wiki->add_user(
-                user => $user,
-                role => Silki::Schema::Role->Member(),
-            );
-
             if ( $user->requires_activation() ) {
                 $c->session_object()->add_message(
                     loc(
@@ -389,6 +384,11 @@ sub _process_new_members {
                 )
             );
         }
+
+        $wiki->add_user(
+            user => $user,
+            role => Silki::Schema::Role->Member(),
+        );
     }
 }
 

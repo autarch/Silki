@@ -2,10 +2,13 @@
 <form action="<% $action %>" method="post">
 % if ($user) {
   <input type="hidden" name="x-tunneled-method" value="PUT" />
+%   if ( $user->activation_key() ) {
+  <input type="hidden" name="activation_key" value="<% $user->activation_key() %>" />
+%   }
 % }
 
   <fieldset>
-    <legend>Preferences</legend>
+    <legend><% loc('Account Preferences') %></legend>
 
     <div class="form-item">
       <label for="display_name" class="for-field"><% loc('Your name:') %></label>
@@ -23,16 +26,6 @@
     </div>
 
     <div class="form-item">
-      <label for="openid_uri" class="for-field">OpenID:</label>
-      <input type="text" class="text medium" name="openid_uri" id="openid_uri" />
-      <div class="help-text">
-        <p>
-          <% loc('If you provide an OpenID you do not need a password.') %>
-        </p>
-      </div>
-    </div>
-
-    <div class="form-item">
       <label for="password" class="for-field"><% loc('Password:') %></label>
       <input type="password" class="text" name="password" id="password" />
     </div>
@@ -40,6 +33,16 @@
     <div class="form-item">
       <label for="password2" class="for-field"><% loc('Password (again):') %></label>
       <input type="password" class="text" name="password2" id="password2" />
+    </div>
+
+    <div class="form-item">
+      <label for="openid_uri" class="for-field">OpenID:</label>
+      <input type="text" class="text medium" name="openid_uri" id="openid_uri" />
+      <div class="help-text">
+        <p>
+          <% loc('If you provide an OpenID you do not need a password.') %>
+        </p>
+      </div>
     </div>
 
     <div class="form-item">

@@ -52,6 +52,7 @@ has best_name => (
     isa     => Str,
     lazy    => 1,
     builder => '_build_best_name',
+    clearer => '_clear_best_name',
 );
 
 class_has _RoleInWikiSelect => (
@@ -198,6 +199,10 @@ around update => sub {
     return $self->$orig(%p);
 };
 
+after update => sub {
+    $_[0]->_clear_best_name();
+};
+
 sub _password_as_rfc2307 {
     my $self = shift;
     my $pw   = shift;
@@ -278,7 +283,7 @@ sub _normalize_and_validate_openid_uri {
         && $uri->scheme() =~ /^https?/ ) {
         return {
             field   => 'openid_uri',
-            message => loc('The OpenID URI you provided is not a valid URI.'),
+            message => loc('The OpenID you provided is not a valid URI.'),
         };
     }
 

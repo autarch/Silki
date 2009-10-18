@@ -104,24 +104,45 @@ sub user_PUT {
 
     my $user = $c->stash()->{user};
 
-    $c->redirect_and_detach( $self->_make_user_uri( $c, $user ) )
-        unless $c->user()->can_edit_user($user);
-
-    my %update = $c->request()->user_params();
-
-    my @errors = $self->_check_passwords_match(\%update);
-    eval { $user->update(%update) };
-
-    my $e = $@;
-    die $e if $e && ! ref $e;
-
-    if ( $e || @errors ) {
-        push @errors, @{ $e->errors() } if $e && ref $e;
-        $self->_user_update_error( $c, \@errors, \%update );
+    my $can_edit = 0;
+    my $key = $c->request()->params()->{activation_key};
+    if ($key) {
+        $can_edit
+            = $user->requires_activation() && $key eq $user->activation_key();
+    }
+    else {
+        $can_edit = $c->user()->can_edit_user($user);
     }
 
+    $c->redirect_and_detach( $self->_make_user_uri( $c, $user ) )
+        unless $can_edit;
+
+    my %update = $c->request()->user_params();
+    $update{activation_key} = undef
+        if defined $key;
+
+    my @errors = $self->_check_passwords_match(\%update);
+
+    unless (@errors) {
+        eval { $user->update(%update) };
+
+        my $e = $@;
+        die $e if $e && ! ref $e;
+
+        push @errors, @{ $e->errors() } if $e;
+    }
+
+    $self->_user_update_error( $c, \@errors, \%update )
+        if @errors;
+
+    $c->set_authen_cookie( value => { user_id => $user->user_id() } );
+
     my $message
-        = $user->user_id() == $c->user()->user_id()
+        = $key ? loc(
+        'Your account has been activated. Welcome to the site, %1',
+        $user->best_name()
+        )
+        : $user->user_id() == $c->user()->user_id()
         ? $c->loc('Your preferences have been updated.')
         : $c->loc(
         'Preferences for ' . $user->best_name() . ' have been updated.' );
@@ -141,6 +162,11 @@ sub _check_passwords_match {
     return
         if defined $pw2 && $params->{password} eq $pw2;
 
+    # Deleting both passwords ensures that any update we attempt after this
+    # will fail, unless the user also provided an openid, in which case we
+    # might as well let it succeed.
+    delete @{$params}{qw( password password2 )};
+
     return {
         field => 'password',
         message =>
@@ -156,10 +182,17 @@ sub _user_update_error {
 
     delete @{$form_data}{qw( password password2 )};
 
+    my $key = $c->request()->params()->{activation_key};
+
+    my $view
+        = $key
+        ? 'activation_form/' . $key
+        : 'preferences_form';
+
     $c->redirect_with_error(
         error => $errors,
         uri   => $self->_make_user_uri(
-            $c, $c->stash()->{user}, 'preferences_form'
+            $c, $c->stash()->{user}, $view
         ),
         form_data => $form_data,
     );

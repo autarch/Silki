@@ -48,6 +48,21 @@ sub wikis_GET {
     return $self->status_ok( $c, entity => \@entity );
 }
 
+sub activation_form : Chained('_set_user') : PathPart('activation_form') : Args(1)  {
+    my $self = shift;
+    my $c    = shift;
+    my $key  = shift;
+
+    my $user = Silki::Schema::User->new( activation_key => $key );
+
+    $c->redirect_and_detach( $c->domain()->uri( with_host => 1 ) )
+        unless $user;
+
+    $c->stash()->{user} = $user;
+
+    $c->stash()->{template} = '/user/activation_form';
+}
+
 sub login_form : Local {
     my $self = shift;
     my $c    = shift;

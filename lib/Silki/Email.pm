@@ -79,6 +79,7 @@ sub _execute_template {
     package Silki::Mason::Email;
 
     use Silki::I18N qw( loc );
+    use Silki::Util qw( string_is_empty );
 }
 
 1;

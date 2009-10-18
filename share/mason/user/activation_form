@@ -1,0 +1,13 @@
+<p>
+<% loc('Please pick a password or provide an OpenID for future logins.') %>
+</p>
+
+<& /lib/forms/user.mas, user => $user, action => $user->uri() &>
+
+<%args>
+$user
+</%args>
+
+<%method title>
+<% loc('Activate Your Account') %>
+</%method>
