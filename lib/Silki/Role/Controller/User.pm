@@ -182,18 +182,18 @@ sub _user_update_error {
 
     delete @{$form_data}{qw( password password2 )};
 
-    my $key = $c->request()->params()->{activation_key};
-
-    my $view
-        = $key
-        ? 'activation_form/' . $key
-        : 'preferences_form';
+    my $uri
+        = $c->request()->params()->{activation_key}
+        ? $c->stash()->{user}->activation_uri( view => 'preferences_form' )
+        : $self->_make_user_uri(
+        $c,
+        $c->stash()->{user},
+        'preferences_form',
+        );
 
     $c->redirect_with_error(
         error => $errors,
-        uri   => $self->_make_user_uri(
-            $c, $c->stash()->{user}, $view
-        ),
+        uri   => $uri,
         form_data => $form_data,
     );
 }

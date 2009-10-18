@@ -32,7 +32,7 @@ sidebar => []
 
 <%method title>
 % if ( $c->user() ) {
-Wikis readable by <% $c->user()->display_name() %>
+<% loc( 'Wikis readable by %1', $c->user()->best_name() ) %>
 % } else {
 Public wikis
 % }

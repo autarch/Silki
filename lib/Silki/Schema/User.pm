@@ -19,7 +19,7 @@ use Silki::Schema;
 use Silki::Schema::Domain;
 use Silki::Schema::Permission;
 use Silki::Schema::Role;
-use Silki::Types qw( Int Str );
+use Silki::Types qw( Int Str Bool );
 use Silki::Util qw( string_is_empty );
 
 use Fey::ORM::Table;
@@ -53,6 +53,14 @@ has best_name => (
     lazy    => 1,
     builder => '_build_best_name',
     clearer => '_clear_best_name',
+);
+
+has has_login_credentials => (
+    is      => 'ro',
+    isa     => Bool,
+    lazy    => 1,
+    builder => '_build_has_login_credentials',
+    clearer => '_clear_has_login_credentials',
 );
 
 class_has _RoleInWikiSelect => (
@@ -162,6 +170,9 @@ around insert => sub {
     my %p     = @_;
 
     if ( delete $p{requires_activation} ) {
+        $p{disable_login} = 1
+            if string_is_empty( $p{password} );
+
         $p{activation_key}
             = sha1_hex( $p{email_address}, Silki::Config->new()->secret() );
     }
@@ -189,7 +200,13 @@ around update => sub {
         $p{username} = $p{email_address};
     }
 
-    unless ( string_is_empty( $p{password} ) ) {
+    # An empty password field in a form should be treated as "leave the
+    # password alone", not an empty to set the field to null.
+    if ( string_is_empty( $p{password} ) ) {
+        delete $p{password}
+            unless $self->password() eq $DisabledPW;
+    }
+    else {
         $p{password} = $self->_password_as_rfc2307( $p{password} );
     }
 
@@ -200,6 +217,7 @@ around update => sub {
 
 after update => sub {
     $_[0]->_clear_best_name();
+    $_[0]->_clear_has_login_credentials();
 };
 
 sub _password_as_rfc2307 {
@@ -411,6 +429,16 @@ sub _build_best_name {
     return $username;
 }
 
+sub _build_has_login_credentials {
+    my $self = shift;
+
+    return 1 if !string_is_empty( $self->openid_uri() );
+
+    return 1
+        if !string_is_empty( $self->password() )
+            && $self->password ne $DisabledPW;
+}
+
 sub requires_activation {
     my $self = shift;
 
@@ -419,15 +447,17 @@ sub requires_activation {
 
 sub activation_uri {
     my $self = shift;
+    my %p    = @_;
 
     die
         'Cannot make an activation uri for a user which does not need activation.'
         unless $self->requires_activation();
 
-    return $self->uri(
-        view      => 'activation_form/' . $self->activation_key(),
-        with_host => 1,
-    );
+    my $view = $p{view} || 'preferences_form';
+
+    $p{view} = 'activation/' . $self->activation_key() . q{/} . $view;
+
+    return $self->uri(%p);
 }
 
 sub check_password {
@@ -754,22 +784,33 @@ sub _send_email {
     my $self = shift;
     my ( $wiki, $sender, $message, $template ) = validated_list(
         \@_,
-        wiki     => { isa => 'Silki::Schema::Wiki' },
+        wiki     => { isa => 'Silki::Schema::Wiki', optional => 1 },
         sender   => { isa => 'Silki::Schema::User' },
-        message  => { isa => Str, optional => 1 },
+        message  => { isa => Str,                   optional => 1 },
         template => { isa => Str },
     );
 
+    my $subject
+        = $wiki
+        ? loc(
+        'You have been invited to participate in the %1 wiki at %2',
+        $wiki->title(),
+        $wiki->domain()->web_hostname(),
+        )
+        : loc(
+        'Activate your account on the %1 server',
+        $self->domain()->web_hostname
+        );
+
+    my $from = Email::Address->new(
+        $sender->best_name(),
+        $sender->email_address()
+    )->format();
+
     send_email(
-        from => Email::Address->new(
-            $sender->best_name(), $sender->email_address()
-            )->format(),
-        to      => $self->email_address(),
-        subject => loc(
-            'You have been invited to participate in the %1 wiki at %2',
-            $wiki->title(),
-            $wiki->domain()->web_hostname(),
-        ),
+        from            => $from,
+        subject         => $subject,
+        to              => $self->email_address(),
         template        => $template,
         template_params => {
             user    => $self,

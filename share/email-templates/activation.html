@@ -5,7 +5,7 @@
 % if ($wiki) {
 <& invitation-text.mas, user => $user, wiki => $wiki &>
 % } else {
-<% loc( q{You have created a wiki account on the %1 server. You must <a href="%html(%2)">activate your account</a> before you can log in.}, Silki::Schema::Domain->DefaultDomain(), $user->activation_uri() ) %>
+<% loc( q{You have created a wiki account on the %1 server. You must <a href="%html(%2)">activate your account</a> before you can log in.}, Silki::Schema::Domain->DefaultDomain()->web_hostname(), $user->activation_uri( with_host => 1 ) ) %>
 % }
 
 <& custom-message.mas, message => $message &>

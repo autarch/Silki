@@ -48,7 +48,7 @@ sub wikis_GET {
     return $self->status_ok( $c, entity => \@entity );
 }
 
-sub activation_form : Chained('_set_user') : PathPart('activation_form') : Args(1)  {
+sub _set_activation : Chained('_set_user') : PathPart('activation') : CaptureArgs(1) {
     my $self = shift;
     my $c    = shift;
     my $key  = shift;
@@ -56,9 +56,21 @@ sub activation_form : Chained('_set_user') : PathPart('activation_form') : Args(
     my $user = Silki::Schema::User->new( activation_key => $key );
 
     $c->redirect_and_detach( $c->domain()->uri( with_host => 1 ) )
-        unless $user;
+        unless $user && $user->user_id() == $c->stash()->{user}->user_id();
 
-    $c->stash()->{user} = $user;
+    return;
+}
+
+sub pending_activation : Chained('_set_activation') : PathPart('status') : Args(0)  {
+    my $self = shift;
+    my $c    = shift;
+
+    $c->stash()->{template} = '/user/pending_activation';
+}
+
+sub activation_form : Chained('_set_activation') : PathPart('preferences_form') : Args(0)  {
+    my $self = shift;
+    my $c    = shift;
 
     $c->stash()->{template} = '/user/activation_form';
 }
@@ -110,15 +122,15 @@ sub authentication_POST {
             username => $username,
         );
 
+        undef $user unless $user->check_password($pw);
+
         if ($user) {
             $c->redirect_and_detach(
-                $c->domain()->application_uri(
-                    path  => '/user/pending_activation',
-                    query => { user_id => $user->user_id },
+                $user->activation_uri(
+                    view      => 'status',
+                    with_host => 1,
                 )
             ) if $user->requires_activation();
-
-            undef $user unless $user->check_password($pw);
         }
 
         push @errors,
@@ -192,15 +204,19 @@ sub users_collection_POST {
 
     my @errors = $self->_check_passwords_match(\%insert);
 
-    my $user
-        = eval { Silki::Schema::User->insert(%insert) };
+    $insert{requires_activation} = 1;
 
-    my $e = $@;
-    die $e if $e && ! ref $e;
+    my $user;
+    unless (@errors) {
+        $user = eval { Silki::Schema::User->insert(%insert) };
 
-    if ( $e || @errors ) {
-        push @errors, @{ $e->errors() } if $e && ref $e;
+        my $e = $@;
+        die $e if $e && ! ref $e;
 
+        push @errors, @{ $e->errors() } if $e;
+    }
+
+    if (@errors) {
         $c->redirect_with_error(
             error => \@errors,
             uri   => $c->domain()->application_uri(
@@ -211,7 +227,15 @@ sub users_collection_POST {
         );
     }
 
-    $self->_login_user( $c, $user );
+    $user->send_activation_email( sender => $user );
+
+    $c->redirect_and_detach(
+        $user->activation_uri(
+            view      => 'status',
+            with_host => 1,
+        )
+    );
+
 }
 
 no Moose;

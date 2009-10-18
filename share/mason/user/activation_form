@@ -1,5 +1,9 @@
 <p>
-<% loc('Please pick a password or provide an OpenID for future logins.') %>
+% if ( $user->has_login_credentials() ) {
+<% loc('Please confirm the information below to activate your account. If you already chose a password, you do not need to re-enter it.') %>
+% } else {
+<% loc('Please pick a password or provide an OpenID for future logins to activate your account.') %>
+% }
 </p>
 
 <& /lib/forms/user.mas, user => $user, action => $user->uri() &>
@@ -7,6 +11,10 @@
 <%args>
 $user
 </%args>
+
+<%attr>
+sidebar => []
+</%attr>
 
 <%method title>
 <% loc('Activate Your Account') %>

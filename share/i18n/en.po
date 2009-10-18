@@ -30,7 +30,7 @@ msgid "%1 is no longer an admin for this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:357
+#: lib/Silki/Controller/Wiki.pm:352
 msgid "%1 is now a member of this wiki."
 msgstr ""
 
@@ -63,7 +63,7 @@ msgid "%datetime(%1)"
 msgstr ""
 
 #. ($address->address()
-#: lib/Silki/Controller/Wiki.pm:388
+#: lib/Silki/Controller/Wiki.pm:383
 msgid "A user account for %1 has been created, and this person has been invited to join this wiki."
 msgstr ""
 
@@ -75,8 +75,13 @@ msgstr ""
 msgid "Account Preferences"
 msgstr ""
 
-#: share/mason/user/activation_form:8
+#: share/mason/user/activation_form:20
 msgid "Activate Your Account"
+msgstr ""
+
+#. ($self->domain()
+#: lib/Silki/Schema/User.pm:774
+msgid "Activate your account on the %1 server"
 msgstr ""
 
 #: lib/Silki/Schema/Role.pm:19
@@ -98,7 +103,7 @@ msgid "All attachments in this wiki"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:349
+#: lib/Silki/Controller/Wiki.pm:344
 msgid "An unactived account for %1 already exists. Once the account is activated, this user will be able to access this wiki."
 msgstr ""
 
@@ -212,7 +217,7 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: share/mason/lib/forms/user.mas:33
+#: share/mason/lib/forms/user.mas:43
 msgid "If you provide an OpenID you do not need a password."
 msgstr ""
 
@@ -287,7 +292,7 @@ msgstr ""
 msgid "No other pages link to this page. Orphan pages can be confusing, so you may want to add a link to this page."
 msgstr ""
 
-#. ($user->activation_uri()
+#. ($user->activation_uri( with_host => 1)
 #: share/email-templates/invitation-text.mas:4
 msgid "Once you <a href=\"%html(%1)\">activate your account</a>, you will be a member of the wiki."
 msgstr ""
@@ -327,11 +332,11 @@ msgstr ""
 msgid "Pages with no incoming links"
 msgstr ""
 
-#: share/mason/lib/forms/user.mas:44
+#: share/mason/lib/forms/user.mas:34
 msgid "Password (again):"
 msgstr ""
 
-#: share/mason/lib/forms/user.mas:39 share/mason/user/login_form:17
+#: share/mason/lib/forms/user.mas:29 share/mason/user/login_form:17
 msgid "Password:"
 msgstr ""
 
@@ -353,12 +358,20 @@ msgstr ""
 msgid "Personal message"
 msgstr ""
 
+#: share/mason/user/activation_form:3
+msgid "Please confirm the information below to activate your account. If you already chose a password, you do not need to re-enter it."
+msgstr ""
+
+#: share/mason/user/activation_form:5
+msgid "Please pick a password or provide an OpenID for future logins to activate your account."
+msgstr ""
+
 #: share/mason/header.mas:5
 msgid "Preferences"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Role/Controller/User.pm:143
+#: lib/Silki/Role/Controller/User.pm:148
 msgid "Preferences for "
 msgstr ""
 
@@ -445,15 +458,15 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:309
+#: lib/Silki/Schema/User.pm:308
 msgid "The OpenID URI you provided is already in use by another account."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:286
-msgid "The OpenID URI you provided is not a valid URI."
+#: lib/Silki/Schema/User.pm:285
+msgid "The OpenID you provided is not a valid URI."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:268
+#: lib/Silki/Schema/User.pm:267
 msgid "The email address you provided is already in use by another account."
 msgstr ""
 
@@ -469,11 +482,11 @@ msgstr ""
 msgid "The file you uploaded was too large."
 msgstr ""
 
-#: lib/Silki/Role/Controller/User.pm:163
+#: lib/Silki/Role/Controller/User.pm:173
 msgid "The two passwords you provided did not match"
 msgstr ""
 
-#: lib/Silki/Controller/User.pm:125
+#: lib/Silki/Controller/User.pm:137
 msgid "The username or password you provided was not valid."
 msgstr ""
 
@@ -631,6 +644,11 @@ msgstr ""
 msgid "Wikis You and %1 Both Use"
 msgstr ""
 
+#. ($c->user()
+#: share/mason/site/wikis:35
+msgid "Wikis readable by %1"
+msgstr ""
+
 #: lib/Silki/Gettext.pm:238
 msgid "Yesterday"
 msgstr ""
@@ -661,7 +679,7 @@ msgid "You have been invited to join the %1 wiki. "
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Schema/User.pm:771
+#: lib/Silki/Schema/User.pm:769
 msgid "You have been invited to participate in the %1 wiki at %2"
 msgstr ""
 
@@ -670,16 +688,30 @@ msgstr ""
 msgid "You have created a wiki account on the %1 server. You must <a href=\"%html(%2)\">activate your account</a> before you can log in."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:226
+#: lib/Silki/Schema/User.pm:225
 msgid "You must provide a password or OpenID."
 msgstr ""
 
-#: lib/Silki/Controller/User.pm:103
+#: lib/Silki/Controller/User.pm:115
 msgid "You must provide a password."
+msgstr ""
+
+#: share/mason/user/pending_activation:14
+msgid "Your Account Requires Confirmation"
 msgstr ""
 
 #: share/mason/user/profile:14
 msgid "Your Wikis"
+msgstr ""
+
+#. ($user->best_name()
+#: lib/Silki/Role/Controller/User.pm:143
+msgid "Your account has been activated. Welcome to the site, %1"
+msgstr ""
+
+#. ($user->email_address()
+#: share/mason/user/pending_activation:2
+msgid "Your account will be active once you confirm your email address. An email has been sent to %1 with an activation uri."
 msgstr ""
 
 #: share/mason/lib/forms/user.mas:14
@@ -690,7 +722,7 @@ msgstr ""
 msgid "Your preferences"
 msgstr ""
 
-#: lib/Silki/Role/Controller/User.pm:141
+#: lib/Silki/Role/Controller/User.pm:146
 msgid "Your preferences have been updated."
 msgstr ""
 
