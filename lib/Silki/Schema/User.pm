@@ -312,6 +312,15 @@ sub _base_uri_path {
     return '/user/' . $self->user_id();
 }
 
+sub domain {
+    my $self = shift;
+
+    my $wiki = $self->private_wikis()->next();
+    $wiki ||= $self->all_wikis()->next();
+
+    return $wiki ? $wiki->domain() : Silki::Schema::Domain->DefaultDomain();
+}
+
 sub EnsureRequiredUsersExist {
     my $class = shift;
 
@@ -402,6 +411,19 @@ sub requires_activation {
     my $self = shift;
 
     return defined $self->activation_key();
+}
+
+sub activation_uri {
+    my $self = shift;
+
+    die
+        'Cannot make an activation uri for a user which does not need activation.'
+        unless $self->requires_activation();
+
+    return $self->uri(
+        view      => 'activation_form/' . $self->activation_key(),
+        with_host => 1,
+    );
 }
 
 sub check_password {

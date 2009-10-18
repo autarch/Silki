@@ -279,6 +279,11 @@ msgstr ""
 msgid "No other pages link to this page. Orphan pages can be confusing, so you may want to add a link to this page."
 msgstr ""
 
+#. ($user->activation_uri()
+#: share/email-templates/invitation.html:8
+msgid "Once you <a href=\"%html(%1)\">activate your account</a>, you will be a member of the wiki."
+msgstr ""
+
 #: share/mason/wiki/permissions_form:40
 msgid "Only explicitly invited members may access this wiki."
 msgstr ""
@@ -420,7 +425,7 @@ msgid "Settings for %1"
 msgstr ""
 
 #. ($wiki->domain()
-#: share/email-templates/invitation.html:7
+#: share/email-templates/invitation.html:10
 msgid "Since you already have an account at %1, you can <a href=\"%html(%2)\">visit the wiki right now</a>."
 msgstr ""
 
@@ -648,7 +653,7 @@ msgid "You have been invited to join the %1 wiki. "
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Schema/User.pm:744
+#: lib/Silki/Schema/User.pm:753
 msgid "You have been invited to participate in the %1 wiki at %2"
 msgstr ""
 
