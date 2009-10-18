@@ -170,6 +170,9 @@ around insert => sub {
     my %p     = @_;
 
     if ( delete $p{requires_activation} ) {
+        # If we don't do this, then we get an error that an account requires a
+        # password or openid. However, we want to let the user pick one
+        # _later_ when they activate thea ccount.
         $p{disable_login} = 1
             if string_is_empty( $p{password} );
 
@@ -203,6 +206,9 @@ around update => sub {
     # An empty password field in a form should be treated as "leave the
     # password alone", not an empty to set the field to null.
     if ( string_is_empty( $p{password} ) ) {
+        # However, if their password is disabled, then an empty password field
+        # is coming from the activation form, in which case we need to force
+        # them to pick a pw or openid.
         delete $p{password}
             unless $self->password() eq $DisabledPW;
     }
