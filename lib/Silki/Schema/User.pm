@@ -78,18 +78,18 @@ class_has _RoleInWikiSelect => (
     builder => '_BuildRoleInWikiSelect',
 );
 
-class_has _PrivateWikiCountSelect => (
+class_has _MemberWikiCountSelect => (
     is      => 'ro',
     does    => 'Fey::Role::SQL::ReturnsData',
     lazy    => 1,
-    builder => '_BuildPrivateWikiCountSelect',
+    builder => '_BuildMemberWikiCountSelect',
 );
 
-class_has _PrivateWikiSelect => (
+class_has _MemberWikiSelect => (
     is      => 'ro',
     does    => 'Fey::Role::SQL::ReturnsData',
     lazy    => 1,
-    builder => '_BuildPrivateWikiSelect',
+    builder => '_BuildMemberWikiSelect',
 );
 
 class_has _AllWikiCountSelect => (
@@ -128,9 +128,9 @@ class_has 'GuestUser' => (
 );
 
 {
-    my $select = __PACKAGE__->_PrivateWikiCountSelect();
+    my $select = __PACKAGE__->_MemberWikiCountSelect();
 
-    has private_wiki_count => (
+    has member_wiki_count => (
         metaclass   => 'FromSelect',
         is          => 'ro',
         isa         => Int,
@@ -140,9 +140,9 @@ class_has 'GuestUser' => (
 }
 
 {
-    my $select = __PACKAGE__->_PrivateWikiSelect();
+    my $select = __PACKAGE__->_MemberWikiSelect();
 
-    has_many private_wikis => (
+    has_many member_wikis => (
         table       => $Schema->table('Wiki'),
         select      => $select,
         bind_params => sub { $_[0]->user_id(), $select->bind_params() },
@@ -351,7 +351,7 @@ sub _base_uri_path {
 sub domain {
     my $self = shift;
 
-    my $wiki = $self->private_wikis()->next();
+    my $wiki = $self->member_wikis()->next();
     $wiki ||= $self->all_wikis()->next();
 
     return $wiki ? $wiki->domain() : Silki::Schema::Domain->DefaultDomain();
@@ -588,7 +588,7 @@ sub _BuildRoleInWikiSelect {
         );
 }
 
-sub _BuildPrivateWikiCountSelect {
+sub _BuildMemberWikiCountSelect {
     my $class = shift;
 
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
@@ -598,24 +598,24 @@ sub _BuildPrivateWikiCountSelect {
     my $count = Fey::Literal::Function->new( 'COUNT', $distinct );
 
     $select->select($count);
-    $class->_PrivateWikiSelectBase($select);
+    $class->_MemberWikiSelectBase($select);
 
     return $select;
 }
 
-sub _BuildPrivateWikiSelect {
+sub _BuildMemberWikiSelect {
     my $class = shift;
 
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
     $select->select( $Schema->table('Wiki') );
-    $class->_PrivateWikiSelectBase($select);
+    $class->_MemberWikiSelectBase($select);
     $select->order_by( $Schema->table('Wiki')->column('title') );
 
     return $select;
 }
 
-sub _PrivateWikiSelectBase {
+sub _MemberWikiSelectBase {
     my $class  = shift;
     my $select = shift;
 
@@ -623,25 +623,10 @@ sub _PrivateWikiSelectBase {
     my $authed = Silki::Schema::Role->Authenticated();
     my $read   = Silki::Schema::Permission->Read();
 
-    my $public_select = Silki::Schema->SQLFactoryClass()->new_select();
-
-    $public_select->select(
-        $Schema->table('WikiRolePermission')->column('wiki_id') )
-        ->from( $Schema->table('WikiRolePermission') )->where(
-        $Schema->table('WikiRolePermission')->column('role_id'),
-        'IN', $guest->role_id(), $authed->role_id()
-        )->and(
-        $Schema->table('WikiRolePermission')->column('permission_id'),
-        '=', $read->permission_id()
-        );
-
-    $select->from( $Schema->table('Wiki'), $Schema->table('UserWikiRole') )
-        ->where(
-        $Schema->table('UserWikiRole')->column('user_id'),
-        '=', Fey::Placeholder->new()
-        )->and(
-        $Schema->table('Wiki')->column('wiki_id'),
-        'NOT IN', $public_select
+    $select
+        ->from( $Schema->table('Wiki'), $Schema->table('UserWikiRole') )
+        ->where( $Schema->table('UserWikiRole')->column('user_id'),
+                 '=', Fey::Placeholder->new()
         );
 
     return;
