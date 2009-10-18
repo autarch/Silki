@@ -25,7 +25,12 @@
       </select>
 
       <div class="help-text">
-        <p><% $user->email_address() %></p>
+        <p>
+          <% $user->email_address() %>
+%   if ( $user->requires_activation() ) {
+          - this account has not yet been activated
+%   }
+        </p>
       </div>
 %   }
     </div>
