@@ -345,7 +345,7 @@ sub _process_new_members {
             if ( $user->requires_activation() ) {
                 $c->session_object()->add_message(
                     loc(
-                        'An unactived account for %1 already exists. When they activate their account, they will be able to access this wiki.',
+                        'An unactived account for %1 already exists. Once the account is activated, this user will be able to access this wiki.',
                         $user->best_name()
                     )
                 );
