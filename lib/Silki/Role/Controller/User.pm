@@ -120,6 +120,7 @@ sub user_PUT {
     my %update = $c->request()->user_params();
     $update{activation_key} = undef
         if defined $key;
+    $update{preserve_password} = 1;
 
     my @errors = $self->_check_passwords_match(\%update);
 

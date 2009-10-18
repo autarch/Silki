@@ -55,6 +55,14 @@ has best_name => (
     clearer => '_clear_best_name',
 );
 
+has has_valid_password => (
+    is      => 'ro',
+    isa     => Bool,
+    lazy    => 1,
+    builder => '_build_has_valid_password',
+    clearer => '_clear_has_valid_password',
+);
+
 has has_login_credentials => (
     is      => 'ro',
     isa     => Bool,
@@ -170,12 +178,6 @@ around insert => sub {
     my %p     = @_;
 
     if ( delete $p{requires_activation} ) {
-        # If we don't do this, then we get an error that an account requires a
-        # password or openid. However, we want to let the user pick one
-        # _later_ when they activate thea ccount.
-        $p{disable_login} = 1
-            if string_is_empty( $p{password} );
-
         $p{activation_key}
             = sha1_hex( $p{email_address}, Silki::Config->new()->secret() );
     }
@@ -203,16 +205,7 @@ around update => sub {
         $p{username} = $p{email_address};
     }
 
-    # An empty password field in a form should be treated as "leave the
-    # password alone", not an empty to set the field to null.
-    if ( string_is_empty( $p{password} ) ) {
-        # However, if their password is disabled, then an empty password field
-        # is coming from the activation form, in which case we need to force
-        # them to pick a pw or openid.
-        delete $p{password}
-            unless $self->password() eq $DisabledPW;
-    }
-    else {
+    unless ( string_is_empty( $p{password} ) ) {
         $p{password} = $self->_password_as_rfc2307( $p{password} );
     }
 
@@ -223,6 +216,7 @@ around update => sub {
 
 after update => sub {
     $_[0]->_clear_best_name();
+    $_[0]->_clear_has_valid_password();
     $_[0]->_clear_has_login_credentials();
 };
 
@@ -257,6 +251,20 @@ sub _has_password_or_openid_uri {
         return;
     }
     else {
+        my $preserve_pw = delete $p->{preserve_password};
+
+        # The preserve_password param will be set when a user is updated via a
+        # preferences form of some sort. If they already have a valid
+        # password, an empty password field in that form does not indicate
+        # that the password in the dbms should be set to NULL.
+        if (   string_is_empty( $p->{password} )
+            && $self->has_valid_password()
+            && $preserve_pw ) {
+            delete $p->{password};
+
+            return;
+        }
+
         return $error
             if all { exists $p->{$_} && string_is_empty( $p->{$_} ) }
             qw( password openid_uri );
@@ -264,10 +272,10 @@ sub _has_password_or_openid_uri {
         return if any { ! string_is_empty( $p->{$_} ) } qw( password openid_uri );
 
         if ( string_is_empty( $p->{password} ) ) {
-            return if $self->has_openid_uri();
+            return unless string_is_empty( $self->openid_uri() );
         }
         elsif ( string_is_empty( $p->{openid_uri} ) ) {
-            return if $self->has_password();
+            return unless string_is_empty( $self->password() );
         }
 
         return $error;
@@ -435,14 +443,23 @@ sub _build_best_name {
     return $username;
 }
 
+sub _build_has_valid_password {
+    my $self = shift;
+
+    return 0 if string_is_empty( $self->password() );
+    return 0 if $self->password eq $DisabledPW;
+
+    return 1;
+}
+
 sub _build_has_login_credentials {
     my $self = shift;
 
     return 1 if !string_is_empty( $self->openid_uri() );
 
-    return 1
-        if !string_is_empty( $self->password() )
-            && $self->password ne $DisabledPW;
+    return 1 if $self->has_valid_password();
+
+    return 0;
 }
 
 sub requires_activation {
