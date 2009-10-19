@@ -128,7 +128,7 @@ sub _require_permission_for_wiki {
         if ( $perms->{Authenticated}{$perm} ) {
             $c->session_object()->add_message(
                 loc(
-                    'You must login to to perform this action in the %1 wiki.',
+                    'You must log in to to perform this action in the %1 wiki.',
                     $wiki->title(),
                 )
             );
@@ -142,7 +142,12 @@ sub _require_permission_for_wiki {
             );
         }
 
-        $c->redirect_and_detach('/user/login_form');
+        my $uri = $c->domain()->application_uri(
+            path  => '/user/login_form',
+            query => { return_to => $c->request()->uri() },
+        );
+
+        $c->redirect_and_detach($uri);
     }
     else {
         $c->session_object()->add_message(

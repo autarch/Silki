@@ -1,5 +1,6 @@
 <&| /lib/filter/form.mas &>
 <form action="<% $c->domain()->application_uri( path => '/user/authentication' ) %>" method="post">
+  <input type="hidden" name="return_to" value="<% $c->request()->params()->{return_to} || q{} %>" />
   <fieldset>
     <legend>Credentials</legend>
 
