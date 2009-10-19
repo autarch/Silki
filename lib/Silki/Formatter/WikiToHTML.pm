@@ -52,7 +52,7 @@ sub wikitext_to_html {
     return $self->_tmm()->markdown($text);
 }
 
-my $link_re = qr/\[\[([^\]]+?)\]\](\([^)]+\))?/;
+my $link_re = qr/\[\[([^\]]+?)\]\](?:\(([^)]+)\))?/;
 
 sub _handle_wiki_links {
     my $self = shift;
@@ -189,8 +189,8 @@ sub links {
 
     my %links;
 
-    while ( $wikitext =~ /($link_re)/g ) {
-        $links{$1} = $self->_resolve_link( $2, $3 );
+    while ( $wikitext =~ /$link_re/g ) {
+        $links{$1} = $self->_resolve_link( $1, $2 );
     }
 
     return \%links;

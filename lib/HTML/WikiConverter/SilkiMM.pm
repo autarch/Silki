@@ -3,6 +3,8 @@ package HTML::WikiConverter::SilkiMM;
 use strict;
 use warnings;
 
+use HTML::Entities qw( decode_entities );
+
 use base 'HTML::WikiConverter::MultiMarkdown';
 
 sub html2wiki {
@@ -27,14 +29,14 @@ sub rules {
 
     return {
         %{$rules},
-        a => { replace => \&_link },
-        p => {
+        a  => { replace => \&_link },
+        br => { replace => q{} },
+        p  => {
             block       => 1,
             trim        => 'both',
             line_format => 'multi',
             line_prefix => \&_p_prefix
         },
-
     };
 }
 
@@ -51,13 +53,14 @@ sub _link {
     my ( $self, $node, $rules ) = @_;
 
     my $url = $node->attr('href') || '';
+    my $text = decode_entities( $self->get_elem_contents($node) );
 
     if ( my $path = $self->get_wiki_page($url) ) {
         if ( $path =~ m{ /wiki/([^/]+)/page/([^/]+) }x ) {
-            return $self->_link_to_page( $1, Silki::Schema::Page->URIPathToTitle($2) );
+            return $self->_link_to_page( $1, Silki::Schema::Page->URIPathToTitle($2), $text );
         }
         elsif ( $path =~ m{ /wiki/([^/]+)/file/([^/]+)}x ) {
-            return $self->_link_to_file( $1, $2 );
+            return $self->_link_to_file( $1, $2, $text );
         }
         else {
             die 'wtf';
@@ -72,13 +75,17 @@ sub _link_to_page {
     my $self  = shift;
     my $wiki  = shift;
     my $title = shift;
+    my $text  = shift;
 
+    my $link;
     if ( $self->wiki()->short_name() eq $wiki ) {
-        return '[[' . $title . ']]';
+        $link = '[[' . $title . ']]';
     }
     else {
-        return '[[' . $wiki . q{/} . $title . ']]';
+        $link = '[[' . $wiki . q{/} . $title . ']]';
     }
+
+    return $self->_link_plus_text( $link, $title, $text );
 }
 
 sub _link_to_file {
@@ -92,6 +99,20 @@ sub _link_to_file {
     else {
         return '[[file:' . $wiki . q{/} . $file_id . ']]';
     }
+}
+
+sub _link_plus_text {
+    my $self  = shift;
+    my $link  = shift;
+    my $title = shift;
+    my $text  = shift;
+
+    return $link if $text eq $title;
+
+    $text =~ s/\(/&#123;/g;
+    $text =~ s/\)/&#125;/g;
+
+    return $link . '(' . $text . ')';
 }
 
 sub _p_prefix {

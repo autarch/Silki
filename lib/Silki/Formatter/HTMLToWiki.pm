@@ -41,8 +41,6 @@ sub html_to_wikitext {
         wiki_uri => [qr{(^/wiki/.+)}],
     );
 
-    $wikitext =~ s{<br\s*/?>}{}g;
-
     $wikitext .= "\n"
         unless $wikitext =~ /\n$/s;
 
