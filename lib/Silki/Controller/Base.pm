@@ -128,14 +128,16 @@ sub _require_permission_for_wiki {
         if ( $perms->{Authenticated}{$perm} ) {
             $c->session_object()->add_message(
                 loc(
-                    'This wiki requires you to log in to perform this action.'
+                    'You must login to to perform this action in the %1 wiki.',
+                    $wiki->title(),
                 )
             );
         }
         else {
             $c->session_object()->add_message(
                 loc(
-                    'This wiki requires you to be a member to perform this action.'
+                    'You must be a member of the %1 wiki to perform this action.',
+                    $wiki->title()
                 )
             );
         }
@@ -145,7 +147,8 @@ sub _require_permission_for_wiki {
     else {
         $c->session_object()->add_message(
             loc(
-                'This wiki requires you to be a member to perform this action.'
+                'You must be a member of the %1 wiki to perform this action.',
+                $wiki->title()
             )
         );
 
