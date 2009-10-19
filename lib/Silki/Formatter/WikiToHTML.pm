@@ -8,6 +8,7 @@ use Silki::I18N qw( loc );
 use Silki::Schema::File;
 use Silki::Schema::Page;
 use Silki::Schema::Permission;
+use Silki::Schema::Wiki;
 use Silki::Types qw( Bool );
 use Text::MultiMarkdown;
 
@@ -51,44 +52,74 @@ sub wikitext_to_html {
     return $self->_tmm()->markdown($text);
 }
 
-my $link_re = qr/\[\[([^\]]+?)\]\]/;
+my $link_re = qr/\[\[([^\]]+?)\]\](\([^)]+\))?/;
 
 sub _handle_wiki_links {
     my $self = shift;
     my $text = shift;
 
-    $text =~ s/$link_re/$self->_link($1)/eg;
+    $text =~ s/$link_re/$self->_link( $1, $2 )/eg;
 
     return $text;
 }
 
 sub _link {
-    my $self      = shift;
-    my $link_text = shift;
+    my $self = shift;
+    my $link = shift;
+    my $text = shift;
 
-    my $thing = $self->_resolve_link($link_text);
+    my $thing = $self->_resolve_link( $link, $text );
+
+    return unless $thing;
 
     if ( $thing->{file} ) {
-        return $self->_link_to_file( $thing->{file} );
+        return $self->_link_to_file( %{$thing} );
     }
     else {
-        return $self->_link_to_page( $thing->{page}, $thing->{title},
-            $thing->{wiki} );
+        return $self->_link_to_page( %{$thing} );
     }
 }
 
 sub _resolve_link {
-    my $self      = shift;
-    my $link_text = shift;
+    my $self = shift;
+    my $link = shift;
+    my $text = shift;
 
-    if ( $link_text =~ /^file:(.+)/ ) {
-        return { file => Silki::Schema::File->new( file_id => $1 ) };
+    if ( $link =~ /^file:(.+)/ ) {
+        my $file = Silki::Schema::File->new( file_id => $1 );
+
+        return loc('Nonexistent file: $1') unless $file;
+
+        return {
+            file => $file,
+            text => $text // $file->filename(),
+        };
     }
     else {
+        my $wiki = $self->_wiki();
+        my $page_title = $link;
+
+        if ( $link =~ m{^([^/]+)/([^/]+)$} ) {
+            $wiki = Silki::Schema::Wiki->new( short_name => $1 );
+
+            return unless $wiki;
+
+            $page_title = $2;
+        }
+
+        my $page = $self->_page_for_title( $page_title, $wiki );
+
+        unless ( defined $text ) {
+            $text = $page ? $page->title() : $page_title;
+            $text .= ' (' . $wiki->title() . ')'
+                unless $wiki->wiki_id() == $self->_wiki()->wiki_id();
+        }
+
         return {
-            page  => $self->_page_for_title($link_text),
-            title => $link_text,
-            wiki  => $self->_wiki(),
+            page  => $page,
+            title => $page_title,
+            text  => $text,
+            wiki  => $wiki,
         };
     }
 }
@@ -96,18 +127,19 @@ sub _resolve_link {
 sub _page_for_title {
     my $self  = shift;
     my $title = shift;
+    my $wiki  = shift;
 
     return Silki::Schema::Page->new(
         title   => $title,
-        wiki_id => $self->_wiki()->wiki_id(),
+        wiki_id => $wiki->wiki_id(),
     ) || undef;
 }
 
 sub _link_to_file {
     my $self = shift;
-    my $file = shift;
+    my %p    = shift;
 
-    return unless $file;
+    my $file = $p{file};
 
     return loc('Inaccessible file')
         unless $self->_user()->has_permission_in_wiki(
@@ -118,23 +150,23 @@ sub _link_to_file {
     my $file_uri = $file->uri();
 
     my $dl = loc("Download this file");
-    my $name = encode_entities( $file->file_name() );
+    my $link_text = encode_entities( $p{text} );
 
-    return qq{<a href="$file_uri" title="$dl">$name</a>};
+    return qq{<a href="$file_uri" title="$dl">$link_text</a>};
 }
 
 sub _link_to_page {
-    my $self  = shift;
-    my $page  = shift;
-    my $title = shift;
-    my $wiki  = shift;
+    my $self = shift;
+    my %p    = @_;
+
+    my $page = $p{page};
 
     if ( $self->for_editor() ) {
         $page ||= Silki::Schema::Page->new(
             page_id     => 0,
-            wiki_id     => $wiki->wiki_id(),
-            title       => $title,
-            uri_path    => Silki::Schema::Page->TitleToURIPath($title),
+            wiki_id     => $p{wiki}->wiki_id(),
+            title       => $p{title},
+            uri_path    => Silki::Schema::Page->TitleToURIPath( $p{title} ),
             _from_query => 1,
         );
     }
@@ -142,23 +174,23 @@ sub _link_to_page {
     my $uri
         = $page
         ? $page->uri()
-        : $wiki->uri( view => 'new_page_form', query => { title => $title } );
+        : $p{wiki}->uri( view => 'new_page_form', query => { title => $p{title} } );
 
-    my $escaped_title = encode_entities($title);
+    my $link_text = encode_entities( $p{text} );
 
     my $class = $page ? 'existing-page' : 'new-page';
 
-    return qq{<a href="$uri" class="$class">$escaped_title</a>};
+    return qq{<a href="$uri" class="$class">$link_text</a>};
 }
 
 sub links {
-    my $self = shift;
-    my $text = shift;
+    my $self     = shift;
+    my $wikitext = shift;
 
     my %links;
 
-    for my $link_text ( $text =~ /$link_re/g ) {
-        $links{$link_text} = $self->_resolve_link($link_text);
+    while ( $wikitext =~ /($link_re)/g ) {
+        $links{$1} = $self->_resolve_link( $2, $3 );
     }
 
     return \%links;
