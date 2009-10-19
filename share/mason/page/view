@@ -27,6 +27,12 @@
         $c->user->set_time_zone_for_dt( $revision->creation_datetime() ) ) | n %>
 </div>
 
+% if ( $c->request()->params()->{debug} ) {
+<pre>
+<% $revision->content() %>
+</pre>
+% }
+
 % if ( $revision->revision_number() > 1 ) {
 <div id="compare-to-previous">
   <a href="<% $page->uri( view => 'diff', query => { revision1 => $revision->revision_number() - 1, revision2 => $revision->revision_number() } ) %>"><% loc('Compare to previous revision') %></a>
