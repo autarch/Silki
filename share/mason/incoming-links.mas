@@ -3,8 +3,13 @@
 
 % if ($links) {
         <ul>
-%   while ( my $page = $links->next() ) {
-          <li><a href="<% $page->uri() %>"><% $page->title() %></a></li>
+%   while ( my $linking_page = $links->next() ) {
+          <li><a href="<% $linking_page->uri() %>">
+              <% $linking_page->title() %>
+%     if ( $linking_page->wiki_id() != $page->wiki_id() ) {
+(<% $linking_page->wiki()->title() %>)
+%     }
+          </a></li>
 %   }
         </ul>
 % } elsif ( ! $page->is_front_page() ) {
