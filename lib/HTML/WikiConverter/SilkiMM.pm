@@ -54,6 +54,7 @@ sub _link {
 
     my $url = $node->attr('href') || '';
     my $text = decode_entities( $self->get_elem_contents($node) );
+    $text =~ s/^\s+|\s+$//g;
 
     if ( my $path = $self->get_wiki_page($url) ) {
         if ( $path =~ m{ /wiki/([^/]+)/page/([^/]+) }x ) {
@@ -92,13 +93,20 @@ sub _link_to_file {
     my $self    = shift;
     my $wiki    = shift;
     my $file_id = shift;
+    my $text    = shift;
 
+    my $link;
     if ( $self->wiki()->short_name() eq $wiki ) {
-        return '[[file:' . $file_id . ']]';
+        $link = '[[file:' . $file_id . ']]';
     }
     else {
-        return '[[file:' . $wiki . q{/} . $file_id . ']]';
+        $link = '[[file:' . $wiki . q{/} . $file_id . ']]';
     }
+
+    my $file = Silki::Schema::File->new( file_id => $file_id );
+    my $title = $file ? $file->filename() : q{};
+
+    return $self->_link_plus_text( $link, $title, $text );
 }
 
 sub _link_plus_text {
@@ -108,9 +116,6 @@ sub _link_plus_text {
     my $text  = shift;
 
     return $link if $text eq $title;
-
-    $text =~ s/\(/&#123;/g;
-    $text =~ s/\)/&#125;/g;
 
     return $link . '(' . $text . ')';
 }
