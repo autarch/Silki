@@ -112,7 +112,7 @@ sub authentication_POST {
 
     push @errors, {
         field   => 'password',
-        message => $c->loc('You must provide a password.')
+        message => loc('You must provide a password.')
         }
         if string_is_empty($pw);
 
@@ -134,7 +134,7 @@ sub authentication_POST {
         }
 
         push @errors,
-            $c->loc('The username or password you provided was not valid.')
+            loc('The username or password you provided was not valid.')
             unless $user;
     }
 

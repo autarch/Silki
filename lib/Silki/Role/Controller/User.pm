@@ -31,12 +31,12 @@ after '_set_user' => sub {
     my %profile
         = $c->user()->user_id() == $user->user_id()
         ? (
-        label   => $c->loc('Your profile'),
-        tooltip => $c->loc('View details about your profile'),
+        label   => loc('Your profile'),
+        tooltip => loc('View details about your profile'),
         )
         : (
         label   => $user->best_name(),
-        tooltip => $c->loc( 'Information about %1', $user->best_name() ),
+        tooltip => loc( 'Information about %1', $user->best_name() ),
         );
 
     $c->add_tab(
@@ -51,12 +51,12 @@ after '_set_user' => sub {
         my %prefs
             = $c->user()->user_id() == $user->user_id()
             ? (
-            label   => $c->loc('Your preferences'),
-            tooltip => $c->loc('Set your preferences'),
+            label   => loc('Your preferences'),
+            tooltip => loc('Set your preferences'),
             )
             : (
-            label   => $c->loc( 'Preferences for %1', $user->best_name() ),
-            tooltip => $c->loc(
+            label   => loc( 'Preferences for %1', $user->best_name() ),
+            tooltip => loc(
                 'View and change preferences for %1', $user->best_name()
             ),
             );
@@ -144,8 +144,8 @@ sub user_PUT {
         $user->best_name()
         )
         : $user->user_id() == $c->user()->user_id()
-        ? $c->loc('Your preferences have been updated.')
-        : $c->loc(
+        ? loc('Your preferences have been updated.')
+        : loc(
         'Preferences for ' . $user->best_name() . ' have been updated.' );
 
     $c->session_object()->add_message($message);

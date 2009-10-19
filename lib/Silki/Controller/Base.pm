@@ -6,6 +6,7 @@ use warnings;
 use autodie;
 use Carp qw( croak );
 use Silki::Config;
+use Silki::I18N qw( loc );
 use Silki::JSON;
 use Silki::Web::CSS;
 use Silki::Web::Javascript;
@@ -40,7 +41,7 @@ sub begin : Private {
     $c->add_tab(
         {
             uri     => $c->domain()->uri(),
-            label   => $c->loc('Home'),
+            label   => loc('Home'),
             tooltip => q{},
         }
     );
@@ -126,14 +127,14 @@ sub _require_permission_for_wiki {
     if ( $user->is_guest() ) {
         if ( $perms->{Authenticated}{$perm} ) {
             $c->session_object()->add_message(
-                $c->loc(
+                loc(
                     'This wiki requires you to log in to perform this action.'
                 )
             );
         }
         else {
             $c->session_object()->add_message(
-                $c->loc(
+                loc(
                     'This wiki requires you to be a member to perform this action.'
                 )
             );
@@ -143,7 +144,7 @@ sub _require_permission_for_wiki {
     }
     else {
         $c->session_object()->add_message(
-            $c->loc(
+            loc(
                 'This wiki requires you to be a member to perform this action.'
             )
         );

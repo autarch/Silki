@@ -45,11 +45,6 @@ Silki::Schema->EnableObjectCaches();
 
 __PACKAGE__->setup();
 
-sub loc {
-    shift;
-    Silki::I18N::loc(@_);
-}
-
 no Moose;
 
 __PACKAGE__->meta()->make_immutable( replace_constructor => 1 );
