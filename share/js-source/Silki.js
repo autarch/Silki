@@ -1,3 +1,4 @@
+JSAN.use('Data.Dump');
 JSAN.use('DOM.Ready');
 JSAN.use('Silki.FileView');
 JSAN.use('Silki.PageEdit');
