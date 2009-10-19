@@ -52,7 +52,19 @@ sub wikitext_to_html {
     return $self->_tmm()->markdown($text);
 }
 
-my $link_re = qr/\[\[([^\]]+?)\]\](?:\(([^)]+)\))?/;
+# Stolen from Text::Markdown
+my $nested_parens;
+$nested_parens = qr{
+	(?> 								# Atomic matching
+	   [^()]+							# Anything other than parens or whitespace
+	 |
+	   \(
+		 (??{ $nested_parens })		# Recursive set of nested brackets
+	   \)
+	)*
+}x;
+
+my $link_re = qr/\[\[([^\]]+?)\]\](?:\(($nested_parens)\))?/;
 
 sub _handle_wiki_links {
     my $self = shift;
