@@ -4,7 +4,7 @@ CKEDITOR.editorConfig = function( config )
         [ [ "Bold", "Italic" ],
           [ "H2", "H3", "H4", "-", "Pre" ],
           [ "NumberedList", "BulletedList", "-", "Outdent", "Indent", "Blockquote" ],
-          [ "Link", "Unlink", "Anchor" ],
+          [ "Link", "Unlink" ],
           [ "Image", "Table", "HorizontalRule", "SpecialChar" ],
           [ "Undo", "Redo", "Maximize" ] ];
 
