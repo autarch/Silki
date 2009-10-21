@@ -46,6 +46,8 @@ sub attributes {
     return {
         %{ $self->SUPER::attributes() },
         wiki => { isa => 'Silki::Schema::Wiki', required => 1 },
+        wikitext_formatter =>
+            { isa => 'Silki::Formatter::WikiToHTML', required => 1 },
     };
 }
 
@@ -73,40 +75,50 @@ sub _link {
 }
 
 sub _link_to_page {
-    my $self  = shift;
-    my $wiki  = shift;
-    my $title = shift;
-    my $text  = shift;
+    my $self      = shift;
+    my $wiki_name = shift;
+    my $title     = shift;
+    my $text      = shift;
 
+    my $wiki;
     my $link;
-    if ( $self->wiki()->short_name() eq $wiki ) {
+    if ( $self->wiki()->short_name() eq $wiki_name ) {
         $link = '[[' . $title . ']]';
+        $wiki = $self->wiki();
     }
     else {
-        $link = '[[' . $wiki . q{/} . $title . ']]';
+        $link = '[[' . $wiki_name . q{/} . $title . ']]';
+        $wiki = Silki::Schema::Wiki->new( short_name => $wiki_name )
+            or return q{};
     }
 
-    return $self->_link_plus_text( $link, $title, $text );
+    my $default_title = $self->wikitext_formatter()->link_text_for_page( $wiki, $title );
+
+    return $self->_link_plus_text( $link, $default_title, $text );
 }
 
 sub _link_to_file {
-    my $self    = shift;
-    my $wiki    = shift;
-    my $file_id = shift;
-    my $text    = shift;
+    my $self      = shift;
+    my $wiki_name = shift;
+    my $file_id   = shift;
+    my $text      = shift;
 
+    my $wiki;
     my $link;
-    if ( $self->wiki()->short_name() eq $wiki ) {
+    if ( $self->wiki()->short_name() eq $wiki_name ) {
         $link = '[[file:' . $file_id . ']]';
+        $wiki = $self->wiki();
     }
     else {
         $link = '[[file:' . $wiki . q{/} . $file_id . ']]';
+        $wiki = Silki::Schema::Wiki->new( short_name => $wiki_name )
+            or return q{};
     }
 
     my $file = Silki::Schema::File->new( file_id => $file_id );
-    my $title = $file ? $file->filename() : q{};
+    my $default_title = $self->wikitext_formatter()->link_text_for_file( $wiki, $file );
 
-    return $self->_link_plus_text( $link, $title, $text );
+    return $self->_link_plus_text( $link, $default_title, $text );
 }
 
 sub _link_plus_text {

@@ -6,6 +6,7 @@ use warnings;
 use HTML::WikiConverter;
 use HTML::WikiConverter::SilkiMM;
 use HTML::Entities qw( encode_entities );
+use Silki::Formatter::WikiToHTML;
 use URI;
 
 use Moose;
@@ -50,10 +51,16 @@ sub html_to_wikitext {
 sub _build_converter {
     my $self = shift;
 
+    my $formatter = Silki::Formatter::WikiToHTML->new(
+        user => $self->_user(),
+        wiki => $self->_wiki(),
+    );
+
     return HTML::WikiConverter->new(
-        dialect    => 'SilkiMM',
-        wiki       => $self->_wiki(),
-        link_style => 'inline',
+        dialect            => 'SilkiMM',
+        wiki               => $self->_wiki(),
+        wikitext_formatter => $formatter,
+        link_style         => 'inline',
     );
 }
 

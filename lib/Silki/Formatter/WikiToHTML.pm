@@ -98,13 +98,28 @@ sub _resolve_link {
     my $text = shift;
 
     if ( $link =~ /^file:(.+)/ ) {
-        my $file = Silki::Schema::File->new( file_id => $1 );
+        my $wiki = $self->_wiki();
+        my $file_id = $1;
 
-        return loc('Nonexistent file: $1') unless $file;
+        if ( $link =~ m{^([^/]+)/([^/]+)$} ) {
+            $wiki = Silki::Schema::Wiki->new( short_name => $1 )
+                or return;
+
+            $file_id = $2;
+        }
+
+        my $file = Silki::Schema::File->new( file_id => $file_id );
+
+        unless ( defined $text ) {
+            $text = $self->link_text_for_file(
+                $wiki,
+                $file,
+            );
+        }
 
         return {
             file => $file,
-            text => $text // $file->filename(),
+            text => $text,
         };
     }
     else {
@@ -112,9 +127,8 @@ sub _resolve_link {
         my $page_title = $link;
 
         if ( $link =~ m{^([^/]+)/([^/]+)$} ) {
-            $wiki = Silki::Schema::Wiki->new( short_name => $1 );
-
-            return unless $wiki;
+            $wiki = Silki::Schema::Wiki->new( short_name => $1 )
+                or return;
 
             $page_title = $2;
         }
@@ -122,9 +136,10 @@ sub _resolve_link {
         my $page = $self->_page_for_title( $page_title, $wiki );
 
         unless ( defined $text ) {
-            $text = $page ? $page->title() : $page_title;
-            $text .= ' (' . $wiki->title() . ')'
-                unless $wiki->wiki_id() == $self->_wiki()->wiki_id();
+            $text = $self->link_text_for_page(
+                $wiki,
+                ( $page ? $page->title() : $page_title ),
+            );
         }
 
         return {
@@ -134,6 +149,34 @@ sub _resolve_link {
             wiki  => $wiki,
         };
     }
+}
+
+sub link_text_for_page {
+    my $self       = shift;
+    my $wiki       = shift;
+    my $page_title = shift;
+
+    my $text = $page_title;
+
+    $text .= ' (' . $wiki->title() . ')'
+        unless $wiki->wiki_id() == $self->_wiki()->wiki_id();
+
+    return $text;
+}
+
+sub link_text_for_file {
+    my $self = shift;
+    my $wiki = shift;
+    my $file = shift;
+
+    return loc('Nonexistent file: $1') unless $file;
+
+    my $text = $file->filename();
+
+    $text .= ' (' . $wiki->title() . ')'
+        unless $wiki->wiki_id() == $self->_wiki()->wiki_id();
+
+    return $text;
 }
 
 sub _page_for_title {
