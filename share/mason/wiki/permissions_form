@@ -1,5 +1,5 @@
 <&| /lib/filter/form.mas, data => { permissions => $wiki->permissions_name() } &>
-<form action="<% $wiki->uri( view => 'members' ) %>" method="post" />
+<form action="<% $wiki->uri( view => 'permissions' ) %>" method="post" />
   <input type="hidden" name="x-tunneled-method" value="PUT" />
 
   <fieldset>
