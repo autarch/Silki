@@ -52,6 +52,57 @@ sub _handle_upload {
     );
 }
 
+{
+    use HTTP::Body::MultiPart;
+    package HTTP::Body::MultiPart;
+
+    no warnings 'redefine';
+sub handler {
+    my ( $self, $part ) = @_;
+
+    unless ( exists $part->{name} ) {
+
+        my $disposition = $part->{headers}->{'Content-Disposition'};
+        my ($name)      = $disposition =~ / name="?([^\";]+)"?/;
+        my ($filename)  = $disposition =~ / filename="?([^\"]*)"?/;
+        # Need to match empty filenames above, so this part is flagged as an upload type
+
+        $part->{name} = $name;
+
+        if ( defined $filename ) {
+            $part->{filename} = $filename;
+
+            if ( $filename ne "" ) {
+                my $fh = File::Temp->new( UNLINK => 0, DIR => $self->tmpdir, SUFFIX => q{-} . $filename );
+
+                $part->{fh}       = $fh;
+                $part->{tempname} = $fh->filename;
+            }
+        }
+    }
+
+    if ( $part->{fh} && ( my $length = length( $part->{data} ) ) ) {
+        $part->{fh}->write( substr( $part->{data}, 0, $length, '' ), $length );
+    }
+
+    if ( $part->{done} ) {
+
+        if ( exists $part->{filename} ) {
+            if ( $part->{filename} ne "" ) {
+                $part->{fh}->close if defined $part->{fh};
+
+                delete @{$part}{qw[ data done fh ]};
+
+                $self->upload( $part->{name}, $part );
+            }
+        }
+        else {
+            $self->param( $part->{name}, $part->{data} );
+        }
+    }
+}
+}
+
 no Moose::Role;
 
 1;
