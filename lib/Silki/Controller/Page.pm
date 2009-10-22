@@ -15,6 +15,8 @@ use Moose;
 
 BEGIN { extends 'Silki::Controller::Base' }
 
+with 'Silki::Role::Controller::UploadHandler';
+
 sub _set_page : Chained('/wiki/_set_wiki') : PathPart('page') : CaptureArgs(1) {
     my $self      = shift;
     my $c         = shift;

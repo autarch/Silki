@@ -7,7 +7,6 @@ use Data::Page;
 use Data::Page::FlickrLike;
 use Email::Address;
 use File::Basename qw( dirname );
-use List::AllUtils qw( all uniq );
 use Path::Class ();
 use Silki::Config;
 use Silki::Formatter::HTMLToWiki;
@@ -20,7 +19,7 @@ use Moose;
 
 BEGIN { extends 'Silki::Controller::Base' }
 
-with 'Silki::Role::Controller::User';
+with 'Silki::Role::Controller::User', 'Silki::Role::Controller::UploadHandler';
 
 sub _set_wiki : Chained('/') : PathPart('wiki') : CaptureArgs(1) {
     my $self      = shift;
