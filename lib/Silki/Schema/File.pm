@@ -122,6 +122,8 @@ sub _build_file_on_disk {
 sub _build_thumbnail_file {
     my $self = shift;
 
+    return unless $self->is_browser_displayable_image();
+
     my $dir = Silki::Config->new()->thumbnails_dir();
 
     my $file = $dir->file( $self->_file_name_with_hash() );
