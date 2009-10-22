@@ -171,7 +171,7 @@ sub link_text_for_file {
 
     return loc('Nonexistent file: $1') unless $file;
 
-    my $text = $file->filename();
+    my $text = $file->file_name();
 
     $text .= ' (' . $wiki->title() . ')'
         unless $wiki->wiki_id() == $self->_wiki()->wiki_id();
