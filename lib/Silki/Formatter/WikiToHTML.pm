@@ -85,10 +85,10 @@ sub _link {
     return unless $thing;
 
     if ( $thing->{file} ) {
-        return $self->_link_to_file( %{$thing} );
+        return $self->_link_to_file($thing);
     }
     else {
-        return $self->_link_to_page( %{$thing} );
+        return $self->_link_to_page($thing);
     }
 }
 
@@ -192,9 +192,9 @@ sub _page_for_title {
 
 sub _link_to_file {
     my $self = shift;
-    my %p    = @_;
+    my $p    = shift;
 
-    my $file = $p{file};
+    my $file = $p->{file};
 
     return loc('Inaccessible file')
         unless $self->_user()->has_permission_in_wiki(
@@ -205,23 +205,23 @@ sub _link_to_file {
     my $file_uri = $file->uri();
 
     my $dl = loc("Download this file");
-    my $link_text = encode_entities( $p{text} );
+    my $link_text = encode_entities( $p->{text} );
 
     return qq{<a href="$file_uri" title="$dl">$link_text</a>};
 }
 
 sub _link_to_page {
     my $self = shift;
-    my %p    = @_;
+    my $p    = shift;
 
-    my $page = $p{page};
+    my $page = $p->{page};
 
     if ( $self->for_editor() ) {
         $page ||= Silki::Schema::Page->new(
             page_id     => 0,
-            wiki_id     => $p{wiki}->wiki_id(),
-            title       => $p{title},
-            uri_path    => Silki::Schema::Page->TitleToURIPath( $p{title} ),
+            wiki_id     => $p->{wiki}->wiki_id(),
+            title       => $p->{title},
+            uri_path    => Silki::Schema::Page->TitleToURIPath( $p->{title} ),
             _from_query => 1,
         );
     }
@@ -229,9 +229,9 @@ sub _link_to_page {
     my $uri
         = $page
         ? $page->uri()
-        : $p{wiki}->uri( view => 'new_page_form', query => { title => $p{title} } );
+        : $p->{wiki}->uri( view => 'new_page_form', query => { title => $p->{title} } );
 
-    my $link_text = encode_entities( $p{text} );
+    my $link_text = encode_entities( $p->{text} );
 
     my $class = $page ? 'existing-page' : 'new-page';
 
