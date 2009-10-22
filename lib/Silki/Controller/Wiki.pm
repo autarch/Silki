@@ -409,10 +409,20 @@ sub page_collection_POST {
     my $self = shift;
     my $c    = shift;
 
+    my $wiki = $c->stash()->{wiki};
+
+    my $formatter = Silki::Formatter::HTMLToWiki->new(
+        user => $c->user(),
+        wiki => $wiki,
+    );
+
+    my $wikitext
+        = $formatter->html_to_wikitext( $c->request()->params()->{content} );
+
     my $page = Silki::Schema::Page->insert_with_content(
         title   => $c->request()->params()->{title},
-        content => $c->request()->params()->{content},
-        wiki_id => $c->stash()->{wiki}->wiki_id(),
+        content => $wikitext,
+        wiki_id => $wiki->wiki_id(),
         user_id => $c->user()->user_id(),
     );
 

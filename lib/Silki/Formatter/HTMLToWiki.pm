@@ -7,6 +7,7 @@ use HTML::WikiConverter;
 use HTML::WikiConverter::SilkiMM;
 use HTML::Entities qw( encode_entities );
 use Silki::Formatter::WikiToHTML;
+use Silki::Util qw( string_is_empty );
 use URI;
 
 use Moose;
@@ -36,6 +37,9 @@ has _converter => (
 sub html_to_wikitext {
     my $self = shift;
     my $html = shift;
+
+    # HTML::WikiConverter barfs on an empty string
+    return q{} if string_is_empty($html);
 
     my $wikitext = $self->_converter->html2wiki(
         $html,
