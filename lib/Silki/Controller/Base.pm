@@ -5,7 +5,6 @@ use warnings;
 
 use autodie;
 use Carp qw( croak );
-use File::MimeInfo qw( mimetype );
 use Silki::Config;
 use Silki::I18N qw( loc );
 use Silki::JSON;
