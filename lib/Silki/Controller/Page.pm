@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Data::Page;
+use List::AllUtils qw( all );
 use Silki::I18N qw( loc );
 use Silki::Formatter::HTMLToWiki;
 use Silki::Formatter::WikiToHTML;
@@ -118,7 +119,7 @@ sub _rev_content_as_html : Private {
     return $formatter->wikitext_to_html( $rev->content() );
 }
 
-sub page_revision : Chained('_set_page') : PathPart('revision') : Args(1) {
+sub revision : Chained('_set_page') : PathPart('revision') : Args(1) {
     my $self            = shift;
     my $c               = shift;
     my $revision_number = shift;
@@ -145,7 +146,7 @@ sub page_revision : Chained('_set_page') : PathPart('revision') : Args(1) {
     $c->stash()->{template} = '/page/view';
 }
 
-sub page_history : Chained('_set_page') : PathPart('history') : Args(0) {
+sub history : Chained('_set_page') : PathPart('history') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
@@ -168,7 +169,7 @@ sub page_history : Chained('_set_page') : PathPart('history') : Args(0) {
     $c->stash()->{template} = '/page/history';
 }
 
-sub page_diff : Chained('_set_page') : PathPart('diff') : Args(0) {
+sub diff : Chained('_set_page') : PathPart('diff') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
@@ -204,7 +205,7 @@ sub page_diff : Chained('_set_page') : PathPart('diff') : Args(0) {
     $c->stash()->{template} = '/page/diff';
 }
 
-sub page_attachments : Chained('_set_page') : PathPart('attachments') : Args(0) {
+sub attachments : Chained('_set_page') : PathPart('attachments') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
@@ -214,10 +215,10 @@ sub page_attachments : Chained('_set_page') : PathPart('attachments') : Args(0) 
     $c->stash()->{template} = '/page/attachments';
 }
 
-sub page_file_collection : Chained('_set_page') : PathPart('file') : Args(0) : ActionClass('+Silki::Action::REST') {
+sub file_collection : Chained('_set_page') : PathPart('file') : Args(0) : ActionClass('+Silki::Action::REST') {
 }
 
-sub page_file_collection_POST {
+sub file_collection_POST {
     my $self = shift;
     my $c    = shift;
 
