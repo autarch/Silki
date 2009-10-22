@@ -73,6 +73,8 @@ sub handler {
             $part->{filename} = $filename;
 
             if ( $filename ne "" ) {
+                # XXX - this is the monkey patch, adding the filename as a
+                # suffix so that we preserve the file's extension
                 my $fh = File::Temp->new( UNLINK => 0, DIR => $self->tmpdir, SUFFIX => q{-} . $filename );
 
                 $part->{fh}       = $fh;
