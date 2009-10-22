@@ -192,7 +192,7 @@ sub _page_for_title {
 
 sub _link_to_file {
     my $self = shift;
-    my %p    = shift;
+    my %p    = @_;
 
     my $file = $p{file};
 
