@@ -36,22 +36,22 @@ sub file_GET_html {
         $c->stash()->{template} = '/file/view-in-frame';
     }
     else {
-        $self->_file_download( $c, $file );
+        $self->_download( $c, $file );
     }
 
     return;
 }
 
-sub file_download : Chained('_set_file') : PathPart('download') : Args(0) {
+sub download : Chained('_set_file') : PathPart('download') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
-    $self->_file_download( $c, $c->stash()->{file}, 'inline' );
+    $self->_download( $c, $c->stash()->{file}, 'inline' );
 
     return;
 }
 
-sub _file_download {
+sub _download {
     my $self        = shift;
     my $c           = shift;
     my $file        = shift;
@@ -68,7 +68,7 @@ sub _file_download {
     $c->response()->header( 'X-Sendfile' => $file->file_on_disk() );
 }
 
-sub file_thumbnail : Chained('_set_file') : PathPart('thumbnail') : Args(0) {
+sub thumbnail : Chained('_set_file') : PathPart('thumbnail') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
