@@ -395,6 +395,26 @@ sub _make_user_uri {
     return $c->stash()->{wiki}->uri( view => $real_view );
 }
 
+sub search : Chained('_set_wiki') : PathPart('search') : Args(0) : ActionClass('+Silki::Action::REST') {
+}
+
+sub search_GET_html {
+    my $self = shift;
+    my $c    = shift;
+
+    my $wiki = $c->stash()->{wiki};
+
+    my $search = $c->request()->params()->{search};
+
+    $c->redirect_and_detach( $wiki->uri() )
+        if string_is_empty($search);
+
+    $c->stash()->{pages} = $wiki->text_search( query => $search );
+    $c->stash()->{search} = $search;
+
+    $c->stash()->{template} = '/wiki/search_results';
+}
+
 no Moose;
 
 __PACKAGE__->meta()->make_immutable();

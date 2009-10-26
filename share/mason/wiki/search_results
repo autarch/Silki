@@ -1,0 +1,42 @@
+<table class="standard-table">
+  <thead>
+    <tr>
+      <th><% loc('Title') %></th>
+      <th><% loc('Last Edited On') %></th>
+      <th><% loc('Last Edited By') %></th>
+    </tr>
+  </thead>
+% while ( my ( $page, $revision ) = $pages->next() ) {
+  <tbody>
+    <tr class="<% $pages->index() % 2 ? 'odd' : 'even' %>">
+      <td><a href="<% $page->uri() %>"><% $page->title() %></a> (<% loc( 'revision %1', $revision->revision_number() ) %>)</td>
+      <td><% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $revision->creation_datetime() ) ) %></td>
+      <td><a href="<% $wiki->uri( view => 'user/' . $revision->user()->user_id() ) %>"><% $revision->user()->best_name() %></a></td>
+    </tr>
+%   my $raw = $pages->raw_row();
+    <tr class="<% $pages->index() % 2 ? 'odd' : 'even' %>">
+      <td colspan="3"><% $raw->[-1] | n %></td>
+    </tr>
+  </tbody>
+% }
+<%doc>
+<& /lib/table/pager.mas,
+   index     => $pages->index(),
+   pager     => $pager,
+   uri_maker => sub { $wiki->uri( view => 'recent', @_ ) } &>
+</%doc>
+</table>
+
+
+<%args>
+$search
+$pages
+$wiki
+</%args>
+
+<%method title>
+<% loc( q{Search Results for "%1"}, $search ) %>
+<%args>
+$search
+</%args>
+</%method>

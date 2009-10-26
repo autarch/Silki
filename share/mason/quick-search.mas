@@ -1,3 +1,7 @@
-        <form action="/contact/search" method="get">
-          <input name="search" type="text" class="text" value="Quick Search" />
+        <form action="<% $wiki->uri( view => 'search' ) %>" method="get">
+          <input name="search" type="text" class="text" value="" />
         </form>
+
+<%args>
+$wiki
+</%args>

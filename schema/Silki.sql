@@ -155,7 +155,6 @@ CREATE TABLE "Page" (
        -- This is only false for system-generated pages like FrontPage and
        -- Help
        can_be_renamed           BOOLEAN         NOT NULL DEFAULT TRUE,
-       ts_text                  tsvector        NULL,
        UNIQUE ( wiki_id, title ),
        UNIQUE ( wiki_id, uri_path ),
        CONSTRAINT valid_title CHECK ( title != '' )
@@ -163,7 +162,54 @@ CREATE TABLE "Page" (
 
 CREATE INDEX "Page_wiki_id" ON "Page" (wiki_id);
 CREATE INDEX "Page_user_id" ON "Page" (user_id);
-CREATE INDEX "Page_ts_text" ON "Page" USING GIN(ts_text);
+
+CREATE TABLE "PageSearchableText" (
+       page_id                  INT8            PRIMARY KEY,
+       ts_text                  tsvector        NULL
+);
+
+CREATE INDEX "PageSearchableText_ts_text" ON "PageSearchableText" USING GIN(ts_text);
+
+CREATE TABLE "PageRevision" (
+       page_id                  INT8            NOT NULL,
+       revision_number          revision        NOT NULL,
+       content                  TEXT            NOT NULL,
+       user_id                  INT8            NOT NULL,
+       creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       comment                  TEXT            NULL,
+       is_restoration_of_revision_number        INTEGER         NULL,
+       PRIMARY KEY ( page_id, revision_number )
+);
+
+CREATE INDEX "PageRevision_user_id" ON "PageRevision" (user_id);
+
+CREATE FUNCTION update_or_insert_page_searchable_text(id INT8, title VARCHAR(255), content TEXT) RETURNS VOID AS $$
+DECLARE
+    ts_text_val tsvector;
+BEGIN
+    ts_text_val :=
+        setweight(to_tsvector('pg_catalog.english', title), 'A') ||
+        setweight(to_tsvector('pg_catalog.english', content), 'B');
+
+    LOOP
+        UPDATE "PageSearchableText"
+           SET ts_text = ts_text_val
+         WHERE page_id = id;
+
+        IF found THEN
+            RETURN;
+        END IF;
+
+        BEGIN
+            INSERT INTO  "PageSearchableText"
+              ( page_id, ts_text )
+            VALUES
+              ( id, ts_text_val );
+        EXCEPTION WHEN unique_violation THEN
+        END;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
 
 CREATE FUNCTION page_tsvector_trigger() RETURNS trigger AS $$
 DECLARE
@@ -185,29 +231,11 @@ BEGIN
         return NEW;
     END IF;
 
-    NEW.ts_text :=
-        setweight(to_tsvector('pg_catalog.english', NEW.title), 'A') ||
-        setweight(to_tsvector('pg_catalog.english', new_content), 'B');
+    PERFORM update_or_insert_page_searchable_text( NEW.page_id, NEW.title, new_content );    
 
     return NEW;
 END;
 $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER ts_text_sync BEFORE UPDATE
-       ON "Page" FOR EACH ROW EXECUTE PROCEDURE page_tsvector_trigger();
-
-CREATE TABLE "PageRevision" (
-       page_id                  INT8            NOT NULL,
-       revision_number          revision        NOT NULL,
-       content                  TEXT            NOT NULL,
-       user_id                  INT8            NOT NULL,
-       creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-       comment                  TEXT            NULL,
-       is_restoration_of_revision_number        INTEGER         NULL,
-       PRIMARY KEY ( page_id, revision_number )
-);
-
-CREATE INDEX "PageRevision_user_id" ON "PageRevision" (user_id);
 
 CREATE FUNCTION page_revision_tsvector_trigger() RETURNS trigger AS $$
 DECLARE
@@ -217,15 +245,14 @@ BEGIN
       FROM "Page"
      WHERE page_id = NEW.page_id;
 
-    UPDATE "Page"
-       SET ts_text =
-               setweight(to_tsvector('pg_catalog.english', existing_title), 'A') ||
-               setweight(to_tsvector('pg_catalog.english', new.content), 'B')
-     WHERE page_id = NEW.page_id;
+    PERFORM update_or_insert_page_searchable_text( NEW.page_id, existing_title, NEW.content );    
 
     return NULL;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER ts_text_sync BEFORE UPDATE
+       ON "Page" FOR EACH ROW EXECUTE PROCEDURE page_tsvector_trigger();
 
 CREATE TRIGGER page_revision_ts_text_sync AFTER INSERT
        ON "PageRevision" FOR EACH ROW EXECUTE PROCEDURE page_revision_tsvector_trigger();
@@ -380,6 +407,10 @@ ALTER TABLE "Page" ADD CONSTRAINT "Page_wiki_id"
 
 ALTER TABLE "Page" ADD CONSTRAINT "Page_user_id"
   FOREIGN KEY ("user_id") REFERENCES "User" ("user_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "PageSearchableText" ADD CONSTRAINT "PageSearchableText_page_id"
+  FOREIGN KEY ("page_id") REFERENCES "Page" ("page_id")
   ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE "PageRevision" ADD CONSTRAINT "PageRevision_page_id"

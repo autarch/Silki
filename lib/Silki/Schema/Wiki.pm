@@ -7,6 +7,7 @@ use Data::Dumper qw( Dumper );
 use Fey::Literal;
 use Fey::Object::Iterator::FromSelect;
 use Fey::SQL;
+use List::AllUtils qw( uniq );
 use Silki::Config;
 use Silki::Schema;
 use Silki::Schema::Domain;
@@ -705,6 +706,139 @@ sub _BuildMembersSelect {
                   );
 
     return $members_select;
+}
+
+# This is a rather complicated query. The end result is something like this ..
+#
+# SELECT
+#   *,
+#   TS_HEADLINE(title || E'\n' || content, "page") AS "headline"
+# FROM
+#  (
+#     SELECT
+#       "Page"."is_archived",
+#       "Page"."page_id",
+#       ...,
+#       "PageRevision"."comment",
+#       "PageRevision"."creation_datetime",
+#       ...,
+#       TS_RANK("Page"."ts_text", "page") AS "rank"
+#     FROM
+#      "Page" JOIN "PageRevision" ON ("PageRevision"."page_id" = "Page"."page_id")
+#     WHERE
+#      "Page"."ts_text" @@ ?
+#       AND
+#      "Page"."wiki_id" = ?
+#       AND
+#      "PageRevision"."revision_number" =
+#          ( SELECT
+#              MAX("PageRevision"."revision_number") AS "FUNCTION0"
+#            FROM
+#              "PageRevision"
+#            WHERE
+#              "PageRevision"."page_id" = "Page"."page_id" )
+#     ORDER BY
+#       "rank" DESC, "Page"."title" ASC
+#     OFFSET 0
+#  )
+# AS "SUBSELECT0"
+#
+# Part of the reason for the complication is that we want to generate the
+# headline (TS_HEADLINE) only after applying the OFFSET clause. If we don't do
+# this, then we generate the headline for every match, regardless of how many
+# are being displayed. See
+# http://www.postgresql.org/docs/8.3/static/textsearch-controls.html#TEXTSEARCH-HEADLINE
+# for details.
+#
+# The innermost select clause in on PageRevision.revision_number ensures that
+# we only retrieve the most recent revision for a page.
+
+sub text_search {
+    my $self = shift;
+    my ( $query, $limit, $offset ) = validated_list(
+        \@_,
+        query  => { isa => Str },
+        limit  => { isa => Int, optional => 1 },
+        offset => { isa => Int, default  => 0 },
+    );
+
+    my $page_t = $Schema->table('Page');
+    my $page_revision_t = $Schema->table('PageRevision');
+    my $pst_t = $Schema->table('PageSearchableText');
+
+    my $max_func = Fey::Literal::Function->new( 'MAX',
+        $Schema->table('PageRevision')->column('revision_number') );
+
+    my $max_revision = Silki::Schema->SQLFactoryClass()->new_select();
+    $max_revision
+        ->select($max_func)
+        ->from( $Schema->table('PageRevision') )
+        ->where( $Schema->table('PageRevision')->column('page_id'),
+                 '=', $page_t->column('page_id')
+               );
+
+    my $rank = Fey::Literal::Function->new(
+        'TS_RANK',
+        $pst_t->column('ts_text'),
+        $query,
+    );
+
+    $rank->set_alias_name('rank');
+
+    my $search_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    $search_select->select( $page_t, $page_revision_t, $rank )
+           ->from( $page_t, $page_revision_t )
+           ->from( $page_t, $pst_t )
+           ->where( $pst_t->column('ts_text'), '@@', Fey::Placeholder->new() )
+           ->and( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
+           ->and( $page_revision_t->column('revision_number'),
+                  '=', $max_revision )
+           ->order_by( $rank, 'DESC',
+                       $page_t->column('title'), 'ASC' );
+    $search_select->limit( $limit, $offset );
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $headline = Fey::Literal::Function->new(
+        'TS_HEADLINE',
+        Fey::Literal::Term->new( q{title || E'\n' || content}, ),
+        $query
+    );
+    $headline->set_alias_name('headline');
+
+    my $star = Fey::Literal::Term->new('*');
+    $star->set_can_have_alias(0);
+
+    $select->select( $star, $headline )
+           ->from($search_select);
+
+    my $x = 0;
+    my %attribute_map;
+
+    # This matches the order of the columns in the $search_select defined
+    # above.
+    for my $col_name ( sort map { $_->name() } $page_t->columns() ) {
+        $attribute_map{ $x++ } = {
+            class     => 'Silki::Schema::Page',
+            attribute => $col_name,
+        };
+    }
+
+    for my $col_name ( sort map { $_->name() } $page_revision_t->columns() ) {
+        $attribute_map{ $x++ } = {
+            class     => 'Silki::Schema::PageRevision',
+            attribute => $col_name,
+        };
+    }
+
+    return Fey::Object::Iterator::FromSelect->new(
+        classes => [ 'Silki::Schema::Page', 'Silki::Schema::PageRevision' ],
+        select  => $select,
+        dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
+        bind_params   => [ $query, $self->wiki_id() ],
+        attribute_map => \%attribute_map,
+    );
 }
 
 sub PublicWikiCount {
