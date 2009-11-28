@@ -719,12 +719,14 @@ sub _BuildAllWikiSelect {
     my $explicit_wiki_select = Silki::Schema->SQLFactoryClass()->new_select();
 
     my $is_explicit1 = Fey::Literal::Term->new('1 AS is_explicit');
+    $is_explicit1->set_can_have_alias(0);
     $explicit_wiki_select->select( $Schema->table('Wiki'), $is_explicit1 );
     $class->_ExplicitWikiSelectBase($explicit_wiki_select);
 
     my $implicit_wiki_select = Silki::Schema->SQLFactoryClass()->new_select();
 
     my $is_explicit0 = Fey::Literal::Term->new('0 AS is_explicit');
+    $is_explicit0->set_can_have_alias(0);
     $implicit_wiki_select->select( $Schema->table('Wiki'), $is_explicit0 );
     $class->_ImplicitWikiSelectBase($implicit_wiki_select);
 
