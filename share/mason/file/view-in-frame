@@ -1,7 +1,11 @@
-<iframe src="<% $file->uri( view => 'download' ) %>"
+<iframe src="<% $file->uri( view => 'content' ) %>"
         id="file-view-iframe"
         frameborder="1"
         width="100%" height="100%"></iframe>
+
+<p>
+  <a href="<% $file->uri( view => 'download' ) %>"><% loc( 'Download this file' ) %></a>
+</p>
 <%args>
 $file
 </%args>

@@ -58,7 +58,7 @@ msgid "%date(%1) %at_time(%1)"
 msgstr ""
 
 #. ($c->user()
-#: share/mason/lib/table/attachments-table.mas:29 share/mason/page/history:30 share/mason/wiki/recent:14
+#: share/mason/lib/table/attachments-table.mas:29 share/mason/page/history:30 share/mason/wiki/recent:14 share/mason/wiki/search_results:13
 msgid "%datetime(%1)"
 msgstr ""
 
@@ -159,7 +159,7 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: lib/Silki/Formatter/WikiToHTML.pm:207 share/mason/lib/table/attachments-table.mas:16 share/mason/lib/table/attachments-table.mas:19
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:81 share/mason/file/view-in-frame:7 share/mason/lib/table/attachments-table.mas:16 share/mason/lib/table/attachments-table.mas:19
 msgid "Download this file"
 msgstr ""
 
@@ -225,7 +225,7 @@ msgstr ""
 msgid "In a public wiki, anyone can read and edit pages without logging in. However, only wiki members can delete pages or upload files."
 msgstr ""
 
-#: lib/Silki/Formatter/WikiToHTML.pm:199
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:75
 msgid "Inaccessible file"
 msgstr ""
 
@@ -238,8 +238,12 @@ msgstr ""
 msgid "Information about %1"
 msgstr ""
 
-#: share/mason/wiki/orphans:12
+#: share/mason/wiki/orphans:12 share/mason/wiki/search_results:6
 msgid "Last Edited By"
+msgstr ""
+
+#: share/mason/wiki/search_results:5
+msgid "Last Edited On"
 msgstr ""
 
 #. ($wiki->uri( view => 'user/' . $revision->user_id()
@@ -292,7 +296,7 @@ msgstr ""
 msgid "No other pages link to this page. Orphan pages can be confusing, so you may want to add a link to this page."
 msgstr ""
 
-#: lib/Silki/Formatter/WikiToHTML.pm:172
+#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:115
 msgid "Nonexistent file: $1"
 msgstr ""
 
@@ -388,7 +392,7 @@ msgstr ""
 msgid "Public Wikis"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:46 lib/Silki/Controller/Wiki.pm:79
+#: lib/Silki/Controller/Wiki.pm:45
 msgid "Recent Changes"
 msgstr ""
 
@@ -397,7 +401,7 @@ msgstr ""
 msgid "Recent Changes in %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:47
+#: lib/Silki/Controller/Wiki.pm:46
 msgid "Recent activity in this wiki"
 msgstr ""
 
@@ -437,7 +441,7 @@ msgid "Revision %1 versus %2"
 msgstr ""
 
 #. ($search)
-#: share/mason/wiki/search_results:9
+#: share/mason/wiki/search_results:38
 msgid "Search Results for \"%1\""
 msgstr ""
 
@@ -479,7 +483,7 @@ msgstr ""
 msgid "The email address you provided is already in use by another account."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:237
+#: lib/Silki/Controller/Page.pm:221
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
@@ -562,7 +566,7 @@ msgstr ""
 msgid "Time Zone:"
 msgstr ""
 
-#: share/mason/wiki/orphans:9 share/mason/wiki/recent:4 share/mason/wiki/wanted:9
+#: share/mason/wiki/orphans:9 share/mason/wiki/recent:4 share/mason/wiki/search_results:4 share/mason/wiki/wanted:9
 msgid "Title"
 msgstr ""
 
@@ -615,7 +619,7 @@ msgstr ""
 msgid "View details about your profile"
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:43
+#: lib/Silki/Controller/Page.pm:42
 msgid "View this page"
 msgstr ""
 
@@ -770,7 +774,7 @@ msgid "public-read-only"
 msgstr "Public can read, log-in to edit"
 
 #. ($revision->revision_number()
-#: share/mason/wiki/recent:13
+#: share/mason/wiki/recent:13 share/mason/wiki/search_results:12
 msgid "revision %1"
 msgstr ""
 

@@ -36,8 +36,24 @@ sub file_GET_html {
         $c->stash()->{template} = '/file/view-in-frame';
     }
     else {
-        $self->_download( $c, $file );
+        $self->_download( $c, $file, 'attachment' );
     }
+
+    return;
+}
+
+sub content : Chained('_set_file') : PathPart('content') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    my $file = $c->stash()->{file};
+
+    # If the file type is something like text/x-python, the browser might
+    # prompt the user to save the file. However, if we force text/plain, the
+    # browser displays the file nicely.
+    my $ct = $file->mime_type() =~ /^text/ ? 'text/plain' : $file->mime_type();
+
+    $self->_download( $c, $file, 'inline', $ct );
 
     return;
 }
@@ -46,18 +62,19 @@ sub download : Chained('_set_file') : PathPart('download') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
-    $self->_download( $c, $c->stash()->{file}, 'inline' );
+    $self->_download( $c, $c->stash()->{file}, 'attachment' );
 
     return;
 }
 
 sub _download {
-    my $self        = shift;
-    my $c           = shift;
-    my $file        = shift;
-    my $disposition = shift || 'attachment';
+    my $self         = shift;
+    my $c            = shift;
+    my $file         = shift;
+    my $disposition  = shift;
+    my $content_type = shift || $file->mime_type();
 
-    $c->response()->content_type( $file->mime_type() );
+    $c->response()->content_type($content_type);
 
     my $name = $file->file_name();
     $name =~ s/\"/\\"/g;

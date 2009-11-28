@@ -91,13 +91,11 @@ sub mime_type_description_for_lang {
     }
 }
 
-{
-    sub _build_is_displayable_in_browser {
-        my $self = shift;
+sub _build_is_displayable_in_browser {
+    my $self = shift;
 
-        return $self->is_browser_displayable_image()
-            || $self->mime_type() =~ m{^text/};
-    }
+    return $self->is_browser_displayable_image()
+        || $self->mime_type() =~ m{^text/};
 }
 
 sub _build_file_on_disk {
