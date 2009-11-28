@@ -4,11 +4,12 @@ use strict;
 use warnings;
 
 use HTML::Entities qw( decode_entities );
+use Params::Validate qw( ARRAYREF );
 
 use Moose;
 use MooseX::NonMoose;
 
-extends 'HTML::WikiConverter::MultiMarkdown';
+extends 'HTML::WikiConverter::Markdown';
 
 with 'Silki::Markdent::Role::WikiLinkResolver';
 
@@ -34,6 +35,20 @@ sub rules {
 
     return {
         %{$rules},
+        table => {
+            block => 1,
+            end   => \&_table_end,
+        },
+        tr => {
+            start       => \&_tr_start,
+            end         => qq{ |\n},
+            line_format => 'single'
+        },
+        td => {
+            start => \&_td_start,
+            end   => q{ }
+        },
+        th => { alias   => 'td', },
         a  => { replace => \&_link },
         br => { replace => q{} },
         p  => {
@@ -50,8 +65,62 @@ sub attributes {
 
     return {
         %{ $self->SUPER::attributes() },
+        strip_tags =>
+            { type => ARRAYREF, default => [qw( ~comment script style / )] },
         wiki => { isa => 'Silki::Schema::Wiki', required => 1 },
     };
+}
+
+sub _table_end
+{
+    my $self = shift;
+
+    delete $self->{__row_count__};
+    delete $self->{__th_count__};
+
+    return q{};
+}
+
+
+# This method is first called on the _second_ row, go figure
+sub _tr_start
+{
+    my $self = shift;
+
+    my $start = q{};
+    if ( $self->{__row_count__} == 2 )
+    {
+        $start = '+----' x $self->{__th_count__};
+        $start .= qq{+\n};
+    }
+
+    $self->{__row_count__}++;
+
+    return $start;
+}
+
+# This method is called for the first cell in a table, and before the
+# first call to table or tr start!
+sub _td_start
+{
+    my $self = shift;
+
+    $self->{__row_count__} = 1
+        unless exists $self->{__row_count__};
+
+    if ( $self->{__row_count__} == 1 )
+    {
+        if ( exists $self->{__th_count__} )
+        {
+            $self->{__th_count__}++;
+        }
+        else
+        {
+            $self->{__th_count__} = 1;
+        }
+    }
+
+    return '| ';
 }
 
 sub _link {
@@ -150,6 +219,6 @@ sub _p_prefix {
     return $self->SUPER::_p_prefix( $node, $rules );
 }
 
-__PACKAGE__->meta()->make_immutable();
+__PACKAGE__->meta()->make_immutable( inline_constructor => 0 );
 
 1;
