@@ -80,7 +80,7 @@ sub user_GET_html {
     my $self = shift;
     my $c    = shift;
 
-    ( $c->tabs() )[0]->set_is_selected(1);
+    $c->tab_by_id('profile')->set_is_selected(1);
 
     my $user = $c->stash()->{user};
 
