@@ -3,6 +3,7 @@ package Silki::Controller::File;
 use strict;
 use warnings;
 
+use Silki::I18N qw( loc );
 use Silki::Schema::File;
 
 use Moose;
@@ -33,6 +34,18 @@ sub file_GET_html {
     my $file = $c->stash()->{file};
 
     if ( $file->is_displayable_in_browser() ) {
+        my $name = $file->file_name();
+        $name = substr( $name, 0, 16 ) . q{ ...} if length $name > 16;
+
+        $c->add_tab(
+            {
+                uri         => $file->uri(),
+                label       => $name,
+                tooltip     => loc('View this file'),
+                is_selected => 1,
+            }
+        );
+
         $c->stash()->{template} = '/file/view-in-frame';
     }
     else {
