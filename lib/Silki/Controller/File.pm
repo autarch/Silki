@@ -41,7 +41,7 @@ sub file_GET_html {
             {
                 uri         => $file->uri(),
                 label       => $name,
-                tooltip     => loc('View this file'),
+                tooltip     => loc( 'Contents of %1', $file->file_name() ),
                 is_selected => 1,
             }
         );

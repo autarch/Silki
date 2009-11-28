@@ -140,6 +140,11 @@ msgstr ""
 msgid "Compare to previous revision"
 msgstr ""
 
+#. ($file->file_name()
+#: lib/Silki/Controller/File.pm:44
+msgid "Contents of %1"
+msgstr ""
+
 #. ($title)
 #: share/mason/wiki/new_page_form:8
 msgid "Create %1"
@@ -159,7 +164,7 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:81 share/mason/file/view-in-frame:7 share/mason/lib/table/attachments-table.mas:16 share/mason/lib/table/attachments-table.mas:19
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:81 share/mason/file/view-in-frame:11 share/mason/lib/table/attachments-table.mas:16 share/mason/lib/table/attachments-table.mas:19
 msgid "Download this file"
 msgstr ""
 
@@ -477,6 +482,11 @@ msgstr ""
 
 #: lib/Silki/Schema/User.pm:317
 msgid "The OpenID you provided is not a valid URI."
+msgstr ""
+
+#. ($file->file_name()
+#: share/mason/file/view-in-frame:2
+msgid "The contents of <em>%html(%1)</em>"
 msgstr ""
 
 #: lib/Silki/Schema/User.pm:299
