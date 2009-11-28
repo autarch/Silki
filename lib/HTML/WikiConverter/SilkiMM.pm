@@ -5,7 +5,12 @@ use warnings;
 
 use HTML::Entities qw( decode_entities );
 
-use base 'HTML::WikiConverter::MultiMarkdown';
+use Moose;
+use MooseX::NonMoose;
+
+extends 'HTML::WikiConverter::MultiMarkdown';
+
+with 'Silki::Markdent::Role::WikiLinkResolver';
 
 sub html2wiki {
     my $self = shift;
@@ -46,8 +51,6 @@ sub attributes {
     return {
         %{ $self->SUPER::attributes() },
         wiki => { isa => 'Silki::Schema::Wiki', required => 1 },
-        wikitext_formatter =>
-            { isa => 'Silki::Formatter::WikiToHTML', required => 1 },
     };
 }
 
@@ -92,7 +95,7 @@ sub _link_to_page {
             or return q{};
     }
 
-    my $default_title = $self->wikitext_formatter()->link_text_for_page( $wiki, $title );
+    my $default_title = $self->_link_text_for_page( $wiki, $title );
 
     return $self->_link_plus_text( $link, $default_title, $text );
 }
@@ -116,7 +119,7 @@ sub _link_to_file {
     }
 
     my $file = Silki::Schema::File->new( file_id => $file_id );
-    my $default_title = $self->wikitext_formatter()->link_text_for_file( $wiki, $file );
+    my $default_title = $self->_link_text_for_file( $wiki, $file );
 
     return $self->_link_plus_text( $link, $default_title, $text );
 }
@@ -146,5 +149,7 @@ sub _p_prefix {
 
     return $self->SUPER::_p_prefix( $node, $rules );
 }
+
+__PACKAGE__->meta()->make_immutable();
 
 1;

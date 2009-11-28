@@ -187,10 +187,6 @@ sub diff : Chained('_set_page') : PathPart('diff') : Args(0) {
         rev1 => $revisions[0],
         rev2 => $revisions[1],
     );
-    $c->stash()->{formatter} = Silki::Formatter::WikiToHTML->new(
-        user => $c->user(),
-        wiki => $page->wiki(),
-    );
 
     $c->stash()->{template} = '/page/diff';
 }

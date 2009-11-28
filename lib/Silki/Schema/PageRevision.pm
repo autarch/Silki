@@ -12,7 +12,6 @@ use Markdent::Handler::Multiplexer;
 use Markdent::Parser;
 use String::Diff qw( diff );
 use Silki::Config;
-use Silki::Formatter::WikiToHTML;
 use Silki::Markdent::Dialect::Silki::BlockParser;
 use Silki::Markdent::Dialect::Silki::SpanParser;
 use Silki::Markdent::Handler::ExtractWikiLinks;
