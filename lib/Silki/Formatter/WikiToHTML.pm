@@ -10,7 +10,6 @@ use Silki::Schema::Page;
 use Silki::Schema::Permission;
 use Silki::Schema::Wiki;
 use Silki::Types qw( Bool );
-use Text::MultiMarkdown;
 
 use Moose;
 use MooseX::StrictConstructor;

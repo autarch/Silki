@@ -155,6 +155,7 @@ CREATE TABLE "Page" (
        -- This is only false for system-generated pages like FrontPage and
        -- Help
        can_be_renamed           BOOLEAN         NOT NULL DEFAULT TRUE,
+       cached_content           BYTEA           NULL,
        UNIQUE ( wiki_id, title ),
        UNIQUE ( wiki_id, uri_path ),
        CONSTRAINT valid_title CHECK ( title != '' )

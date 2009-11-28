@@ -5,17 +5,28 @@ use warnings;
 
 use Algorithm::Diff qw( sdiff );
 use List::AllUtils qw( all any );
+use Markdent::CapturedEvents;
+use Markdent::Handler::CaptureEvents;
+use Markdent::Handler::HTMLFilter;
+use Markdent::Handler::Multiplexer;
+use Markdent::Parser;
 use String::Diff qw( diff );
 use Silki::Config;
 use Silki::Formatter::WikiToHTML;
+use Silki::Markdent::Dialect::Silki::BlockParser;
+use Silki::Markdent::Dialect::Silki::SpanParser;
+use Silki::Markdent::Handler::ExtractWikiLinks;
+use Silki::Markdent::Handler::HTMLStream;
 use Silki::Schema;
 use Silki::Schema::Page;
 use Silki::Schema::PageLink;
 use Silki::Schema::PageFileLink;
 use Silki::Schema::PendingPageLink;
+use Silki::Types qw( Bool );
+use Storable qw( nfreeze thaw );
 
 use Fey::ORM::Table;
-use MooseX::Params::Validate qw( validated_list );
+use MooseX::Params::Validate qw( validated_list validated_hash );
 
 my $Schema = Silki::Schema->Schema();
 
@@ -39,22 +50,109 @@ around insert => sub {
 
     my $revision = $class->$orig(@_);
 
-    $revision->_update_links();
+    $revision->_post_change();
 };
 
 after update => sub {
     my $self = shift;
 
-    $self->_update_links();
+    $self->_post_change();
 };
 
-sub _update_links {
+sub _post_change {
     my $self = shift;
 
-    my $links = Silki::Formatter::WikiToHTML->new(
-        user => Silki::Schema::User->SystemUser(),
+    my $capture = Markdent::Handler::CaptureEvents->new();
+    my $linkex  = Silki::Markdent::Handler::ExtractWikiLinks->new(
         wiki => $self->page()->wiki(),
-    )->links( $self->content() );
+    );
+    my $multi = Markdent::Handler::Multiplexer->new(
+        handlers => [ $capture, $linkex ],
+    );
+
+    my $filter = Markdent::Handler::HTMLFilter->new( handler => $multi );
+
+    my $parser = Markdent::Parser->new(
+        dialect => 'Silki::Markdent::Dialect::Silki',
+        handler => $filter,
+    );
+
+    $parser->parse( markdown => $self->content() );
+
+    my ( $existing, $pending, $files ) = $self->_process_extracted_links($linkex);
+
+    my $delete_existing = Silki::Schema->SQLFactoryClass()->new_delete();
+    $delete_existing->delete()->from( $Schema->table('PageLink') )->where(
+        $Schema->table('PageLink')->column('from_page_id'),
+        '=', $self->page_id()
+    );
+
+    my $delete_pending = Silki::Schema->SQLFactoryClass()->new_delete();
+    $delete_pending->delete()->from( $Schema->table('PendingPageLink') )
+        ->where(
+        $Schema->table('PendingPageLink')->column('from_page_id'),
+        '=', $self->page_id()
+        );
+
+    my $delete_files = Silki::Schema->SQLFactoryClass()->new_delete();
+    $delete_files->delete()->from( $Schema->table('PageFileLink') )
+        ->where(
+        $Schema->table('PageFileLink')->column('page_id'),
+        '=', $self->page_id()
+        );
+
+    my $update_cached_content
+        = Silki::Schema->SQLFactoryClass()->new_update();
+    $update_cached_content->update( $Schema->table('Page') )
+        ->set( $Schema->table('Page')->column('cached_content') =>
+                nfreeze( $capture->captured_events() ) )
+        ->where(
+            $Schema->table('Page')->column('page_id'), '=',
+            $self->page_id()
+        );
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($delete_existing)
+        ->dbh();
+
+    my $updates = sub {
+        $dbh->do(
+            $delete_existing->sql($dbh),
+            {},
+            $delete_existing->bind_params()
+        );
+        $dbh->do(
+            $delete_pending->sql($dbh),
+            {},
+            $delete_pending->bind_params()
+        );
+        $dbh->do(
+            $delete_files->sql($dbh),
+            {},
+            $delete_files->bind_params()
+        );
+
+        my $sth = $dbh->prepare( $update_cached_content->sql($dbh) );
+        my @bind = $update_cached_content->bind_params();
+        $sth->bind_param( 1, $bind[0], { pg_type => DBD::Pg::PG_BYTEA() } );
+        $sth->bind_param( 2, $bind[1] );
+        $sth->execute();
+
+        Silki::Schema::PageLink->insert_many( @{$existing} )
+            if @{$existing};
+        Silki::Schema::PendingPageLink->insert_many( @{$pending} )
+            if @{$pending};
+        Silki::Schema::PageFileLink->insert_many( @{$files} )
+            if @{$files};
+    };
+
+    Silki::Schema->RunInTransaction($updates);
+}
+
+sub _process_extracted_links {
+    my $self   = shift;
+    my $linkex = shift;
+
+    my $links = $linkex->links();
 
     my @existing
         = map {
@@ -86,46 +184,7 @@ sub _update_links {
         grep { $links->{$_}{file} }
         keys %{$links};
 
-    my $delete_existing = Silki::Schema->SQLFactoryClass()->new_delete();
-    $delete_existing->delete()->from( $Schema->table('PageLink') )->where(
-        $Schema->table('PageLink')->column('from_page_id'),
-        '=', $self->page_id()
-    );
-
-    my $delete_pending = Silki::Schema->SQLFactoryClass()->new_delete();
-    $delete_pending->delete()->from( $Schema->table('PendingPageLink') )
-        ->where(
-        $Schema->table('PendingPageLink')->column('from_page_id'),
-        '=', $self->page_id()
-        );
-
-    my $delete_files = Silki::Schema->SQLFactoryClass()->new_delete();
-    $delete_files->delete()->from( $Schema->table('PageFileLink') )
-        ->where(
-        $Schema->table('PageFileLink')->column('page_id'),
-        '=', $self->page_id()
-        );
-
-    my $dbh = Silki::Schema->DBIManager()->source_for_sql($delete_existing)
-        ->dbh();
-
-    my $updates = sub {
-        $dbh->do( $delete_existing->sql($dbh), {},
-            $delete_existing->bind_params() );
-        $dbh->do( $delete_pending->sql($dbh), {},
-            $delete_pending->bind_params() );
-        $dbh->do( $delete_files->sql($dbh), {},
-            $delete_files->bind_params() );
-
-        Silki::Schema::PageLink->insert_many(@existing)
-            if @existing;
-        Silki::Schema::PendingPageLink->insert_many(@pending)
-            if @pending;
-        Silki::Schema::PageFileLink->insert_many(@files)
-            if @files;
-    };
-
-    Silki::Schema->RunInTransaction($updates);
+    return \@existing, \@pending, \@files;
 }
 
 sub Diff {
@@ -248,6 +307,45 @@ sub _ReorderIfTotalReplacement {
         ( grep { $_->[0] eq q{+} } @{$diff} ),
         ( grep { $_->[0] eq q{-} } @{$diff} ),
     ];
+}
+
+sub content_as_html {
+    my $self = shift;
+    my (%p) = validated_hash(
+        \@_,
+        user       => { isa => 'Silki::Schema::User' },
+        wiki       => { isa => 'Silki::Schema::Wiki' },
+        for_editor => { isa => Bool, default => 0 },
+    );
+
+    my $page = $self->page();
+
+    my $buffer = q{};
+    open my $fh, '>', \$buffer;
+
+    my $html = Silki::Markdent::Handler::HTMLStream->new(
+        output => $fh,
+        %p,
+    );
+
+    if ( $self->revision_number()
+        == $page->most_recent_revision()->revision_number() ) {
+        my $captured = thaw( $page->cached_content() );
+
+        $captured->replay_events($html);
+    }
+    else {
+        my $filter = Markdent::Handler::HTMLFilter->new( handler => $html );
+
+        my $parser = Markdent::Parser->new(
+            dialect => 'Silki::Markdent::Dialect::Silki',
+            handler => $filter,
+        );
+
+        $parser->parse( markdown => $self->content() );
+    }
+
+    return $buffer;
 }
 
 no Fey::ORM::Table;

@@ -7,7 +7,6 @@ use Data::Page;
 use List::AllUtils qw( all );
 use Silki::I18N qw( loc );
 use Silki::Formatter::HTMLToWiki;
-use Silki::Formatter::WikiToHTML;
 use Silki::Schema::Page;
 use Silki::Schema::PageRevision;
 
@@ -61,7 +60,10 @@ sub page_GET_html {
     $c->stash()->{page}                = $page;
     $c->stash()->{revision}            = $revision;
     $c->stash()->{is_current_revision} = 1;
-    $c->stash()->{html} = $self->_rev_content_as_html( $c, $revision, $page );
+    $c->stash()->{html}                = $revision->content_as_html(
+        user => $c->user(),
+        wiki => $page->wiki(),
+    );
 
     $c->stash()->{template} = '/page/view';
 }
@@ -72,11 +74,10 @@ sub page_edit_form : Chained('_set_page') : PathPart('edit_form') : Args(0) {
 
     my $page = $c->stash()->{page};
 
-    $c->stash()->{html} = $self->_rev_content_as_html(
-        $c,
-        $page->most_recent_revision(),
-        $page,
-        1,
+    $c->stash()->{html} = $page->most_recent_revision()->content_as_html(
+        user       => $c->user(),
+        wiki       => $page->wiki(),
+        for_editor => 1,
     );
 
     $c->stash()->{template} = '/page/edit_form';
@@ -105,22 +106,6 @@ sub page_PUT {
     $c->redirect_and_detach( $page->uri() );
 }
 
-sub _rev_content_as_html : Private {
-    my $self       = shift;
-    my $c          = shift;
-    my $rev        = shift;
-    my $page       = shift;
-    my $for_editor = shift;
-
-    my $formatter = Silki::Formatter::WikiToHTML->new(
-        user       => $c->user(),
-        wiki       => $page->wiki(),
-        for_editor => $for_editor,
-    );
-
-    return $formatter->wikitext_to_html( $rev->content() );
-}
-
 sub revision : Chained('_set_page') : PathPart('revision') : Args(1) {
     my $self            = shift;
     my $c               = shift;
@@ -143,7 +128,10 @@ sub revision : Chained('_set_page') : PathPart('revision') : Args(1) {
     $c->stash()->{page}                = $page;
     $c->stash()->{revision}            = $revision;
     $c->stash()->{is_current_revision} = 0;
-    $c->stash()->{html} = $self->_rev_content_as_html( $c, $revision, $page );
+    $c->stash()->{html}                = $revision->content_as_html(
+        user => $c->user(),
+        wiki => $page->wiki(),
+    );
 
     $c->stash()->{template} = '/page/view';
 }
