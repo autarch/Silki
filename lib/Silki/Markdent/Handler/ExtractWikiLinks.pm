@@ -31,7 +31,8 @@ sub handle_event {
 
     return unless $event->isa('Silki::Markdent::Event::WikiLink');
 
-    my $link_data = $self->_resolve_link($event);
+    my $link_data
+        = $self->_resolve_link( $event->link_text(), $event->display_text() );
 
     $self->_add_link( $event->link_text() => $link_data );
 
