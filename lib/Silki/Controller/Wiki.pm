@@ -40,11 +40,11 @@ sub _set_wiki : Chained('/') : PathPart('wiki') : CaptureArgs(1) {
             label   => $wiki->title(),
             tooltip => loc( '%1 overview', $wiki->title() ),
             id      => 'dashboard',
-        },
-        {
+        }, {
             uri     => $wiki->uri( view => 'recent' ),
             label   => loc('Recent Changes'),
             tooltip => loc('Recent activity in this wiki'),
+            id      => 'recent-changes',
         },
         );
 
@@ -76,7 +76,7 @@ sub recent : Chained('_set_wiki') : PathPart('recent') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
-    $c->tab_by_id( loc('Recent Changes') )->set_is_selected(1);
+    $c->tab_by_id('recent-changes')->set_is_selected(1);
 
     my $wiki = $c->stash()->{wiki};
 
