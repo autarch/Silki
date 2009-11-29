@@ -12,13 +12,6 @@ use URI;
 use Moose;
 use MooseX::StrictConstructor;
 
-has _user => (
-    is       => 'ro',
-    isa      => 'Silki::Schema::User',
-    required => 1,
-    init_arg => 'user',
-);
-
 has _wiki => (
     is       => 'ro',
     isa      => 'Silki::Schema::Wiki',

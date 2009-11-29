@@ -363,7 +363,6 @@ sub page_collection_POST {
     my $wiki = $c->stash()->{wiki};
 
     my $formatter = Silki::Formatter::HTMLToWiki->new(
-        user => $c->user(),
         wiki => $wiki,
     );
 

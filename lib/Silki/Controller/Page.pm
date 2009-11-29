@@ -91,7 +91,6 @@ sub page_PUT {
         page_id => $c->request()->params()->{page_id} );
 
     my $formatter = Silki::Formatter::HTMLToWiki->new(
-        user => $c->user(),
         wiki => $page->wiki(),
     );
 
