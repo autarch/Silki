@@ -20,32 +20,32 @@ msgid "# of Revisions"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:285
+#: lib/Silki/Controller/Wiki.pm:349
 msgid "%1 is already a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:257
+#: lib/Silki/Controller/Wiki.pm:321
 msgid "%1 is no longer an admin for this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:303
+#: lib/Silki/Controller/Wiki.pm:367
 msgid "%1 is now a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:249
+#: lib/Silki/Controller/Wiki.pm:313
 msgid "%1 is now an admin for this wiki."
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:41
+#: lib/Silki/Controller/Wiki.pm:43
 msgid "%1 overview"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:236
+#: lib/Silki/Controller/Wiki.pm:300
 msgid "%1 was removed as a wiki member."
 msgstr ""
 
@@ -63,7 +63,7 @@ msgid "%datetime(%1)"
 msgstr ""
 
 #. ($address->address()
-#: lib/Silki/Controller/Wiki.pm:335
+#: lib/Silki/Controller/Wiki.pm:399
 msgid "A user account for %1 has been created, and this person has been invited to join this wiki."
 msgstr ""
 
@@ -89,7 +89,7 @@ msgid "Admin"
 msgstr ""
 
 #. ($wiki->file_count()
-#: share/mason/wiki/autohandler:9
+#: share/mason/wiki/autohandler:18
 msgid "All Attachments (%1)"
 msgstr ""
 
@@ -98,16 +98,16 @@ msgstr ""
 msgid "All Attachments in the %1 wiki"
 msgstr ""
 
-#: share/mason/wiki/autohandler:9
+#: share/mason/wiki/autohandler:18
 msgid "All attachments in this wiki"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:295
+#: lib/Silki/Controller/Wiki.pm:359
 msgid "An unactived account for %1 already exists. Once the account is activated, this user will be able to access this wiki."
 msgstr ""
 
-#: share/mason/page/autohandler:13
+#: share/mason/page/autohandler:17
 msgid "Attachments"
 msgstr ""
 
@@ -116,7 +116,7 @@ msgstr ""
 msgid "Attachments for %1"
 msgstr ""
 
-#: share/mason/page/autohandler:13
+#: share/mason/page/autohandler:17
 msgid "Attachments for this page"
 msgstr ""
 
@@ -128,7 +128,7 @@ msgstr ""
 msgid "Back to current revision"
 msgstr ""
 
-#: share/mason/wiki/autohandler:22
+#: share/mason/wiki/autohandler:31
 msgid "Change settings for this wiki"
 msgstr ""
 
@@ -168,7 +168,7 @@ msgstr ""
 msgid "Download this file"
 msgstr ""
 
-#: share/mason/page/autohandler:9
+#: share/mason/page/autohandler:13
 msgid "Edit"
 msgstr ""
 
@@ -177,7 +177,7 @@ msgstr ""
 msgid "Edit %1"
 msgstr ""
 
-#: share/mason/page/autohandler:9
+#: share/mason/page/autohandler:13
 msgid "Edit this page"
 msgstr ""
 
@@ -214,7 +214,7 @@ msgstr ""
 msgid "Hi,"
 msgstr ""
 
-#: share/mason/page/autohandler:17
+#: share/mason/page/autohandler:21
 msgid "History"
 msgstr ""
 
@@ -264,7 +264,7 @@ msgstr ""
 msgid "Like a public wiki, but users must log-in to edit. However, users do not have to be explicitly invited to become members."
 msgstr ""
 
-#: share/mason/wiki/autohandler:17
+#: share/mason/wiki/autohandler:26
 msgid "Links to pages which do not yet exist"
 msgstr ""
 
@@ -323,7 +323,7 @@ msgid "Orphaned pages are pages which no other page in the system links to, maki
 msgstr ""
 
 #. ($wiki->orphaned_page_count()
-#: share/mason/wiki/autohandler:13
+#: share/mason/wiki/autohandler:22
 msgid "Orphans (%1)"
 msgstr ""
 
@@ -341,7 +341,7 @@ msgstr ""
 msgid "Page:"
 msgstr ""
 
-#: share/mason/wiki/autohandler:13
+#: share/mason/wiki/autohandler:22
 msgid "Pages with no incoming links"
 msgstr ""
 
@@ -363,7 +363,7 @@ msgid "Permissions"
 msgstr ""
 
 #. ($perm_loc)
-#: lib/Silki/Controller/Wiki.pm:187
+#: lib/Silki/Controller/Wiki.pm:251
 msgid "Permissions for this wiki have been set to %1"
 msgstr ""
 
@@ -397,16 +397,16 @@ msgstr ""
 msgid "Public Wikis"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:45
+#: lib/Silki/Controller/Wiki.pm:47
 msgid "Recent Changes"
 msgstr ""
 
 #. ($wiki->title()
-#: share/mason/wiki/recent:37
+#: lib/Silki/Controller/Wiki.pm:140 share/mason/wiki/autohandler:7 share/mason/wiki/recent:37
 msgid "Recent Changes in %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:46
+#: lib/Silki/Controller/Wiki.pm:48
 msgid "Recent activity in this wiki"
 msgstr ""
 
@@ -454,7 +454,7 @@ msgstr ""
 msgid "Set your preferences"
 msgstr ""
 
-#: share/mason/wiki/autohandler:22
+#: share/mason/wiki/autohandler:31
 msgid "Settings"
 msgstr ""
 
@@ -493,11 +493,11 @@ msgstr ""
 msgid "The email address you provided is already in use by another account."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:221
+#: lib/Silki/Controller/Page.pm:220
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:129
+#: lib/Silki/Controller/Wiki.pm:193
 msgid "The file has been uploaded."
 msgstr ""
 
@@ -542,7 +542,7 @@ msgstr ""
 msgid "This page has %quant(%1,revision,revisions)"
 msgstr ""
 
-#: share/mason/page/autohandler:17
+#: share/mason/page/autohandler:21
 msgid "This page's history of revisions"
 msgstr ""
 
@@ -620,6 +620,10 @@ msgstr ""
 msgid "Username:"
 msgstr ""
 
+#: share/mason/page/autohandler:9
+msgid "View"
+msgstr ""
+
 #. ($user->best_name()
 #: lib/Silki/Role/Controller/User.pm:60
 msgid "View and change preferences for %1"
@@ -629,7 +633,7 @@ msgstr ""
 msgid "View details about your profile"
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:42
+#: lib/Silki/Controller/Page.pm:42 share/mason/page/autohandler:9
 msgid "View this page"
 msgstr ""
 
@@ -638,7 +642,7 @@ msgid "Wanted Pages"
 msgstr ""
 
 #. ($wiki->wanted_page_count()
-#: share/mason/wiki/autohandler:17
+#: share/mason/wiki/autohandler:26
 msgid "Wanted Pages (%1)"
 msgstr ""
 
@@ -784,7 +788,7 @@ msgid "public-read-only"
 msgstr "Public can read, log-in to edit"
 
 #. ($revision->revision_number()
-#: share/mason/wiki/recent:13 share/mason/wiki/search_results:12
+#: lib/Silki/Controller/Wiki.pm:121 share/mason/wiki/recent:13 share/mason/wiki/search_results:12
 msgid "revision %1"
 msgstr ""
 

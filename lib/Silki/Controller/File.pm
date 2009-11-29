@@ -87,6 +87,7 @@ sub _download {
     my $disposition  = shift;
     my $content_type = shift || $file->mime_type();
 
+    $c->response()->status(200);
     $c->response()->content_type($content_type);
 
     my $name = $file->file_name();
@@ -96,6 +97,8 @@ sub _download {
         ->header( 'Content-Disposition' => qq{$disposition; filename="$name"} );
     $c->response()->content_length( $file->file_size() );
     $c->response()->header( 'X-Sendfile' => $file->file_on_disk() );
+
+    $c->detach();
 }
 
 sub thumbnail : Chained('_set_file') : PathPart('thumbnail') : Args(0) {
@@ -114,7 +117,7 @@ sub thumbnail : Chained('_set_file') : PathPart('thumbnail') : Args(0) {
     $c->response()->content_length( -s $thumbnail );
     $c->response()->header( 'X-Sendfile' => $thumbnail );
 
-    return;
+    $c->detach();
 }
 
 no Moose;

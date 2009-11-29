@@ -27,13 +27,18 @@ use Storable qw( nfreeze thaw );
 use Fey::ORM::Table;
 use MooseX::Params::Validate qw( validated_list validated_hash );
 
+with 'Silki::Role::Schema::URIMaker';
+
 my $Schema = Silki::Schema->Schema();
 
 has_policy 'Silki::Schema::Policy';
 
 has_table( $Schema->table('PageRevision') );
 
-has_one( $Schema->table('Page') );
+has_one page => (
+    table   => $Schema->table('Page'),
+    handles => ['domain'],
+);
 
 has_one( $Schema->table('User') );
 
@@ -186,6 +191,14 @@ sub _process_extracted_links {
     return \@existing, \@pending, \@files;
 }
 
+sub _base_uri_path {
+    my $self = shift;
+
+    my $page = $self->page();
+
+    return $page->_base_uri_path() . '/revision/' . $self->revision_number();
+}
+
 sub Diff {
     my $class = shift;
     my ( $rev1, $rev2 ) = validated_list(
@@ -313,7 +326,6 @@ sub content_as_html {
     my (%p) = validated_hash(
         \@_,
         user       => { isa => 'Silki::Schema::User' },
-        wiki       => { isa => 'Silki::Schema::Wiki' },
         for_editor => { isa => Bool, default => 0 },
     );
 
@@ -324,6 +336,7 @@ sub content_as_html {
 
     my $html = Silki::Markdent::Handler::HTMLStream->new(
         output => $fh,
+        wiki   => $page->wiki(),
         %p,
     );
 

@@ -5,6 +5,7 @@ use warnings;
 
 use Data::Page;
 use Data::Page::FlickrLike;
+use DateTime::Format::W3CDTF 0.05;
 use Email::Address;
 use File::Basename qw( dirname );
 use Path::Class ();
@@ -14,6 +15,7 @@ use Silki::I18N qw( loc );
 use Silki::Schema::Page;
 use Silki::Schema::Wiki;
 use Silki::Util qw( string_is_empty );
+use XML::Atom::SimpleFeed;
 
 use Moose;
 
@@ -97,6 +99,71 @@ sub recent : Chained('_set_wiki') : PathPart('recent') : Args(0) {
     );
 
     $c->stash()->{template} = '/wiki/recent';
+}
+
+sub recent_atom : Chained('_set_wiki') : PathPart('recent.atom') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    my $wiki = $c->stash()->{wiki};
+
+    my $atom_mime_type = 'application/atom+xml';
+
+    my $revisions = $wiki->revisions( limit => 50 );
+
+    my @entries;
+
+    my $updated;
+    while ( my ( $page, $revision ) = $revisions->next() ) {
+        $updated ||= $revision->creation_datetime();
+
+        my $entry_title = $page->title() . '('
+            . loc( 'revision %1', $revision->revision_number() ) . ')';
+
+        my $entry_uri = $revision->uri( with_host => 1 );
+
+        my $content = $revision->content_as_html( user => $c->user() );
+
+        push @entries,
+            [
+            title   => $entry_title,
+            link    => $entry_uri,
+            id      => $entry_uri,
+            author  => $revision->user()->best_name(),
+            updated => DateTime::Format::W3CDTF->format_datetime(
+                $revision->creation_datetime()->clone()->set_time_zone('UTC')
+            ),
+            content => { type => 'html', content => $content },
+            ];
+    }
+
+    my $feed_uri = $wiki->uri( view => 'recent', with_host => 1 );
+
+    my $feed = XML::Atom::SimpleFeed->new(
+        title => loc( 'Recent Changes in %1', $wiki->title() ),
+        link  => $feed_uri,
+        id    => $feed_uri,
+        link  => {
+            rel  => 'self',
+            href => $wiki->uri( view => 'recent.atom', with_host => 1 )
+        },
+        updated => DateTime::Format::W3CDTF->format_datetime(
+            $updated->clone()->set_time_zone('UTC')
+        ),
+    );
+
+    $feed->add_entry( @{$_} ) for @entries;
+
+    $c->response()->content_type($atom_mime_type);
+
+    my $xml = $feed->as_string();
+    $c->response()->content_length( length $xml );
+
+    $c->response()->body($xml);
+
+    $c->response()->status(200);
+
+    $c->detach();
 }
 
 sub attachments : Chained('_set_wiki') : PathPart('attachments') : Args(0) {

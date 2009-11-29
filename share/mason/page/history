@@ -24,7 +24,7 @@
         <a href="<% $page->uri( ) %>"><% loc( 'Revision %1', $revision->revision_number() ) %></a>
         (<% loc('current') %>)
 %   } else {
-        <a href="<% $page->uri( view => 'revision/' . $revision->revision_number() ) %>"><% loc( 'Revision %1', $revision->revision_number() ) %></a>
+        <a href="<% $revision->uri() %>"><% loc( 'Revision %1', $revision->revision_number() ) %></a>
 %   }
       </td>
       <td><% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $revision->creation_datetime() ) ) %></td>

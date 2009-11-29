@@ -62,7 +62,6 @@ sub page_GET_html {
     $c->stash()->{is_current_revision} = 1;
     $c->stash()->{html}                = $revision->content_as_html(
         user => $c->user(),
-        wiki => $page->wiki(),
     );
 
     $c->stash()->{template} = '/page/view';
@@ -76,7 +75,6 @@ sub page_edit_form : Chained('_set_page') : PathPart('edit_form') : Args(0) {
 
     $c->stash()->{html} = $page->most_recent_revision()->content_as_html(
         user       => $c->user(),
-        wiki       => $page->wiki(),
         for_editor => 1,
     );
 
@@ -129,7 +127,6 @@ sub revision : Chained('_set_page') : PathPart('revision') : Args(1) {
     $c->stash()->{is_current_revision} = 0;
     $c->stash()->{html}                = $revision->content_as_html(
         user => $c->user(),
-        wiki => $page->wiki(),
     );
 
     $c->stash()->{template} = '/page/view';
