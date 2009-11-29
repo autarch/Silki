@@ -130,6 +130,9 @@ sub _link {
     my $text = decode_entities( $self->get_elem_contents($node) );
     $text =~ s/^\s+|\s+$//g;
 
+    # CKEditor can leave behind things like <a href="..."> </a>.
+    return unless defined $text && length $text;
+
     if ( my $path = $self->get_wiki_page($url) ) {
         if ( $path =~ m{ /wiki/([^/]+)/page/([^/]+) }x ) {
             return $self->_link_to_page( $1, Silki::Schema::Page->URIPathToTitle($2), $text );
