@@ -20,32 +20,32 @@ msgid "# of Revisions"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:349
+#: lib/Silki/Controller/Wiki.pm:308
 msgid "%1 is already a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:321
+#: lib/Silki/Controller/Wiki.pm:280
 msgid "%1 is no longer an admin for this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:367
+#: lib/Silki/Controller/Wiki.pm:326
 msgid "%1 is now a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:313
+#: lib/Silki/Controller/Wiki.pm:272
 msgid "%1 is now an admin for this wiki."
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:43
+#: lib/Silki/Controller/Wiki.pm:47
 msgid "%1 overview"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:300
+#: lib/Silki/Controller/Wiki.pm:259
 msgid "%1 was removed as a wiki member."
 msgstr ""
 
@@ -63,7 +63,7 @@ msgid "%datetime(%1)"
 msgstr ""
 
 #. ($address->address()
-#: lib/Silki/Controller/Wiki.pm:399
+#: lib/Silki/Controller/Wiki.pm:358
 msgid "A user account for %1 has been created, and this person has been invited to join this wiki."
 msgstr ""
 
@@ -103,7 +103,7 @@ msgid "All attachments in this wiki"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:359
+#: lib/Silki/Controller/Wiki.pm:318
 msgid "An unactived account for %1 already exists. Once the account is activated, this user will be able to access this wiki."
 msgstr ""
 
@@ -218,7 +218,12 @@ msgstr ""
 msgid "History"
 msgstr ""
 
-#: lib/Silki/Controller/Base.pm:46
+#. ($page->title()
+#: lib/Silki/Controller/Page.pm:176 share/mason/autohandler:36
+msgid "History for %1"
+msgstr ""
+
+#: lib/Silki/Controller/Base.pm:43
 msgid "Home"
 msgstr ""
 
@@ -363,7 +368,7 @@ msgid "Permissions"
 msgstr ""
 
 #. ($perm_loc)
-#: lib/Silki/Controller/Wiki.pm:251
+#: lib/Silki/Controller/Wiki.pm:210
 msgid "Permissions for this wiki have been set to %1"
 msgstr ""
 
@@ -397,16 +402,16 @@ msgstr ""
 msgid "Public Wikis"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:47
+#: lib/Silki/Controller/Wiki.pm:51
 msgid "Recent Changes"
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:140 share/mason/wiki/autohandler:7 share/mason/wiki/recent:37
+#: lib/Silki/Controller/Wiki.pm:119 share/mason/autohandler:31 share/mason/wiki/autohandler:7 share/mason/wiki/recent:37
 msgid "Recent Changes in %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:48
+#: lib/Silki/Controller/Wiki.pm:52
 msgid "Recent activity in this wiki"
 msgstr ""
 
@@ -493,11 +498,11 @@ msgstr ""
 msgid "The email address you provided is already in use by another account."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:220
+#: lib/Silki/Controller/Page.pm:241
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:193
+#: lib/Silki/Controller/Wiki.pm:152
 msgid "The file has been uploaded."
 msgstr ""
 
@@ -633,7 +638,7 @@ msgstr ""
 msgid "View details about your profile"
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:42 share/mason/page/autohandler:9
+#: lib/Silki/Controller/Page.pm:45 share/mason/page/autohandler:9
 msgid "View this page"
 msgstr ""
 
@@ -708,12 +713,12 @@ msgid "You have created a wiki account on the %1 server. You must <a href=\"%htm
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Base.pm:142 lib/Silki/Controller/Base.pm:158
+#: lib/Silki/Controller/Base.pm:139 lib/Silki/Controller/Base.pm:155
 msgid "You must be a member of the %1 wiki to perform this action."
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Base.pm:134
+#: lib/Silki/Controller/Base.pm:131
 msgid "You must log in to to perform this action in the %1 wiki."
 msgstr ""
 
@@ -788,7 +793,7 @@ msgid "public-read-only"
 msgstr "Public can read, log-in to edit"
 
 #. ($revision->revision_number()
-#: lib/Silki/Controller/Wiki.pm:121 share/mason/wiki/recent:13 share/mason/wiki/search_results:12
+#: lib/Silki/Role/Controller/RevisionsAtomFeed.pm:26 share/mason/wiki/recent:13 share/mason/wiki/search_results:12
 msgid "revision %1"
 msgstr ""
 

@@ -14,7 +14,10 @@ use Moose;
 
 BEGIN { extends 'Silki::Controller::Base' }
 
-with 'Silki::Role::Controller::UploadHandler';
+with qw(
+    Silki::Role::Controller::UploadHandler
+    Silki::Role::Controller::RevisionsAtomFeed
+);
 
 sub _set_page : Chained('/wiki/_set_wiki') : PathPart('page') : CaptureArgs(1) {
     my $self      = shift;
@@ -157,6 +160,24 @@ sub history : Chained('_set_page') : PathPart('history') : Args(0) {
         = $page->revisions( limit => $limit, offset => $offset );
 
     $c->stash()->{template} = '/page/history';
+}
+
+sub history_atom : Chained('_set_page') : PathPart('history.atom') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    my $page = $c->stash()->{page};
+
+    my $revisions = $page->revisions( limit => 50 );
+
+    $self->_output_atom_feed_for_revisions(
+        $c,
+        $revisions,
+        loc( 'History for %1', $page->title() ),
+        $page->uri( view => 'history',      with_host => 1 ),
+        $page->uri( view => 'history.atom', with_host => 1 ),
+        $page,
+    );
 }
 
 sub diff : Chained('_set_page') : PathPart('diff') : Args(0) {

@@ -2,15 +2,6 @@
 return $m->call_next();
 </%init>
 
-<%method head_links>
-<link rel="alternate" type="application/atom+xml"
-      title="<% loc( 'Recent Changes in %1', $wiki->title() ) %>"
-      href="<% $wiki->uri( view => 'recent.atom' ) %>" />
-<%args>
-$wiki
-</%args>
-</%method>
-
 <%method local_nav>
   <ul>
     <li>
