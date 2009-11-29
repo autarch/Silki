@@ -119,7 +119,11 @@ sub revision : Chained('_set_page') : PathPart('revision') : Args(1) {
     }
 
     unless ($revision) {
-        $c->redirect_and_detch( $page->uri( with_host => 1 ) );
+        $c->redirect_and_detach( $page->uri( with_host => 1 ) );
+    }
+
+    if ( $revision->revision_number() == $page->most_recent_revision()->revision_number() ) {
+        $c->redirect_and_detach( $page->uri( with_host => 1 ) );
     }
 
     $c->stash()->{page}                = $page;
