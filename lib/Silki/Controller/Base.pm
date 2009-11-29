@@ -23,9 +23,6 @@ sub begin : Private {
 
     Silki::Schema->ClearObjectCaches();
 
-    #    $self->_require_authen($c)
-    #        if $self->_uri_requires_authen( $c->request()->uri() );
-
     return unless $c->request()->looks_like_browser();
 
     my $config = Silki::Config->new();
