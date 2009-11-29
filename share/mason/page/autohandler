@@ -5,6 +5,10 @@ return $m->call_next();
 <%method local_nav>
   <ul>
     <li>
+      <a href="<% $page->uri() %>"
+         title="<% loc('View this page') %>"><% loc('View') %></a>
+    </li>
+    <li>
       <a href="<% $page->uri( view => 'edit_form' ) %>"
          title="<% loc('Edit this page') %>"><% loc('Edit') %></a>
     </li>
