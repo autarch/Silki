@@ -8,7 +8,7 @@
   </thead>
 % while ( my ( $page, $revision ) = $pages->next() ) {
   <tbody>
-    <tr class="<% $pages->index() % 2 ? 'odd' : 'even' %>">
+    <tr class="has-child-row <% $pages->index() % 2 ? 'odd' : 'even' %>">
       <td><a href="<% $page->uri() %>"><% $page->title() %></a> (<% loc( 'revision %1', $revision->revision_number() ) %>)</td>
       <td><% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $revision->creation_datetime() ) ) %></td>
       <td><a href="<% $wiki->uri( view => 'user/' . $revision->user()->user_id() ) %>"><% $revision->user()->best_name() %></a></td>

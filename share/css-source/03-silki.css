@@ -218,6 +218,10 @@ table.standard-table tr.even {
     border-left: 5px solid #21379d;
 }
 
+table.standard-table tr.has-child-row {
+    border-bottom: 0;
+}
+
 table.standard-table tbody:hover tr {
     background-color: #EEE;
 }
