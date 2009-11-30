@@ -218,7 +218,6 @@ sub quant {
 
 sub _number {
     my $self = shift;
-    my $lang = shift;
     my $num  = shift;
 
     return $num;
