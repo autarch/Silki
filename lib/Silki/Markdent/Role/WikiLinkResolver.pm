@@ -53,6 +53,7 @@ sub _parse_file_link {
         $display_text = $self->_link_text_for_file(
             $wiki,
             $file,
+            $file_id,
         );
     }
 
@@ -112,7 +113,7 @@ sub _link_text_for_file {
     my $wiki = shift;
     my $file = shift;
 
-    return loc('Nonexistent file: $1') unless $file;
+    return loc('(Link to non-existent file)') unless $file;
 
     my $text = $file->file_name();
 

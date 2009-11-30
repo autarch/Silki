@@ -54,7 +54,7 @@ sub wiki_link {
 
     return unless $link_data;
 
-    return $link_data->{file}
+    return exists $link_data->{file}
         ? $self->_link_to_file($link_data)
         : $self->_link_to_page($link_data);
 }
@@ -64,6 +64,11 @@ sub _link_to_file {
     my $p    = shift;
 
     my $file = $p->{file};
+
+    unless ( defined $file ) {
+        $self->_stream()->text( $p->{text} );
+        return;
+    }
 
     unless (
         $self->_user()->has_permission_in_wiki(
