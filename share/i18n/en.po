@@ -89,7 +89,7 @@ msgid "Admin"
 msgstr ""
 
 #. ($wiki->file_count()
-#: share/mason/wiki/autohandler:18
+#: share/mason/wiki/autohandler:9
 msgid "All Attachments (%1)"
 msgstr ""
 
@@ -98,13 +98,17 @@ msgstr ""
 msgid "All Attachments in the %1 wiki"
 msgstr ""
 
-#: share/mason/wiki/autohandler:18
+#: share/mason/wiki/autohandler:9
 msgid "All attachments in this wiki"
 msgstr ""
 
 #. ($user->best_name()
 #: lib/Silki/Controller/Wiki.pm:318
 msgid "An unactived account for %1 already exists. Once the account is activated, this user will be able to access this wiki."
+msgstr ""
+
+#: share/mason/file/delete-confirmation:2
+msgid "Are you sure you want to delete this file? Once you do, it cannot be recovered."
 msgstr ""
 
 #: share/mason/page/autohandler:17
@@ -128,7 +132,7 @@ msgstr ""
 msgid "Back to current revision"
 msgstr ""
 
-#: share/mason/wiki/autohandler:31
+#: share/mason/wiki/autohandler:22
 msgid "Change settings for this wiki"
 msgstr ""
 
@@ -164,6 +168,15 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
+#: share/mason/file/delete-confirmation:19
+msgid "Delete this file?"
+msgstr ""
+
+#. ($file->file_name()
+#: lib/Silki/Controller/File.pm:71
+msgid "Deleted the file %1"
+msgstr ""
+
 #: lib/Silki/Markdent/Handler/HTMLStream.pm:81 share/mason/file/view-in-frame:11 share/mason/lib/table/attachments-table.mas:16 share/mason/lib/table/attachments-table.mas:19
 msgid "Download this file"
 msgstr ""
@@ -195,6 +208,11 @@ msgstr ""
 
 #: share/mason/page/attachments:18 share/mason/wiki/attachments:17
 msgid "File"
+msgstr ""
+
+#. ($file->file_name()
+#: share/mason/file/delete-confirmation:6
+msgid "File: <em>%html(%1)</em>"
 msgstr ""
 
 #. (format_bytes( Silki::Config->new()
@@ -269,7 +287,7 @@ msgstr ""
 msgid "Like a public wiki, but users must log-in to edit. However, users do not have to be explicitly invited to become members."
 msgstr ""
 
-#: share/mason/wiki/autohandler:26
+#: share/mason/wiki/autohandler:17
 msgid "Links to pages which do not yet exist"
 msgstr ""
 
@@ -328,7 +346,7 @@ msgid "Orphaned pages are pages which no other page in the system links to, maki
 msgstr ""
 
 #. ($wiki->orphaned_page_count()
-#: share/mason/wiki/autohandler:22
+#: share/mason/wiki/autohandler:13
 msgid "Orphans (%1)"
 msgstr ""
 
@@ -346,7 +364,7 @@ msgstr ""
 msgid "Page:"
 msgstr ""
 
-#: share/mason/wiki/autohandler:22
+#: share/mason/wiki/autohandler:13
 msgid "Pages with no incoming links"
 msgstr ""
 
@@ -407,7 +425,7 @@ msgid "Recent Changes"
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:119 share/mason/autohandler:31 share/mason/wiki/autohandler:7 share/mason/wiki/recent:37
+#: lib/Silki/Controller/Wiki.pm:119 share/mason/autohandler:31 share/mason/wiki/recent:37
 msgid "Recent Changes in %1"
 msgstr ""
 
@@ -459,7 +477,7 @@ msgstr ""
 msgid "Set your preferences"
 msgstr ""
 
-#: share/mason/wiki/autohandler:31
+#: share/mason/wiki/autohandler:22
 msgid "Settings"
 msgstr ""
 
@@ -498,7 +516,7 @@ msgstr ""
 msgid "The email address you provided is already in use by another account."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:241
+#: lib/Silki/Controller/Page.pm:242
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
@@ -647,7 +665,7 @@ msgid "Wanted Pages"
 msgstr ""
 
 #. ($wiki->wanted_page_count()
-#: share/mason/wiki/autohandler:26
+#: share/mason/wiki/autohandler:17
 msgid "Wanted Pages (%1)"
 msgstr ""
 
@@ -671,6 +689,10 @@ msgstr ""
 #. ($c->user()
 #: share/mason/site/wikis:35
 msgid "Wikis readable by %1"
+msgstr ""
+
+#: share/mason/file/delete-confirmation:11
+msgid "Yes, delete it"
 msgstr ""
 
 #: lib/Silki/Gettext.pm:238
@@ -793,7 +815,7 @@ msgid "public-read-only"
 msgstr "Public can read, log-in to edit"
 
 #. ($revision->revision_number()
-#: lib/Silki/Role/Controller/RevisionsAtomFeed.pm:26 share/mason/wiki/recent:13 share/mason/wiki/search_results:12
+#: lib/Silki/Role/Controller/RevisionsAtomFeed.pm:29 share/mason/wiki/recent:13 share/mason/wiki/search_results:12
 msgid "revision %1"
 msgstr ""
 

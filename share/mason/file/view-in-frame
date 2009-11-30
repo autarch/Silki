@@ -8,7 +8,7 @@
         width="100%" height="100%"></iframe>
 
 <p>
-  <a href="<% $file->uri( view => 'download' ) %>"><% loc( 'Download this file' ) %></a>
+  <a href="<% $file->uri( view => 'content_as_attachment' ) %>"><% loc( 'Download this file' ) %></a>
 </p>
 <%args>
 $file

@@ -55,6 +55,24 @@ sub file_GET_html {
     return;
 }
 
+sub file_DELETE {
+    my $self = shift;
+    my $c    = shift;
+
+    # No need to for authen check since that happens automatically for DELETE
+    # method requests.
+
+    my $file = $c->stash()->{file};
+
+    my $msg = loc( 'Deleted the file %1', $file->file_name() );
+
+    $file->delete();
+
+    $c->session_object()->add_message($msg);
+
+    $c->redirect_and_detach( $c->stash()->{wiki}->uri( with_host => 1 ) );
+}
+
 sub content : Chained('_set_file') : PathPart('content') : Args(0) {
     my $self = shift;
     my $c    = shift;
@@ -71,7 +89,7 @@ sub content : Chained('_set_file') : PathPart('content') : Args(0) {
     return;
 }
 
-sub download : Chained('_set_file') : PathPart('download') : Args(0) {
+sub download : Chained('_set_file') : PathPart('content_as_attachment') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
@@ -118,6 +136,20 @@ sub thumbnail : Chained('_set_file') : PathPart('thumbnail') : Args(0) {
     $c->response()->header( 'X-Sendfile' => $thumbnail );
 
     $c->detach();
+}
+
+sub delete_confirmation : Chained('_set_file') : PathPart('delete_confirmation') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    my $wiki = $c->stash()->{wiki};
+    $c->redirect_and_detach( $wiki->uri( with_host => 1 ) )
+        unless $c->user()->has_permission_in_wiki(
+        wiki       => $wiki,
+        permission => Silki::Schema::Permission->Delete(),
+        );
+
+    $c->stash()->{template} = '/file/delete-confirmation';
 }
 
 no Moose;
