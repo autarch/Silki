@@ -49,17 +49,17 @@ msgstr ""
 msgid "%1 was removed as a wiki member."
 msgstr ""
 
-#: lib/Silki/Gettext.pm:241
-msgid "%date(%1)"
-msgstr ""
-
-#: lib/Silki/Gettext.pm:347
+#: lib/Silki/Gettext.pm:346
 msgid "%date(%1) %at_time(%1)"
 msgstr ""
 
 #. ($c->user()
 #: share/mason/lib/table/attachments-table.mas:29 share/mason/page/history:30 share/mason/wiki/recent:14 share/mason/wiki/search_results:13
 msgid "%datetime(%1)"
+msgstr ""
+
+#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:116
+msgid "(Link to non-existent file)"
 msgstr ""
 
 #. ($address->address()
@@ -285,10 +285,6 @@ msgstr ""
 
 #: share/mason/wiki/permissions_form:22
 msgid "Like a public wiki, but users must log-in to edit. However, users do not have to be explicitly invited to become members."
-msgstr ""
-
-#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:116
-msgid "Link to non-existent file"
 msgstr ""
 
 #: share/mason/wiki/autohandler:17
@@ -587,11 +583,11 @@ msgstr ""
 msgid "This wiki is currently <strong>%1</strong>."
 msgstr ""
 
-#: lib/Silki/Gettext.pm:240
+#: lib/Silki/Gettext.pm:239
 msgid "Three days ago"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:265 lib/Silki/Gettext.pm:346
+#: lib/Silki/Gettext.pm:264 lib/Silki/Gettext.pm:345
 msgid "Three days ago %at_time(%1)"
 msgstr ""
 
@@ -603,19 +599,19 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:237
+#: lib/Silki/Gettext.pm:236
 msgid "Today"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:262 lib/Silki/Gettext.pm:343
+#: lib/Silki/Gettext.pm:261 lib/Silki/Gettext.pm:342
 msgid "Today %at_time(%1)"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:239
+#: lib/Silki/Gettext.pm:238
 msgid "Two days ago"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:264 lib/Silki/Gettext.pm:345
+#: lib/Silki/Gettext.pm:263 lib/Silki/Gettext.pm:344
 msgid "Two days ago %at_time(%1)"
 msgstr ""
 
@@ -695,11 +691,11 @@ msgstr ""
 msgid "Yes, delete it"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:238
+#: lib/Silki/Gettext.pm:237
 msgid "Yesterday"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:263 lib/Silki/Gettext.pm:344
+#: lib/Silki/Gettext.pm:262 lib/Silki/Gettext.pm:343
 msgid "Yesterday %at_time(%1)"
 msgstr ""
 
@@ -786,7 +782,7 @@ msgstr ""
 msgid "Your profile"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:284
+#: lib/Silki/Gettext.pm:283
 msgid "at %time(%1)"
 msgstr ""
 
@@ -794,7 +790,11 @@ msgstr ""
 msgid "current"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:266
+#: lib/Silki/Gettext.pm:240
+msgid "on %date(%1)"
+msgstr ""
+
+#: lib/Silki/Gettext.pm:265
 msgid "on %date(%1) %at_time(%1)"
 msgstr ""
 

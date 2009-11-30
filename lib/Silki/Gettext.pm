@@ -237,7 +237,7 @@ sub on_date {
         when ('yesterday')      { $id = loc('Yesterday') }
         when ('two_days_ago')   { $id = loc('Two days ago') }
         when ('three_days_ago') { $id = loc('Three days ago') }
-        when ('any')            { $id = loc('%date(%1)') }
+        when ('any')            { $id = loc('on %date(%1)') }
         default { die "Unknown day key: $day_key" }
     }
 
