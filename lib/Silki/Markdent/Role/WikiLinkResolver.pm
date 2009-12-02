@@ -6,9 +6,6 @@ use warnings;
 our $VERSION = '0.01';
 
 use Silki::I18N qw( loc );
-use Silki::Schema::File;
-use Silki::Schema::Page;
-use Silki::Schema::Wiki;
 
 use namespace::autoclean;
 use Moose::Role;
@@ -133,5 +130,11 @@ sub _page_for_title {
         wiki_id => $wiki->wiki_id(),
     ) || undef;
 }
+
+# These classes may in turn load other classes which use this role, so they
+# need to be loaded after the role is defined.
+require Silki::Schema::File;
+require Silki::Schema::Page;
+require Silki::Schema::Wiki;
 
 1;
