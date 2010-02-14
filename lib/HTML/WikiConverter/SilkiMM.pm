@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use HTML::Entities qw( decode_entities );
+use List::AllUtils qw( all max );
 use Params::Validate qw( ARRAYREF );
 
 use Moose;
@@ -37,18 +38,20 @@ sub rules {
         %{$rules},
         table => {
             block => 1,
+            start => \&_table_start,
             end   => \&_table_end,
         },
         tr => {
             start       => \&_tr_start,
-            end         => qq{ |\n},
-            line_format => 'single'
+            end         => \&_tr_end,
+            line_format => 'multi'
         },
         td => {
-            start => \&_td_start,
-            end   => q{ }
+            start       => \&_td_start,
+            end         => \&_td_end,
+            line_format => 'multi'
         },
-        th => { alias   => 'td', },
+        th => { alias   => 'td' },
         a  => { replace => \&_link },
         br => { replace => q{} },
         p  => {
@@ -71,56 +74,163 @@ sub attributes {
     };
 }
 
-sub _table_end
-{
-    my $self = shift;
+sub get_elem_contents {
+    my ( $self, $node ) = @_;
+    my $str = join '', map { $self->__wikify($_) } $node->content_list;
 
-    delete $self->{__row_count__};
-    delete $self->{__th_count__};
+    if ( $self->{__in_table__} ) {
+        $self->{__current_cell__}{content} .= $str;
+    }
+    else {
+        return $str;
+    }
+}
+
+sub _table_start {
+    my $self = shift;
+    warn "TABLE START\n";
+    $self->{__in_table__} = 1;
+    $self->{__rows__}     = [];
 
     return q{};
 }
 
-
-# This method is first called on the _second_ row, go figure
-sub _tr_start
-{
+sub _tr_start {
     my $self = shift;
+    warn "TR START\n";
 
-    my $start = q{};
-    if ( $self->{__row_count__} == 2 )
-    {
-        $start = '+----' x $self->{__th_count__};
-        $start .= qq{+\n};
-    }
+    $self->{__current_row__} = [];
 
-    $self->{__row_count__}++;
-
-    return $start;
+    return q{};
 }
 
 # This method is called for the first cell in a table, and before the
 # first call to table or tr start!
-sub _td_start
-{
+sub _td_start {
+    my $self = shift;
+    my $node = shift;
+
+    warn "TD START\n";
+
+    $self->{__current_cell__} = {
+        align => $node->attr('align') || q{},
+        is_header_cell => ( $node->tag() eq 'th' ? 1 : 0 ),
+        content => {},
+    };
+
+    return q{};
+}
+
+sub _td_end {
     my $self = shift;
 
-    $self->{__row_count__} = 1
-        unless exists $self->{__row_count__};
+    warn "TD END\n";
 
-    if ( $self->{__row_count__} == 1 )
-    {
-        if ( exists $self->{__th_count__} )
-        {
-            $self->{__th_count__}++;
-        }
-        else
-        {
-            $self->{__th_count__} = 1;
+    $self->{__current_cell__}{content} =~ s/^\s+|\s+$//gm;
+
+    push @{ $self->{__current_row__} }, $self->{__current_cell__};
+
+    return q{};
+}
+
+sub _tr_end {
+    my $self = shift;
+
+    warn "TR END\n";
+
+    push @{ $self->{__rows__} }, $self->{__current_row__};
+
+    return q{};
+}
+
+sub _table_end {
+    my $self = shift;
+
+    warn "TABLE END\n";
+
+    $self->{__in_table__} = 0;
+
+    my @longest;
+
+    for my $row ( @{ $self->{__rows__} } ) {
+        for my $i ( 0 .. $#{$row} ) {
+            my $length = max map {length} split /\n/, $row->[$i]{content};
+
+            $longest[$i] ||= 0;
+            $longest[$i] = $length
+                if $length > $longest[$i];
         }
     }
 
-    return '| ';
+    my $table = q{};
+
+    for my $html_row ( @{ $self->{__rows__} } ) {
+        $table .= $self->_html_row_to_wikitext( $html_row, \@longest );
+    }
+
+    $table .= "\n";
+
+    return $table;
+}
+
+sub _html_row_to_wikitext {
+    my $self     = shift;
+    my $html_row = shift;
+    my $longest  = shift;
+
+    if ( !@{$html_row} ) {
+        return "\n";
+    }
+
+    my $is_header = all { $_->{is_header_cell} } @{$html_row};
+
+    my $wikitext = q{};
+
+    my @wiki_rows;
+    for my $i ( 0 .. $#{$html_row} ) {
+        my $length = $longest->[$i] + 4;
+
+        my $align = $html_row->[$i]{align} || 'left';
+
+        my $format
+            = $align eq 'left'   ? qq{ %${length}s   }
+            : $align eq 'center' ? qq{  %${length}s  }
+            :                      qq{   %${length}s };
+
+        my @lines = split /\n/, $html_row->[$i]{content};
+        for my $j ( 0 .. $#lines ) {
+            $wiki_rows[$j][$i] = sprintf( $format, $lines[$j] );
+        }
+    }
+
+    for my $j ( 0 .. $#wiki_rows ) {
+        my $length = $longest->[$j] + 4;
+
+        my $sep = $j ? q{:} : q{|};
+
+        $wikitext .= $sep;
+        $wikitext .= join $sep,
+            map { defined $_ ? $_ : q{ } x $longest } @{ $wiki_rows[$j] };
+        $wikitext .= $sep;
+
+        $wikitext .= "\n";
+    }
+
+    if ($is_header) {
+        $wikitext .= q{+};
+
+        for my $j ( 0 .. $#wiki_rows ) {
+            my $length = $longest->[$j] + 4;
+
+            $wikitext .= q{-} x $length;
+
+            $wikitext .= q{+};
+        }
+    }
+
+    $wikitext .= "\n";
+
+    return $wikitext;
 }
 
 sub _link {
@@ -135,7 +245,8 @@ sub _link {
 
     if ( my $path = $self->get_wiki_page($url) ) {
         if ( $path =~ m{ /wiki/([^/]+)/page/([^/]+) }x ) {
-            return $self->_link_to_page( $1, Silki::Schema::Page->URIPathToTitle($2), $text );
+            return $self->_link_to_page( $1,
+                Silki::Schema::Page->URIPathToTitle($2), $text );
         }
         elsif ( $path =~ m{ /wiki/([^/]+)/file/([^/]+)}x ) {
             return $self->_link_to_file( $1, $2, $text );
