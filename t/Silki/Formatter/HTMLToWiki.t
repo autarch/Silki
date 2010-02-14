@@ -128,10 +128,12 @@ EOF
     my $wikitext = $formatter->html_to_wikitext($html);
 
     my $expected = <<'EOF';
-| Head 1 | Head 2 |
-+--------+--------+
-| B1     | B2     |
-| B3     | B4     |
++----------+----------+
+| Head 1   | Head 2   |
++----------+----------+
+| B1       | B2       |
+| B3       | B4       |
++----------+----------+
 EOF
 
     eq_or_diff(
@@ -167,11 +169,13 @@ EOF
     my $wikitext = $formatter->html_to_wikitext($html);
 
     my $expected = <<'EOF';
-| Head 1 | Head 2 |
-+--------+--------+
-| B1     | B2     |
++----------+----------+
+| Head 1   | Head 2   |
++----------+----------+
+| B1       | B2       |
 
-| B3     | B4     |
+| B3       | B4       |
++----------+----------+
 EOF
 
     eq_or_diff(
