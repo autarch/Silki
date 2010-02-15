@@ -2,6 +2,7 @@ package Silki::AppRole::Tabs;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Scalar::Util qw( blessed );
 use Silki::Web::Tab;

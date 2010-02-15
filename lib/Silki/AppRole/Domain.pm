@@ -2,6 +2,7 @@ package Silki::AppRole::Domain;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Silki::Schema::Domain;
 

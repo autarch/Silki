@@ -2,10 +2,13 @@ package Silki::Action::REST;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
-use base 'Catalyst::Action::REST';
+use Moose;
 
-sub dispatch {
+extends 'Catalyst::Action::REST';
+
+override dispatch => sub {
     my $self = shift;
     my $c    = shift;
 
@@ -21,7 +24,7 @@ sub dispatch {
         }
     }
 
-    return $self->next::method($c);
-}
+    return super();
+};
 
 1;

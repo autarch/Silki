@@ -2,6 +2,7 @@ package Silki::AppRole::User;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Silki::Schema::User;
 
@@ -25,7 +26,5 @@ sub _build_user {
 
     return $user ||= Silki::Schema::User->GuestUser();
 }
-
-no Moose::Role;
 
 1;
