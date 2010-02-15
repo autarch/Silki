@@ -345,6 +345,8 @@ sub _handle_table {
     $self->_clear_table();
     $self->_set_stream($old_stream);
 
+    $table->finalize();
+
     $self->_print_to_stream( $table->as_markdown() );
 }
 

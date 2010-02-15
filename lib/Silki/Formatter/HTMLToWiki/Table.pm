@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
-use List::AllUtils qw( max sum );
+use List::AllUtils qw( all max sum );
 use Silki::Formatter::HTMLToWiki::Table::Cell;
 use Silki::Types qw( Str ArrayRef Int Bool Maybe );
 
@@ -38,8 +38,11 @@ has _tbodies => (
     traits => ['Array'],
     is     => 'ro',
     isa    => ArrayRef[ ArrayRef[$row] ],
-    default  => sub { [] },
-    handles  => { _add_tbody => 'push' },
+    default => sub { [] },
+    handles => {
+        _add_tbody   => 'push',
+        _has_tbodies => 'count',
+    },
     init_arg => undef,
 );
 
@@ -139,8 +142,8 @@ sub _end_th {
 sub _start_td {
     my $self = shift;
 
-    $self->_start_cell(@_);
-}
+    $self->_start_cell(@_);}
+
 
 sub _end_td {
     my $self = shift;
@@ -156,6 +159,7 @@ sub _start_cell {
         Silki::Formatter::HTMLToWiki::Table::Cell->new(
             colspan   => $node->attr('colspan') || 1,
             alignment => $node->attr('align')   || 'left',
+            is_header_cell => $node->tag() eq 'th' ? 1 : 0,
         )
     );
 }
@@ -164,6 +168,27 @@ sub _end_cell {
     my $self = shift;
 
     $self->_add_cell( $self->_current_cell() );
+}
+
+sub finalize {
+    my $self = shift;
+
+    unless ( $self->_has_tbodies() ) {
+        $self->_end_tbody();
+    }
+
+    unless ( $self->_has_thead() ) {
+        for my $tbody ( @{ $self->_tbodies() } ) {
+            for my $row ( @{$tbody} ) {
+                if ( all { $_->is_header_cell() } @{$row} ) {
+                    $self->_add_thead_row( shift @{$tbody} );
+                }
+                else {
+                    last;
+                }
+            }
+        }
+    }
 }
 
 sub as_markdown {

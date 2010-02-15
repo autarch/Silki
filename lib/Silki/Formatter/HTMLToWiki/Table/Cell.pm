@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
-use Silki::Types qw( Int Str );
+use Silki::Types qw( Int Str Bool );
 
 use Moose;
 use Moose::Util::TypeConstraints;
@@ -21,6 +21,12 @@ has alignment => (
     is      => 'ro',
     isa     => enum( [ qw( left right center ) ] ),
     default => 'left',
+);
+
+has is_header_cell => (
+    is      => 'ro',
+    isa     => Bool,
+    default => 0,
 );
 
 has content => (

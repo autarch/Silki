@@ -183,5 +183,39 @@ EOF
         'html to wikitext - table with two tbody tags'
     );
 }
+{
+    my $html = <<'EOF';
+<table>
+  <tr>
+    <th>Head 1</th>
+    <th>Head 2</th>
+  </tr>
+  <tr>
+    <td>B1</td>
+    <td>B2</td>
+  </tr>
+  <tr>
+    <td>B3</td>
+    <td>B4</td>
+  </tr>
+</table>
+EOF
+
+    my $wikitext = $formatter->html_to_wikitext($html);
+
+    my $expected = <<'EOF';
++----------+----------+
+| Head 1   | Head 2   |
++----------+----------+
+| B1       | B2       |
+| B3       | B4       |
++----------+----------+
+EOF
+
+    eq_or_diff(
+        $wikitext, $expected,
+        'html to wikitext - table with no thead or tbody tags'
+    );
+}
 
 done_testing();
