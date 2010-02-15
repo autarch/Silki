@@ -27,4 +27,6 @@ $page
 <%init>
 my $links;
 $links = $page->incoming_links if $page->incoming_link_count();
+
+return if $page->is_front_page() && ! $links;
 </%init>
