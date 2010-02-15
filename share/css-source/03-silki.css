@@ -7,7 +7,6 @@ html {
 
 body {
     font-family: sans-serif;
-    line-height: 1.6em;
 }
 
 /* There are two rules in YUI Base that fuck up nesting ol inside ul and vice
@@ -66,6 +65,7 @@ ul * ul, ul * ol, ol * ol, ol * ul {
 
 #tabs {
     border-bottom: 8px solid #13708f;
+    line-height: 1.2;
 }
 
 #tabs ul {
@@ -87,7 +87,7 @@ ul * ul, ul * ol, ol * ol, ol * ul {
     background-color: white;
     color: #333;
     font-weight: bold;
-    padding: 0.3em 1em 0.11em 1em;
+    padding: 0.3em 1em 0 1em;
     text-decoration: none;
 }
 
@@ -95,14 +95,14 @@ ul * ul, ul * ol, ol * ol, ol * ul {
     background-color: #13708f;
     color: white;
     font-size: 110%;
-    padding: 0.5em 1.2em 0.15em 1.2em;
+    padding: 0.5em 1.2em 0 1.2em;
 }
 
 /* This makes sure that the header is the same height with our without
    tabs */
 #tabs li.invisible {
     background-color: transparent;
-    padding: 0.3em 1em 0.11em 1em;
+    padding: 0.3em 1em 0 1em;
 }
 
 #tabs li a:hover {
