@@ -86,23 +86,25 @@ sub _post_change {
     my ( $existing, $pending, $files ) = $self->_process_extracted_links($linkex);
 
     my $delete_existing = Silki::Schema->SQLFactoryClass()->new_delete();
-    $delete_existing->delete()->from( $Schema->table('PageLink') )->where(
-        $Schema->table('PageLink')->column('from_page_id'),
-        '=', $self->page_id()
-    );
+    $delete_existing->delete()
+        ->from( $Schema->table('PageLink') )
+        ->where(
+            $Schema->table('PageLink')->column('from_page_id'),
+            '=', $self->page_id()
+        );
 
     my $delete_pending = Silki::Schema->SQLFactoryClass()->new_delete();
     $delete_pending->delete()->from( $Schema->table('PendingPageLink') )
         ->where(
-        $Schema->table('PendingPageLink')->column('from_page_id'),
-        '=', $self->page_id()
+            $Schema->table('PendingPageLink')->column('from_page_id'),
+            '=', $self->page_id()
         );
 
     my $delete_files = Silki::Schema->SQLFactoryClass()->new_delete();
     $delete_files->delete()->from( $Schema->table('PageFileLink') )
         ->where(
-        $Schema->table('PageFileLink')->column('page_id'),
-        '=', $self->page_id()
+            $Schema->table('PageFileLink')->column('page_id'),
+            '=', $self->page_id()
         );
 
     my $update_cached_content
