@@ -190,6 +190,7 @@ table.standard-table {
 table.standard-table th,
 table.standard-table td {
     border: none;
+    vertical-align: top;
 }
 
 table.standard-table th {
@@ -271,6 +272,10 @@ table.revision-diff > tbody > tr > td.diff-added {
 table.revision-diff > tbody > tr > td.marker {
     font-weight: bold;
     text-align: center;
+}
+
+#attachments img {
+    margin-top: 0.3em;
 }
 
 /* === Forms === */
