@@ -1,4 +1,4 @@
-<table class="standard-table">
+<table id="attachments" class="standard-table">
   <thead>
     <tr>
       <th><% loc('Name') %></th>
