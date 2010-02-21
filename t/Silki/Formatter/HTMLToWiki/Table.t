@@ -16,6 +16,11 @@ use Silki::Formatter::HTMLToWiki::Table;
 
     use Moose;
 
+    has tag => (
+        is  => 'ro',
+        isa => 'Str',
+    );
+
     has _attr => (
         traits   => ['Hash'],
         is       => 'ro',
@@ -27,7 +32,7 @@ use Silki::Formatter::HTMLToWiki::Table;
     sub BUILDARGS {
         my $class = shift;
 
-        return { attr => {@_} };
+        return { tag => shift, attr => {@_} };
     }
 
     __PACKAGE__->meta()->make_immutable();
@@ -256,7 +261,7 @@ sub cell {
 
     my $start = '_start_' . $type;
     my $end   = '_end_' . $type;
-    $table->$start( FakeNode->new( ref $cell ? %{$cell} : () ) );
+    $table->$start( FakeNode->new( $type, ref $cell ? %{$cell} : () ) );
     $table->print($content);
     $table->$end();
 }
