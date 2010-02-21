@@ -1,42 +1,44 @@
 use strict;
 use warnings;
 
-use Test::More tests => 3;
+use Test::More;
 
 use Silki::Schema::Domain;
 
 {
-    my $domain =
-        Silki::Schema::Domain->new( domain_id    => 1,
-                                    hostname     => 'host.example.com',
-                                    requires_ssl => 0,
-                                    path_prefix  => '',
-                                    _from_query  => 1,
-                                  );
-    is( $domain->base_uri(), 'http://host.example.com',
-        'base_uri() for domain' );
+    my $domain = Silki::Schema::Domain->new(
+        domain_id    => 1,
+        web_hostname => 'host.example.com',
+        requires_ssl => 0,
+        _from_query  => 1,
+    );
+
+    is(
+        $domain->uri( with_host => 1 ), 'http://host.example.com/',
+        'uri() for domain'
+    );
+
+    is(
+        $domain->application_uri(
+            with_host => 1, path => '/foo/bar', query => { x => 42 },
+        ),
+        'http://host.example.com/foo/bar?x=42',
+        'application_uri() with path'
+    );
 }
 
 {
-    my $domain =
-        Silki::Schema::Domain->new( domain_id    => 1,
-                                    hostname     => 'host.example.com',
-                                    path_prefix  => '',
-                                    requires_ssl => 1,
-                                    _from_query  => 1,
-                                  );
-    is( $domain->base_uri(), 'https://host.example.com',
-        'base_uri() for domain that requires ssl' );
+    my $domain = Silki::Schema::Domain->new(
+        domain_id    => 1,
+        web_hostname => 'host.example.com',
+        requires_ssl => 1,
+        _from_query  => 1,
+    );
+
+    is(
+        $domain->uri( with_host => 1 ), 'https://host.example.com/',
+        'uri() for domain that requires ssl'
+    );
 }
 
-{
-    my $domain =
-        Silki::Schema::Domain->new( domain_id    => 1,
-                                    hostname     => 'host.example.com',
-                                    requires_ssl => 0,
-                                    path_prefix  => '/silk',
-                                    _from_query  => 1,
-                                  );
-    is( $domain->base_uri(), 'http://host.example.com/silk',
-        'base_uri() for domain with a path prefix' );
-}
+done_testing();
