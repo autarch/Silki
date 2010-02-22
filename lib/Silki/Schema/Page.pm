@@ -38,6 +38,7 @@ has revision_count => (
     metaclass   => 'FromSelect',
     is          => 'ro',
     isa         => Int,
+    lazy        => 1,
     select      => __PACKAGE__->_RevisionCountSelect(),
     bind_params => sub { $_[0]->page_id() },
 );
@@ -72,6 +73,7 @@ has incoming_link_count => (
     metaclass   => 'FromSelect',
     is          => 'ro',
     isa         => Int,
+    lazy        => 1,
     select      => __PACKAGE__->_IncomingLinkCountSelect(),
     bind_params => sub { $_[0]->page_id() },
 );
@@ -268,7 +270,7 @@ sub TitleToURIPath {
     # after URI-escaping, making for much friendlier paths.
     my $escaped = uri_escape_utf8( $title, q{^A-Za-z0-9-.!~*'()"} );
 
-    $escaped =~ s/%20/_/;
+    $escaped =~ s/%20/_/g;
 
     return $escaped;
 }
