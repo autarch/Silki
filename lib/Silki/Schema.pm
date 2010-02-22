@@ -3,6 +3,7 @@ package Silki::Schema;
 use strict;
 use warnings;
 
+use Carp;
 use DBI;
 use Fey::ORM::Schema;
 use Fey::DBIManager::Source;
@@ -39,6 +40,8 @@ sub _set_dbh_attributes {
     $dbh->{pg_enable_utf8} = 1;
 
     $dbh->do('SET TIME ZONE UTC');
+
+    $dbh->{HandleError} = sub { Carp::confess(shift) };
 
     return;
 }
