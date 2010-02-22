@@ -8,12 +8,15 @@ use Fey::ORM::Schema;
 use Fey::DBIManager::Source;
 use Fey::Loader;
 use Silki::Config;
+use Silki::I18N;
 
-my $Schema;
-
-my $source;
 if ($Silki::Schema::TestSchema) {
     has_schema($Silki::Schema::TestSchema);
+
+    require DBD::Mock;
+
+    my $source = Fey::DBIManager::Source->new( dsn => 'dbi:Mock:' );
+    __PACKAGE__->DBIManager()->add_source($source);
 }
 else {
     my $dbi_config = Silki::Config->new()->dbi_config();
@@ -23,9 +26,9 @@ else {
         post_connect => \&_set_dbh_attributes,
     );
 
-    $Schema = Fey::Loader->new( dbh => $source->dbh() )->make_schema();
+    my $schema = Fey::Loader->new( dbh => $source->dbh() )->make_schema();
 
-    has_schema $Schema;
+    has_schema $schema;
 
     __PACKAGE__->DBIManager()->add_source($source);
 }
