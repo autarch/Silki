@@ -3,7 +3,7 @@ SET CLIENT_MIN_MESSAGES = ERROR;
 DROP DATABASE IF EXISTS "Silki";
 
 CREATE DATABASE "Silki"
-       ENCODING = 'UTF8';
+       ENCODING 'UTF8';
 
 \connect "Silki"
 
