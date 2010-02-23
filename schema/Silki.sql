@@ -363,7 +363,7 @@ ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_domain_id"
   ON DELETE SET DEFAULT ON UPDATE CASCADE;
 
 ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_account_id"
-  FOREIGN KEY ("user_id") REFERENCES "Account" ("account_id")
+  FOREIGN KEY ("account_id") REFERENCES "Account" ("account_id")
   ON DELETE RESTRICT ON UPDATE CASCADE;
 
 ALTER TABLE "Wiki" ADD CONSTRAINT "Wiki_user_id"
