@@ -39,8 +39,6 @@ use Silki::Email;
     sub SystemUser {$user}
 }
 
-$ENV{EMAIL_SENDER_TRANSPORT} = 'Test';
-
 Silki::Email::send_email(
     from            => 'foo@example.com',
     to              => 'bar@example.com',
