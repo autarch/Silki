@@ -20,8 +20,10 @@ use Silki::Types qw( Str HashRef );
 use Sub::Exporter -setup => { exports => ['send_email'] };
 
 my $Body;
-my $Interp = HTML::Mason::Interp->new( out_method => \$Body,
-    %{ Silki::Config->new()->mason_config_for_email() } );
+my $Interp = HTML::Mason::Interp->new(
+    out_method => \$Body,
+    %{ Silki::Config->new()->mason_config_for_email() },
+);
 
 sub send_email {
     my ( $from, $to, $subject, $template, $args ) = validated_list(
