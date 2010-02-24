@@ -94,6 +94,9 @@ sub _clean_tables {
         #
         # XXX - If this goes wrong, it'll loop forever. Not sure how best to
         # detect a cycle.
+        #
+        # Using TRUNCATE "Foo" CASCADE avoids this problem but seems to be a
+        # lot slower.
         eval { $dbh->do( "DELETE FROM $table" ) };
 
         if ($@) {
