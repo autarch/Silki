@@ -1,0 +1,76 @@
+package Silki::Test::Email;
+
+use strict;
+use warnings;
+
+use Exporter qw( import );
+
+our @EXPORT = qw( test_email );
+
+use List::AllUtils qw( first );
+use Test::More;
+
+$ENV{EMAIL_SENDER_TRANSPORT} = 'Test';
+
+sub test_email {
+    my $email   = shift;
+    my $headers = shift;
+    my $html_re = shift;
+    my $text_re = shift;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    for my $header ( sort keys %{$headers} ) {
+
+        my $expect = $headers->{$header};
+
+        if ( ref $expect ) {
+            like(
+                $email->header($header),
+                $expect,
+                "$headers matches regex"
+            );
+        }
+        else {
+            is(
+                $email->header($header),
+                $expect,
+                "$header header is correct"
+            );
+        }
+    }
+
+    my @parts = $email->parts();
+
+    my $html = first { $_->content_type() =~ m{^text/html} } @parts;
+
+    ok( $html, 'found an HTML part' );
+    is(
+        $html->content_type(),
+        'text/html; charset=utf-8',
+        'html content type is text/html and includes charset'
+    );
+
+    like(
+        $html->body(),
+        $html_re,
+        'html body matches regex'
+    );
+
+    my $text = first { $_->content_type() =~ m{^text/plain} } @parts;
+
+    ok( $text, 'found plain text part' );
+    is(
+        $text->content_type(),
+        'text/plain; charset=utf-8',
+        'text content type is text/plain and includes charset'
+    );
+
+    like(
+        $text->body,
+        $text_re,
+        'plain text body include uri from <a> tag'
+    );
+}
+
+1;

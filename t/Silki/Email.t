@@ -4,11 +4,11 @@ use warnings;
 use Test::More;
 
 use lib 't/lib';
+use Silki::Test::Email qw( test_email );
 use Silki::Test::FakeSchema;
 
 use Cwd qw( abs_path );
 use File::Temp qw( tempdir );
-use List::AllUtils qw( first );
 use Silki::Config;
 
 BEGIN {
@@ -55,70 +55,20 @@ is( scalar @deliveries, 1, 'one email was sent' );
 
 my $email = $deliveries[0]{email}->cast('Email::MIME');
 
-is(
-    $email->header('From'),
-    'foo@example.com',
-    'From header is correct'
-);
-
-is(
-    $email->header('To'),
-    'bar@example.com',
-    'To header is correct'
-);
-
-is(
-    $email->header('Subject'),
-    'Test email',
-    'Subject header is correct'
-);
-
-like(
-    $email->header('Message-ID'),
-    qr/^<.+>$/,
-    'Message-ID looks valid'
-);
-
-like(
-    $email->header('X-Sender'),
-    qr/^Silki version \d+\.\d+$/,
-    'X-Sender header is correct'
-);
-
-my @parts = $email->parts();
-
-my $html = first { $_->content_type() =~ m{^text/html} } @parts;
-
-ok( $html, 'found an HTML part' );
-is(
-    $html->content_type(),
-    'text/html; charset=utf-8',
-    'html content type is text/html and includes charset'
-);
-
-like(
-    $html->body(),
+test_email(
+    $email, {
+        From         => 'foo@example.com',
+        To           => 'bar@example.com',
+        Subject      => 'Test email',
+        'Message-ID' => qr/^<.+>$/,
+        'X-Sender'   => "Silki version $Silki::Email::VERSION",
+    },
     qr{<p>
        \s+
        \QThe user can pass a <a href="http://example.com">uri</a>.\E
        \s+
        </p>}x,
-    'html body includes template parameters'
-);
-
-my $text = first { $_->content_type() =~ m{^text/plain} } @parts;
-
-ok( $text, 'found plain text part' );
-is(
-    $text->content_type(),
-    'text/plain; charset=utf-8',
-    'text content type is text/plain and includes charset'
-);
-
-like(
-    $text->body,
     qr{\QThe user can pass a uri (http://example.com).\E},
-    'plain text body include uri from <a> tag'
 );
 
 done_testing();
