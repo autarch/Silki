@@ -814,7 +814,7 @@ sub _send_email {
         )
         : loc(
         'Activate your account on the %1 server',
-        $self->domain()->web_hostname
+        $self->domain()->web_hostname()
         );
 
     my $from = Email::Address->new(
