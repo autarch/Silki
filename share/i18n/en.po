@@ -58,7 +58,7 @@ msgstr ""
 msgid "%datetime(%1)"
 msgstr ""
 
-#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:116
+#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:113
 msgid "(Link to non-existent file)"
 msgstr ""
 
@@ -130,6 +130,10 @@ msgstr ""
 
 #: share/mason/page/diff:2 share/mason/page/view:3
 msgid "Back to current revision"
+msgstr ""
+
+#: lib/Silki/Schema/User.pm:475
+msgid "Cannot make an activation uri for a user which does not need activation.\n"
 msgstr ""
 
 #: share/mason/wiki/autohandler:22

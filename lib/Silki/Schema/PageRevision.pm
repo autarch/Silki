@@ -66,24 +66,8 @@ after update => sub {
 sub _post_change {
     my $self = shift;
 
-    my $capture = Markdent::Handler::CaptureEvents->new();
-    my $linkex  = Silki::Markdent::Handler::ExtractWikiLinks->new(
-        wiki => $self->page()->wiki(),
-    );
-    my $multi = Markdent::Handler::Multiplexer->new(
-        handlers => [ $capture, $linkex ],
-    );
-
-    my $filter = Markdent::Handler::HTMLFilter->new( handler => $multi );
-
-    my $parser = Markdent::Parser->new(
-        dialect => 'Silki::Markdent::Dialect::Silki',
-        handler => $filter,
-    );
-
-    $parser->parse( markdown => $self->content() );
-
-    my ( $existing, $pending, $files ) = $self->_process_extracted_links($linkex);
+    my ( $existing, $pending, $files, $capture )
+        = $self->_process_extracted_links();
 
     my $delete_existing = Silki::Schema->SQLFactoryClass()->new_delete();
     $delete_existing->delete()
@@ -156,7 +140,23 @@ sub _post_change {
 
 sub _process_extracted_links {
     my $self   = shift;
-    my $linkex = shift;
+
+    my $capture = Markdent::Handler::CaptureEvents->new();
+    my $linkex  = Silki::Markdent::Handler::ExtractWikiLinks->new(
+        wiki => $self->page()->wiki(),
+    );
+    my $multi = Markdent::Handler::Multiplexer->new(
+        handlers => [ $capture, $linkex ],
+    );
+
+    my $filter = Markdent::Handler::HTMLFilter->new( handler => $multi );
+
+    my $parser = Markdent::Parser->new(
+        dialect => 'Silki::Markdent::Dialect::Silki',
+        handler => $filter,
+    );
+
+    $parser->parse( markdown => $self->content() );
 
     my $links = $linkex->links();
 
@@ -190,7 +190,7 @@ sub _process_extracted_links {
         grep { $links->{$_}{file} }
         keys %{$links};
 
-    return \@existing, \@pending, \@files;
+    return \@existing, \@pending, \@files, $capture;
 }
 
 sub _base_uri_path {

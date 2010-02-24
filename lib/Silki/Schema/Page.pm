@@ -41,6 +41,7 @@ has revision_count => (
     lazy        => 1,
     select      => __PACKAGE__->_RevisionCountSelect(),
     bind_params => sub { $_[0]->page_id() },
+    clearer     => '_clear_revision_count',
 );
 
 class_has _RevisionsSelect => (
@@ -234,6 +235,7 @@ sub add_revision {
     my $revision_number = $revision ? $revision->revision_number() + 1 : 1;
 
     $self->_clear_most_recent_revision();
+    $self->_clear_revision_count();
 
     return Silki::Schema::PageRevision->insert(
         %p,

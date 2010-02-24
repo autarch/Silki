@@ -1,104 +1,192 @@
 use strict;
 use warnings;
 
-use Test::More tests => 6;
+use Test::More;
+
+use lib 't/lib';
+use Silki::Test::RealSchema;
 
 use DateTime;
 use DateTime::Format::Pg;
 use Silki::Schema::Domain;
 use Silki::Schema::Page;
+use Silki::Schema::PendingPageLink;
 use Silki::Schema::Wiki;
 
-use lib 't/lib';
-use Silki::Test qw( mock_dbh );
-
-
-my $dbh = mock_dbh();
+my $dbh = Silki::Schema->DBIManager()->default_source()->dbh();
+my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
+my $user = Silki::Schema::User->GuestUser();
 
 {
-    $dbh->{mock_start_insert_id} = [ q{"Page"}, 100 ];
+    my $page = Silki::Schema::Page->insert_with_content(
+        title   => 'Some Page',
+        content => 'This is a page with a link to a [[Pending Page]]',
+        user_id => $user->user_id(),
+        wiki_id => $wiki->wiki_id(),
+    );
 
-    my $page = Silki::Schema::Page->insert_with_content( title   => 'SomePage',
-                                                         content => 'This is a page',
-                                                         user_id => 12,
-                                                         wiki_id => 42,
-                                                       );
+    is( $page->uri_path(), 'Some_Page',
+        'title is converted to uri_path on page insert' );
+    is( $page->uri(), '/wiki/first-wiki/page/Some_Page', 'uri() for page' );
 
-    my @inserts =
-        map { $_->bound_params() }
-        grep { $_->statement() =~ /^INSERT/ }
-        @{ $dbh->{mock_all_history} };
+    is_deeply(
+        $dbh->selectall_arrayref(
+            q{SELECT * FROM "PendingPageLink" WHERE from_page_id = ?},
+            { Slice => {} },
+            $page->page_id(),
+        ),
+        [
+            {
+                from_page_id  => $page->page_id(),
+                to_wiki_id    => $wiki->wiki_id(),
+                to_page_title => 'Pending Page',
+            },
+        ],
+        'creating a page inserts PendingPageLink rows as needed',
+    );
 
-    is_deeply( $inserts[0],
-               [ 12, 42 ],
-               'Page was inserted as expected' );
-
-    is_deeply( $inserts[1],
-               [ 'This is a page', 100, 1, 'SomePage', 12 ],
-               'Inserting a page also inserts the first page revision' );
-}
-
-{
-    my $page = Silki::Schema::Page->new( page_id     => 20,
-                                         _from_query => 1,
-                                       );
-
-    $dbh->{mock_clear_history} = 1;
-
-    my $now = DateTime::Format::Pg->format_timestamp( DateTime->now( time_zone => 'UTC' ) );
-
-    $dbh->{mock_add_resultset} =
-        [ [ qw( content creation_datetime is_restoration_of_revision_number
-                page_id revision_number title user_id ) ],
-          [ 'This is a page', $now, undef,
-            20, 15, 'SomePage', 99 ],
-        ];
+    is_deeply(
+        $dbh->selectcol_arrayref(
+            q{SELECT COUNT(*) FROM "PageRevision" where page_id = ? },
+            {},
+            $page->page_id(),
+        ),
+        [1],
+        'calling insert_with_content creates a page and a page revision',
+    );
 
     my $revision = $page->most_recent_revision();
-
-    is( $revision->revision_number(), 15,
-        'most_recent_revision() returns a single revision, rev 15' );
+    is(
+        $revision->revision_number(), 1,
+        'most_recent_revision returns revision 1'
+    );
 }
 
 {
-    my $domain =
-        Silki::Schema::Domain->new( domain_id    => 1,
-                                    hostname     => 'host.example.com',
-                                    path_prefix  => '/prefix',
-                                    requires_ssl => 0,
-                                    _from_query  => 1,
-                                  );
+    my $page = Silki::Schema::Page->new(
+        title   => 'Front Page',
+        wiki_id => $wiki->wiki_id(),
+    );
 
-    my $wiki =
-        Silki::Schema::Wiki->new( wiki_id    => 1,
-                                  domain_id  => 1,
-                                  title      => 'Some Wiki',
-                                  short_name => 'some-wiki',
-                                  _from_query => 1,
-                                );
-
-    no warnings 'redefine';
-    local *Silki::Schema::Wiki::domain = sub { return $domain };
-    local *Silki::Schema::Page::wiki   = sub { return $wiki };
-
-    my $page = Silki::Schema::Page->new( page_id     => 2,
-                                         _from_query => 1,
-                                       );
-
-    is( $page->uri(), 'http://host.example.com/prefix/wiki/1/page/2',
-        '$page->uri()' );
-
-    is( $page->uri_for_domain($domain), '/prefix/wiki/1/page/2',
-        '$page->uri_for_domain() - same domain' );
-
-    my $other_domain =
-        Silki::Schema::Domain->new( domain_id    => 2,
-                                    hostname     => 'another.example.com',
-                                    path_prefix  => '/prefix2',
-                                    requires_ssl => 0,
-                                    _from_query  => 1,
-                                  );
-
-    is( $page->uri_for_domain($other_domain), 'http://host.example.com/prefix/wiki/1/page/2',
-        '$page->uri_for_domain() - different domain' );
+    ok( $page->is_front_page(),
+        'is_front_page is true for page where title is Front Page' );
 }
+
+{
+    my $page = Silki::Schema::Page->insert_with_content(
+        title   => 'Pending Page',
+        content => 'Resolves a pending page link',
+        user_id => $user->user_id(),
+        wiki_id => $wiki->wiki_id(),
+    );
+
+    is_deeply(
+        $dbh->selectall_arrayref(
+            q{SELECT * FROM "PendingPageLink" WHERE to_page_title = ?},
+            { Slice => {} },
+            'Pending Page',
+        ),
+        [],
+        'creating a page resolves pending page links',
+    );
+
+    my $revision = $page->most_recent_revision();
+    is(
+        $revision->revision_number(), 1,
+        'most_recent_revision returns revision 1'
+    );
+
+    is( $page->revision_count(), 1, 'revision_count is 1' );
+
+    $page->add_revision(
+        content => 'New Revision',
+        user_id => $user->user_id(),
+    );
+
+    is_deeply(
+        $dbh->selectcol_arrayref(
+            q{SELECT COUNT(*) FROM "PageRevision" where page_id = ? },
+            {},
+            $page->page_id(),
+        ),
+        [2],
+        'calling add_revision creates a new page',
+    );
+
+    $revision = $page->most_recent_revision();
+    is(
+        $revision->revision_number(), 2,
+        'most_recent_revision returns revision 2'
+    );
+
+    is( $page->revision_count(), 2, 'revision_count is 2' );
+
+    my $first_rev = $page->first_revision();
+    is( $first_rev->revision_number(), 1,
+        'first_revision returns the right object' );
+
+    my $text = "This is some plain text.\n";
+    my $file1 = Silki::Schema::File->insert(
+        file_name => 'test1.txt',
+        mime_type => 'text/plain',
+        file_size => length $text,
+        contents  => $text,
+        user_id   => $user->user_id(),
+        wiki_id   => $wiki->wiki_id(),
+    );
+
+    $page->add_file($file1);
+
+    $revision = $page->most_recent_revision();
+    is(
+        $revision->revision_number(), 3,
+        'adding a file to a page creates a new revision'
+    );
+
+    my $link = '[[file:' . $file1->file_id() . ']]';
+    like(
+        $revision->content(), qr/\Q$link/,
+        'new revision has a link to the added file'
+    );
+
+    is( $page->revision_count(), 3, 'revision_count is 3' );
+
+    $text = "This is some more plain text.\n";
+    my $file2 = Silki::Schema::File->insert(
+        file_name => 'test2.txt',
+        mime_type => 'text/plain',
+        file_size => length $text,
+        contents  => $text,
+        user_id   => $user->user_id(),
+        wiki_id   => $wiki->wiki_id(),
+    );
+
+    $page->add_file($file2);
+
+    # Creating this so that we know $page->files() doesn't just return all the
+    # files in the wiki or some other wrong result.
+    $text  = "This is even more plain text.\n";
+    my $file3 = Silki::Schema::File->insert(
+        file_name => 'test3.txt',
+        mime_type => 'text/plain',
+        file_size => length $text,
+        contents  => $text,
+        user_id   => $user->user_id(),
+        wiki_id   => $wiki->wiki_id(),
+    );
+
+    is( $page->file_count(), 2, 'file_count is 2' );
+    is_deeply(
+        [ sort map { $_->file_name() } $page->files()->all() ],
+        [qw( test1.txt test2.txt )],
+        'files returns the right two files',
+    );
+
+    ok( ! $page->is_front_page(), 'page is not the front page' );
+
+    is( $page->incoming_link_count(), 1, 'page has one incoming link' );
+    my @links = $page->incoming_links()->all();
+    is( $links[0]->title(), 'Some Page', 'Some Page links to Pending Page' );
+}
+
+done_testing();

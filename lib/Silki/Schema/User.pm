@@ -330,7 +330,10 @@ sub _openid_uri_is_unique {
 
     return if string_is_empty( $p->{openid_uri} );
 
-    return if !$is_insert && $self->openid_uri() eq $p->{openid_uri};
+    return
+        if !$is_insert
+            && $self->openid_uri()
+            && $self->openid_uri() eq $p->{openid_uri};
 
     return unless __PACKAGE__->new( openid_uri => $p->{openid_uri} );
 
@@ -473,7 +476,7 @@ sub activation_uri {
     my %p    = @_;
 
     die
-        'Cannot make an activation uri for a user which does not need activation.'
+        loc("Cannot make an activation uri for a user which does not need activation.\n")
         unless $self->requires_activation();
 
     my $view = $p{view} || 'preferences_form';
