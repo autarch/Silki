@@ -53,7 +53,7 @@ sub send_email {
             Subject      => $subject,
             'Message-ID' => Email::MessageID->new()->in_brackets(),
             Date         => format_date(),
-            'X-Sender'   => 'Silki version $VERSION',
+            'X-Sender'   => "Silki version $VERSION",
         ],
         body            => $html_body,
         body_attributes => { content_type => 'text/html; charset=utf-8' },
