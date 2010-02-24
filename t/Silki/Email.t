@@ -47,14 +47,8 @@ Silki::Email::send_email(
     template_params => { uri => 'http://example.com' },
 );
 
-my @deliveries = Email::Sender::Simple->default_transport()->deliveries();
-
-is( scalar @deliveries, 1, 'one email was sent' );
-
-my $email = $deliveries[0]{email}->cast('Email::MIME');
-
 test_email(
-    $email, {
+    {
         From         => 'foo@example.com',
         To           => 'bar@example.com',
         Subject      => 'Test email',

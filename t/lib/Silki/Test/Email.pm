@@ -13,12 +13,17 @@ use Test::More;
 $ENV{EMAIL_SENDER_TRANSPORT} = 'Test';
 
 sub test_email {
-    my $email   = shift;
     my $headers = shift;
     my $html_re = shift;
     my $text_re = shift;
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    my @deliveries = Email::Sender::Simple->default_transport()->deliveries();
+
+    is( scalar @deliveries, 1, 'one email was sent' );
+
+    my $email = $deliveries[0]{email}->cast('Email::MIME');
 
     for my $header ( sort keys %{$headers} ) {
 
