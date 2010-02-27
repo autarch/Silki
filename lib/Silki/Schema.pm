@@ -18,7 +18,7 @@ if ($Silki::Schema::TestSchema) {
 
     my $source = Fey::DBIManager::Source->new( dsn => 'dbi:Mock:' );
 
-    $source->dbh()->{HandleError} = sub { Carp::confess(shift;) };
+    $source->dbh()->{HandleError} = sub { Carp::confess(shift); };
 
     __PACKAGE__->DBIManager()->add_source($source);
 }
