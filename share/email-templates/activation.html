@@ -5,14 +5,16 @@
 % if ($wiki) {
 <& invitation-text.mas, user => $user, wiki => $wiki &>
 % } else {
+<p>
 <% loc( q{You have created a wiki account on the %1 server. You must <a href="%html(%2)">activate your account</a> before you can log in.}, Silki::Schema::Domain->DefaultDomain()->web_hostname(), $user->activation_uri( with_host => 1 ) ) %>
+</p>
 % }
 
 <& custom-message.mas, message => $message &>
 
-% if ( $sender->user_id() != $user->user_id() ) {
+% if ( $sender->user_id() != $user->user_id() && ! $sender->is_system_user()) {
 <p>
-<% $sender->best_name() %>
+Sent by <% $sender->best_name() %>
 </p>
 % }
 

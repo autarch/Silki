@@ -5,12 +5,16 @@ use warnings;
 
 use Exporter qw( import );
 
-our @EXPORT = qw( test_email );
+our @EXPORT = qw( clear_emails test_email );
 
 use List::AllUtils qw( first );
 use Test::More;
 
 $ENV{EMAIL_SENDER_TRANSPORT} = 'Test';
+
+sub clear_emails {
+    Email::Sender::Simple->default_transport()->clear_deliveries();
+}
 
 sub test_email {
     my $headers = shift;
@@ -31,14 +35,14 @@ sub test_email {
 
         if ( ref $expect ) {
             like(
-                $email->header($header),
+                scalar $email->header($header),
                 $expect,
-                "$headers matches regex"
+                "$header matches regex"
             );
         }
         else {
             is(
-                $email->header($header),
+                scalar $email->header($header),
                 $expect,
                 "$header header is correct"
             );
@@ -74,7 +78,7 @@ sub test_email {
     like(
         $text->body,
         $text_re,
-        'plain text body include uri from <a> tag'
+        'plain text body matches regex'
     );
 }
 

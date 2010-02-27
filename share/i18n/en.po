@@ -80,7 +80,7 @@ msgid "Activate Your Account"
 msgstr ""
 
 #. ($self->domain()
-#: lib/Silki/Schema/User.pm:814
+#: lib/Silki/Schema/User.pm:817
 msgid "Activate your account on the %1 server"
 msgstr ""
 
@@ -132,7 +132,7 @@ msgstr ""
 msgid "Back to current revision"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:475
+#: lib/Silki/Schema/User.pm:478
 msgid "Cannot make an activation uri for a user which does not need activation.\n"
 msgstr ""
 
@@ -499,7 +499,7 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:340
+#: lib/Silki/Schema/User.pm:343
 msgid "The OpenID URI you provided is already in use by another account."
 msgstr ""
 
@@ -720,13 +720,13 @@ msgid "You did not select a file to upload."
 msgstr ""
 
 #. ($wiki->title()
-#: share/email-templates/invitation-text.mas:2
-msgid "You have been invited to join the %1 wiki. "
+#: lib/Silki/Schema/User.pm:812
+msgid "You have been invited to join the %1 wiki at %2"
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Schema/User.pm:809
-msgid "You have been invited to participate in the %1 wiki at %2"
+#: share/email-templates/invitation-text.mas:2
+msgid "You have been invited to join the %1 wiki. "
 msgstr ""
 
 #. (Silki::Schema::Domain->DefaultDomain()

@@ -13,6 +13,7 @@ use Fey::Object::Iterator::FromSelect;
 use Fey::ORM::Exceptions qw( no_such_row );
 use Fey::Placeholder;
 use List::AllUtils qw( all any first first_index );
+use Moose::Util::TypeConstraints;
 use Silki::Email qw( send_email );
 use Silki::I18N qw( loc );
 use Silki::Schema;
@@ -411,9 +412,9 @@ sub _CreateSpecialUser {
 
     my $domain = Silki::Schema::Domain->DefaultDomain();
 
-    my $email = $username . q{@} . $domain->email_hostname();
+    my $email = 'silki-' . $username . q{@} . $domain->email_hostname();
 
-    my $display_name = join ' ', map {ucfirst} split /-/, $username;
+    my $display_name = 'Silki ' . join ' ', map {ucfirst} split /-/, $username;
 
     return $class->insert(
         display_name   => $display_name,
@@ -805,10 +806,13 @@ sub _send_email {
         template => { isa => Str },
     );
 
+    die "Cannot send an invitation email without a wiki."
+        if $template eq 'invitation' && ! $wiki;
+
     my $subject
         = $wiki
         ? loc(
-        'You have been invited to participate in the %1 wiki at %2',
+        'You have been invited to join the %1 wiki at %2',
         $wiki->title(),
         $wiki->domain()->web_hostname(),
         )
@@ -822,10 +826,15 @@ sub _send_email {
         $sender->email_address()
     )->format();
 
+    my $to = Email::Address->new(
+        $self->best_name(),
+        $self->email_address(),
+    )->format();
+
     send_email(
         from            => $from,
         subject         => $subject,
-        to              => $self->email_address(),
+        to              => $to,
         template        => $template,
         template_params => {
             user    => $self,
