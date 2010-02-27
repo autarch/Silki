@@ -227,7 +227,7 @@ sub users_collection_POST {
         );
     }
 
-    $user->send_activation_email( sender => $user );
+    $user->send_activation_email( sender => Silki::Schema::User->SystemUser() );
 
     $c->redirect_and_detach(
         $user->activation_uri(
