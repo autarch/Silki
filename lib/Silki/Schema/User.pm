@@ -137,6 +137,7 @@ class_has 'GuestUser' => (
         isa         => Int,
         select      => $select,
         bind_params => sub { $_[0]->user_id(), $select->bind_params() },
+        clearer     => '_clear_member_wiki_count',
     );
 }
 
@@ -159,6 +160,7 @@ class_has 'GuestUser' => (
         isa         => Int,
         select      => $select,
         bind_params => sub { ( $_[0]->user_id() ) x 3 },
+        clearer     => '_clear_all_wiki_count',
     );
 }
 

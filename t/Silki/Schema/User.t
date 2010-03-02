@@ -10,7 +10,12 @@ use Silki::Test::RealSchema;
 use DateTime;
 use DateTime::Format::Pg;
 use Digest::SHA qw( sha512_base64 );
+use Silki::Schema;
+use Silki::Schema::Permission;
+use Silki::Schema::Role;
 use Silki::Schema::User;
+use Silki::Schema::Wiki;
+
 
 my $dbh = Silki::Schema->DBIManager()->default_source()->dbh();
 my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
@@ -295,6 +300,158 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
     ok( $reg1->can_edit_user($reg1), 'regular user can edit self' );
     ok( !$reg1->can_edit_user($reg2),
         'regular user cannot edit other users' );
+}
+
+{
+    my $user
+        = Silki::Schema::User->new( email_address => 'reg1@example.com' );
+
+    my %perms = (
+        Read   => 1,
+        Edit   => 1,
+        Delete => 0,
+        Upload => 0,
+        Invite => 0,
+        Manage => 0,
+    );
+
+    test_permissions( $user, $wiki, \%perms );
+
+    ok( !$user->is_wiki_member($wiki),
+        'user is not a member of the first wiki' );
+
+    is(
+        $user->role_in_wiki($wiki)->name(), 'Authenticated',
+        'user role in First Wiki is Authenticated'
+    );
+
+    is(
+        $user->member_wiki_count(), 0,
+        'user is not a member of any wikis'
+    );
+
+    is(
+        $user->all_wiki_count(), 0,
+        'user is not a participant in any wikis'
+    );
+
+    Silki::Schema::Page->new(
+        wiki_id => $wiki->wiki_id(),
+        title   => 'Front Page'
+        )->add_revision(
+        content => 'whatever',
+        user_id => $user->user_id(),
+        );
+
+    $user->_clear_all_wiki_count();
+
+    is(
+        $user->all_wiki_count(), 1,
+        'user is a participant in one wiki'
+    );
+
+    $wiki->add_user( user => $user, role => Silki::Schema::Role->Member() );
+
+    ok( $user->is_wiki_member($wiki), 'user is a member of the first wiki' );
+
+    is(
+        $user->role_in_wiki($wiki)->name(), 'Member',
+        'user role in First Wiki is Member'
+    );
+
+    is(
+        $user->member_wiki_count(), 1,
+        'user is a member of one wiki'
+    );
+
+    $user->_clear_all_wiki_count();
+
+    is(
+        $user->all_wiki_count(), 1,
+        'user is a participant in one wiki'
+    );
+}
+
+{
+    my $user
+        = Silki::Schema::User->new( email_address => 'reg1@example.com' );
+
+    my $wiki = Silki::Schema::Wiki->new( short_name => 'second-wiki' );
+
+    my %perms = (
+        Read   => 0,
+        Edit   => 0,
+        Delete => 0,
+        Upload => 0,
+        Invite => 0,
+        Manage => 0,
+    );
+
+    test_permissions( $user, $wiki, \%perms );
+
+    $wiki->add_user( user => $user, role => Silki::Schema::Role->Member() );
+
+    @perms{ qw( Read Edit Delete Upload ) } = (1) x 5;
+    test_permissions( $user, $wiki, \%perms );
+
+    is(
+        $user->member_wiki_count(), 2,
+        'user is a member of two wikis'
+    );
+
+    $user->_clear_all_wiki_count();
+
+    is(
+        $user->all_wiki_count(), 2,
+        'user is a participant in two wikis'
+    );
+
+    Silki::Schema::Wiki->new( short_name => 'first-wiki' )
+        ->remove_user( user => $user );
+
+    is(
+        $user->member_wiki_count(), 1,
+        'user is a member of one wiki after being removed from First Wiki'
+    );
+
+    is(
+        $user->all_wiki_count(), 2,
+        'user is still a participant in two wikis after being removed from First Wiki'
+    );
+}
+
+sub test_permissions {
+    my $user = shift;
+    my $wiki = shift;
+    my $perms = shift;
+
+    my $member_desc
+        = $user->role_in_wiki($wiki)->name() eq 'Authenticated'
+        ? 'non-member'
+        : 'member';
+
+    my $perm_name = $wiki->permissions_name();
+
+    for my $perm ( sort keys %{$perms} ) {
+        if ( $perms->{$perm} ) {
+            ok(
+                $user->has_permission_in_wiki(
+                    wiki       => $wiki,
+                    permission => Silki::Schema::Permission->$perm(),
+                ),
+                "$member_desc user has $perm permission in $perm_name wiki"
+            );
+        }
+        else {
+            ok(
+                !$user->has_permission_in_wiki(
+                    wiki       => $wiki,
+                    permission => Silki::Schema::Permission->$perm(),
+                ),
+                "$member_desc user does not have $perm permission in $perm_name wiki"
+            );
+        }
+    }
 }
 
 done_testing();
