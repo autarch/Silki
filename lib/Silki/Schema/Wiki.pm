@@ -229,6 +229,10 @@ sub add_user {
             wiki_id => $self->wiki_id(),
             role_id => $role->role_id(),
         );
+
+        # XXX - this is rather gross
+        $user->_clear_member_wiki_count();
+        $user->_clear_all_wiki_count();
     }
 
     return;
@@ -249,6 +253,10 @@ sub remove_user {
     );
 
     $uwr->delete() if $uwr;
+
+    # XXX - this is rather gross
+    $user->_clear_member_wiki_count();
+    $user->_clear_all_wiki_count();
 
     return;
 }
@@ -309,7 +317,7 @@ sub _build_permissions {
         'private' => {
             Guest         => [],
             Authenticated => [],
-            Member        => [qw( Read Edit Delete Upload Invite )],
+            Member        => [qw( Read Edit Delete Upload )],
             Admin         => [qw( Read Edit Delete Upload Invite Manage )],
         },
     );
