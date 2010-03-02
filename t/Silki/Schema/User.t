@@ -454,4 +454,74 @@ sub test_permissions {
     }
 }
 
+{
+    my $reg3 = Silki::Schema::User->insert(
+        email_address => 'reg3@example.com',
+        password      => 'foo',
+    );
+
+    my $reg4 = Silki::Schema::User->insert(
+        email_address => 'reg4@example.com',
+        password      => 'foo',
+    );
+
+    my @wikis = $reg3->wikis_shared_with($reg4)->all();
+    is(
+        scalar @wikis, 0,
+        'reg3 and reg4 user do not share any wikis'
+    );
+
+    @wikis = $reg4->wikis_shared_with($reg3)->all();
+
+    is(
+        scalar @wikis, 0,
+        'reg3 and reg4 user do not share any wikis'
+    );
+
+    my $wiki1 = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
+    my $wiki2 = Silki::Schema::Wiki->new( short_name => 'second-wiki' );
+    my $wiki3 = Silki::Schema::Wiki->new( short_name => 'third-wiki' );
+
+    $wiki1->add_user( user => $reg3, role => Silki::Schema::Role->Member() );
+    $wiki2->add_user( user => $reg4, role => Silki::Schema::Role->Member() );
+
+    @wikis = $reg4->wikis_shared_with($reg3)->all();
+
+    is(
+        scalar @wikis, 0,
+        'reg3 and reg4 user still do not share any wikis'
+    );
+
+    $wiki1->add_user( user => $reg4, role => Silki::Schema::Role->Member() );
+
+    @wikis = $reg4->wikis_shared_with($reg3)->all();
+
+    is(
+        scalar @wikis, 1,
+        'reg3 and reg4 user share one wiki'
+    );
+
+    is_deeply(
+        [ sort map { $_->title() } @wikis ],
+        ['First Wiki'],
+        'the shared wiki is First Wiki'
+    );
+
+    $wiki2->add_user( user => $reg3, role => Silki::Schema::Role->Member() );
+
+    @wikis = $reg4->wikis_shared_with($reg3)->all();
+
+    is(
+        scalar @wikis, 2,
+        'reg3 and reg4 user share two wikis'
+    );
+
+    is_deeply(
+        [ sort map { $_->title() } @wikis ],
+        ['First Wiki', 'Second Wiki' ],
+        'the shared wikis are First and Second Wiki'
+    );
+
+}
+
 done_testing();
