@@ -1,7 +1,10 @@
 use strict;
 use warnings;
 
-use Test::More tests => 5;
+use Test::More;
+
+use lib 't/lib';
+use Silki::Test::RealSchema;
 
 use DateTime;
 use DateTime::Format::Pg;
@@ -9,84 +12,125 @@ use Silki::Schema::Domain;
 use Silki::Schema::User;
 use Silki::Schema::Wiki;
 
-use lib 't/lib';
-use Silki::Test qw( mock_dbh );
-
-
 {
-    my $domain =
-        Silki::Schema::Domain->new( domain_id    => 1,
-                                    hostname     => 'host.example.com',
-                                    path_prefix  => '',
-                                    requires_ssl => 0,
-                                    _from_query  => 1,
-                                  );
+    my $wiki = Silki::Schema::Wiki->new( title => 'First Wiki' );
 
-    no warnings 'redefine';
-    local *Silki::Schema::Wiki::domain = sub { return $domain };
+    is(
+        $wiki->uri(), "/wiki/first-wiki",
+        'uri for wiki'
+    );
 
-    my $wiki =
-        Silki::Schema::Wiki->new( wiki_id    => 1,
-                                  title      => 'Some Wiki',
-                                  short_name => 'some-wiki',
-                                  _from_query => 1,
-                                );
+    my $domain = Silki::Schema::Domain->DefaultDomain();
 
-    is( $wiki->base_uri(), 'http://host.example.com/wiki/1',
-        'base_uri() for wiki' );
+    my $hostname = $domain->web_hostname();
+
+    is(
+        $wiki->uri( with_host => 1 ), "http://$hostname/wiki/first-wiki",
+        'uri with host for wiki'
+    );
+
+    my @pages = $wiki->pages()->all();
+
+    is(
+        scalar @pages, 2,
+        'inserting a new wiki creates two pages'
+    );
+
+    is_deeply(
+        [ sort map { $_->title() } @pages ],
+        [ 'Front Page', 'Help' ],
+        'new pages are called Front Page and Help'
+    );
 }
 
 {
-    my $domain =
-        Silki::Schema::Domain->new( domain_id    => 1,
-                                    hostname     => 'host.example.com',
-                                    path_prefix  => '/silk',
-                                    requires_ssl => 0,
-                                    _from_query  => 1,
-                                  );
+    my $wiki = Silki::Schema::Wiki->new( title => 'First Wiki' );
 
-    no warnings 'redefine';
-    local *Silki::Schema::Wiki::domain = sub { return $domain };
+    my %perms = (
+        Guest         => { map { $_ => 1 } qw( Read Edit ) },
+        Authenticated => { map { $_ => 1 } qw( Read Edit ) },
+        Member        => {
+            map { $_ => 1 } qw( Read Edit Delete Upload )
+        },
+        Admin => {
+            map { $_ => 1 } qw( Read Edit Delete Upload Invite Manage )
+        },
+    );
 
-    my $wiki =
-        Silki::Schema::Wiki->new( wiki_id    => 1,
-                                  title      => 'Some Wiki',
-                                  short_name => 'some-wiki',
-                                  _from_query => 1,
-                                );
+    is_deeply(
+        $wiki->permissions(), \%perms,
+        'permissions hash matches expected perm set for public wiki'
+    );
 
-    is( $wiki->base_uri(), 'http://host.example.com/silk/wiki/1',
-        'base_uri() for wiki in domain with path prefix' );
+    is(
+        $wiki->permissions_name(), 'public',
+        'permissions name is public'
+    );
+
+    $wiki->set_permissions('private');
+
+    %perms = (
+        Member        => {
+            map { $_ => 1 } qw( Read Edit Delete Upload )
+        },
+        Admin => {
+            map { $_ => 1 } qw( Read Edit Delete Upload Invite Manage )
+        },
+    );
+
+    is_deeply(
+        $wiki->permissions(), \%perms,
+        'permissions hash matches expected perm set for private wiki'
+    );
+
+    is(
+        $wiki->permissions_name(), 'private',
+        'permissions name is private'
+    );
 }
-
-my $dbh = mock_dbh();
 
 {
-    $dbh->{mock_start_insert_id} = [ q{"Wiki"}, 42 ];
-    $dbh->{mock_start_insert_id} = [ q{"Page"}, 3 ];
+    my $wiki = Silki::Schema::Wiki->new( title => 'First Wiki' );
 
-    my $wiki =
-        Silki::Schema::Wiki->insert( title      => 'Some Wiki',
-                                     short_name => 'some-wiki',
-                                     domain_id  => 1,
-                                     user_id    => 99,
-                                   );
+    is( $wiki->revision_count(), 2, 'wiki has two revisions' );
 
+    my @revs = $wiki->revisions()->all();
 
-    my @inserts =
-        map { $_->bound_params() }
-        grep { $_->statement() =~ /^INSERT/ }
-        @{ $dbh->{mock_all_history} };
+    # We need to sort the revs because the creation_datetime for the two pages
+    # could be identical.
+    is_deeply(
+        [
+            map { [ $_->[0]->title(), $_->[1]->revision_number() ] }
+            sort { $a->[0]->title() cmp $b->[0]->title() } @revs
+        ],
+        [
+            [ 'Front Page', 1 ],
+            [ 'Help',       1 ],
+        ],
+        'revisions returns expected revisions'
+    );
 
-    is_deeply( $inserts[0],
-               [ 1, 'some-wiki', 'Some Wiki', 99 ],
-               'Wiki data was inserted as expected' );
+    is(
+        $wiki->front_page_title(), 'Front Page',
+        'front page title is Front Page'
+    );
 
-    is_deeply( $inserts[1],
-               [ 99, 42 ],
-               'Creating a wiki also creates a front page' );
+    is(
+        $wiki->orphaned_page_count(), 0,
+        'wiki has no orphaned pages'
+    );
 
-    is_deeply( $inserts[2],
-               [ 'Welcome to Some Wiki', 3, 1, 'FrontPage', 99 ],
-               'Creating a wiki also creates a front page (page revision)' );
+    Silki::Schema::Page->insert_with_content(
+        title   => 'Orphan',
+        wiki_id => $wiki->wiki_id(),
+        user_id => Silki::Schema::User->SystemUser()->user_id(),
+        content => 'Whatever',
+    );
+
+    is(
+        $wiki->orphaned_page_count(), 1,
+        'wiki has one orphaned page'
+    );
 }
+
+done_testing();

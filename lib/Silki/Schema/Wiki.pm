@@ -39,10 +39,11 @@ has_many pages => (
 
 has permissions => (
     is       => 'ro',
-    isa      => HashRef[HashRef[Bool]],
+    isa      => HashRef[ HashRef[Bool] ],
     lazy     => 1,
     builder  => '_build_permissions',
     init_arg => undef,
+    clearer  => '_clear_permissions',
 );
 
 has permissions_name => (
@@ -51,12 +52,10 @@ has permissions_name => (
     lazy     => 1,
     builder  => '_build_permissions_name',
     init_arg => undef,
+    clearer  => '_clear_permissions_name',
 );
 
-has revision_count => (
-    metaclass   => 'FromSelect',
-    is          => 'ro',
-    isa         => Int,
+query revision_count => (
     select      => __PACKAGE__->_RevisionCountSelect(),
     bind_params => sub { $_[0]->wiki_id() },
 );
@@ -69,26 +68,17 @@ has front_page_title => (
     builder  => '_build_front_page_title',
 );
 
-has orphaned_page_count => (
-    metaclass   => 'FromSelect',
-    is          => 'ro',
-    isa         => Int,
+query orphaned_page_count => (
     select      => __PACKAGE__->_OrphanedPageCountSelect(),
     bind_params => sub { $_[0]->wiki_id(), $_[0]->front_page_title() },
 );
 
-has wanted_page_count => (
-    metaclass   => 'FromSelect',
-    is          => 'ro',
-    isa         => Int,
+query wanted_page_count => (
     select      => __PACKAGE__->_WantedPageCountSelect(),
     bind_params => sub { $_[0]->wiki_id() },
 );
 
-has file_count => (
-    metaclass   => 'FromSelect',
-    is          => 'ro',
-    isa         => Int,
+query file_count => (
     select      => __PACKAGE__->_FileCountSelect(),
     bind_params => sub { $_[0]->wiki_id() },
 );
@@ -229,10 +219,6 @@ sub add_user {
             wiki_id => $self->wiki_id(),
             role_id => $role->role_id(),
         );
-
-        # XXX - this is rather gross
-        $user->_clear_member_wiki_count();
-        $user->_clear_all_wiki_count();
     }
 
     return;
@@ -253,10 +239,6 @@ sub remove_user {
     );
 
     $uwr->delete() if $uwr;
-
-    # XXX - this is rather gross
-    $user->_clear_member_wiki_count();
-    $user->_clear_all_wiki_count();
 
     return;
 }
@@ -360,6 +342,11 @@ sub _build_permissions {
         };
 
         Silki::Schema->RunInTransaction($trans);
+
+        $self->_clear_permissions();
+        $self->_clear_permissions_name();
+
+        return;
     }
 
     my %SetsAsHashes;
@@ -436,8 +423,8 @@ sub _BuildRecentChangesSelect {
         ->from( $page_t, $Schema->table('PageRevision') )
         ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
         ->order_by(
-        $Schema->table('PageRevision')->column('creation_datetime'), 'DESC',
-        $Schema->table('Page')->column('title'),                     'ASC',
+            $Schema->table('PageRevision')->column('creation_datetime'), 'DESC',
+            $Schema->table('Page')->column('title'),                     'ASC',
         );
 
     return $pages_select;
@@ -454,10 +441,12 @@ sub _BuildDistinctRecentChangesSelect {
         $Schema->table('PageRevision')->column('revision_number') );
 
     my $max_revision = Silki::Schema->SQLFactoryClass()->new_select();
-    $max_revision->select($max_func)->from( $Schema->table('PageRevision') )
+    $max_revision
+        ->select($max_func)
+        ->from( $Schema->table('PageRevision') )
         ->where(
-        $Schema->table('PageRevision')->column('page_id'),
-        '=', $page_t->column('page_id')
+            $Schema->table('PageRevision')->column('page_id'),
+            '=', $page_t->column('page_id')
         );
 
     my $pages_select = Silki::Schema->SQLFactoryClass()->new_select();
@@ -466,11 +455,11 @@ sub _BuildDistinctRecentChangesSelect {
         ->from( $page_t, $Schema->table('PageRevision') )
         ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
         ->and(
-        $Schema->table('PageRevision')->column('revision_number'),
-        '=', $max_revision
+            $Schema->table('PageRevision')->column('revision_number'),
+            '=', $max_revision
         )->order_by(
             $Schema->table('PageRevision')->column('creation_datetime'), 'DESC',
-            $page_t->column('title'),                                   'ASC',
+            $page_t->column('title'),                                    'ASC',
         );
 
     return $pages_select;

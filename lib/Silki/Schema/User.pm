@@ -131,13 +131,9 @@ class_has 'GuestUser' => (
 {
     my $select = __PACKAGE__->_MemberWikiCountSelect();
 
-    has member_wiki_count => (
-        metaclass   => 'FromSelect',
-        is          => 'ro',
-        isa         => Int,
+    query member_wiki_count => (
         select      => $select,
         bind_params => sub { $_[0]->user_id(), $select->bind_params() },
-        clearer     => '_clear_member_wiki_count',
     );
 }
 
@@ -154,13 +150,9 @@ class_has 'GuestUser' => (
 {
     my $select = __PACKAGE__->_AllWikiCountSelect();
 
-    has all_wiki_count => (
-        metaclass   => 'FromSelect',
-        is          => 'ro',
-        isa         => Int,
+    query all_wiki_count => (
         select      => $select,
         bind_params => sub { ( $_[0]->user_id() ) x 3 },
-        clearer     => '_clear_all_wiki_count',
     );
 }
 

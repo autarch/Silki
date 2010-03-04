@@ -343,8 +343,6 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         user_id => $user->user_id(),
         );
 
-    $user->_clear_all_wiki_count();
-
     is(
         $user->all_wiki_count(), 1,
         'user is a participant in one wiki'
@@ -363,8 +361,6 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         $user->member_wiki_count(), 1,
         'user is a member of one wiki'
     );
-
-    $user->_clear_all_wiki_count();
 
     is(
         $user->all_wiki_count(), 1,
@@ -398,8 +394,6 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         $user->member_wiki_count(), 2,
         'user is a member of two wikis'
     );
-
-    $user->_clear_all_wiki_count();
 
     is(
         $user->all_wiki_count(), 2,
