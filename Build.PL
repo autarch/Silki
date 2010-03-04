@@ -1,18 +1,7 @@
 use strict;
 use warnings;
 
-use Module::Build;
+use lib 'inc';
+use Silki::Build;
 
-my $builder = Module::Build->new
-    ( module_name        => 'Silki',
-      license            => 'perl',
-      requires           => { 'Fey::Class' => 0,
-                            },
-      build_requires     => { 'Test::More' => 0,
-                            },
-      create_makefile_pl => 'passthrough',
-      create_readme      => 1,
-      sign               => 1,
-    );
-
-$builder->create_build_script();
+Silki::Build->new()->create_build_script();
