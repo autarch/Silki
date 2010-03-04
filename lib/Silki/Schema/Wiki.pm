@@ -747,7 +747,7 @@ sub _BuildMembersSelect {
 # http://www.postgresql.org/docs/8.3/static/textsearch-controls.html#TEXTSEARCH-HEADLINE
 # for details.
 #
-# The innermost select clause in on PageRevision.revision_number ensures that
+# The innermost select clause on PageRevision.revision_number ensures that
 # we only retrieve the most recent revision for a page.
 
 sub text_search {
