@@ -8,9 +8,47 @@ use Silki::Test::RealSchema;
 
 use DateTime;
 use DateTime::Format::Pg;
+use Lingua::EN::Inflect qw( PL_N );
+use Silki::Schema::Account;
 use Silki::Schema::Domain;
+use Silki::Schema::Role;
 use Silki::Schema::User;
 use Silki::Schema::Wiki;
+
+my $account = Silki::Schema::Account->new( name => 'Default Account' );
+my $user = Silki::Schema::User->SystemUser();
+
+{
+    is(
+        Silki::Schema::Wiki->PublicWikiCount(),
+        1,
+        'there is one public wiki'
+    );
+
+    my $wiki = Silki::Schema::Wiki->insert(
+        title      => 'Public',
+        short_name => 'public',
+        domain_id  => Silki::Schema::Domain->DefaultDomain()->domain_id(),
+        user_id    => $user->user_id(),
+        account_id => $account->account_id(),
+    );
+
+    $wiki->set_permissions('public');
+
+    is(
+        Silki::Schema::Wiki->PublicWikiCount(),
+        2,
+        'there are two public wikis'
+    );
+
+    my @wikis = Silki::Schema::Wiki->PublicWikis()->all();
+
+    is_deeply(
+        [ sort map { $_->title() } @wikis ],
+        [ 'First Wiki', 'Public' ],
+        'got expected set of public wikis'
+    );
+}
 
 {
     my $wiki = Silki::Schema::Wiki->new( title => 'First Wiki' );
@@ -123,13 +161,239 @@ use Silki::Schema::Wiki;
     Silki::Schema::Page->insert_with_content(
         title   => 'Orphan',
         wiki_id => $wiki->wiki_id(),
-        user_id => Silki::Schema::User->SystemUser()->user_id(),
+        user_id => $user->user_id(),
         content => 'Whatever',
     );
 
     is(
         $wiki->orphaned_page_count(), 1,
         'wiki has one orphaned page'
+    );
+
+    Silki::Schema::Page->insert_with_content(
+        title   => 'Orphan2',
+        wiki_id => $wiki->wiki_id(),
+        user_id => $user->user_id(),
+        content => 'Whatever',
+    );
+
+    my @orphans = $wiki->orphaned_pages()->all();
+    is_deeply(
+        [ sort map { $_->title() } map { $_->[0] } @orphans ],
+        [ 'Orphan', 'Orphan2' ],
+        'orphaned pages returns expected list of pages'
+    );
+
+    is(
+        $wiki->wanted_page_count(), 1,
+        'wiki has one wanted page'
+    );
+
+    Silki::Schema::Page->insert_with_content(
+        title   => 'Wants',
+        wiki_id => $wiki->wiki_id(),
+        user_id => $user->user_id(),
+        content => 'A link to [[Something New]]',
+    );
+
+    is(
+        $wiki->wanted_page_count(), 2,
+        'wiki has two wanted pages'
+    );
+
+    my @wanted = $wiki->wanted_pages()->all();
+    is_deeply(
+        [ sort map { $_->title() } @wanted ],
+        [ 'Something New', 'Wanted Page' ],
+        'wanted pages returns expected list of pages'
+    );
+}
+
+{
+    my $wiki = Silki::Schema::Wiki->new( title => 'First Wiki' );
+
+    is(
+        $wiki->file_count(), 0,
+        'wiki has no files'
+    );
+
+    my $text = "This is some plain text.\n";
+    my $file1 = Silki::Schema::File->insert(
+        file_name => 'test1.txt',
+        mime_type => 'text/plain',
+        file_size => length $text,
+        contents  => $text,
+        user_id   => $user->user_id(),
+        wiki_id   => $wiki->wiki_id(),
+    );
+
+    is(
+        $wiki->file_count(), 1,
+        'wiki has one file'
+    );
+
+    $text = "This is some more plain text.\n";
+    my $file2 = Silki::Schema::File->insert(
+        file_name => 'test2.txt',
+        mime_type => 'text/plain',
+        file_size => length $text,
+        contents  => $text,
+        user_id   => $user->user_id(),
+        wiki_id   => $wiki->wiki_id(),
+    );
+
+    is(
+        $wiki->file_count(), 2,
+        'wiki has two files'
+    );
+
+    my @files = $wiki->files()->all();
+    is_deeply(
+        [ sort map { $_->file_name() } @files ],
+        [ 'test1.txt', 'test2.txt' ],
+        'files returns all files in the wiki'
+    );
+}
+
+{
+    my $wiki = Silki::Schema::Wiki->insert(
+        title      => 'New',
+        short_name => 'new',
+        domain_id  => Silki::Schema::Domain->DefaultDomain()->domain_id(),
+        user_id    => $user->user_id(),
+        account_id => $account->account_id(),
+    );
+
+    check_members( $wiki, [] );
+
+    $wiki->add_user(
+        user => Silki::Schema::User->SystemUser(),
+        role => Silki::Schema::Role->Admin(),
+    );
+
+    check_members( $wiki, [], 'cannot add a system user' );
+
+    my $user1 = Silki::Schema::User->insert(
+        email_address => 'user1@example.com',
+        password      => 'foo',
+    );
+
+    $wiki->add_user( user => $user1, role => Silki::Schema::Role->Member() );
+
+    check_members( $wiki, [ [ 'user1@example.com', 'Member' ] ] );
+
+    my $user2 = Silki::Schema::User->insert(
+        email_address => 'user2@example.com',
+        password      => 'foo',
+    );
+
+    $wiki->add_user( user => $user2, role => Silki::Schema::Role->Member() );
+
+    check_members(
+        $wiki,
+        [
+            [ 'user1@example.com', 'Member' ],
+            [ 'user2@example.com', 'Member' ],
+        ]
+    );
+
+    $wiki->add_user( user => $user1, role => Silki::Schema::Role->Admin() );
+
+    check_members(
+        $wiki,
+        [
+            [ 'user1@example.com', 'Admin' ],
+            [ 'user2@example.com', 'Member' ],
+        ],
+        're-add existing user with new role'
+    );
+
+    $wiki->remove_user( user => $user1 );
+
+    check_members(
+        $wiki,
+        [
+            [ 'user2@example.com', 'Member' ],
+        ],
+        'remove a user from the wiki'
+    );
+}
+
+sub check_members {
+    my $wiki   = shift;
+    my $expect = shift;
+    my $desc   = shift;
+
+    my @members = $wiki->members()->all();
+
+    my $count = scalar @{$expect};
+    my $pl = PL_N( 'member', $count );
+
+    is(
+        scalar @members, $count,
+        "wiki has $count $pl" . ( $desc ? " - $desc" : q{} )
+    );
+
+    return unless $count;
+
+    is_deeply(
+        [
+            sort { $a->[0] cmp $b->[0] }
+            map { [ $_->[0]->email_address(), $_->[1]->name() ] } @members
+        ],
+        $expect,
+        'users and roles for wiki members match expected values'
+            . ( $desc ? " - $desc" : q{} )
+    );
+}
+
+{
+    my $wiki = Silki::Schema::Wiki->insert(
+        title      => 'Clean',
+        short_name => 'clean',
+        domain_id  => Silki::Schema::Domain->DefaultDomain()->domain_id(),
+        user_id    => $user->user_id(),
+        account_id => $account->account_id(),
+    );
+
+    check_search(
+        $wiki,
+        'afkjadghasjgd',
+        [],
+        'garbage text'
+    );
+
+    check_search(
+        $wiki,
+        'page',
+        [ 'Front Page', 'Help' ],
+    );
+}
+
+sub check_search {
+    my $wiki   = shift;
+    my $query  = shift;
+    my $expect = shift;
+    my $desc   = shift;
+
+    my $search = $wiki->text_search( query => $query );
+
+    my @results = map { $_->[0]->title() } $search->all();
+
+    my $count = scalar @{$expect};
+    my $pl = PL_N( 'result', $count );
+
+    is(
+        scalar @results, $count,
+        "$count $pl for '$query'" . ( $desc ? " - $desc" : q{} )
+    );
+
+    return unless $count;
+
+    is_deeply(
+        \@results,
+        $expect,
+        "search results for '$query'" . ( $desc ? " - $desc" : q{} )
     );
 }
 
