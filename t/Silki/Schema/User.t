@@ -384,8 +384,8 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         'regular user cannot edit other users' );
 
     ok(
-        !Silki::Schema::User->SystemUser()->can_edit_user($reg1),
-        'system user cannot edit other users'
+        !$admin->can_edit_user( Silki::Schema::User->SystemUser() ),
+        'cannot edit system users'
     );
 }
 
