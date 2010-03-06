@@ -37,6 +37,7 @@ my $formatter = Silki::Formatter::HTMLToWiki->new( wiki => $wiki );
 <p><a href="/wiki/first-wiki/file/1">File link</a></p>
 <p><a href="/wiki/second-wiki/file/1">foo.txt</a></p>
 <p><a href="/wiki/second-wiki/file/1">File link</a></p>
+<p><a href="/wiki/second-wiki/recent">recent changes</a></p>
 
 <ol>
   <li>
@@ -129,6 +130,8 @@ See the [[second-wiki/Front Page]]{Second Wiki}.
 [[second-wiki/file:1]]
 
 [[second-wiki/file:1]]{File link}
+
+[recent changes](/wiki/second-wiki/recent)
 
 1.  num
 1.  list 
