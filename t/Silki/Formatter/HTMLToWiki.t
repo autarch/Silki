@@ -37,6 +37,7 @@ my $formatter = Silki::Formatter::HTMLToWiki->new( wiki => $wiki );
 <p><a href="/wiki/first-wiki/file/1">File link</a></p>
 <p><a href="/wiki/second-wiki/file/1">foo.txt</a></p>
 <p><a href="/wiki/second-wiki/file/1">File link</a></p>
+<p><a href="/wiki/first-wiki/file/2">bad file</a></p>
 <p><a href="/wiki/second-wiki/recent">recent changes</a></p>
 
 <ol>
@@ -93,11 +94,20 @@ EOF
 
     no warnings 'redefine';
     local *Silki::Schema::File::new = sub {
-        bless {
-            file_id   => 1,
-            file_name => 'foo.txt',
-            },
-            'Silki::Schema::File';
+        shift;
+
+        my %p = @_;
+
+        if ( $p{file_id} == 1 ) {
+            return bless {
+                file_id   => 1,
+                file_name => 'foo.txt',
+                },
+                'Silki::Schema::File';
+        }
+        else {
+            return;
+        }
     };
 
     my $wikitext = $formatter->html_to_wikitext($html);
@@ -130,6 +140,8 @@ See the [[second-wiki/Front Page]]{Second Wiki}.
 [[second-wiki/file:1]]
 
 [[second-wiki/file:1]]{File link}
+
+[[file:2]]{bad file}
 
 [recent changes](/wiki/second-wiki/recent)
 
