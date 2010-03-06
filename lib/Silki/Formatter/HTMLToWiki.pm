@@ -234,6 +234,9 @@ sub _handle_a_as_wiki_link {
 
         $default_text = $file ? $file->file_name() : q{};
     }
+    else {
+        return $self->_handle_a_as_external_link( $node, $href );
+    }
 
     my $link = q{};
     if ( $wiki ne $self->_wiki()->short_name() ) {
