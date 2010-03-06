@@ -68,7 +68,10 @@ sub html_to_wikitext {
     my $buffer = q{};
     $self->_replace_stream( \$buffer );
 
-    my $tree = HTML::TreeBuilder->new_from_content($html);
+    my $tree = HTML::TreeBuilder->new();
+    $tree->store_comments(1);
+
+    $tree->parse_content($html);
 
     $self->_handle_events_from_tree($tree);
 
@@ -125,14 +128,14 @@ sub _handle_node {
     my $self = shift;
     my $node = shift;
 
-    if ( $node->tag eq '~text' ) {
+    if ( $node->tag() eq '~text' ) {
         my $text = $node->attr('text');
         $text =~ s/\n+$//;
 
         $self->_print_to_stream($text);
     }
-    elsif ( $node->tag eq '~comment' ) {
-        $self->_print_to_stream( '<!-- ' . $node->attr('text') . ' -->' );
+    elsif ( $node->tag() eq '~comment' ) {
+        $self->_print_to_stream( '<!--' . $node->attr('text') . '-->' );
     }
 
     return;
@@ -220,8 +223,8 @@ sub _handle_a_as_wiki_link {
 
     if ( $href =~ m{^/wiki/([^/]+)/page/([^/]+)} ) {
         $wiki         = $1;
-        $thing        = $2;
-        $default_text = Silki::Schema::Page->URIPathToTitle($thing);
+        $thing        = Silki::Schema::Page->URIPathToTitle($2);
+        $default_text = $thing;
     }
     elsif ( $href =~ m{^/wiki/([^/]+)/file/([^/]+)} ) {
         $wiki  = $1;
@@ -249,7 +252,7 @@ sub _handle_a_as_wiki_link {
     $self->_set_stream($old_stream);
 
     $self->_print_to_stream( '[[' . $link . ']]' );
-    $self->_print_to_stream($buffer)
+    $self->_print_to_stream( '{' . $buffer . '}' )
         unless $buffer eq $default_text;
 }
 
@@ -267,9 +270,13 @@ sub _handle_a_as_external_link {
 
     $self->_set_stream($old_stream);
 
-    $self->_print_to_stream( '[' . $buffer . ']' )
-        unless $buffer eq $href;
-    $self->_print_to_stream( '(' . $href . ')' );
+    if ( $buffer eq $href ) {
+        $self->_print_to_stream( '<' . $href . '>' );
+    }
+    else {
+        $self->_print_to_stream( '[' . $buffer . ']' );
+        $self->_print_to_stream( '(' . $href . ')' );
+    }
 }
 
 # No need for _start_p
@@ -317,7 +324,7 @@ sub _start_li {
     my $self = shift;
 
     $self->_print_to_stream( q{ } x ( 4 * ( $self->_indent_level() - 1 ) ) );
-    $self->_print_to_stream( $self->_bullet() );
+    $self->_print_to_stream( $self->_bullet() . q{ } );
 }
 
 sub _end_li {

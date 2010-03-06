@@ -29,14 +29,14 @@ sub _possible_span_matches {
 }
 
 # Stolen from Text::Markdown
-my $nested_parens;
-$nested_parens = qr{
+my $nested_curlies;
+$nested_curlies = qr{
     (?>                                 # Atomic matching
-       [^()]+                           # Anything other than parens
+       [^{}]+                           # Anything other than parens
        |
-       \(
-         (??{ $nested_parens })         # Recursive set of nested parens
-       \)
+       \{
+         (??{ $nested_curlies })        # Recursive set of nested curlies
+       \}
     )*
 }x;
 
@@ -49,9 +49,9 @@ sub _match_wiki_link {
                                 ([^]]+)
                                 \]\]
                                 (?:
-                                  \(
-                                   ($nested_parens)
-                                  \)
+                                  \{
+                                   ($nested_curlies)
+                                  \}
                                 )?
                               /xmgc;
 

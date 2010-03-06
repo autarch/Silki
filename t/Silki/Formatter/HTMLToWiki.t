@@ -4,7 +4,11 @@ use warnings;
 use Test::Differences;
 use Test::More;
 
+use lib 't/lib';
+use Silki::Test::FakeSchema;
+
 use Silki::Formatter::HTMLToWiki;
+use Silki::Schema::File;
 use Silki::Schema::Wiki;
 
 my $wiki = Silki::Schema::Wiki->new(
@@ -21,10 +25,18 @@ my $formatter = Silki::Formatter::HTMLToWiki->new( wiki => $wiki );
 <h2 id="welcometoyournewwiki">Welcome to your new wiki</h2>
 
 <p>A <a href="http://www.vegguide.org">wiki</a> is a set of web pages</p>
+<p><a href="http://www.vegguide.org">http://www.vegguide.org</a></p>
 <p><strong>that can</strong> <em>be</em> read and edited by a group of people.</p>
 <p>You use simple syntax to add things like <em>italics</em> and <strong>bold</strong></p>
 <p>to the text. Wikis are designed to make linking to other pages easy.</p>
 <p>See the <a class="existing-page" href="/wiki/first-wiki/page/Help">Help</a> page.</p>
+<p>See the <a class="existing-page" href="/wiki/first-wiki/page/Help">instructions</a> page.</p>
+<p>See the <a class="existing-page" href="/wiki/second-wiki/page/Front_Page">Front Page</a>.</p>
+<p>See the <a class="existing-page" href="/wiki/second-wiki/page/Front_Page">Second Wiki</a>.</p>
+<p><a href="/wiki/first-wiki/file/1">foo.txt</a></p>
+<p><a href="/wiki/first-wiki/file/1">File link</a></p>
+<p><a href="/wiki/second-wiki/file/1">foo.txt</a></p>
+<p><a href="/wiki/second-wiki/file/1">File link</a></p>
 
 <ol>
   <li>
@@ -45,6 +57,15 @@ my $formatter = Silki::Formatter::HTMLToWiki->new( wiki => $wiki );
     Item 2</li>
 </ul>
 
+<ul>
+  <li>UL</li>
+  <li>more
+    <ul>
+      <li>2nd level</li>
+    </ul>
+  </li>
+</ul>
+
 <p>blah</p>
 
 <ul>
@@ -53,6 +74,12 @@ my $formatter = Silki::Formatter::HTMLToWiki->new( wiki => $wiki );
 </ul>
 
 <p>plain text</p>
+
+<p>This is <code>code</code> and not</p>
+
+<p>
+<a name="empty"></a><a name="empty">no href</a>
+</p>
 
 <blockquote>
   <blockquote>
@@ -63,12 +90,23 @@ my $formatter = Silki::Formatter::HTMLToWiki->new( wiki => $wiki );
 </blockquote>
 EOF
 
+    no warnings 'redefine';
+    local *Silki::Schema::File::new = sub {
+        bless {
+            file_id   => 1,
+            file_name => 'foo.txt',
+            },
+            'Silki::Schema::File';
+    };
+
     my $wikitext = $formatter->html_to_wikitext($html);
 
     my $expected = <<'EOF';
 ## Welcome to your new wiki
 
 A [wiki](http://www.vegguide.org) is a set of web pages
+
+<http://www.vegguide.org>
 
 **that can** _be_ read and edited by a group of people.
 
@@ -78,20 +116,44 @@ to the text. Wikis are designed to make linking to other pages easy.
 
 See the [[Help]] page.
 
-1. num
-1. list 
-    1. 2nd level
+See the [[Help]]{instructions} page.
+
+See the [[second-wiki/Front Page]].
+
+See the [[second-wiki/Front Page]]{Second Wiki}.
+
+[[file:1]]
+
+[[file:1]]{File link}
+
+[[second-wiki/file:1]]
+
+[[second-wiki/file:1]]{File link}
+
+1.  num
+1.  list 
+    1.  2nd level
 
 
 
-* Unordered list
-* Item 2
+*  Unordered list
+*  Item 2
+
+* UL
+* more 
+    * 2nd level
+
+
 
 blah
 
-* blah
+*  blah
 
 plain text
+
+This is `code` and not
+
+no href
 
 > > > indented
 
@@ -215,6 +277,35 @@ EOF
     eq_or_diff(
         $wikitext, $expected,
         'html to wikitext - table with no thead or tbody tags'
+    );
+}
+
+{
+    is(
+        $formatter->html_to_wikitext(q{}),
+        q{},
+        'formatter handles empty string properly'
+    );
+}
+
+{
+    is(
+        $formatter->html_to_wikitext('foo'),
+        "foo\n",
+        'formatter always adds a newline to the end of the returned string'
+    );
+}
+
+{
+    my $html = '<p>foo <!-- a comment --></p>';
+
+    my $expected = "foo <!-- a comment -->\n\n";
+
+    my $wikitext = $formatter->html_to_wikitext($html);
+
+    eq_or_diff(
+        $wikitext, $expected,
+        'formatter outputs comment in html verbatim'
     );
 }
 
