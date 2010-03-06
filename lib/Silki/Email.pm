@@ -69,10 +69,10 @@ sub send_email {
 
 sub _execute_template {
     my $template = shift;
-    my $args = shift;
+    my $args     = shift;
 
     $Body = q{};
-    $Interp->exec( q{/} . $template . '.html',  %{$args} );
+    $Interp->exec( q{/} . $template . '.html', %{$args} );
 
     return $Body;
 }
