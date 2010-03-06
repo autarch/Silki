@@ -12,7 +12,7 @@ use Fey::Literal::Function;
 use Fey::Object::Iterator::FromSelect;
 use Fey::ORM::Exceptions qw( no_such_row );
 use Fey::Placeholder;
-use List::AllUtils qw( all any first first_index );
+use List::AllUtils qw( all any none first first_index );
 use Moose::Util::TypeConstraints;
 use Silki::Email qw( send_email );
 use Silki::I18N qw( loc );
@@ -204,6 +204,10 @@ around update => sub {
         $p{password} = $self->_password_as_rfc2307( $p{password} );
     }
 
+    if ( delete $p{disable_login} ) {
+        $p{password} = $DisabledPW;
+    }
+
     $p{last_modified_datetime} = Fey::Literal::Function->new('NOW');
 
     return $self->$orig(%p);
@@ -266,10 +270,13 @@ sub _has_password_or_openid_uri {
 
         return if any { ! string_is_empty( $p->{$_} ) } qw( password openid_uri );
 
-        if ( string_is_empty( $p->{password} ) ) {
+        return if none { exists $p->{$_} } qw( password openid_uri );
+
+        if ( exists $p->{password} && string_is_empty( $p->{password} ) ) {
             return unless string_is_empty( $self->openid_uri() );
         }
-        elsif ( string_is_empty( $p->{openid_uri} ) ) {
+        elsif ( exists $p->{openid_uri}
+            && string_is_empty( $p->{openid_uri} ) ) {
             return unless string_is_empty( $self->password() );
         }
 

@@ -51,9 +51,19 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         'check_password returns false for invalid pw'
     );
 
+    $user->update( password => 'new pw' );
+
+    ok(
+        $user->check_password('new pw'),
+        'updating password works'
+    );
+
     ok( $user->has_valid_password(), 'user has valid password' );
 
     ok( $user->has_login_credentials(), 'user has login credentials' );
+
+    $user->update( disable_login => 1 );
+    ok( ! $user->has_login_credentials(), 'user does not have login credentials' );
 
     ok(
         !$user->is_guest(),
@@ -167,10 +177,7 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         'activation_uri() with explicit view'
     );
 
-    $user->update(
-        activation_key    => undef,
-        preserve_password => 1,
-    );
+    $user->update( activation_key => undef );
 
     throws_ok(
         sub { $user->activation_uri() },
@@ -232,6 +239,24 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         'Can update a user to unset the password but add an openid_uri'
     );
 
+    lives_ok(
+        sub {
+            $user->update( password => undef );
+        },
+        'Can update a user to not have a password if they have an openid_uri in the dbms'
+    );
+
+    throws_ok(
+        sub {
+            $user->update(
+                openid_uri => undef,
+                password   => q{},
+            );
+        },
+        qr/\QYou must provide a password or OpenID./,
+        'Cannot update a user to not have a password or openid'
+    );
+
     ok( !$user->has_valid_password(), 'user does not have valid password' );
 
     ok( $user->has_login_credentials(), 'user has login credentials (openid)' );
@@ -261,7 +286,28 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
             );
         },
         qr/The OpenID URI you provided is already in use by another account./,
-        'Cannot have two users with the same openid_uri',
+        'Cannot insert a user with the same openid_uri as an existing usre',
+    );
+
+    lives_ok(
+        sub {
+            $user->update( openid_uri => 'http://example.com' );
+        },
+        q{can update a user's openid to the same openid it already has}
+    );
+
+    my $user5 = Silki::Schema::User->insert(
+        email_address => 'userr@example.com',
+        display_name  => 'Example User',
+        openid_uri    => 'http://example.com/foo',
+    );
+
+    throws_ok(
+        sub {
+            $user5->update( openid_uri => 'http://example.com' );
+        },
+        qr/The OpenID URI you provided is already in use by another account./,
+        'Cannot update a user to the same openid_uri as an existing usre',
     );
 
     throws_ok(
@@ -273,7 +319,43 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
             );
         },
         qr/The email address you provided is already in use by another account./,
-        'Cannot have two users with the same email_address',
+        'Cannot insert a user with the same email_address as an existing user',
+    );
+
+    lives_ok(
+        sub {
+            $user->update( email_address => $email );
+        },
+        q{can update a user's email address to the same email address it already has}
+    );
+
+    throws_ok(
+        sub { $user->update( email_address => 'user@example.com' ) },
+        qr/The email address you provided is already in use by another account./,
+        'Cannot update a user to the same email_address as an existing user',
+    );
+
+    $user->update(
+        password   => 'foo',
+        openid_uri => undef,
+    );
+
+    lives_ok(
+        sub {
+            $user->update( openid_uri => undef );
+        },
+        'Can update a user to not have an openid_uri if they have a password in the dbms'
+    );
+
+    throws_ok(
+        sub {
+            $user->update(
+                openid_uri => undef,
+                password   => undef,
+            );
+        },
+        qr/\QYou must provide a password or OpenID./,
+        'Cannot update a user to not have a password or openid_uri'
     );
 }
 
@@ -300,6 +382,11 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
     ok( $reg1->can_edit_user($reg1), 'regular user can edit self' );
     ok( !$reg1->can_edit_user($reg2),
         'regular user cannot edit other users' );
+
+    ok(
+        !Silki::Schema::User->SystemUser()->can_edit_user($reg1),
+        'system user cannot edit other users'
+    );
 }
 
 {
@@ -323,6 +410,12 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
     is(
         $user->role_in_wiki($wiki)->name(), 'Authenticated',
         'user role in First Wiki is Authenticated'
+    );
+
+    is(
+        Silki::Schema::User->GuestUser()->role_in_wiki($wiki)->name(),
+        'Guest',
+        'guest user role in First Wiki is Guest'
     );
 
     is(
