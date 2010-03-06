@@ -37,7 +37,7 @@ sub send_email {
         template        => { isa => Str },
         template_params => {
             isa     => HashRef,
-            default => sub { {} },
+            default => {},
         },
     );
 

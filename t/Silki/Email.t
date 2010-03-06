@@ -4,7 +4,7 @@ use warnings;
 use Test::More;
 
 use lib 't/lib';
-use Silki::Test::Email qw( test_email );
+use Silki::Test::Email qw( clear_emails test_email );
 use Silki::Test::FakeSchema;
 
 use Cwd qw( abs_path );
@@ -61,6 +61,27 @@ test_email(
        \s+
        </p>}x,
     qr{\QThe user can pass a uri (http://example.com).\E},
+);
+
+clear_emails();
+
+Silki::Email::send_email(
+    from     => 'foo@example.com',
+    to       => 'bar@example.com',
+    subject  => 'Test email',
+    template => 'test',
+);
+
+test_email(
+    {},
+    qr{<p>
+       \s+
+       \QSome random content goes here.\E
+       \s+
+       </p>
+       \s*
+       \z}x,
+    qr{\QSome random content goes here.\E\s*\z},
 );
 
 done_testing();
