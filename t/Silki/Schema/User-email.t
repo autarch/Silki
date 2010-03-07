@@ -40,7 +40,7 @@ test_email(
     qr{<p>\s+
        \QYou have been invited to join the First Wiki wiki.\E
        \s+
-       \QSince you already have an account at \E\S+?\Q, you can <a href="http://\E\S+?\Q/wiki/first-wiki">visit the wiki right now</a>.\E
+       \QSince you already have a user account at \E\S+?\Q, you can <a href="http://\E\S+?\Q/wiki/first-wiki">visit the wiki right now</a>.\E
        \s+</p>
        .+?
        <p>\s+
@@ -49,7 +49,9 @@ test_email(
       }xs,
     qr{\QYou have been invited to join the First Wiki wiki. Since you already have\E
        \s+
-       \Qan account at \E\S+?\Q, you can visit the wiki right now (http://\E\S+?\Q/wiki/first-wiki).\E
+       \Qa user account at \E\S+?\Q, you can visit the wiki right\E
+       \s+
+       \Qnow (http://\E\S+?\Q/wiki/first-wiki).\E
        \s+
        \QSent by Bjork\E
       }xs,
@@ -71,17 +73,17 @@ test_email(
         From => qr{\Q"Silki System User" <silki-system-user@\E.+?\Q>},
         To   => q{"Colin" <colin@example.com>},
         Subject =>
-            qr{^\QActivate your account on the \E\S+\Q server},
+            qr{^\QActivate your user account on the \E\S+\Q server},
     },
     qr{<p>\s+
-       \QYou have created a wiki account on the \E\S+\Q server. You must <a href="http://\E\S+?/user/\d+/activation/.+?\Q">activate your account</a> before you can log in.\E
+       \QYou have created a user account on the \E\S+\Q server. You must <a href="http://\E\S+?/user/\d+/activation/.+?\Q">activate your user account</a> before you can log in.\E
        \s+</p>
        \s+
        \Q</body>\E
       }xs,
-    qr{\QYou have created a wiki account on the \E\S+\Q server. You\E
+    qr{\QYou have created a user account on the \E\S+\Q server. You\E
        \s+
-       \Qmust activate your account (http://\E\S+?\)
+       \Qmust activate your user account (http://\E\S+?\)
        \s+
        \Qbefore you can log in.\E
        \s+$
@@ -105,7 +107,7 @@ test_email(
     qr{<p>\s+
        \QYou have been invited to join the First Wiki wiki.\E
        \s+
-       \QOnce you <a href="http://\E\S+?/user/\d+/activation/.+?\Q">activate your account</a>, you will be a member of the wiki.\E
+       \QOnce you <a href="http://\E\S+?/user/\d+/activation/.+?\Q">activate your user account</a>, you will be a member of the wiki.\E
        \s+</p>
        .+?
        <p>\s+
@@ -114,7 +116,7 @@ test_email(
       }xs,
     qr{\QYou have been invited to join the First Wiki wiki. Once you activate your\E
        \s+
-       \Qaccount (http://\E\S+?\),
+       \Quser account (http://\E\S+?\),
        \s+
        \Qyou will be a member of the wiki.\E
        \s+
