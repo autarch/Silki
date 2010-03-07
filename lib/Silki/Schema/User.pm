@@ -242,6 +242,10 @@ sub _has_password_or_openid_uri {
     my $error = { message => loc('You must provide a password or OpenID.') };
 
     if ($is_insert) {
+        # coverage - this is never going to be true if the around modifier on
+        # insert defined above runs first, because it deletes the
+        # disable_login parameter and sets a crypted password in the params
+        # hash.
         return if $p->{disable_login};
 
         return $error
@@ -256,7 +260,8 @@ sub _has_password_or_openid_uri {
         # preferences form of some sort. If they already have a valid
         # password, an empty password field in that form does not indicate
         # that the password in the dbms should be set to NULL.
-        if (   string_is_empty( $p->{password} )
+        if (   exists $p->{password}
+            && string_is_empty( $p->{password} )
             && $self->has_valid_password()
             && $preserve_pw ) {
             delete $p->{password};
@@ -298,7 +303,7 @@ sub _email_address_is_unique {
     return {
         field   => 'email_address',
         message => loc(
-            'The email address you provided is already in use by another account.'
+            'The email address you provided is already in use by another user.'
         ),
     };
 }
@@ -342,7 +347,7 @@ sub _openid_uri_is_unique {
     return {
         field   => 'openid_uri',
         message => loc(
-            'The OpenID URI you provided is already in use by another account.'
+            'The OpenID URI you provided is already in use by another user.'
         ),
     };
 }
@@ -818,7 +823,7 @@ sub _send_email {
         $wiki->domain()->web_hostname(),
         )
         : loc(
-        'Activate your account on the %1 server',
+        'Activate your user account on the %1 server',
         $self->domain()->web_hostname()
         );
 

@@ -80,8 +80,8 @@ msgid "Activate Your Account"
 msgstr ""
 
 #. ($self->domain()
-#: lib/Silki/Schema/User.pm:817
-msgid "Activate your account on the %1 server"
+#: lib/Silki/Schema/User.pm:827
+msgid "Activate your user account on the %1 server"
 msgstr ""
 
 #: lib/Silki/Schema/Role.pm:19
@@ -132,7 +132,7 @@ msgstr ""
 msgid "Back to current revision"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:478
+#: lib/Silki/Schema/User.pm:485
 msgid "Cannot make an activation uri for a user which does not need activation.\n"
 msgstr ""
 
@@ -499,11 +499,11 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:343
-msgid "The OpenID URI you provided is already in use by another account."
+#: lib/Silki/Schema/User.pm:350
+msgid "The OpenID URI you provided is already in use by another user."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:317
+#: lib/Silki/Schema/User.pm:324
 msgid "The OpenID you provided is not a valid URI."
 msgstr ""
 
@@ -512,8 +512,8 @@ msgstr ""
 msgid "The contents of <em>%html(%1)</em>"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:299
-msgid "The email address you provided is already in use by another account."
+#: lib/Silki/Schema/User.pm:306
+msgid "The email address you provided is already in use by another user."
 msgstr ""
 
 #: lib/Silki/Controller/Page.pm:242
@@ -720,7 +720,7 @@ msgid "You did not select a file to upload."
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Schema/User.pm:812
+#: lib/Silki/Schema/User.pm:822
 msgid "You have been invited to join the %1 wiki at %2"
 msgstr ""
 
@@ -730,7 +730,7 @@ msgid "You have been invited to join the %1 wiki. "
 msgstr ""
 
 #. (Silki::Schema::Domain->DefaultDomain()
-#: share/email-templates/activation.html:8
+#: share/email-templates/activation.html:9
 msgid "You have created a wiki account on the %1 server. You must <a href=\"%html(%2)\">activate your account</a> before you can log in."
 msgstr ""
 
@@ -744,7 +744,7 @@ msgstr ""
 msgid "You must log in to to perform this action in the %1 wiki."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:243
+#: lib/Silki/Schema/User.pm:242
 msgid "You must provide a password or OpenID."
 msgstr ""
 
