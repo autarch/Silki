@@ -58,6 +58,18 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         'updating password works'
     );
 
+    # Simulates what happens when the user preferences form is submitted
+    # without a new pw.
+    $user->update(
+        password          => q{},
+        preserve_password => 1,
+    );
+
+    ok(
+        $user->check_password('new pw'),
+        'password is unchanged with preserve_password flag'
+    );
+
     ok( $user->has_valid_password(), 'user has valid password' );
 
     ok( $user->has_login_credentials(), 'user has login credentials' );
@@ -279,13 +291,21 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 
     throws_ok(
         sub {
+            $user->update( openid_uri => undef );
+        },
+        qr/\QYou must provide a password or OpenID./,
+        'Cannot update a user to not have a password or openid'
+    );
+
+    throws_ok(
+        sub {
             Silki::Schema::User->insert(
                 email_address => 'user5@example.com',
                 display_name  => 'Example User',
                 openid_uri    => 'http://example.com',
             );
         },
-        qr/The OpenID URI you provided is already in use by another account./,
+        qr/The OpenID URI you provided is already in use by another user./,
         'Cannot insert a user with the same openid_uri as an existing usre',
     );
 
@@ -306,7 +326,7 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         sub {
             $user5->update( openid_uri => 'http://example.com' );
         },
-        qr/The OpenID URI you provided is already in use by another account./,
+        qr/The OpenID URI you provided is already in use by another user./,
         'Cannot update a user to the same openid_uri as an existing usre',
     );
 
@@ -318,7 +338,7 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
                 password      => 'whatever',
             );
         },
-        qr/The email address you provided is already in use by another account./,
+        qr/The email address you provided is already in use by another user./,
         'Cannot insert a user with the same email_address as an existing user',
     );
 
@@ -331,7 +351,7 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 
     throws_ok(
         sub { $user->update( email_address => 'user@example.com' ) },
-        qr/The email address you provided is already in use by another account./,
+        qr/The email address you provided is already in use by another user./,
         'Cannot update a user to the same email_address as an existing user',
     );
 
@@ -609,6 +629,42 @@ sub test_permissions {
         'the shared wikis are First and Second Wiki'
     );
 
+}
+
+{
+    my $account = Silki::Schema::Account->new( name => 'Default Account' );
+
+    my $domain = Silki::Schema::Domain->insert(
+        web_hostname   => 'urth.org',
+        email_hostname => 'urth.org',
+    );
+
+    my $wiki = Silki::Schema::Wiki->insert(
+        title      => 'Alt Domain',
+        short_name => 'alt',
+        user_id    => Silki::Schema::User->SystemUser()->user_id(),
+        account_id => $account->account_id(),
+        domain_id  => $domain->domain_id(),
+    );
+
+    my $reg5 = Silki::Schema::User->insert(
+        email_address => 'reg5@example.com',
+        password      => 'foo',
+    );
+
+    is(
+        $reg5->domain()->web_hostname(),
+        Silki::Schema::Domain->DefaultDomain()->web_hostname(),
+        'default domain for user with no wikis is the default domain'
+    );
+
+    $wiki->add_user( user => $reg5, role => Silki::Schema::Role->Member() );
+
+    is(
+        $reg5->domain()->web_hostname(),
+        $domain->web_hostname(),
+        'default domain for user in a wiki is domain of the first wiki they belong to'
+    );
 }
 
 done_testing();
