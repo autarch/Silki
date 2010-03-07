@@ -121,6 +121,13 @@ my $user = Silki::Schema::User->GuestUser();
 
     is( $page->revision_count(), 2, 'revision_count is 2' );
 
+    my @revisions = $page->revisions()->all();
+    is_deeply(
+        [ map { $_->revision_number() } @revisions ],
+        [ 2, 1 ],
+        'page has two revisions, which are returned with most recent first'
+    );
+
     my $first_rev = $page->first_revision();
     is( $first_rev->revision_number(), 1,
         'first_revision returns the right object' );
