@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 
+use Test::Exception;
 use Test::More;
 
 use lib 't/lib';
@@ -273,6 +274,13 @@ my $user = Silki::Schema::User->SystemUser();
 
     check_members( $wiki, [], 'cannot add a system user' );
 
+    lives_ok(
+        sub {
+            $wiki->remove_user( user => Silki::Schema::User->SystemUser() );
+        },
+        'trying to remove a system user from a wiki is a no-op'
+    );
+
     my $user1 = Silki::Schema::User->insert(
         email_address => 'user1@example.com',
         password      => 'foo',
@@ -316,6 +324,31 @@ my $user = Silki::Schema::User->SystemUser();
             [ 'user2@example.com', 'Member' ],
         ],
         'remove a user from the wiki'
+    );
+
+    $wiki->add_user( user => $user1, role => Silki::Schema::Role->Guest() );
+
+    check_members(
+        $wiki,
+        [
+            [ 'user2@example.com', 'Member' ],
+        ],
+        'cannot add a user in the Guest role'
+    );
+
+    $wiki->add_user( user => $user1, role => Silki::Schema::Role->Authenticated() );
+
+    check_members(
+        $wiki,
+        [
+            [ 'user2@example.com', 'Member' ],
+        ],
+        'cannot add a user in the Authenticated role'
+    );
+
+    lives_ok(
+        sub { $wiki->remove_user( user => $user1 ) },
+        'removing a user not in a wiki is a no-op'
     );
 }
 
@@ -394,6 +427,18 @@ sub check_search {
         \@results,
         $expect,
         "search results for '$query'" . ( $desc ? " - $desc" : q{} )
+    );
+}
+
+{
+    my $wikis = Silki::Schema::Wiki->All();
+    while ( my $wiki = $wikis->next() ) {
+        $wiki->set_permissions('private');
+    }
+
+    is(
+        Silki::Schema::Wiki->PublicWikiCount(), 0,
+        'there are no public wikis'
     );
 }
 
