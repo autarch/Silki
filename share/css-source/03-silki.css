@@ -114,19 +114,9 @@ ul * ul, ul * ol, ol * ol, ol * ul {
     color: white;
 }
 
-#messages {
-    background-color: #FFFFD9;
-    font-size: 90%;
-}
-
-#content {
-    background-color: white;
-    padding: 0.5em;
-}
-
 #local-nav {
     background-color: #eee;
-    padding: 0.2em 0 0.2em 0.7em;
+    padding: 0.4em 0 0.4em 0.7em;
 }
 
 #local-nav ul {
@@ -149,6 +139,16 @@ ul * ul, ul * ol, ol * ol, ol * ul {
 
 #local-nav .current {
     font-weight: bold;
+}
+
+#messages {
+    background-color: #FFFFD9;
+    font-size: 90%;
+}
+
+#content {
+    background-color: white;
+    padding: 0.5em;
 }
 
 #sidebar {
