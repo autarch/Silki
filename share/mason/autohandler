@@ -46,18 +46,11 @@
 
 <div id="doc3" class="<% $show_nav ? 'yui-t5' : q{} %>">
 
-<& header.mas, %ARGS &>
+<& header.mas, %ARGS, request_comp => $m->request_comp() &>
 
   <div id="bd">
     <div id="yui-main">
       <div class="yui-b">
-% if ( $m->request_comp()->method_exists('local_nav') ) {
-        <div id="local-nav">
-<&| /lib/filter/unlink-current.mas &>
-        <& SELF:local_nav, %ARGS &>
-</&>
-</div>
-% }
         <div id="content">
 
 <& .messages &>

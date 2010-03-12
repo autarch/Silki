@@ -32,7 +32,20 @@
 % }
       </ul>
     </div>
+
+% if ( $request_comp->method_exists('local_nav') ) {
+    <div id="local-nav">
+<&| /lib/filter/unlink-current.mas &>
+% $request_comp->call_method( 'local_nav', %ARGS );
+</&>
+</div>
+% }
+
   </div>
+
+<%args>
+$request_comp
+</%args>
 
 <%init>
 my @tabs = $c->tabs();
