@@ -5,6 +5,7 @@ use warnings;
 
 use Config::INI::Reader;
 use File::HomeDir;
+use File::Slurp qw( read_file );
 use Net::Interface;
 use Path::Class;
 use Silki::Types qw( Bool Str Int ArrayRef HashRef );
@@ -19,7 +20,6 @@ has is_production => (
     isa     => Bool,
     lazy    => 1,
     default => sub { $_[0]->_config_hash()->{Silki}{is_production} },
-
     # for testing
     writer => '_set_is_production',
 );
@@ -29,7 +29,6 @@ has is_test => (
     isa     => Bool,
     lazy    => 1,
     default => sub { $_[0]->_config_hash()->{Silki}{is_test} },
-
     # for testing
     writer => '_set_is_test',
 );
@@ -50,7 +49,6 @@ has is_profiling => (
     isa     => Bool,
     lazy    => 1,
     builder => '_build_is_profiling',
-
     # for testing
     writer => '_set_is_profiling',
 );
@@ -60,7 +58,6 @@ has _config_hash => (
     isa     => HashRef,
     lazy    => 1,
     builder => '_build_config_hash',
-
     # for testing
     writer  => '_set_config_hash',
     clearer => '_clear_config_hash',
@@ -163,7 +160,6 @@ has static_path_prefix => (
     isa     => Str,
     lazy    => 1,
     builder => '_build_static_path_prefix',
-
     # for testing
     writer  => '_set_static_path_prefix',
     clearer => '_clear_static_path_prefix',
@@ -173,7 +169,6 @@ has path_prefix => (
     is      => 'rw',
     isa     => Str,
     default => sub { $_[0]->_config_hash()->{Silki}{path_prefix} || q{} },
-
     # for testing
     writer => '_set_path_prefix',
 );
@@ -190,7 +185,6 @@ has secret => (
     isa     => Str,
     lazy    => 1,
     builder => '_build_secret',
-
     # for testing
     writer => '_set_secret',
 );
@@ -254,7 +248,9 @@ sub _find_config_file {
 
         my @imports = @StandardImports;
         push @imports, 'Static::Simple'
-            unless $ENV{MOD_PERL} || $self->is_profiling();
+            unless $ENV{MOD_PERL}
+                || $self->is_production()
+                || $self->is_profiling();
 
         push @imports, 'StackTrace'
             unless $self->is_production() || $self->is_profiling();
@@ -429,9 +425,9 @@ sub _build_catalyst_config {
         $config{static} = {
             dirs         => [qw( files images js css static w3c ckeditor )],
             include_path => [
-                __PACKAGE__->cache_dir()->stringify(),
-                __PACKAGE__->var_lib_dir()->stringify(),
-                __PACKAGE__->share_dir()->stringify(),
+                $self->cache_dir()->stringify(),
+                $self->var_lib_dir()->stringify(),
+                $self->share_dir()->stringify(),
             ],
             debug => 1,
         };
