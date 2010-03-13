@@ -273,18 +273,6 @@ sub on_datetime {
     );
 }
 
-sub at_time {
-    my $self       = shift;
-    my $lang       = shift;
-    my $dt         = shift;
-
-    return $self->localize_for(
-        lang => $lang,
-        id   => loc('at %time(%1)'),
-        args => [$dt],
-    );
-}
-
 sub _day_key_for_dt {
     my $self = shift;
     my $dt   = shift;
@@ -350,6 +338,18 @@ sub datetime {
     return $self->localize_for(
         lang => $lang,
         id   => $id,
+        args => [$dt],
+    );
+}
+
+sub at_time {
+    my $self       = shift;
+    my $lang       = shift;
+    my $dt         = shift;
+
+    return $self->localize_for(
+        lang => $lang,
+        id   => loc('at %time(%1)'),
         args => [$dt],
     );
 }
