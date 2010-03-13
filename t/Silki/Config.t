@@ -22,6 +22,11 @@ my $dir = tempdir( CLEANUP => 1 );
         'config hash is empty by default'
     );
 
+    is(
+        $config->_build_secret, 'a big secret',
+        'secret has a basic default in dev environment'
+    );
+
     {
         local $ENV{SILKI_CONFIG} = '/path/to/nonexistent/file.conf';
 
@@ -592,6 +597,20 @@ EOF
         $config->static_path_prefix(), q{/foo/47},
         'in prod environment, static path prefix includes revision number and general prefix'
     );
+}
+
+Silki::Config->_clear_instance();
+
+{
+    my $config = Silki::Config->new();
+
+    my $dir = tempdir( CLEANUP => 1 );
+
+    my $new_dir = dir($dir)->subdir('foo');
+
+    $config->_ensure_dir($new_dir);
+
+    ok( -d $new_dir, '_ensure_dir makes a new directory if needed' );
 }
 
 done_testing();
