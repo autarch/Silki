@@ -6,39 +6,38 @@ use warnings;
 use Silki::Types qw( ArrayRef HashRef NonEmptyStr ErrorForSession );
 
 use Moose;
-use MooseX::AttributeHelpers;
 use MooseX::Params::Validate qw( pos_validated_list );
 use MooseX::SemiAffordanceAccessor;
 use MooseX::StrictConstructor;
 
 has form_data => (
     is      => 'rw',
-    isa     => 'HashRef',
+    isa     => HashRef,
     lazy    => 1,
     default => sub { {} },
 );
 
 has _errors => (
-    metaclass => 'Collection::Array',
-    is        => 'ro',
-    isa       => ArrayRef[ NonEmptyStr | HashRef ],
-    default   => sub { [] },
-    init_arg  => undef,
-    provides  => {
-        push     => 'add_error',
-        elements => 'errors',
+    traits   => ['Array'],
+    is       => 'ro',
+    isa      => ArrayRef [ NonEmptyStr | HashRef ],
+    default  => sub { [] },
+    init_arg => undef,
+    handles  => {
+        add_error => 'push',
+        errors    => 'elements',
     },
 );
 
 has _messages => (
-    metaclass => 'Collection::Array',
-    is        => 'ro',
-    isa       => ArrayRef[NonEmptyStr],
-    default   => sub { [] },
-    init_arg  => undef,
-    provides  => {
-        push     => 'add_message',
-        elements => 'messages',
+    traits   => ['Array'],
+    is       => 'ro',
+    isa      => ArrayRef [NonEmptyStr],
+    default  => sub { [] },
+    init_arg => undef,
+    handles  => {
+        add_message => 'push',
+        messages    => 'elements',
     },
 );
 
