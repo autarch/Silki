@@ -16,8 +16,6 @@ use Silki::Schema::Role;
 use Silki::Schema::User;
 use Silki::Schema::Wiki;
 
-
-my $dbh = Silki::Schema->DBIManager()->default_source()->dbh();
 my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 
 {
