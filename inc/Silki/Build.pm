@@ -7,6 +7,7 @@ use base 'Module::Build';
 
 my %Requires = (
     'Catalyst::Plugin::Session::Store::DBI' => '0.15',
+    'Data::Localize'                        => '0.13',
     'Fey::ORM'                              => '0.32',
     'MooseX::ClassAttribute'                => '0',
     'MooseX::StrictConstructor'             => '0',
