@@ -14,8 +14,9 @@ use Silki::Config;
 {
     my $DL = Data::Localize->new( fallback_languages => ['en'] );
     $DL->add_localizer(
-        class => '+Silki::Gettext',
-        path  => file( Silki::Config->new()->share_dir, 'i18n', '*.po' ),
+        class      => '+Silki::Gettext',
+        path       => file( Silki::Config->new()->share_dir, 'i18n', '*.po' ),
+        keep_empty => 1,
     );
 
     sub SetLanguage {
