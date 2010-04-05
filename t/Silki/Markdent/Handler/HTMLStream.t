@@ -63,7 +63,7 @@ my $stream = Silki::Markdent::Handler::HTMLStream->new(
     is(
         $buffer,
         q{<a href="/wiki/public/new_page_form?title=New+Page" class="new-page">New Page</a>},
-        'link to nonexistent page, no alternate link text'
+        'link to non-existent page, no alternate link text'
     );
 
     $buffer = q{};
@@ -77,7 +77,7 @@ my $stream = Silki::Markdent::Handler::HTMLStream->new(
     is(
         $buffer,
         q{<a href="/wiki/public/new_page_form?title=New+Page" class="new-page">the new page</a>},
-        'link to nonexistent page, with alternate link text'
+        'link to non-existent page, with alternate link text'
     );
 
     $buffer = q{};
@@ -141,5 +141,23 @@ my $stream = Silki::Markdent::Handler::HTMLStream->new(
         'link to inaccessible file'
     );
 }
+
+my $stream = Silki::Markdent::Handler::HTMLStream->new(
+    output     => $fh,
+    user       => $user,
+    wiki       => $wiki,
+    for_editor => 1,
+);
+
+$buffer = q{};
+seek $fh, 0, 0;
+
+$stream->wiki_link( link_text => 'New Page' );
+
+is(
+    $buffer,
+    q{<a href="/wiki/public/page/New_Page" class="existing-page">New Page</a>},
+    'link to non-existent page for editor'
+);
 
 done_testing();
