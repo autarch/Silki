@@ -9,6 +9,7 @@ use Silki::Test::RealSchema;
 use DateTime;
 use DateTime::Format::Pg;
 use Silki::Schema::Domain;
+use Silki::Schema::File;
 use Silki::Schema::Page;
 use Silki::Schema::PendingPageLink;
 use Silki::Schema::Wiki;
