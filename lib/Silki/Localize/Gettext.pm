@@ -1,4 +1,4 @@
-package Silki::Gettext;
+package Silki::Localize::Gettext;
 
 use strict;
 use warnings;
@@ -6,7 +6,7 @@ use namespace::autoclean;
 
 use feature ':5.10';
 
-use Silki::Gettext::Format;
+use Silki::Localize::Format::Gettext;
 
 use Moose;
 
@@ -55,7 +55,7 @@ sub _parse_lang {
 }
 
 sub _build_formatter {
-    return Silki::Gettext::Format->new();
+    return Silki::Localize::Format::Gettext->new();
 }
 
 __PACKAGE__->meta()->make_immutable();

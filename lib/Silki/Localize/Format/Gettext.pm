@@ -1,4 +1,4 @@
-package Silki::Gettext::Format;
+package Silki::Localize::Format::Gettext;
 
 use strict;
 use warnings;
