@@ -22,7 +22,7 @@ sub _resolve_link {
     my $link         = shift;
     my $display_text = shift;
 
-    if ( $link =~ /^file:(.+)/ ) {
+    if ( $link =~ m{^(?:[^/]+/)?file:(.+)} ) {
         return $self->_parse_file_link( $1, $display_text );
     }
     else {
@@ -37,7 +37,7 @@ sub _parse_file_link {
 
     my $wiki = $self->_wiki();
 
-    if ( $file_id =~ m{^([^/]+)/([^/]+)$} ) {
+    if ( $file_id =~ m{^([^/]+)/file:([^/]+)$} ) {
         $wiki = Silki::Schema::Wiki->new( short_name => $1 )
             or return;
 
