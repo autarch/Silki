@@ -49,7 +49,7 @@ msgstr ""
 msgid "%1 was removed as a wiki member."
 msgstr ""
 
-#: lib/Silki/Gettext.pm:346
+#: lib/Silki/Gettext/Format.pm:156
 msgid "%date(%1) %at_time(%1)"
 msgstr ""
 
@@ -587,11 +587,11 @@ msgstr ""
 msgid "This wiki is currently <strong>%1</strong>."
 msgstr ""
 
-#: lib/Silki/Gettext.pm:239
+#: lib/Silki/Gettext/Format.pm:61
 msgid "Three days ago"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:264 lib/Silki/Gettext.pm:345
+#: lib/Silki/Gettext/Format.pm:155 lib/Silki/Gettext/Format.pm:86
 msgid "Three days ago %at_time(%1)"
 msgstr ""
 
@@ -603,19 +603,19 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:236
+#: lib/Silki/Gettext/Format.pm:58
 msgid "Today"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:261 lib/Silki/Gettext.pm:342
+#: lib/Silki/Gettext/Format.pm:152 lib/Silki/Gettext/Format.pm:83
 msgid "Today %at_time(%1)"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:238
+#: lib/Silki/Gettext/Format.pm:60
 msgid "Two days ago"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:263 lib/Silki/Gettext.pm:344
+#: lib/Silki/Gettext/Format.pm:154 lib/Silki/Gettext/Format.pm:85
 msgid "Two days ago %at_time(%1)"
 msgstr ""
 
@@ -695,11 +695,11 @@ msgstr ""
 msgid "Yes, delete it"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:237
+#: lib/Silki/Gettext/Format.pm:59
 msgid "Yesterday"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:262 lib/Silki/Gettext.pm:343
+#: lib/Silki/Gettext/Format.pm:153 lib/Silki/Gettext/Format.pm:84
 msgid "Yesterday %at_time(%1)"
 msgstr ""
 
@@ -786,7 +786,7 @@ msgstr ""
 msgid "Your profile"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:283
+#: lib/Silki/Gettext/Format.pm:174
 msgid "at %time(%1)"
 msgstr ""
 
@@ -794,11 +794,11 @@ msgstr ""
 msgid "current"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:240
+#: lib/Silki/Gettext/Format.pm:62
 msgid "on %date(%1)"
 msgstr ""
 
-#: lib/Silki/Gettext.pm:265
+#: lib/Silki/Gettext/Format.pm:87
 msgid "on %date(%1) %at_time(%1)"
 msgstr ""
 
