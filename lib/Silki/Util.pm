@@ -12,14 +12,8 @@ sub string_is_empty {
     return 0;
 }
 
-sub studly_to_calm {
-    my $studly = shift;
-
-    return join q{_}, map {lc} ( $studly =~ /([A-Z][a-z]+)/g );
-}
-
 sub english_list {
-    return @_ if @_ <= 1;
+    return $_[0] if @_ <= 1;
 
     return join ' and ', @_ if @_ == 2;
 
