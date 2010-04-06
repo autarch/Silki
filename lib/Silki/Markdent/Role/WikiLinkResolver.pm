@@ -22,8 +22,8 @@ sub _resolve_link {
     my $link         = shift;
     my $display_text = shift;
 
-    if ( $link =~ m{^(?:[^/]+/)?file:(.+)} ) {
-        return $self->_parse_file_link( $1, $display_text );
+    if ( $link =~ m{^(?:[^/]+/)?file:.+} ) {
+        return $self->_parse_file_link( $link, $display_text );
     }
     else {
         return $self->_parse_page_link( $link, $display_text );
@@ -42,6 +42,9 @@ sub _parse_file_link {
             or return;
 
         $file_id = $2;
+    }
+    else {
+        $file_id =~ s/^file://;
     }
 
     my $file = Silki::Schema::File->new( file_id => $file_id );

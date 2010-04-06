@@ -178,6 +178,8 @@ open my $fh, '>', \$buffer;
 }
 
 {
+    $wiki->set_permissions('public');
+
     my $wiki2 = Silki::Schema::Wiki->insert(
         title      => 'Other',
         short_name => 'other',
@@ -246,12 +248,12 @@ open my $fh, '>', \$buffer;
 
     my $text = "This is some plain text.\n";
     my $file = Silki::Schema::File->insert(
-        file_name => 'test.txt',
+        file_name => 'test2.txt',
         mime_type => 'text/plain',
         file_size => length $text,
         contents  => $text,
         user_id   => $user->user_id(),
-        wiki_id   => $wiki->wiki_id(),
+        wiki_id   => $wiki2->wiki_id(),
     );
 
     my $file_link = 'other/file:' . $file->file_id();
@@ -264,7 +266,7 @@ open my $fh, '>', \$buffer;
 
     is(
         $buffer,
-        qq{<a href="$uri" title="Download this file">test.txt (Other)</a>},
+        qq{<a href="$uri" title="Download this file">test2.txt (Other)</a>},
         'link to another wiki existing file, no alternate link text'
     );
 
