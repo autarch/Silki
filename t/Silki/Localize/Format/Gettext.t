@@ -24,6 +24,12 @@ is(
 );
 
 is(
+    $formatter->quant( 'en', [ 0, 'dog', 'dogs', 'no dogs' ] ),
+    'no dogs',
+    'quant for 0 with third form'
+);
+
+is(
     $formatter->quant( 'en', [ 1, 'dog', 'dogs' ] ),
     '1 dog',
     'quant for 1'
@@ -34,6 +40,18 @@ is(
     '42 dogs',
     'quant for 42'
 );
+
+throws_ok {
+    $formatter->quant( 'en', [ 42, 'dog' ] );
+}
+qr/quant can only be called with 2 or 3 forms/,
+'quant throws an error when called with 1 form';
+
+throws_ok {
+    $formatter->quant( 'en', [ 42, 'dog', 'dogs', 'no dogs', 'doggika' ] );
+}
+qr/quant can only be called with 2 or 3 forms/,
+'quant throws an error when called with 4 forms';
 
 {
     no warnings 'redefine';
@@ -186,6 +204,60 @@ is(
         ),
         'Today at 1:12 PM',
         'on_datetime for today'
+    );
+
+    is(
+        $formatter->datetime(
+            'en_US',
+            [
+                DateTime->new(
+                    year => 2009, hour => 13, minute => 12, second => 33
+                )
+            ],
+        ),
+        'Jan 1, 2009 at 1:12 PM',
+        'datetime for past year'
+    );
+
+    is(
+        $formatter->datetime(
+            'en_US',
+            [
+                DateTime->new(
+                    year => 2010, hour => 13, minute => 12, second => 33
+                )
+            ],
+        ),
+        'Jan 1 at 1:12 PM',
+        'datetime for current year'
+    );
+
+    is(
+        $formatter->datetime(
+            'en_US',
+            [
+                DateTime->new(
+                    year => 2010, month  => 4,  day    => 5,
+                    hour => 13,   minute => 12, second => 33
+                )
+            ],
+        ),
+        'Yesterday at 1:12 PM',
+        'datetime for yesterday'
+    );
+
+    is(
+        $formatter->datetime(
+            'en_US',
+            [
+                DateTime->new(
+                    year => 2010, month  => 4,  day    => 6,
+                    hour => 13,   minute => 12, second => 33
+                )
+            ],
+        ),
+        'Today at 1:12 PM',
+        'datetime for today'
     );
 }
 
