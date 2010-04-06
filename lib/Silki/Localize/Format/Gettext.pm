@@ -6,8 +6,10 @@ use namespace::autoclean;
 
 use feature ':5.10';
 
+use DateTime;
 use DateTime::Locale;
 use HTML::Entities qw( encode_entities );
+use Silki::I18N ();
 
 use Moose;
 
@@ -25,10 +27,11 @@ sub quant {
     my $self  = shift;
     my $lang  = shift;
     my $args  = shift;
-    my @forms = @_;
 
-    my $num = $args->[0];
+    my $num = shift @{$args};
     $num += 0;
+
+    my @forms = @{$args};
 
     die "quant can only be called with 2 or 3 forms"
         unless @forms == 2 || @forms == 3;
@@ -41,9 +44,8 @@ sub quant {
 
 sub _number {
     my $self = shift;
-    my $args = shift;
 
-    return $args->[0];
+    return $_[0];
 }
 
 sub on_date {
@@ -66,11 +68,7 @@ sub on_date {
         default { die "Unknown day key: $day_key" }
     }
 
-    return $self->localize_for(
-        lang => $lang,
-        id   => $id,
-        args => [$dt],
-    );
+    return Silki::I18N::loc( $id, $dt );
 }
 
 sub on_datetime {
@@ -93,11 +91,7 @@ sub on_datetime {
         default { die "Unknown day key: $day_key" }
     }
 
-    return $self->localize_for(
-        lang => $lang,
-        id   => $id,
-        args => [$dt],
-    );
+    return Silki::I18N::loc( $id, $dt );
 }
 
 sub _day_key_for_dt {
@@ -114,15 +108,15 @@ sub _day_key_for_dt {
 
     return 'yesterday' if $date eq $cmp;
 
-    $cmp->subtract( days => 1 );
+    # $cmp->subtract( days => 1 );
 
-    return 'two_days'
-        if $date eq $cmp && $dt->locale()->relative_field_name( 'day', -2 );
+    # return 'two_days'
+    #     if $date eq $cmp && $dt->locale()->relative_field_name( 'day', -2 );
 
-    $cmp->subtract( days => 1 );
+    # $cmp->subtract( days => 1 );
 
-    return 'three_days'
-        if $date eq $cmp && $dt->locale()->relative_field_name( 'day', -3 );
+    # return 'three_days'
+    #     if $date eq $cmp && $dt->locale()->relative_field_name( 'day', -3 );
 
     return 'any';
 }
@@ -168,11 +162,7 @@ sub datetime {
         default { die "Unknown day key: $day_key" }
     }
 
-    return $self->localize_for(
-        lang => $lang,
-        id   => $id,
-        args => [$dt],
-    );
+    return Silki::I18N::loc( $id, $dt );
 }
 
 sub at_time {
@@ -182,11 +172,7 @@ sub at_time {
 
     my $dt = $args->[0];
 
-    return $self->localize_for(
-        lang => $lang,
-        id   => loc('at %time(%1)'),
-        args => [$dt],
-    );
+    return Silki::I18N::loc( 'at %time(%1)', $dt );
 }
 
 sub time {
