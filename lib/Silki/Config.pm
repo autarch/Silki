@@ -6,6 +6,7 @@ use warnings;
 use Config::INI::Reader;
 use File::HomeDir;
 use File::Slurp qw( read_file );
+use File::Temp qw( tempdir );
 use Net::Interface;
 use Path::Class;
 use Silki::Types qw( Bool Str Int ArrayRef HashRef );
@@ -359,6 +360,7 @@ sub _dir {
     return $dir;
 }
 
+my $TestingRootDir;
 sub _pick_dir {
     my $self         = shift;
     my $pieces       = shift;
@@ -377,6 +379,12 @@ sub _pick_dir {
 
     return $dev_default
         if defined $dev_default;
+
+    if ( $ENV{HARNESS_ACTIVE} ) {
+        $TestingRootDir ||= tempdir( CLEANUP => 1 );
+
+        return dir( $TestingRootDir, @{$pieces} );
+    }
 
     return dir( $self->_home_dir(), '.silki', @{$pieces} );
 }

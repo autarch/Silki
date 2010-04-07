@@ -13,6 +13,8 @@ use Silki::Config;
 
 my $dir = tempdir( CLEANUP => 1 );
 
+$ENV{HARNESS_ACTIVE} = 0;
+
 {
     my $config = Silki::Config->instance();
 
