@@ -49,6 +49,7 @@ has file_on_disk => (
     init_arg => undef,
     lazy     => 1,
     builder  => '_build_file_on_disk',
+    clearer  => '_clear_file_on_disk',    # for testing
 );
 
 has thumbnail_file => (
