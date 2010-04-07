@@ -56,4 +56,73 @@ EOF
     );
 }
 
+{
+    my $content1 = <<'EOF';
+This is a block.
+
+And another block.
+
+Last block here.
+EOF
+
+    my $page = Silki::Schema::Page->insert_with_content(
+        title   => 'Diff Testing',
+        content => $content1,
+        user_id => $user->user_id(),
+        wiki_id => $wiki->wiki_id(),
+    );
+
+    my $rev1 = $page->most_recent_revision();
+
+    my $content2 = <<'EOF';
+This is a block.
+
+And another block.
+EOF
+
+    my $rev2 = $page->add_revision(
+        content => $content2,
+        user_id => $user->user_id(),
+    );
+
+    my $diff
+        = Silki::Schema::PageRevision->Diff( rev1 => $rev1, rev2 => $rev2 );
+
+    is_deeply(
+        $diff,
+        [
+            [ 'u', 'This is a block.',   'This is a block.' ],
+            [ 'u', 'And another block.', 'And another block.' ],
+            [ '-', 'Last block here.',   q{} ],
+        ],
+        'diff for two revisions, removed one block'
+    );
+
+    my $content3 = <<'EOF';
+This is a block.
+
+And another block.
+
+New block!
+EOF
+
+    my $rev3 = $page->add_revision(
+        content => $content3,
+        user_id => $user->user_id(),
+    );
+
+    $diff
+        = Silki::Schema::PageRevision->Diff( rev1 => $rev1, rev2 => $rev3 );
+
+    is_deeply(
+        $diff,
+        [
+            [ 'u', 'This is a block.',   'This is a block.' ],
+            [ 'u', 'And another block.', 'And another block.' ],
+            [ 'c', 'Last block here.',   'New block!' ],
+        ],
+        'diff for two revisions, added a block and removed a block (looks like a change)'
+    );
+}
+
 done_testing();
