@@ -49,6 +49,8 @@ EOF
         user_id => $user->user_id(),
     );
 
+    $rev1->_clear_page();
+
     is(
         $rev1->content_as_html( user => $user ),
         $html,
