@@ -45,7 +45,7 @@
 % }
       </td>
       <td class="<% $diff->[0] eq q{+} ? 'diff-added' : q{} %>">
-<% $formatter->wikitext_to_html( $diff->[2] ) | n %>
+        <% $formatter->wikitext_to_html( $diff->[2] ) | n %>
       </td>
     </tr>
   </tbody>

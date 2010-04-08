@@ -55,6 +55,8 @@ around insert => sub {
     my $revision = $class->$orig(@_);
 
     $revision->_post_change();
+
+    return $revision;
 };
 
 after update => sub {
@@ -212,100 +214,22 @@ sub Diff {
     my @rev1 = map { s/^\s+|\s+$//; $_ } split /\n\n+/, $rev1->content();
     my @rev2 = map { s/^\s+|\s+$//; $_ } split /\n\n+/, $rev2->content();
 
-    return $class->_SmartDiff( \@rev1, \@rev2 );
+    return $class->_BlockLevelDiff( \@rev1, \@rev2 );
 }
 
-# This is smart because when it sees a block level argument marked as changed,
-# it then breaks down the block into its words and diffs those.
-sub _SmartDiff {
+sub _BlockLevelDiff {
     my $class = shift;
     my $rev1  = shift;
     my $rev2  = shift;
 
     return $class->_ReorderIfTotalReplacement(
         [
-            map {
-                $_->[0] eq 'c'
-                    ? $class->_MergedSdiff(
-                    $_->[1],
-                    $_->[2],
-                    q{ },
-                    )
-                    : $_
-                } sdiff(
+            sdiff(
                 $rev1,
                 $rev2,
-                )
+            )
         ]
     );
-}
-
-sub _MergedSdiff {
-    my $class    = shift;
-    my $text1    = shift;
-    my $text2    = shift;
-
-    my ( $seq1, $split1 ) = $class->_CaptureSplitOnWS($text1);
-    my ( $seq2, $split2 ) = $class->_CaptureSplitOnWS($text2);
-
-    my @diff = sdiff( $seq1, $seq2 );
-
-    # If every single word has changed, we treat it as a delete of the old
-    # paragraph and insert of the new.
-    if ( all { $_->[0] ne 'u' } @diff ) {
-        return (
-            [ q{-}, $text1, q{} ],
-            [ q{+}, q{},    $text2 ],
-        );
-    }
-
-    for ( my $x = $#diff; $x > 0; $x-- ) {
-        if ( $diff[$x][0] eq $diff[ $x - 1 ][0] ) {
-            $diff[ $x - 1 ][1] .= join q{}, grep { defined } $split1->[ $x - 1 ], $diff[$x][1];
-            $diff[ $x - 1 ][2] .= join q{}, grep { defined } $split2->[ $x - 1 ], $diff[$x][2];
-
-            splice @diff, $x, 1;
-        }
-    }
-
-    $class->_AddDiffTags(\@diff);
-
-    return [
-        'c',
-        ( join q{ }, map { $_->[1] } @diff ),
-        ( join q{ }, map { $_->[2] } @diff ),
-    ];
-}
-
-sub _CaptureSplitOnWS {
-    my $class = shift;
-    my $text  = shift;
-
-    my @seq;
-    my @split;
-
-    while ( $text =~ /\G(\S+)(?:(\s+)|\z)/g ) {
-        push @seq, $1;
-        push @split, $2 if defined $2;
-    }
-
-
-    return \@seq, \@split;
-}
-
-sub _AddDiffTags {
-    my $class    = shift;
-    my $diff     = shift;
-
-    for my $chunk (@{$diff} ) {
-        if ( $chunk->[0] =~ /[-c]/ ) {
-            $chunk->[1] = q{<del>} . $chunk->[1] . q{</del>};
-        }
-
-        if ( $chunk->[0] =~ /[+c]/ ) {
-            $chunk->[2] = q{<ins>} . $chunk->[2] . q{</ins>};
-        }
-    }
 }
 
 # If the two revisions have nothing in common, we reorder the diff so all the
