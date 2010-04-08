@@ -2,104 +2,55 @@ package Silki::Formatter::WikiToHTML;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
-use HTML::Entities qw( encode_entities );
-use Silki::Schema::Page;
-use Text::MultiMarkdown;
+use Markdent::Handler::HTMLFilter;
+use Markdent::Parser;
+use Silki::Markdent::Dialect::Silki::BlockParser;
+use Silki::Markdent::Dialect::Silki::SpanParser;
+use Silki::Markdent::Handler::HTMLStream;
 
 use Moose;
 use MooseX::StrictConstructor;
 
-has _user =>
-    ( is       => 'ro',
-      isa      => 'Silki::Schema::User',
-      required => 1,
-      init_arg => 'user',
-    );
+has _user => (
+    is       => 'ro',
+    isa      => 'Silki::Schema::User',
+    required => 1,
+    init_arg => 'user',
+);
 
-has _wiki =>
-    ( is       => 'ro',
-      isa      => 'Silki::Schema::Wiki',
-      required => 1,
-      init_arg => 'wiki',
-    );
+has _wiki => (
+    is       => 'ro',
+    isa      => 'Silki::Schema::Wiki',
+    required => 1,
+    init_arg => 'wiki',
+);
 
-has _tmm =>
-    ( is       => 'ro',
-      isa      => 'Text::MultiMarkdown',
-      lazy     => 1,
-      default  => sub { Text::MultiMarkdown->new() },
-      init_arg => undef,
-    );
-
-sub wikitext_to_html
-{
+sub wiki_to_html {
     my $self = shift;
     my $text = shift;
 
-    $text = $self->_handle_wiki_links($text);
+    my $buffer = q{};
+    open my $fh, '>', \$buffer;
 
-    return $self->_tmm()->markdown($text);
+    my $html = Silki::Markdent::Handler::HTMLStream->new(
+        output => $fh,
+        wiki   => $self->_wiki(),
+        user   => $self->_user()
+    );
+
+    my $filter = Markdent::Handler::HTMLFilter->new( handler => $html );
+
+    my $parser = Markdent::Parser->new(
+        dialect => 'Silki::Markdent::Dialect::Silki',
+        handler => $filter,
+    );
+
+    $parser->parse( markdown => $text );
+
+    return $buffer;
 }
-
-my $link_re = qr/\[\[([^\]]+?)\]\]/;
-sub _handle_wiki_links
-{
-    my $self = shift;
-    my $text = shift;
-
-    $text =~ s/$link_re/$self->_link_to_page($1)/eg;
-
-    return $text;
-}
-
-sub _link_to_page
-{
-    my $self  = shift;
-    my $title = shift;
-
-    my $page = $self->_page_for_title($title);
-
-    my $class = $page ? 'existing-page' : 'new-page';
-
-    my $uri =
-          $page
-        ? $page->uri()
-        : $self->_wiki()
-               ->uri( view => 'new_page_form', query => { title => $title } );
-
-    my $escaped_title = encode_entities($title);
-
-    return qq{<a href="$uri" class="$class">$escaped_title</a>};
-}
-
-sub links
-{
-    my $self = shift;
-    my $text = shift;
-
-    my %links = map { $_ =>
-                          { page => $self->_page_for_title($_),
-                            wiki => $self->_wiki(),
-                          }
-                    } ( $text =~ /$link_re/g );
-
-    return \%links;
-}
-
-sub _page_for_title
-{
-    my $self  = shift;
-    my $title = shift;
-
-    return
-        Silki::Schema::Page->new( title   => $title,
-                                  wiki_id => $self->_wiki()->wiki_id(),
-                                )
-        || undef;
-}
-
-no Moose;
 
 __PACKAGE__->meta()->make_immutable();
 

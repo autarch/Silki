@@ -7,6 +7,7 @@ use Data::Page;
 use List::AllUtils qw( all );
 use Silki::I18N qw( loc );
 use Silki::Formatter::HTMLToWiki;
+use Silki::Formatter::WikiToHTML;
 use Silki::Schema::Page;
 use Silki::Schema::PageRevision;
 
@@ -207,6 +208,11 @@ sub diff : Chained('_set_page') : PathPart('diff') : Args(0) {
     $c->stash()->{diff} = Silki::Schema::PageRevision->Diff(
         rev1 => $revisions[0],
         rev2 => $revisions[1],
+    );
+
+    $c->stash()->{formatter} = Silki::Formatter::WikiToHTML->new(
+        user => $c->user(),
+        wiki => $c->stash()->{wiki},
     );
 
     $c->stash()->{template} = '/page/diff';

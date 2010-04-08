@@ -17,6 +17,7 @@ use base 'Catalyst::View::Mason';
 
 # used in templates
 use HTML::FillInForm;
+use Markdent::Simple;
 use Path::Class;
 use Silki::Config;
 use Silki::Web::Form;

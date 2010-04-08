@@ -49,7 +49,7 @@ msgstr ""
 msgid "%1 was removed as a wiki member."
 msgstr ""
 
-#: lib/Silki/Gettext/Format.pm:156
+#: lib/Silki/Localize/Format/Gettext.pm:161
 msgid "%date(%1) %at_time(%1)"
 msgstr ""
 
@@ -58,7 +58,7 @@ msgstr ""
 msgid "%datetime(%1)"
 msgstr ""
 
-#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:113
+#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:116
 msgid "(Link to non-existent file)"
 msgstr ""
 
@@ -241,7 +241,7 @@ msgid "History"
 msgstr ""
 
 #. ($page->title()
-#: lib/Silki/Controller/Page.pm:176 share/mason/autohandler:36
+#: lib/Silki/Controller/Page.pm:177 share/mason/autohandler:36
 msgid "History for %1"
 msgstr ""
 
@@ -453,8 +453,10 @@ msgstr ""
 msgid "Revision #"
 msgstr ""
 
+#. ($rev1->revision_number()
+#. ($rev2->revision_number()
 #. ($revision->revision_number()
-#: share/mason/page/history:24 share/mason/page/history:27
+#: share/mason/page/diff:14 share/mason/page/diff:9 share/mason/page/history:24 share/mason/page/history:27
 msgid "Revision %1"
 msgstr ""
 
@@ -464,7 +466,7 @@ msgid "Revision %1 of %2"
 msgstr ""
 
 #. ($rev1->revision_number()
-#: share/mason/page/diff:65
+#: share/mason/page/diff:69
 msgid "Revision %1 versus %2"
 msgstr ""
 
@@ -516,7 +518,7 @@ msgstr ""
 msgid "The email address you provided is already in use by another user."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:242
+#: lib/Silki/Controller/Page.pm:248
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
@@ -587,11 +589,11 @@ msgstr ""
 msgid "This wiki is currently <strong>%1</strong>."
 msgstr ""
 
-#: lib/Silki/Gettext/Format.pm:61
+#: lib/Silki/Localize/Format/Gettext.pm:66
 msgid "Three days ago"
 msgstr ""
 
-#: lib/Silki/Gettext/Format.pm:155 lib/Silki/Gettext/Format.pm:86
+#: lib/Silki/Localize/Format/Gettext.pm:160 lib/Silki/Localize/Format/Gettext.pm:89
 msgid "Three days ago %at_time(%1)"
 msgstr ""
 
@@ -603,19 +605,19 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: lib/Silki/Gettext/Format.pm:58
+#: lib/Silki/Localize/Format/Gettext.pm:63
 msgid "Today"
 msgstr ""
 
-#: lib/Silki/Gettext/Format.pm:152 lib/Silki/Gettext/Format.pm:83
+#: lib/Silki/Localize/Format/Gettext.pm:157 lib/Silki/Localize/Format/Gettext.pm:86
 msgid "Today %at_time(%1)"
 msgstr ""
 
-#: lib/Silki/Gettext/Format.pm:60
+#: lib/Silki/Localize/Format/Gettext.pm:65
 msgid "Two days ago"
 msgstr ""
 
-#: lib/Silki/Gettext/Format.pm:154 lib/Silki/Gettext/Format.pm:85
+#: lib/Silki/Localize/Format/Gettext.pm:159 lib/Silki/Localize/Format/Gettext.pm:88
 msgid "Two days ago %at_time(%1)"
 msgstr ""
 
@@ -656,7 +658,7 @@ msgstr ""
 msgid "View details about your profile"
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:45 share/mason/page/autohandler:9
+#: lib/Silki/Controller/Page.pm:46 share/mason/page/autohandler:9
 msgid "View this page"
 msgstr ""
 
@@ -695,11 +697,11 @@ msgstr ""
 msgid "Yes, delete it"
 msgstr ""
 
-#: lib/Silki/Gettext/Format.pm:59
+#: lib/Silki/Localize/Format/Gettext.pm:64
 msgid "Yesterday"
 msgstr ""
 
-#: lib/Silki/Gettext/Format.pm:153 lib/Silki/Gettext/Format.pm:84
+#: lib/Silki/Localize/Format/Gettext.pm:158 lib/Silki/Localize/Format/Gettext.pm:87
 msgid "Yesterday %at_time(%1)"
 msgstr ""
 
@@ -786,7 +788,8 @@ msgstr ""
 msgid "Your profile"
 msgstr ""
 
-#: lib/Silki/Gettext/Format.pm:174
+#. ($dt)
+#: lib/Silki/Localize/Format/Gettext.pm:175
 msgid "at %time(%1)"
 msgstr ""
 
@@ -794,11 +797,11 @@ msgstr ""
 msgid "current"
 msgstr ""
 
-#: lib/Silki/Gettext/Format.pm:62
+#: lib/Silki/Localize/Format/Gettext.pm:67
 msgid "on %date(%1)"
 msgstr ""
 
-#: lib/Silki/Gettext/Format.pm:87
+#: lib/Silki/Localize/Format/Gettext.pm:90
 msgid "on %date(%1) %at_time(%1)"
 msgstr ""
 

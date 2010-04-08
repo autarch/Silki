@@ -6,12 +6,12 @@
   <thead>
     <tr>
       <th class="rev1">
-        <% loc( 'Revision [_1]', $rev1->revision_number() ) %>
+        <% loc( 'Revision %1', $rev1->revision_number() ) %>
       </th>
       </th>
       <th class="marker"></th>
       <th class="rev2">
-        <% loc( 'Revision [_1]', $rev2->revision_number() ) %>
+        <% loc( 'Revision %1', $rev2->revision_number() ) %>
       </th>
     </tr>
   </thead>
@@ -37,7 +37,7 @@
   <tbody>
     <tr class="<% $diff->[0] eq 'c' ? 'diff-changed' : q{} %>">
       <td class="<% $diff->[0] eq q{-} ? 'diff-removed' : q{} %>">
-        <% $formatter->wikitext_to_html( $diff->[1] ) | n %>
+        <% $formatter->wiki_to_html( $diff->[1] ) | n %>
       </td>
       <td class="marker">
 % if ( $diff->[0] ne 'u' ) {
@@ -45,7 +45,7 @@
 % }
       </td>
       <td class="<% $diff->[0] eq q{+} ? 'diff-added' : q{} %>">
-        <% $formatter->wikitext_to_html( $diff->[2] ) | n %>
+        <% $formatter->wiki_to_html( $diff->[2] ) | n %>
       </td>
     </tr>
   </tbody>
@@ -62,7 +62,7 @@ $formatter
 </%args>
 
 <%method title>
-<% $page->title() %> - <% loc( 'Revision [_1] versus [_2]', $rev1->revision_number(), $rev2->revision_number() ) %>
+<% $page->title() %> - <% loc( 'Revision %1 versus %2', $rev1->revision_number(), $rev2->revision_number() ) %>
 <%args>
 $page
 $rev1
