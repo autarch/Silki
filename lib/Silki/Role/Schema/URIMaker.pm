@@ -27,8 +27,10 @@ sub uri {
     );
 
     my $path = $self->_base_uri_path();
-    $path .= q{/} . $p{view}
-        unless string_is_empty( $p{view} );
+    unless ( string_is_empty( $p{view} ) ) {
+        $path .= q{/} if length $path;
+        $path .= $p{view};
+    }
 
     $self->_make_uri(
         path      => $path,
