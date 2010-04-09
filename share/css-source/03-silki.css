@@ -37,6 +37,12 @@ ul * ul, ul * ol, ol * ol, ol * ul {
 
 #hd {
     background-color: #a3d3e3;
+    border-radius-topleft: 10px;
+    border-radius-topright: 10px;
+    -moz-border-radius-topleft: 10px;
+    -moz-border-radius-topright: 10px;
+    -webkit-border-radius-topleft: 10px;
+    -webkit-border-radius-topright: 10px;
     padding-top:1em;
 }
 
@@ -84,6 +90,12 @@ ul * ul, ul * ol, ol * ol, ol * ul {
 
 #tabs li a {
     background-color: white;
+    border-radius-topleft: 6px;
+    border-radius-topright: 6px;
+    -moz-border-radius-topleft: 6px;
+    -moz-border-radius-topright: 6px;
+    -webkit-border-radius-topleft: 6px;
+    -webkit-border-radius-topright: 6px;
     color: #333;
     font-weight: bold;
     padding: 0.3em 1em 0 1em;
