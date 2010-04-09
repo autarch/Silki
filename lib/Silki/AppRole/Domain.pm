@@ -20,8 +20,10 @@ sub _build_domain {
 
     my $host = $self->request()->uri()->host();
 
-    return Silki::Schema::Domain->new( web_hostname => $host )
+    my $domain = Silki::Schema::Domain->new( web_hostname => $host )
         or die "No domain found for hostname ($host)\n";
+
+    return $domain;
 }
 
 1;
