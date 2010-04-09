@@ -11,7 +11,7 @@
 <h2><% loc('Public Wikis') %></h2>
 
 <& /lib/wiki-list.mas, wikis => $public_wikis &>
-% } else {
+% } elsif ( ! $c->user()->is_authenticated ) {
 <p>
   <% loc( 'This Silki site has no public wikis available.
            Please <a href="%html(%1)">login</a>
