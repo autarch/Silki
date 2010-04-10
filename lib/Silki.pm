@@ -45,6 +45,17 @@ Silki::Schema->EnableObjectCaches();
 
 __PACKAGE__->setup();
 
+{
+    package Catalyst::Plugin::Session;
+    no warnings 'redefine';
+
+    # XXX - monkey patch so that we don't try to read the value of sessionid
+    # before prepare_action can set the session id from the URI.
+    sub dump_these {
+        return $_[0]->maybe::next::method;
+    }
+}
+
 no Moose;
 
 __PACKAGE__->meta()->make_immutable( replace_constructor => 1 );
