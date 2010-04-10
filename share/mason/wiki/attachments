@@ -4,29 +4,10 @@
   <img src="/images/spinner.gif" height="32" width="32" />
 </div>
 
-<&| /lib/filter/form.mas &>
-<form id="file-upload-form"
-      class="flush-left"
-      action="<% $wiki->uri( view => 'file' ) %>"
-      method="post"
-      enctype="multipart/form-data">
-  <fieldset>
-    <legend><% loc('Upload a file to this wiki') %></legend>
-
-    <div class="form-item">
-      <label class="for-field" for="file"><% loc('File') %>:</label>
-      <input id="file" name="file" type="file" />
-% if ( Silki::Config->new()->max_upload_size() ) {
-      <div class="help-text">
-        <p><% loc( 'Files cannot be larger than %1.', format_bytes( Silki::Config->new()->max_upload_size() ) ) %></p>
-      </div>
-% }
-    </div>
-
-    <input value="Upload" type="submit" />
-  </fieldset>
-</form>
-</&>
+<& /lib/forms/attachment-upload.mas,
+   uri    => $wiki->uri( view => 'file' ),
+   legend => loc('Upload a file to this wiki')
+ &>
 % }
 
 % if ($file_count) {
