@@ -466,7 +466,7 @@ msgid "Revision %1 of %2"
 msgstr ""
 
 #. ($rev1->revision_number()
-#: share/mason/page/diff:69
+#: share/mason/page/diff:65
 msgid "Revision %1 versus %2"
 msgstr ""
 
@@ -526,7 +526,11 @@ msgstr ""
 msgid "The file has been uploaded."
 msgstr ""
 
-#: lib/Silki/Role/Controller/UploadHandler.pm:26
+#: lib/Silki/Role/Controller/UploadHandler.pm.orig:33 lib/Silki/Role/Controller/UploadHandler.pm:33
+msgid "The file you uploaded was empty."
+msgstr ""
+
+#: lib/Silki/Role/Controller/UploadHandler.pm.orig:26 lib/Silki/Role/Controller/UploadHandler.pm:26
 msgid "The file you uploaded was too large."
 msgstr ""
 
@@ -717,7 +721,7 @@ msgstr ""
 msgid "You cannot remove yourself as an admin."
 msgstr ""
 
-#: lib/Silki/Role/Controller/UploadHandler.pm:19
+#: lib/Silki/Role/Controller/UploadHandler.pm.orig:19 lib/Silki/Role/Controller/UploadHandler.pm:19
 msgid "You did not select a file to upload."
 msgstr ""
 

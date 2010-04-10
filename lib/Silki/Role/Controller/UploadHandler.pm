@@ -28,6 +28,13 @@ sub _handle_upload {
         );
     }
 
+    if ( $upload->size() == 0 ) {
+        $c->redirect_with_error(
+            error => loc('The file you uploaded was empty.'),
+            uri   => $on_error,
+        );
+    }
+
     # Copied the logic from Catalyst::Request::Upload without the last step of
     # removing most characters.
     my $basename = $upload->filename;
