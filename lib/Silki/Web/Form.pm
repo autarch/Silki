@@ -78,22 +78,7 @@ sub _fill_in_form {
 
     my $html = $self->_form_html_from_dom();
 
-    return $html unless $self->make_pretty();
-
-    require HTML::Tidy;
-    my $tidy = HTML::Tidy->new(
-        {
-            indent         => 'auto',
-            output_xhtml   => 1,
-            doctype        => 'omit',
-            show_body_only => 1,
-        }
-    );
-
-    $tidy->ignore( type => HTML::Tidy::TIDY_WARNING() );
-    $tidy->ignore( type => HTML::Tidy::TIDY_ERROR() );
-
-    return $tidy->clean($html);
+    return $html;
 }
 
 sub _fill_errors {
