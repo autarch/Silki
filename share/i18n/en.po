@@ -94,7 +94,7 @@ msgid "All Attachments (%1)"
 msgstr ""
 
 #. ($wiki->title()
-#: share/mason/wiki/attachments:47
+#: share/mason/wiki/attachments:28
 msgid "All Attachments in the %1 wiki"
 msgstr ""
 
@@ -116,7 +116,7 @@ msgid "Attachments"
 msgstr ""
 
 #. ($page->title()
-#: share/mason/page/attachments:48
+#: share/mason/page/attachments:28
 msgid "Attachments for %1"
 msgstr ""
 
@@ -210,7 +210,7 @@ msgstr ""
 msgid "Existing Members"
 msgstr ""
 
-#: share/mason/page/attachments:18 share/mason/wiki/attachments:17
+#: share/mason/lib/forms/attachment-upload.mas:11
 msgid "File"
 msgstr ""
 
@@ -220,7 +220,7 @@ msgid "File: <em>%html(%1)</em>"
 msgstr ""
 
 #. (format_bytes( Silki::Config->new()
-#: share/mason/page/attachments:22 share/mason/wiki/attachments:21
+#: share/mason/lib/forms/attachment-upload.mas:15
 msgid "Files cannot be larger than %1."
 msgstr ""
 
@@ -526,11 +526,11 @@ msgstr ""
 msgid "The file has been uploaded."
 msgstr ""
 
-#: lib/Silki/Role/Controller/UploadHandler.pm.orig:33 lib/Silki/Role/Controller/UploadHandler.pm:33
+#: lib/Silki/Role/Controller/UploadHandler.pm:33
 msgid "The file you uploaded was empty."
 msgstr ""
 
-#: lib/Silki/Role/Controller/UploadHandler.pm.orig:26 lib/Silki/Role/Controller/UploadHandler.pm:26
+#: lib/Silki/Role/Controller/UploadHandler.pm:26
 msgid "The file you uploaded was too large."
 msgstr ""
 
@@ -562,7 +562,7 @@ msgstr ""
 msgid "This name identifies you to other users."
 msgstr ""
 
-#: share/mason/page/attachments:37
+#: share/mason/page/attachments:17
 msgid "This page does not have any attachments."
 msgstr ""
 
@@ -580,7 +580,7 @@ msgstr ""
 msgid "This revision was created by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
-#: share/mason/wiki/attachments:36
+#: share/mason/wiki/attachments:17
 msgid "This wiki does not have any attachments."
 msgstr ""
 
@@ -629,11 +629,11 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: share/mason/page/attachments:15
+#: share/mason/page/attachments:9
 msgid "Upload a file for this page"
 msgstr ""
 
-#: share/mason/wiki/attachments:14
+#: share/mason/wiki/attachments:9
 msgid "Upload a file to this wiki"
 msgstr ""
 
@@ -721,7 +721,7 @@ msgstr ""
 msgid "You cannot remove yourself as an admin."
 msgstr ""
 
-#: lib/Silki/Role/Controller/UploadHandler.pm.orig:19 lib/Silki/Role/Controller/UploadHandler.pm:19
+#: lib/Silki/Role/Controller/UploadHandler.pm:19
 msgid "You did not select a file to upload."
 msgstr ""
 
