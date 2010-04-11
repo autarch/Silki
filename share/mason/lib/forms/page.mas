@@ -6,6 +6,7 @@
 % } else {
     <input type="hidden" name="title" value="<% $title %>" />
 % }
+    <input type="hidden" name="format" value="html" />
 
     <textarea id="page-content" name="content"><% $html ? $html : q{} %></textarea>
 

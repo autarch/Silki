@@ -22,9 +22,10 @@ use Moose;
 BEGIN { extends 'Silki::Controller::Base' }
 
 with qw(
-    Silki::Role::Controller::User
-    Silki::Role::Controller::UploadHandler
     Silki::Role::Controller::RevisionsAtomFeed
+    Silki::Role::Controller::UploadHandler
+    Silki::Role::Controller::User
+    Silki::Role::Controller::WikitextHandler
 );
 
 sub _set_wiki : Chained('/') : PathPart('wiki') : CaptureArgs(1) {
@@ -385,12 +386,7 @@ sub page_collection_POST {
 
     my $wiki = $c->stash()->{wiki};
 
-    my $formatter = Silki::Formatter::HTMLToWiki->new(
-        wiki => $wiki,
-    );
-
-    my $wikitext
-        = $formatter->html_to_wikitext( $c->request()->params()->{content} );
+    my $wikitext = $self->_wikitext_from_form( $c, $wiki );
 
     my $page = Silki::Schema::Page->insert_with_content(
         title   => $c->request()->params()->{title},

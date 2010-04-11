@@ -16,8 +16,9 @@ use Moose;
 BEGIN { extends 'Silki::Controller::Base' }
 
 with qw(
-    Silki::Role::Controller::UploadHandler
     Silki::Role::Controller::RevisionsAtomFeed
+    Silki::Role::Controller::UploadHandler
+    Silki::Role::Controller::WikitextHandler
 );
 
 sub _set_page : Chained('/wiki/_set_wiki') : PathPart('page') : CaptureArgs(1) {
@@ -92,12 +93,7 @@ sub page_PUT {
     my $page = Silki::Schema::Page->new(
         page_id => $c->request()->params()->{page_id} );
 
-    my $formatter = Silki::Formatter::HTMLToWiki->new(
-        wiki => $page->wiki(),
-    );
-
-    my $wikitext
-        = $formatter->html_to_wikitext( $c->request()->params()->{content} );
+    my $wikitext = $self->_wikitext_from_form( $c, $page->wiki() );
 
     $page->add_revision(
         content => $wikitext,
