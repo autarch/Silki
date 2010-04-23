@@ -409,7 +409,7 @@ sub revisions {
         offset => { isa => Int, default  => 0 },
     );
 
-    my $select = $self->_RecentChangesSelect()->clone();
+    my $select = $self->_DistinctRecentChangesSelect()->clone();
     $select->limit( $limit, $offset );
 
     return Fey::Object::Iterator::FromSelect->new(
