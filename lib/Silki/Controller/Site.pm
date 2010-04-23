@@ -14,8 +14,6 @@ sub site : Path('/') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
-    $c->tab_by_id('Home')->set_is_selected(1);
-
     if ( $c->user()->is_authenticated() ) {
         $c->stash()->{user_wiki_count} = $c->user()->member_wiki_count();
         $c->stash()->{user_wikis}      = $c->user()->member_wikis();
