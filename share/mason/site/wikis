@@ -19,6 +19,15 @@
 </p>
 % }
 
+% if ( $c->user()->is_admin() ) {
+<h2><% loc('Site Admin Tools') %></h2>
+
+<ul>
+  <li><a href="/user"><% loc('All users') %></li>
+  <li><a href="/wiki"><% loc('All wikis') %></li>
+</ul>
+% }
+
 <%args>
 $user_wiki_count => 0
 $user_wikis => undef

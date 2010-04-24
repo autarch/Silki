@@ -25,6 +25,10 @@ sub site : Path('/') : Args(0) {
     $c->stash()->{template} = '/site/wikis';
 }
 
+sub wiki : Path ('/wiki') : Args(0) {
+
+}
+
 no Moose;
 
 __PACKAGE__->meta()->make_immutable();
