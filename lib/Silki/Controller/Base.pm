@@ -37,14 +37,6 @@ sub begin : Private {
 
     Silki::I18N->SetLanguage(@langs);
 
-    $c->add_tab(
-        {
-            uri     => $c->domain()->uri(),
-            label   => loc('Home'),
-            tooltip => q{},
-        }
-    );
-
     return 1;
 }
 
