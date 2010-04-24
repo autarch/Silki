@@ -1,7 +1,7 @@
 JSAN.use('DOM.Events');
 JSAN.use('DOM.Find');
 JSAN.use('DOM.Utils');
-JSAN.use('Textarea.Text');
+JSAN.use('Textarea');
 
 if ( typeof Silki == "undefined" ) {
     Silki = {};
@@ -18,7 +18,7 @@ Silki.PageEdit.instrumentForm = function () {
         return;
     }
 
-    var textarea = new Textarea.Text ( $("page-content") );
+    var textarea = new Textarea ( $("page-content") );
 
     for ( var i = 0; i < Silki.PageEdit._Buttons.length; i++ ) {
         var button_def = Silki.PageEdit._Buttons[i];
@@ -104,7 +104,7 @@ Silki.PageEdit._insertBullet = function (textarea, bullet) {
         insert = "\n" + insert;
     }
 
-    textarea.moveCaretAfter("\n");
+    textarea.moveToBeginningOfLine();
 
     textarea.replaceSelectedText(insert);
 
@@ -116,8 +116,37 @@ Silki.PageEdit._insertBullet = function (textarea, bullet) {
     }
 };
 
-Silki.PageEdit._Buttons = [ [ "h2", "## ", "" ],
-                            [ "h3", "### ", "" ],
+Silki.PageEdit._makeInsertHeaderFunction = function (header) {
+    var func = function (textarea) {
+        var old_pos;
+
+        var insert = header + " ";
+
+        if ( textarea.caretIsMidLine() ) {
+            old_pos = textarea.caretPosition();
+        }
+        else {
+            insert = insert + "\n\n";
+        }
+
+        textarea.moveToBeginningOfLine();
+
+        textarea.replaceSelectedText(insert);
+
+        if (old_pos) {
+            textarea.moveCaret( ( old_pos - textarea.caretPosition() ) + insert.length );
+        }
+        else {
+            textarea.moveCaret(-2);
+        }
+    };
+
+    return func;
+}
+
+Silki.PageEdit._Buttons = [ [ "h2", Silki.PageEdit._makeInsertHeaderFunction('##') ],
+                            [ "h3", Silki.PageEdit._makeInsertHeaderFunction('###') ],
+                            [ "h4", Silki.PageEdit._makeInsertHeaderFunction('####') ],
                             [ "bold", "**", "**" ],
                             [ "italic", "*", "*" ],
                             [ "bullet-list", Silki.PageEdit._insertBulletList ],
