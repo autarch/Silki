@@ -56,7 +56,7 @@ has permissions_name => (
 );
 
 query revision_count => (
-    select      => __PACKAGE__->_RevisionCountSelect(),
+    select      => __PACKAGE__->_DistinctRevisionCountSelect(),
     bind_params => sub { $_[0]->wiki_id() },
 );
 
@@ -401,6 +401,40 @@ sub _RevisionCountSelect {
     return $select;
 }
 
+sub _DistinctRevisionCountSelect {
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my ( $page_t, $page_revision_t )
+        = $Schema->tables( 'Page', 'PageRevision' );
+
+    my $max_func = Fey::Literal::Function->new( 'MAX',
+        $Schema->table('PageRevision')->column('revision_number') );
+
+    my $max_revision = Silki::Schema->SQLFactoryClass()->new_select();
+    $max_revision
+        ->select($max_func)
+        ->from( $Schema->table('PageRevision') )
+        ->where(
+            $Schema->table('PageRevision')->column('page_id'),
+            '=', $page_t->column('page_id')
+        );
+
+    my $pages_select = Silki::Schema->SQLFactoryClass()->new_select();
+    $pages_select
+        ->select( $page_t, $Schema->table('PageRevision') )
+        ->from( $page_t, $Schema->table('PageRevision') )
+        ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
+        ->and(
+            $Schema->table('PageRevision')->column('revision_number'),
+            '=', $max_revision
+        )->order_by(
+            $Schema->table('PageRevision')->column('creation_datetime'), 'DESC',
+            $page_t->column('title'),                                    'ASC',
+        );
+
+    return $select;
+}
+
 sub revisions {
     my $self = shift;
     my ( $limit, $offset ) = validated_list(
@@ -442,34 +476,35 @@ sub _BuildRecentChangesSelect {
 sub _BuildDistinctRecentChangesSelect {
     my $class = shift;
 
-    my $page_t = $Schema->table('Page');
+    my ( $page_t, $page_revision_t )
+        = $Schema->tables( 'Page', 'PageRevision' );
 
     my $max_func = Fey::Literal::Function->new( 'MAX',
-        $Schema->table('PageRevision')->column('revision_number') );
+        $page_revision_t->column('revision_number') );
 
     my $max_revision = Silki::Schema->SQLFactoryClass()->new_select();
     $max_revision
         ->select($max_func)
-        ->from( $Schema->table('PageRevision') )
+        ->from( $page_revision_t )
         ->where(
-            $Schema->table('PageRevision')->column('page_id'),
+            $page_revision_t->column('page_id'),
             '=', $page_t->column('page_id')
         );
 
-    my $pages_select = Silki::Schema->SQLFactoryClass()->new_select();
-    $pages_select
-        ->select( $page_t, $Schema->table('PageRevision') )
-        ->from( $page_t, $Schema->table('PageRevision') )
+    my $count = Fey::Literal::Function->new( 'COUNT',
+        $page_revision_t->column('page_id') );
+
+    my $count_select = Silki::Schema->SQLFactoryClass()->new_select();
+    $count_select
+        ->select($count)
+        ->from( $page_t, $page_revision_t )
         ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
         ->and(
-            $Schema->table('PageRevision')->column('revision_number'),
+            $page_revision_t->column('revision_number'),
             '=', $max_revision
-        )->order_by(
-            $Schema->table('PageRevision')->column('creation_datetime'), 'DESC',
-            $page_t->column('title'),                                    'ASC',
         );
 
-    return $pages_select;
+    return $count_select;
 }
 
 sub orphaned_pages {
@@ -949,7 +984,8 @@ sub _BuildAllWikiSelect {
     my $wiki_t = $Schema->table('Wiki');
 
     $select->select($wiki_t)
-           ->from($wiki_t);
+           ->from($wiki_t)
+           ->order_by( $wiki_t->column('name') );
 
     return $select;
 }
