@@ -2,7 +2,7 @@
   <thead>
     <tr>
       <th><% loc('Wiki') %></th>
-      <th><% loc('Permissions') %></th>
+      <th><% loc('Privacy') %></th>
       <th><% loc('User count') %></th>
       <th><% loc('Created By') %></th>
       <th><% loc('Created On') %></th>
