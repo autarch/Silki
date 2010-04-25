@@ -28,6 +28,8 @@ with 'Silki::Role::Schema::URIMaker';
 
 my $Schema = Silki::Schema->Schema();
 
+has_policy 'Silki::Schema::Policy';
+
 has_table( $Schema->table('Wiki') );
 
 has_one( $Schema->table('Domain') );
