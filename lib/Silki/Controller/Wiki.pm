@@ -39,13 +39,23 @@ sub _set_wiki : Chained('/') : PathPart('wiki') : CaptureArgs(1) {
 
     $self->_require_permission_for_wiki( $c, $wiki );
 
+    my $front_page = Silki::Schema::Page->new(
+        title   => $wiki->front_page_title(),
+        wiki_id => $wiki->wiki_id(),
+    );
+
     $c->add_tab($_)
         for (
         {
             uri     => $wiki->uri(),
             label   => $wiki->title(),
-            tooltip => loc( '%1 overview', $wiki->title() ),
+            tooltip => loc( '%1 dashboard', $wiki->title() ),
             id      => 'dashboard',
+        }, {
+            uri     => $front_page->uri(),
+            label   => loc('Front Page'),
+            tooltip => loc( '%1 Front Page', $wiki->title() ),
+            id      => 'front-page',
         }, {
             uri     => $wiki->uri( view => 'recent' ),
             label   => loc('Recent Changes'),

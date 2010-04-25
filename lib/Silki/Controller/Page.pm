@@ -40,14 +40,19 @@ sub _set_page : Chained('/wiki/_set_wiki') : PathPart('page') : CaptureArgs(1) {
     $c->redirect_and_detach( $wiki->uri( with_host => 1 ) )
         unless $page;
 
-    $c->add_tab(
-        {
-            uri         => $page->uri(),
-            label       => $page->title(),
-            tooltip     => loc('View this page'),
-            is_selected => 1,
-        }
-    );
+    if ( $page->title() eq $wiki->front_page_title() ) {
+        $c->tab_by_id('front-page')->set_is_selected(1);
+    }
+    else {
+        $c->add_tab(
+            {
+                uri         => $page->uri(),
+                label       => $page->title(),
+                tooltip     => loc('View this page'),
+                is_selected => 1,
+            }
+        );
+    }
 
     $c->stash()->{page} = $page;
 }
