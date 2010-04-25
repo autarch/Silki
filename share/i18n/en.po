@@ -20,32 +20,32 @@ msgid "# of Revisions"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:309
+#: lib/Silki/Controller/Wiki.pm:300
 msgid "%1 is already a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:281
+#: lib/Silki/Controller/Wiki.pm:272
 msgid "%1 is no longer an admin for this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:327
+#: lib/Silki/Controller/Wiki.pm:318
 msgid "%1 is now a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:273
+#: lib/Silki/Controller/Wiki.pm:264
 msgid "%1 is now an admin for this wiki."
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:48
+#: lib/Silki/Controller/Wiki.pm:47
 msgid "%1 overview"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:260
+#: lib/Silki/Controller/Wiki.pm:251
 msgid "%1 was removed as a wiki member."
 msgstr ""
 
@@ -54,7 +54,7 @@ msgid "%date(%1) %at_time(%1)"
 msgstr ""
 
 #. ($c->user()
-#: share/mason/lib/table/attachments-table.mas:29 share/mason/page/history:30 share/mason/wiki/recent:14 share/mason/wiki/search_results:13
+#: share/mason/lib/table/attachments-table.mas:29 share/mason/page/history:30 share/mason/site/admin/wikis:19 share/mason/wiki/recent:14 share/mason/wiki/search_results:13
 msgid "%datetime(%1)"
 msgstr ""
 
@@ -63,7 +63,7 @@ msgid "(Link to non-existent file)"
 msgstr ""
 
 #. ($address->address()
-#: lib/Silki/Controller/Wiki.pm:359
+#: lib/Silki/Controller/Wiki.pm:350
 msgid "A user account for %1 has been created, and this person has been invited to join this wiki."
 msgstr ""
 
@@ -102,8 +102,16 @@ msgstr ""
 msgid "All attachments in this wiki"
 msgstr ""
 
+#: share/mason/site/dashboard:26
+msgid "All users"
+msgstr ""
+
+#: share/mason/site/dashboard:27
+msgid "All wikis"
+msgstr ""
+
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:319
+#: lib/Silki/Controller/Wiki.pm:310
 msgid "An unactived account for %1 already exists. Once the account is activated, this user will be able to access this wiki."
 msgstr ""
 
@@ -158,8 +166,12 @@ msgstr ""
 msgid "Create %1"
 msgstr ""
 
-#: share/mason/wiki/orphans:10
+#: share/mason/site/admin/wikis:7 share/mason/wiki/orphans:10
 msgid "Created By"
+msgstr ""
+
+#: share/mason/site/admin/wikis:8
+msgid "Created On"
 msgstr ""
 
 #. ($rev1->user()
@@ -241,7 +253,7 @@ msgid "History"
 msgstr ""
 
 #. ($page->title()
-#: lib/Silki/Controller/Page.pm:173 share/mason/autohandler:36
+#: lib/Silki/Controller/Page.pm:169 share/mason/autohandler:36
 msgid "History for %1"
 msgstr ""
 
@@ -417,12 +429,12 @@ msgstr ""
 msgid "Permission for %1"
 msgstr ""
 
-#: share/mason/wiki/permissions_form:6 share/mason/wiki/settings:3
+#: share/mason/site/admin/wikis:5 share/mason/wiki/permissions_form:6 share/mason/wiki/settings:3
 msgid "Permissions"
 msgstr ""
 
 #. ($perm_loc)
-#: lib/Silki/Controller/Wiki.pm:211
+#: lib/Silki/Controller/Wiki.pm:202
 msgid "Permissions for this wiki have been set to %1"
 msgstr ""
 
@@ -452,20 +464,20 @@ msgstr ""
 msgid "Preferences for %1"
 msgstr ""
 
-#: share/mason/site/wikis:11
+#: share/mason/site/dashboard:11
 msgid "Public Wikis"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:52
+#: lib/Silki/Controller/Wiki.pm:51
 msgid "Recent Changes"
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:120 share/mason/autohandler:31 share/mason/wiki/recent:37
+#: lib/Silki/Controller/Wiki.pm:111 share/mason/autohandler:31 share/mason/wiki/recent:37
 msgid "Recent Changes in %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:53
+#: lib/Silki/Controller/Wiki.pm:52
 msgid "Recent activity in this wiki"
 msgstr ""
 
@@ -529,6 +541,14 @@ msgstr ""
 msgid "Since you already have a user account at %1, you can <a href=\"%html(%2)\">visit the wiki right now</a>."
 msgstr ""
 
+#: share/mason/site/dashboard:23
+msgid "Site Admin Tools"
+msgstr ""
+
+#: share/mason/header.mas:12
+msgid "Site Home"
+msgstr ""
+
 #: share/mason/lib/table/attachments-table.mas:6
 msgid "Size"
 msgstr ""
@@ -554,11 +574,11 @@ msgstr ""
 msgid "The email address you provided is already in use by another user."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:244
+#: lib/Silki/Controller/Page.pm:240
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:153
+#: lib/Silki/Controller/Wiki.pm:144
 msgid "The file has been uploaded."
 msgstr ""
 
@@ -583,7 +603,7 @@ msgid "There are no wanted pages in this wiki."
 msgstr ""
 
 #. ($c->domain()
-#: share/mason/site/wikis:16
+#: share/mason/site/dashboard:16
 msgid ""
 "This Silki site has no public wikis available.\n"
 "           Please <a href=\"%html(%1)\">login</a>\n"
@@ -681,6 +701,10 @@ msgstr ""
 msgid "Uploaded on"
 msgstr ""
 
+#: share/mason/site/admin/wikis:6
+msgid "User count"
+msgstr ""
+
 #: share/mason/user/login_form:8
 msgid "Username:"
 msgstr ""
@@ -719,7 +743,11 @@ msgstr ""
 msgid "Who"
 msgstr ""
 
-#: share/mason/site/wikis:2
+#: share/mason/site/admin/wikis:4
+msgid "Wiki"
+msgstr ""
+
+#: share/mason/site/dashboard:2
 msgid "Wikis You Are a Member of"
 msgstr ""
 
@@ -729,7 +757,7 @@ msgid "Wikis You and %1 Both Use"
 msgstr ""
 
 #. ($c->user()
-#: share/mason/site/wikis:35
+#: share/mason/site/dashboard:44
 msgid "Wikis readable by %1"
 msgstr ""
 
@@ -745,7 +773,7 @@ msgstr ""
 msgid "Yesterday %at_time(%1)"
 msgstr ""
 
-#: share/mason/site/wikis:7
+#: share/mason/site/dashboard:7
 msgid "You are not a member of any wikis."
 msgstr ""
 
@@ -777,12 +805,12 @@ msgid "You have created a user account on the %1 server. You must <a href=\"%htm
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Base.pm:131 lib/Silki/Controller/Base.pm:147
+#: lib/Silki/Controller/Base.pm:133 lib/Silki/Controller/Base.pm:149
 msgid "You must be a member of the %1 wiki to perform this action."
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Base.pm:123
+#: lib/Silki/Controller/Base.pm:125
 msgid "You must log in to to perform this action in the %1 wiki."
 msgstr ""
 
