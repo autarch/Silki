@@ -3,8 +3,6 @@ package Silki::Controller::Wiki;
 use strict;
 use warnings;
 
-use Data::Page;
-use Data::Page::FlickrLike;
 use DateTime::Format::W3CDTF 0.05;
 use Email::Address;
 use File::Basename qw( dirname );
@@ -22,6 +20,7 @@ use Moose;
 BEGIN { extends 'Silki::Controller::Base' }
 
 with qw(
+    Silki::Role::Controller::Pager
     Silki::Role::Controller::RevisionsAtomFeed
     Silki::Role::Controller::UploadHandler
     Silki::Role::Controller::User
@@ -87,16 +86,8 @@ sub recent : Chained('_set_wiki') : PathPart('recent') : Args(0) {
 
     my $wiki = $c->stash()->{wiki};
 
-    my $limit    = 50;
-    my $page_num = $c->request()->params()->{page} || 1;
-    my $offset   = $limit * ( $page_num - 1 );
-
-    my $pager = Data::Page->new();
-    $pager->total_entries( $wiki->revision_count() );
-    $pager->entries_per_page($limit);
-    $pager->current_page($page_num);
-
-    $c->stash()->{pager} = $pager;
+    my ( $limit, $offset )
+        = $self->_make_pager( $c, $wiki->revision_count() );
 
     $c->stash()->{pages} = $wiki->revisions(
         limit  => $limit,

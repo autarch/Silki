@@ -3,7 +3,6 @@ package Silki::Controller::Page;
 use strict;
 use warnings;
 
-use Data::Page;
 use List::AllUtils qw( all );
 use Silki::I18N qw( loc );
 use Silki::Formatter::HTMLToWiki;
@@ -16,6 +15,7 @@ use Moose;
 BEGIN { extends 'Silki::Controller::Base' }
 
 with qw(
+    Silki::Role::Controller::Pager
     Silki::Role::Controller::RevisionsAtomFeed
     Silki::Role::Controller::UploadHandler
     Silki::Role::Controller::WikitextHandler
@@ -140,21 +140,17 @@ sub history : Chained('_set_page') : PathPart('history') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
-    my $limit    = 20;
-    my $page_num = $c->request()->params()->{page} || 1;
-    my $offset   = $limit * ( $page_num - 1 );
-
     my $page = $c->stash()->{page};
 
-    my $pager = Data::Page->new();
-    $pager->total_entries( $page->most_recent_revision()->revision_number() );
-    $pager->entries_per_page($limit);
-    $pager->current_page($page_num);
+    my ( $limit, $offset ) = $self->_make_pager(
+        $c,
+        $page->most_recent_revision()->revision_number(),
+    );
 
-    $c->stash()->{pager} = $pager;
-
-    $c->stash()->{revisions}
-        = $page->revisions( limit => $limit, offset => $offset );
+    $c->stash()->{revisions} = $page->revisions(
+        limit  => $limit,
+        offset => $offset,
+    );
 
     $c->stash()->{template} = '/page/history';
 }

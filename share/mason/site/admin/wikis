@@ -1,0 +1,42 @@
+<table class="standard-table">
+  <thead>
+    <tr>
+      <th><% loc('Wiki') %></th>
+      <th><% loc('Permissions') %></th>
+      <th><% loc('User count') %></th>
+      <th><% loc('Created By') %></th>
+      <th><% loc('Created On') %></th>
+    </tr>
+  </thead>
+
+% while ( my $wiki = $wikis->next() ) {
+  <tbody>
+    <tr class="<% $wikis->index() % 2 ? 'odd' : 'even' %>">
+      <td><a href="<% $wiki->uri() %>"><% $wiki->title() %></a></td>
+      <td><% loc( $wiki->permissions_name() ) %></td>
+      <td>X</td>
+      <td><a href="<% $wiki->creator()->uri() %>"><% $wiki->creator()->best_name() %></td>
+      <td><%  loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $wiki->creation_datetime() ) ) %></td>
+    </tr>
+  </tbody>
+% }
+
+<& /lib/table/pager.mas,
+   index     => $wikis->index(),
+   pager     => $pager,
+   uri_maker => sub { site_uri( path => '/wikis', @_ ) } &>
+
+</table>     
+
+<%args>
+$wikis
+$pager
+</%args>
+
+<%method title>
+All Wikis
+</%method>
+
+<%attr>
+sidebar => [ 'admin' ]
+</%attr>

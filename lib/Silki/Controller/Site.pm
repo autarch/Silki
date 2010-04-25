@@ -10,6 +10,8 @@ use Moose;
 
 BEGIN { extends 'Silki::Controller::Base' }
 
+with qw( Silki::Role::Controller::Pager );
+
 sub site : Path('/') : Args(0) {
     my $self = shift;
     my $c    = shift;
@@ -25,8 +27,31 @@ sub site : Path('/') : Args(0) {
     $c->stash()->{template} = '/site/wikis';
 }
 
-sub wiki : Path ('/wiki') : Args(0) {
+sub wikis : Path('/wikis') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
 
+    unless ( $c->user()->is_admin() ) {
+        $c->redirect_and_detach( $self->_site_uri($c) );
+    }
+
+    my ( $limit, $offset ) = $self->_make_pager( $c, Silki::Schema::Wiki->Count() );
+
+    $c->stash()->{wikis} = Silki::Schema::Wiki->All(
+        limit  => $limit,
+        offset => $offset,
+    );
+
+    $c->stash()->{template} = '/site/admin/wikis';
+}
+
+sub _site_uri {
+    my $self = shift;
+    my $c = shift;
+
+    # XXX - this needs to figure out the correct hostname and port - but
+    # Catalyst::Request doesn't include the requested hostname.
+    return '/';
 }
 
 no Moose;
