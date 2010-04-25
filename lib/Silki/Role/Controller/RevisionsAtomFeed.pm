@@ -2,10 +2,10 @@ package Silki::Role::Controller::RevisionsAtomFeed;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Silki::I18N qw( loc );
 
-use namespace::autoclean;
 use Moose::Role;
 
 sub _output_atom_feed_for_revisions {
