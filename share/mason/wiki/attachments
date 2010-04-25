@@ -5,7 +5,7 @@
 </div>
 
 <& /lib/forms/attachment-upload.mas,
-   uri    => $wiki->uri( view => 'file' ),
+   uri    => $wiki->uri( view => 'files' ),
    legend => loc('Upload a file to this wiki')
  &>
 % }

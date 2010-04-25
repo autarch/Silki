@@ -61,5 +61,5 @@ $wiki
 </%args>
 
 <%init>
-my $action = $page ? $page->uri() : $wiki->uri( view => 'page' );
+my $action = $page ? $page->uri() : $wiki->uri( view => 'pages' );
 </%init>

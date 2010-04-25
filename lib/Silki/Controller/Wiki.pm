@@ -124,7 +124,7 @@ sub attachments : Chained('_set_wiki') : PathPart('attachments') : Args(0) {
     $c->stash()->{template} = '/wiki/attachments';
 }
 
-sub file_collection : Chained('_set_wiki') : PathPart('file') : Args(0) : ActionClass('+Silki::Action::REST') {
+sub file_collection : Chained('_set_wiki') : PathPart('files') : Args(0) : ActionClass('+Silki::Action::REST') {
 }
 
 sub file_collection_POST {
@@ -368,7 +368,7 @@ sub new_page_form : Chained('_set_wiki') : PathPart('new_page_form') : Args(0)
     $c->stash()->{template} = '/wiki/new_page_form';
 }
 
-sub page_collection : Chained('_set_wiki') : PathPart('page') : Args(0) : ActionClass('+Silki::Action::REST') {
+sub page_collection : Chained('_set_wiki') : PathPart('pages') : Args(0) : ActionClass('+Silki::Action::REST') {
 }
 
 sub page_collection_POST {
@@ -422,6 +422,25 @@ sub search_GET_html {
     $c->stash()->{search} = $search;
 
     $c->stash()->{template} = '/wiki/search_results';
+}
+
+sub wiki_collection : Path('/wikis') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    unless ( $c->user()->is_admin() ) {
+        $c->redirect_and_detach(
+            $c->domain()->application_uri( path => '/' ) );
+    }
+
+    my ( $limit, $offset ) = $self->_make_pager( $c, Silki::Schema::Wiki->Count() );
+
+    $c->stash()->{wikis} = Silki::Schema::Wiki->All(
+        limit  => $limit,
+        offset => $offset,
+    );
+
+    $c->stash()->{template} = '/site/admin/wikis';
 }
 
 no Moose;
