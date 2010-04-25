@@ -1,0 +1,47 @@
+<table class="standard-table">
+  <thead>
+    <tr>
+      <th><% loc('User') %></th>
+      <th><% loc('Wiki Memberships') %></th>
+      <th><% loc('Created On') %></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+% while ( my $user = $users->next() ) {
+  <tbody>
+    <tr class="<% $users->index() % 2 ? 'odd' : 'even' %>">
+      <td><a href="<% $user->uri() %>"><% $user->best_name() %></a></td>
+      <td><% $user->member_wiki_count() %></td>
+      <td><%  loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $user->creation_datetime() ) ) %></td>
+      <td><strong><% $user->is_admin() ? loc('site admin') : q{} %></strong></td>
+      <td>
+%   if ( $user->user_id() != $c->user()->user_id() && ! $user->is_system_user() ) {
+        <form action="<% $user->uri() %>" method="post">
+          <input type="submit" value="Disable" />
+        </form>
+%   }
+    </tr>
+  </tbody>
+% }
+
+<& /lib/table/pager.mas,
+   index     => $users->index(),
+   pager     => $pager,
+   uri_maker => sub { site_uri( path => '/users', @_ ) } &>
+
+</table>     
+
+<%args>
+$users
+$pager
+</%args>
+
+<%method title>
+All Users
+</%method>
+
+<%attr>
+sidebar => [ 'admin' ]
+</%attr>

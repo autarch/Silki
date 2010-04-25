@@ -47,6 +47,25 @@ sub wikis : Path('/wikis') : Args(0) {
     $c->stash()->{template} = '/site/admin/wikis';
 }
 
+sub users : Path('/users') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    unless ( $c->user()->is_admin() ) {
+        $c->redirect_and_detach(
+            $c->domain()->application_uri( path => '/' ) );
+    }
+
+    my ( $limit, $offset ) = $self->_make_pager( $c, Silki::Schema::User->Count() );
+
+    $c->stash()->{users} = Silki::Schema::User->All(
+        limit  => $limit,
+        offset => $offset,
+    );
+
+    $c->stash()->{template} = '/site/admin/users';
+}
+
 __PACKAGE__->meta()->make_immutable();
 
 1;

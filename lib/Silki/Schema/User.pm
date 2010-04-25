@@ -2,6 +2,7 @@ package Silki::Schema::User;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use feature ':5.10';
 
@@ -126,6 +127,20 @@ class_has 'GuestUser' => (
     isa     => __PACKAGE__,
     lazy    => 1,
     default => sub { __PACKAGE__->_FindOrCreateGuestUser() },
+);
+
+class_has _AllUserSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildAllUserSelect',
+);
+
+class_has _UserCountSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildUserCountSelect',
 );
 
 {
@@ -853,8 +868,73 @@ sub _send_email {
     return;
 }
 
-no Fey::ORM::Table;
-no MooseX::ClassAttribute;
+sub All {
+    my $class = shift;
+    my ( $limit, $offset ) = validated_list(
+        \@_,
+        limit  => { isa => Int, optional => 1 },
+        offset => { isa => Int, default  => 0 },
+    );
+
+    my $select = $class->_AllUserSelect()->clone();
+    $select->limit( $limit, $offset );
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
+
+    return Fey::Object::Iterator::FromSelect->new(
+        classes     => 'Silki::Schema::User',
+        select      => $select,
+        dbh         => $dbh,
+        bind_params => [ $select->bind_params() ],
+    );
+}
+
+sub _BuildAllUserSelect {
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $user_t = $Schema->table('User');
+
+    my $order_by = Fey::Literal::Term->new(
+        q{CASE WHEN display_name = '' THEN username ELSE display_name END});
+
+    $select->select($user_t)
+           ->from($user_t)
+           ->order_by($order_by);
+
+    return $select;
+}
+
+sub Count {
+    my $class = shift;
+
+    my $select = $class->_UserCountSelect();
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
+
+    my $vals = $dbh->selectrow_arrayref( $select->sql($dbh) );
+
+    return $vals ? $vals->[0] : 0;
+}
+
+sub _BuildUserCountSelect {
+    my $class = shift;
+
+    my $user_t = $Schema->table('User');
+
+    my $count = Fey::Literal::Function->new(
+        'COUNT',
+        $user_t->column('user_id')
+    );
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+    $select
+        ->select($count)
+        ->from($user_t);
+
+    return $select;
+}
 
 __PACKAGE__->meta()->make_immutable();
 
