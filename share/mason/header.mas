@@ -9,6 +9,7 @@
       <li><a href="<% $c->domain()->application_uri( path => '/user/new_user_form' ) %>"><% loc('Register') %></a></li>
 %   }
 % }
+      <li><a href="<% $c->domain()->application_uri( path => '/' ) %>"><% loc('Site Home') %></a></li>
     </ul>
 
 <!--
