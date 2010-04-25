@@ -1,4 +1,4 @@
-<& /lib/forms/user.mas, action => '/user' &>
+<& /lib/forms/user.mas, action => '/users' &>
 
 <%attr>
 show_title => 0

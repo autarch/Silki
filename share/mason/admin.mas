@@ -1,1 +1,7 @@
-admin sidebar
+<h2><% loc('Site Admin Tools') %></h2>
+
+<ul>
+  <li><a href="/users"><% loc('All users') %></li>
+  <li><a href="/wikis"><% loc('All wikis') %></li>
+</ul>
+

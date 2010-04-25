@@ -193,7 +193,9 @@ around insert => sub {
     }
 
     if ( delete $p{disable_login} ) {
-        $p{password} = $DisabledPW;
+        $p{password}       = $DisabledPW;
+        $p{openid_uri}     = undef;
+        $p{activation_key} = undef;
     }
     elsif ( $p{password} ) {
         $p{password} = $class->_password_as_rfc2307( $p{password} );
@@ -220,7 +222,9 @@ around update => sub {
     }
 
     if ( delete $p{disable_login} ) {
-        $p{password} = $DisabledPW;
+        $p{password}       = $DisabledPW;
+        $p{openid_uri}     = undef;
+        $p{activation_key} = undef;
     }
 
     $p{last_modified_datetime} = Fey::Literal::Function->new('NOW');

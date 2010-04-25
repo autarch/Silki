@@ -12,7 +12,10 @@ use Moose;
 
 BEGIN { extends 'Silki::Controller::Base' }
 
-with 'Silki::Role::Controller::User';
+with qw(
+    Silki::Role::Controller::Pager
+    Silki::Role::Controller::User
+);
 
 sub _set_user : Chained('/') : PathPart('user') : CaptureArgs(1) {
 }
@@ -122,20 +125,28 @@ sub authentication_POST {
             username => $username,
         );
 
-        undef $user unless $user->check_password($pw);
+        if ( $user->is_disabled() ) {
+            undef $user;
 
-        if ($user) {
-            $c->redirect_and_detach(
-                $user->activation_uri(
-                    view      => 'status',
-                    with_host => 1,
-                )
-            ) if $user->requires_activation();
+            push @errors,
+                loc('This user account has been disabled by a site admin.');
         }
+        else {
+            undef $user unless $user->check_password($pw);
 
-        push @errors,
-            loc('The username or password you provided was not valid.')
-            unless $user;
+            if ($user) {
+                $c->redirect_and_detach(
+                    $user->activation_uri(
+                        view      => 'status',
+                        with_host => 1,
+                    )
+                ) if $user->requires_activation();
+            }
+
+            push @errors,
+                loc('The username or password you provided was not valid.')
+                unless $user;
+        }
     }
 
     unless ($user) {
@@ -159,6 +170,7 @@ sub _login_user {
 
     my %expires
         = $c->request()->param('remember') ? ( expires => '+1y' ) : ();
+
     $c->set_authen_cookie(
         value => { user_id => $user->user_id() },
         %expires,
@@ -193,7 +205,26 @@ sub new_user_form : Local {
     $c->stash()->{template} = '/user/new_user_form';
 }
 
-sub users_collection : Path('/user') : ActionClass('+Silki::Action::REST') {
+sub users_collection : Path('/users') : ActionClass('+Silki::Action::REST') {
+}
+
+sub users_collection_GET_html {
+    my $self = shift;
+    my $c    = shift;
+
+    unless ( $c->user()->is_admin() ) {
+        $c->redirect_and_detach(
+            $c->domain()->application_uri( path => '/' ) );
+    }
+
+    my ( $limit, $offset ) = $self->_make_pager( $c, Silki::Schema::User->Count() );
+
+    $c->stash()->{users} = Silki::Schema::User->All(
+        limit  => $limit,
+        offset => $offset,
+    );
+
+    $c->stash()->{template} = '/site/admin/users';
 }
 
 sub users_collection_POST {

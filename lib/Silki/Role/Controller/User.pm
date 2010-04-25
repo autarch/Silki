@@ -102,10 +102,12 @@ sub user_PUT {
     my $self = shift;
     my $c    = shift;
 
+    my $params = $c->request()->params();
+
     my $user = $c->stash()->{user};
 
     my $can_edit = 0;
-    my $key = $c->request()->params()->{activation_key};
+    my $key = $params->{activation_key};
     if ($key) {
         $can_edit
             = $user->requires_activation() && $key eq $user->activation_key();
@@ -117,40 +119,67 @@ sub user_PUT {
     $c->redirect_and_detach( $self->_make_user_uri( $c, $user ) )
         unless $can_edit;
 
-    my %update = $c->request()->user_params();
-    $update{activation_key} = undef
-        if defined $key;
-    $update{preserve_password} = 1;
+    my $message;
+    my $uri;
 
-    my @errors = $self->_check_passwords_match(\%update);
+    if (   exists $params->{is_disabled}
+        && $c->user()->is_admin()
+        && $c->user()->user_id() != $user->user_id() ) {
 
-    unless (@errors) {
-        eval { $user->update(%update) };
+        $user->update( is_disabled => $params->{is_disabled} );
 
-        my $e = $@;
-        die $e if $e && ! ref $e;
+        $message
+            = $params->{is_disabled}
+            ? loc(
+            'The account for %1 has been disabled.',
+            $user->best_name()
+            )
+            : loc(
+            'The account for %1 has been enabled.',
+            $user->best_name()
+            );
 
-        push @errors, @{ $e->errors() } if $e;
+        $uri = $c->domain()->application_uri( path => '/users' );
     }
+    else {
+        my %update = $c->request()->user_params();
+        $update{activation_key} = undef
+            if defined $key;
+        $update{preserve_password} = 1;
 
-    $self->_user_update_error( $c, \@errors, \%update )
-        if @errors;
+        my @errors = $self->_check_passwords_match( \%update );
 
-    $c->set_authen_cookie( value => { user_id => $user->user_id() } );
+        unless (@errors) {
+            eval { $user->update(%update) };
 
-    my $message
-        = $key ? loc(
-        'Your account has been activated. Welcome to the site, %1',
-        $user->best_name()
-        )
-        : $user->user_id() == $c->user()->user_id()
-        ? loc('Your preferences have been updated.')
-        : loc(
-        'Preferences for ' . $user->best_name() . ' have been updated.' );
+            my $e = $@;
+            die $e if $e && !ref $e;
+
+            push @errors, @{ $e->errors() } if $e;
+        }
+
+        $self->_user_update_error( $c, \@errors, \%update )
+            if @errors;
+
+        $c->set_authen_cookie( value => { user_id => $user->user_id() } )
+            if $c->user()->is_guest();
+
+        $message
+            = $key ? loc(
+            'Your account has been activated. Welcome to the site, %1',
+            $user->best_name()
+            )
+            : $user->user_id() == $c->user()->user_id()
+            ? loc('Your preferences have been updated.')
+            : loc(
+            'Preferences for ' . $user->best_name() . ' have been updated.' );
+
+        $uri = $self->_make_user_uri( $c, $user );
+    }
 
     $c->session_object()->add_message($message);
 
-    $c->redirect_and_detach( $self->_make_user_uri( $c, $user ) );
+    $c->redirect_and_detach($uri);
 }
 
 sub _check_passwords_match {

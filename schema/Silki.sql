@@ -34,6 +34,7 @@ CREATE TABLE "User" (
        activation_key           VARCHAR(40)     UNIQUE  NULL,
        is_admin                 BOOLEAN         NOT NULL DEFAULT FALSE,
        is_system_user           BOOLEAN         NOT NULL DEFAULT FALSE,
+       is_disabled              BOOLEAN         NOT NULL DEFAULT FALSE,
        creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
        last_modified_datetime   TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
        time_zone                VARCHAR(50)     NOT NULL DEFAULT 'UTC',
