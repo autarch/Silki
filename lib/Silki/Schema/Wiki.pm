@@ -32,6 +32,8 @@ has_table( $Schema->table('Wiki') );
 
 has_one( $Schema->table('Domain') );
 
+has_one creator => ( table => $Schema->table('User') );
+
 has_many pages => (
     table    => $Schema->table('Page'),
     order_by => [ $Schema->table('Page')->column('title') ],
@@ -144,6 +146,13 @@ class_has _AllWikiSelect => (
     isa     => 'Fey::SQL::Select',
     lazy    => 1,
     builder => '_BuildAllWikiSelect',
+);
+
+class_has _WikiCountSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildWikiCountSelect',
 );
 
 my $FrontPage = <<'EOF';
@@ -985,7 +994,37 @@ sub _BuildAllWikiSelect {
 
     $select->select($wiki_t)
            ->from($wiki_t)
-           ->order_by( $wiki_t->column('name') );
+           ->order_by( $wiki_t->column('title') );
+
+    return $select;
+}
+
+sub Count {
+    my $class = shift;
+
+    my $select = $class->_WikiCountSelect();
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
+
+    my $vals = $dbh->selectrow_arrayref( $select->sql($dbh) );
+
+    return $vals ? $vals->[0] : 0;
+}
+
+sub _BuildWikiCountSelect {
+    my $class = shift;
+
+    my $wiki_t = $Schema->table('Wiki');
+
+    my $count = Fey::Literal::Function->new(
+        'COUNT',
+        $wiki_t->column('wiki_id')
+    );
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+    $select
+        ->select($count)
+        ->from($wiki_t);
 
     return $select;
 }
