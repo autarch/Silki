@@ -24,7 +24,7 @@ sub site : Path('/') : Args(0) {
     $c->stash()->{public_wiki_count} = Silki::Schema::Wiki->PublicWikiCount();
     $c->stash()->{public_wikis}      = Silki::Schema::Wiki->PublicWikis();
 
-    $c->stash()->{template} = '/site/wikis';
+    $c->stash()->{template} = '/site/dashboard';
 }
 
 sub wikis : Path('/wikis') : Args(0) {
