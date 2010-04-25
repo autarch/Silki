@@ -8,15 +8,28 @@
 </p>
 % }
 % if ($public_wiki_count) {
+%   if ( $c->user()->is_authenticated() ) {
 <h2><% loc('Public Wikis') %></h2>
+%   }
 
 <& /lib/wiki-list.mas, wikis => $public_wikis &>
-% } elsif ( ! $c->user()->is_authenticated ) {
+% }
+
+% if ( ! $c->user()->is_authenticated ) {
+%   if ($public_wiki_count) {
 <p>
-  <% loc( 'This Silki site has no public wikis available.
+  <% loc( 'You are not logged in, and can only see public wikis.
+           Please <a href="%html(%1)">login</a> to see wikis
+           of which you are a member.',
+           $c->domain()->uri( view => '/user/login_form' ) ) | n %>
+</p>
+%   } else {
+<p>
+  <% loc( 'This site has no public wikis available.
            Please <a href="%html(%1)">login</a>
            if you have an account.', $c->domain()->uri( view => '/user/login_form' ) ) | n %>
 </p>
+%   }
 % }
 
 % if ( $c->user()->is_admin() ) {
@@ -35,7 +48,7 @@ sidebar => []
 </%attr>
 
 <%method title>
-% if ( $c->user() ) {
+% if ( $c->user()->is_authenticated() ) {
 <% loc( 'Wikis readable by %1', $c->user()->best_name() ) %>
 % } else {
 Public wikis
