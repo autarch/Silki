@@ -543,6 +543,9 @@ sub can_edit_user {
 
 sub has_permission_in_wiki {
     my $self = shift;
+
+    return 1 if $self->is_admin();
+
     my ( $wiki, $perm ) = validated_list(
         \@_,
         wiki       => { isa => 'Silki::Schema::Wiki' },
