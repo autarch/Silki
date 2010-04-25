@@ -2,6 +2,7 @@
   <thead>
     <tr>
       <th><% loc('User') %></th>
+      <th><% loc('Email') %></th>
       <th><% loc('Wiki Memberships') %></th>
       <th><% loc('Created On') %></th>
       <th></th>
@@ -12,7 +13,13 @@
 % while ( my $user = $users->next() ) {
   <tbody>
     <tr class="<% $users->index() % 2 ? 'odd' : 'even' %>">
-      <td><a href="<% $user->uri() %>"><% $user->best_name() %></a></td>
+      <td>
+        <a href="<% $user->uri() %>"><% $user->best_name() %></a>
+%   if ( $user->username() ne $user->email_address() ) {
+        (<% $user->username() %>)
+%   }
+      </td>
+      <td><% $user->email_address() %></td>
       <td><% $user->member_wiki_count() %></td>
       <td><%  loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $user->creation_datetime() ) ) %></td>
       <td><strong><% $user->is_admin() ? loc('site admin') : q{} %></strong></td>
