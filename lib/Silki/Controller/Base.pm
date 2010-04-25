@@ -107,6 +107,8 @@ sub _require_permission_for_wiki {
 
     my $user = $c->user();
 
+    return if $user->is_admin();
+
     return
         if $user->has_permission_in_wiki(
         wiki       => $wiki,
