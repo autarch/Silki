@@ -556,3 +556,7 @@ textarea#page-content {
 #upload-lightbox {
     text-align: center;
 }
+
+#file-view-iframe {
+    border: 1px solid #bbb;
+}
