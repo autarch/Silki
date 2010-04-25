@@ -71,6 +71,7 @@ CREATE TABLE "Wiki" (
        domain_id                INT8            NOT NULL,
        account_id               INT8            NOT NULL,
        user_id                  INT8            NOT NULL,
+       creation_datetime  TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
        CONSTRAINT valid_title CHECK ( title != '' )
 );
 
