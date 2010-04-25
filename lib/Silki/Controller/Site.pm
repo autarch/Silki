@@ -2,6 +2,7 @@ package Silki::Controller::Site;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Silki::Schema::User;
 use Silki::Schema::Wiki;
@@ -32,7 +33,8 @@ sub wikis : Path('/wikis') : Args(0) {
     my $c    = shift;
 
     unless ( $c->user()->is_admin() ) {
-        $c->redirect_and_detach( $self->_site_uri($c) );
+        $c->redirect_and_detach(
+            $c->domain()->application_uri( path => '/' ) );
     }
 
     my ( $limit, $offset ) = $self->_make_pager( $c, Silki::Schema::Wiki->Count() );
@@ -44,17 +46,6 @@ sub wikis : Path('/wikis') : Args(0) {
 
     $c->stash()->{template} = '/site/admin/wikis';
 }
-
-sub _site_uri {
-    my $self = shift;
-    my $c = shift;
-
-    # XXX - this needs to figure out the correct hostname and port - but
-    # Catalyst::Request doesn't include the requested hostname.
-    return '/';
-}
-
-no Moose;
 
 __PACKAGE__->meta()->make_immutable();
 
