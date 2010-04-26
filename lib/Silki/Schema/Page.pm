@@ -108,6 +108,13 @@ has is_front_page => (
     default  => sub { $_[0]->title() eq $_[0]->wiki()->front_page_title() },
 );
 
+class_has _PageViewInsert => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Insert',
+    lazy    => 1,
+    builder => '_BuildPageViewInsert',
+);
+
 class_has _PendingPageLinkSelectSQL => (
     is      => 'ro',
     isa     => 'Fey::SQL::Select',
@@ -261,6 +268,36 @@ sub add_file {
     );
 
     return;
+}
+
+sub record_view {
+    my $self = shift;
+    my ($user) = pos_validated_list( \@_, { isa => 'Silki::Schema::User' } );
+
+    my $insert = $self->_PageViewInsert();
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($insert)->dbh();
+
+    $dbh->do( $insert->sql($dbh), {}, $self->page_id(), $user->user_id() );
+
+    return;
+}
+
+sub _BuildPageViewInsert {
+    my $class = shift;
+
+    my $page_view_t = $Schema->table('PageView');
+
+    my $insert = Silki::Schema->SQLFactoryClass()->new_insert();
+
+    $insert
+        ->insert()
+        ->into( $page_view_t->columns( 'page_id', 'user_id' ) )
+        ->values( page_id => Fey::Placeholder->new(),
+                  user_id => Fey::Placeholder->new(),
+                );
+
+    return $insert;
 }
 
 sub TitleToURIPath {

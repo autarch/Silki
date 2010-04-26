@@ -67,6 +67,8 @@ sub page_GET_html {
     my $page     = $c->stash()->{page};
     my $revision = $page->most_recent_revision();
 
+    $page->record_view( $c->user() );
+
     $c->stash()->{page}                = $page;
     $c->stash()->{revision}            = $revision;
     $c->stash()->{is_current_revision} = 1;

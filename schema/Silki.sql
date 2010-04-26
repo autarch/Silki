@@ -322,6 +322,15 @@ CREATE TABLE "PendingPageLink" (
 
 CREATE INDEX "PendingPageLink_to_wiki_id_to_page_title" ON "PendingPageLink" (to_wiki_id, to_page_title);
 
+CREATE TABLE "PageView" (
+       page_id                  INT8            NOT NULL,
+       user_id                  INT8            NOT NULL,
+       view_datetime            TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       PRIMARY KEY ( page_id, user_id, view_datetime )
+);
+
+CREATE INDEX "PageView_user_id" ON "PageView" (user_id);
+
 CREATE DOMAIN file_name AS VARCHAR(255)
        CONSTRAINT no_slashes CHECK ( VALUE ~ E'^[^\\\\/]+$' );
 
@@ -466,6 +475,14 @@ ALTER TABLE "PendingPageLink" ADD CONSTRAINT "PendingPageLink_from_page_id"
 
 ALTER TABLE "PendingPageLink" ADD CONSTRAINT "PendingPageLink_to_wiki_id"
   FOREIGN KEY ("to_wiki_id") REFERENCES "Wiki" ("wiki_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "PageView" ADD CONSTRAINT "PageView_page_id"
+  FOREIGN KEY ("page_id") REFERENCES "Page" ("page_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "PageView" ADD CONSTRAINT "PageView_user_id"
+  FOREIGN KEY ("user_id") REFERENCES "User" ("user_id")
   ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE "File" ADD CONSTRAINT "File_user_id"
