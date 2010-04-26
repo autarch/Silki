@@ -3,11 +3,15 @@
 <ul>
 % while ( my $page = $views->next() ) {
   <li>
-    <a href="<% $page->uri() %>"><% $page->title() %></a>
+    <a href="<% $page->uri() %>">
+% if ( ! $c->stash()->{wiki} || $c->stash()->{wiki}->wiki_id() != $page->wiki_id() ) {
+      <% $page->wiki()->title() %> /
+% }
+      <% $page->title() %>
+    </a>
   </li>
 % }
 </ul>
-
 
 <%init>
 my $views = $c->user()->recently_viewed_pages( limit => 10 );
