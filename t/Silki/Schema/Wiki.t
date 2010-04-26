@@ -143,6 +143,12 @@ my $user = Silki::Schema::User->SystemUser();
 {
     my $wiki = Silki::Schema::Wiki->new( title => 'First Wiki' );
 
+    my $admin_username = 'admin@' . Silki::Schema::Domain->DefaultDomain()->email_hostname();
+    my $admin_user = Silki::Schema::User->new( username => $admin_username );
+
+    my @active = $wiki->active_users()->all();
+    is( scalar @active, 0, 'wiki has no active users' );
+
     is( $wiki->revision_count(), 2, 'wiki has two revisions' );
 
     my @revs = $wiki->revisions()->all();
@@ -174,7 +180,7 @@ my $user = Silki::Schema::User->SystemUser();
     Silki::Schema::Page->insert_with_content(
         title   => 'Orphan',
         wiki_id => $wiki->wiki_id(),
-        user_id => $user->user_id(),
+        user_id => $admin_user->user_id(),
         content => 'Whatever',
     );
 
@@ -186,7 +192,7 @@ my $user = Silki::Schema::User->SystemUser();
     Silki::Schema::Page->insert_with_content(
         title   => 'Orphan2',
         wiki_id => $wiki->wiki_id(),
-        user_id => $user->user_id(),
+        user_id => $admin_user->user_id(),
         content => 'Whatever',
     );
 
@@ -205,7 +211,7 @@ my $user = Silki::Schema::User->SystemUser();
     Silki::Schema::Page->insert_with_content(
         title   => 'Wants',
         wiki_id => $wiki->wiki_id(),
-        user_id => $user->user_id(),
+        user_id => $admin_user->user_id(),
         content => 'A link to [[Something New]]',
     );
 
@@ -219,6 +225,32 @@ my $user = Silki::Schema::User->SystemUser();
         [ sort map { $_->title() } @wanted ],
         [ 'Something New', 'Wanted Page' ],
         'wanted pages returns expected list of pages'
+    );
+
+    my @active = $wiki->active_users()->all();
+    is( scalar @active, 1, 'wiki has one active user' );
+    is_deeply(
+        [ map { $_->username() } @active ],
+        [$admin_username],
+        'active users returns expected user'
+    );
+
+    my $joe_username = 'joe@' . Silki::Schema::Domain->DefaultDomain()->email_hostname();
+    my $joe_user = Silki::Schema::User->new( username => $joe_username );
+
+    Silki::Schema::Page->insert_with_content(
+        title   => 'Orphan3',
+        wiki_id => $wiki->wiki_id(),
+        user_id => $joe_user->user_id(),
+        content => 'Whatever',
+    );
+
+    my @active = $wiki->active_users()->all();
+    is( scalar @active, 2, 'wiki has two active users' );
+    is_deeply(
+        [ map { $_->username() } @active ],
+        [ $admin_username, $joe_username ],
+        'active users returns expected users, ordered by username'
     );
 }
 
