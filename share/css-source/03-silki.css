@@ -190,6 +190,31 @@ h1 {
     padding: 0.1em 0;
 }
 
+/* === Dashboard === */
+
+.dashboard-item {
+    border: 1px solid #21379d;
+    border-radius-topleft: 6px;
+    border-radius-topright: 6px;
+    border-radius-bottomleft: 6px;
+    border-radius-bottomright: 6px;
+    -moz-border-radius-topleft: 6px;
+    -moz-border-radius-topright: 6px;
+    -moz-border-radius-bottomleft: 6px;
+    -moz-border-radius-bottomright: 6px;
+    -webkit-border-radius-topleft: 6px;
+    -webkit-border-radius-topright: 6px;
+    -webkit-border-radius-bottomleft: 6px;
+    -webkit-border-radius-bottomright: 6px;
+}
+
+.dashboard-item h2 {
+    background-color: #21379d;
+    color: white;
+    margin-top: 0;
+    padding: 0.2em 0.4em;
+}
+
 /* === Tables === */
 
 table.standard-table {

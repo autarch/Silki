@@ -129,6 +129,13 @@ class_has _MembersSelect => (
     builder => '_BuildMembersSelect',
 );
 
+class_has _ActiveUsersSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildActiveUsersSelect',
+);
+
 class_has _PublicWikiCountSelect => (
     is      => 'ro',
     isa     => 'Fey::SQL::Select',
@@ -756,6 +763,50 @@ sub _BuildMembersSelect {
                   );
 
     return $members_select;
+}
+
+sub active_users {
+    my $self = shift;
+
+    my ( $limit, $offset ) = validated_list(
+        \@_,
+        limit  => { isa => Int, optional => 1 },
+        offset => { isa => Int, default  => 0 },
+    );
+
+    my $select = $self->_ActiveUsersSelect()->clone();
+    $select->limit( $limit, $offset );
+
+    return Fey::Object::Iterator::FromSelect->new(
+        classes => [ 'Silki::Schema::User' ],
+        select  => $select,
+        dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
+        bind_params => [ $self->wiki_id() ],
+    );
+}
+
+sub _BuildActiveUsersSelect {
+    my $class = shift;
+
+    my $user_t = $Schema->table('User');
+    my $page_t = $Schema->table('Page');
+    my $page_revision_t = $Schema->table('PageRevision');
+
+    my $order_by = Fey::Literal::Term->new(
+        q{CASE WHEN display_name = '' THEN username ELSE display_name END});
+
+    my $users_select = Silki::Schema->SQLFactoryClass()
+        ->new_select( auto_placeholders => 0 );
+    $users_select
+        ->select( $user_t, $order_by )
+        ->distinct()
+        ->from( $user_t, $page_revision_t )
+        ->from( $page_revision_t, $page_t )
+        ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
+        ->where( $user_t->column('is_system_user'), '=', 'f' )
+        ->order_by( $order_by );
+
+    return $users_select;
 }
 
 # This is a rather complicated query. The end result is something like this ..

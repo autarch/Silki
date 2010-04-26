@@ -1,19 +1,44 @@
-<ul>
-% while ( my $page = $pages->next() ) {
-  <li><a href="<% $page->uri() %>"><% $page->title() %></a></li>
+<div id="dashboard" class="yui-g">
+  <div class="yui-u first">
+    <div class="dashboard-item">
+      <h2>Recent Changes</h2>
+
+      <ul>
+% while ( my ( $page, $revision ) = $recent->next() ) {
+        <li>
+          <a href="<% $page->uri() %>"><% $page->title() %>
+            (<% loc( 'revision %1', $revision->revision_number() ) %>)</a>
+          - <% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $revision->creation_datetime() ) ) %>
+        </li>
 % }
-</ul>
+      </ul>
+    </div>
+  </div>
+
+  <div class="yui-u">
+    <div class="dashboard-item">
+      <h2>Active Users</h2>
+
+      <ul>
+% while ( my $user = $users->next() ) {
+        <li><a href="<% $user->uri() %>"><% $user->best_name() %></a></li>
+% }
+% if ( $users->index() == 0 ) {
+        <li><% loc( q{Looks like there hasn't been any user activity in this wiki yet.} ) %></li>
+% }
+      </ul>
+    </div>
+  </div>
+</div>
 
 <%args>
 $wiki
+$recent
+$users
 </%args>
 
-<%init>
-my $pages = $wiki->pages();
-</%init>
-
 <%method title>
-<% $wiki->title() %>
+<% loc( '%1 Dashboard ', $wiki->title() ) %>
 <%args>
 $wiki
 </%args>

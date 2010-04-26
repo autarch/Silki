@@ -2,7 +2,7 @@
   <thead>
     <tr>
       <th><% loc('Title') %></th>
-      <th><% loc('Date') %></th>
+      <th><% loc('When') %></th>
       <th><% loc('Who') %></th>
       <th></th>
     </tr>

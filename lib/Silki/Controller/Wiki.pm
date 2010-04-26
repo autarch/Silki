@@ -85,6 +85,12 @@ sub dashboard : Chained('_set_wiki') : PathPart('dashboard') : Args(0) {
 
     $c->tab_by_id('dashboard')->set_is_selected(1);
 
+    my $wiki = $c->stash()->{wiki};
+
+    $c->stash()->{recent} = $wiki->revisions( limit => 10 );
+
+    $c->stash()->{users} = $wiki->active_users( limit => 10 );
+
     $c->stash()->{template} = '/wiki/dashboard';
 }
 
