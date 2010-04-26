@@ -99,6 +99,28 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 }
 
 {
+    is( Silki::Schema::User->Count(), 5, 'Count finds 5 usersx' );
+
+    my @wikis = Silki::Schema::User->All()->all();
+
+    my $hostname   = Silki::Schema::Domain->DefaultDomain()->email_hostname();
+    my $admin_user = 'admin@' . $hostname;
+    my $joe_user   = 'joe@' . $hostname;
+
+    is_deeply(
+        [ sort map { $_->username() } @wikis ],
+        [
+            $admin_user,
+            'guest-user',
+            $joe_user,
+            , 'system-user',
+            'user@example.com',
+        ],
+        'All returns all users'
+    );
+}
+
+{
     my $system = Silki::Schema::User->SystemUser();
     ok(
         !$system->check_password('anything'),
