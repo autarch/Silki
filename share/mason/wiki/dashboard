@@ -28,6 +28,9 @@
             <% loc( '%quant( %1, view, views )', $raw->[-1] ) %>
           </li>
 % }
+% unless ( $views->index() ) {
+          <li><% loc( q{Looks like there hasn't been any page view activity in this wiki yet.} ) %></li>
+% }
         </ul>
       </div>
     </div>
@@ -42,7 +45,7 @@
 % while ( my $user = $users->next() ) {
           <li><a href="<% $user->uri() %>"><% $user->best_name() %></a></li>
 % }
-% if ( $users->index() == 0 ) {
+% unless ( $users->index() ) {
           <li><% loc( q{Looks like there hasn't been any user activity in this wiki yet.} ) %></li>
 % }
         </ul>
