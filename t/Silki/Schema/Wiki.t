@@ -52,6 +52,18 @@ my $user = Silki::Schema::User->SystemUser();
 }
 
 {
+    is( Silki::Schema::Wiki->Count(), 4, 'Count finds 4 wikis' );
+
+    my @wikis = Silki::Schema::Wiki->All()->all();
+
+    is_deeply(
+        [ sort map { $_->title() } @wikis ],
+        [ 'First Wiki', 'Public', 'Second Wiki', 'Third Wiki' ],
+        'All returns all wikis'
+    );
+}
+
+{
     my $wiki = Silki::Schema::Wiki->new( title => 'First Wiki' );
 
     is(
