@@ -19,6 +19,7 @@ use Silki::Email qw( send_email );
 use Silki::I18N qw( loc );
 use Silki::Schema;
 use Silki::Schema::Domain;
+use Silki::Schema::Page;
 use Silki::Schema::Permission;
 use Silki::Schema::Role;
 use Silki::Types qw( Int Str Bool );
@@ -113,6 +114,13 @@ class_has _SharedWikiSelect => (
     isa     => 'Fey::SQL::Union',
     lazy    => 1,
     builder => '_BuildSharedWikiSelect',
+);
+
+class_has _RecentlyViewedPagesSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildRecentlyViewedPagesSelect',
 );
 
 class_has 'SystemUser' => (
@@ -810,6 +818,56 @@ sub _ImplicitWikiSelectBase {
                   $explicit );
 
     return;
+}
+
+sub recently_viewed_pages {
+    my $self = shift;
+    my ( $limit, $offset ) = validated_list(
+        \@_,
+        limit  => { isa => Int, optional => 1 },
+        offset => { isa => Int, default  => 0 },
+    );
+
+    my $select = $self->_RecentlyViewedPagesSelect()->clone();
+    $select->limit( $limit, $offset );
+
+    return Fey::Object::Iterator::FromSelect->new(
+        classes => ['Silki::Schema::Page'],
+        select  => $select,
+        dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
+        bind_params => [ $self->user_id() ],
+    );
+}
+
+sub _BuildRecentlyViewedPagesSelect {
+    my $class = shift;
+
+    my ( $page_t, $page_view_t ) = $Schema->tables( 'Page', 'PageView' );
+
+    my $max_func = Fey::Literal::Function->new( 'MAX',
+        $page_view_t->column('view_datetime') );
+
+    my $max_datetime = Silki::Schema->SQLFactoryClass()->new_select();
+    $max_datetime
+        ->select($max_func)
+        ->from( $page_view_t )
+        ->where(
+            $page_view_t->column('page_id'),
+            '=', $page_t->column('page_id')
+        );
+
+    my $viewed_select = Silki::Schema->SQLFactoryClass()->new_select();
+    $viewed_select
+        ->select($page_t)
+        ->from( $page_t, $page_view_t )
+        ->where( $page_view_t->column('user_id'), '=', Fey::Placeholder->new() )
+        ->and( $page_view_t->column('view_datetime') , '=', $max_datetime )
+        ->order_by(
+            $page_view_t->column('view_datetime'), 'DESC',
+            $page_t->column('title'),              'ASC',
+        );
+
+    return $viewed_select;
 }
 
 sub send_invitation_email {

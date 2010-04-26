@@ -74,9 +74,9 @@ my $show_nav = $m->request_comp()->attr('show_nav');
 </%init>
 
 <%attr>
-show_title    => 1
-show_nav      => 1
-sidebar       => [ 'quick-search' ]
+show_title => 1
+show_nav   => 1
+sidebar    => []
 </%attr>
 
 <%def .messages>

@@ -1,0 +1,14 @@
+<h2>Recently Viewed Pages</h2>
+
+<ul>
+% while ( my $page = $views->next() ) {
+  <li>
+    <a href="<% $page->uri() %>"><% $page->title() %></a>
+  </li>
+% }
+</ul>
+
+
+<%init>
+my $views = $c->user()->recently_viewed_pages( limit => 10 );
+</%init>

@@ -26,3 +26,7 @@ return $m->call_next();
 $page
 </%args>
 </%method>
+
+<%attr>
+sidebar => [ 'quick-search', 'incoming-links', 'recently-viewed' ]
+</%attr>

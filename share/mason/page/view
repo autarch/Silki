@@ -47,10 +47,6 @@ $is_current_revision
 $html
 </%args>
 
-<%attr>
-sidebar => [ 'quick-search', 'incoming-links' ]
-</%attr>
-
 <%method title>
 <% $page->title() %>
 % unless ($is_current_revision) {

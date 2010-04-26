@@ -28,3 +28,7 @@ return $m->call_next();
 $wiki
 </%args>
 </%method>
+
+<%attr>
+sidebar => [ 'quick-search', 'recently-viewed' ]
+</%attr>
