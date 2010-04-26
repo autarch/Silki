@@ -1,39 +1,60 @@
-<div id="dashboard" class="yui-g">
-  <div class="yui-u first">
-    <div class="dashboard-item">
-      <h2>Recent Changes</h2>
+<div id="dashboard">
+  <div class="yui-g">
+    <div class="yui-u first">
+      <div class="dashboard-item">
+        <h2>Recent Changes</h2>
 
-      <ul>
-% while ( my ( $page, $revision ) = $recent->next() ) {
-        <li>
-          <a href="<% $page->uri() %>"><% $page->title() %>
-            (<% loc( 'revision %1', $revision->revision_number() ) %>)</a>
-          - <% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $revision->creation_datetime() ) ) %>
-        </li>
+        <ul>
+% while ( my ( $page, $revision ) = $changes->next() ) {
+          <li>
+            <a href="<% $page->uri() %>"><% $page->title() %>
+              (<% loc( 'revision %1', $revision->revision_number() ) %>)</a>
+            - <% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $revision->creation_datetime() ) ) %>
+          </li>
 % }
-      </ul>
+        </ul>
+      </div>
+    </div>
+
+    <div class="yui-u">
+      <div class="dashboard-item">
+        <h2>Popular Pages</h2>
+
+        <ul>
+% while ( my $page = $views->next() ) {
+          <li>
+            <a href="<% $page->uri() %>"><% $page->title() %></a> -
+%   my $raw = $views->raw_row();
+            <% loc( '%quant( %1, view, views )', $raw->[-1] ) %>
+          </li>
+% }
+        </ul>
+      </div>
     </div>
   </div>
 
-  <div class="yui-u">
-    <div class="dashboard-item">
-      <h2>Active Users</h2>
+  <div class="yui-g">
+    <div class="yui-u first">
+      <div class="dashboard-item">
+        <h2>Active Users</h2>
 
-      <ul>
+        <ul>
 % while ( my $user = $users->next() ) {
-        <li><a href="<% $user->uri() %>"><% $user->best_name() %></a></li>
+          <li><a href="<% $user->uri() %>"><% $user->best_name() %></a></li>
 % }
 % if ( $users->index() == 0 ) {
-        <li><% loc( q{Looks like there hasn't been any user activity in this wiki yet.} ) %></li>
+          <li><% loc( q{Looks like there hasn't been any user activity in this wiki yet.} ) %></li>
 % }
-      </ul>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
 
 <%args>
 $wiki
-$recent
+$changes
+$views
 $users
 </%args>
 

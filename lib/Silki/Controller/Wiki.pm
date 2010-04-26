@@ -87,7 +87,9 @@ sub dashboard : Chained('_set_wiki') : PathPart('dashboard') : Args(0) {
 
     my $wiki = $c->stash()->{wiki};
 
-    $c->stash()->{recent} = $wiki->revisions( limit => 10 );
+    $c->stash()->{changes} = $wiki->revisions( limit => 10 );
+
+    $c->stash()->{views} = $wiki->recently_viewed_pages( limit => 10 );
 
     $c->stash()->{users} = $wiki->active_users( limit => 10 );
 

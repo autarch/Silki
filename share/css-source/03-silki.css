@@ -192,6 +192,12 @@ h1 {
 
 /* === Dashboard === */
 
+#dashboard {
+    /* This is needed to avoid a too-large gap from the <h1> at
+       the top of the page to the first dashboard item. */
+    margin-top: -1em;
+}
+
 .dashboard-item {
     border: 1px solid #21379d;
     border-radius-topleft: 6px;
@@ -206,6 +212,7 @@ h1 {
     -webkit-border-radius-topright: 6px;
     -webkit-border-radius-bottomleft: 6px;
     -webkit-border-radius-bottomright: 6px;
+    margin-top: 1em;
 }
 
 .dashboard-item h2 {

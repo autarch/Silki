@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Data::Dumper qw( Dumper );
+use DateTime::Format::Pg;
 use Fey::Literal;
 use Fey::Object::Iterator::FromSelect;
 use Fey::SQL;
@@ -120,6 +121,13 @@ class_has _WantedPagesSelect => (
     isa     => 'Fey::SQL::Select',
     lazy    => 1,
     builder => '_BuildWantedPagesSelect',
+);
+
+class_has _RecentlyViewedPagesSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildRecentlyViewedPagesSelect',
 );
 
 class_has _MembersSelect => (
@@ -672,6 +680,57 @@ sub _BuildWantedPagesSelect {
         );
 
     return $wanted_select;
+}
+
+sub recently_viewed_pages {
+    my $self = shift;
+    my ( $cutoff, $limit, $offset ) = validated_list(
+        \@_,
+        cutoff => {
+            isa     => 'DateTime',
+            default => DateTime->today()->subtract( months => 1 )
+        },
+        limit  => { isa => Int, optional => 1 },
+        offset => { isa => Int, default  => 0 },
+    );
+
+    my $select = $self->_RecentlyViewedPagesSelect()->clone();
+    $select->limit( $limit, $offset );
+
+    return Fey::Object::Iterator::FromSelect->new(
+        classes => ['Silki::Schema::Page'],
+        select  => $select,
+        dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
+        bind_params => [
+            $self->wiki_id(),
+            DateTime::Format::Pg->format_datetime($cutoff)
+        ],
+    );
+}
+
+sub _BuildRecentlyViewedPagesSelect {
+    my $class = shift;
+
+    my ( $page_t, $page_view_t ) = $Schema->tables( 'Page', 'PageView' );
+
+    my $count = Fey::Literal::Function->new(
+        'COUNT',
+        $page_view_t->column('page_id')
+    );
+
+    my $viewed_select = Silki::Schema->SQLFactoryClass()->new_select();
+    $viewed_select
+        ->select( $page_t, $count )
+        ->from( $page_t, $page_view_t )
+        ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
+        ->and( $page_view_t->column('view_datetime'), '>=', Fey::Placeholder->new() )
+        ->group_by( $page_t->columns() )
+        ->order_by(
+            $count, 'DESC',
+            $page_t->column('title'), 'ASC',
+        );
+
+    return $viewed_select;
 }
 
 sub _FileCountSelect {
