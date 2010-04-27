@@ -149,6 +149,13 @@ has files_dir => (
     builder => '_build_files_dir',
 );
 
+has small_image_dir => (
+    is      => 'ro',
+    isa     => 'Path::Class::Dir',
+    lazy    => 1,
+    builder => '_build_small_image_dir',
+);
+
 has thumbnails_dir => (
     is      => 'ro',
     isa     => 'Path::Class::Dir',
@@ -336,6 +343,18 @@ sub _build_files_dir {
     $self->_ensure_dir($files_dir);
 
     return $files_dir;
+}
+
+sub _build_small_image_dir {
+    my $self = shift;
+
+    my $cache = $self->cache_dir();
+
+    my $small_image_dir = $cache->subdir('small-image');
+
+    $self->_ensure_dir($small_image_dir);
+
+    return $small_image_dir;
 }
 
 sub _build_thumbnails_dir {

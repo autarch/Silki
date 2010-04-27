@@ -86,6 +86,17 @@ sub _link_to_file {
     my $dl = loc("Download this file");
 
     $self->_stream()->tag( a => ( href => $file_uri, title => $dl ) );
+
+    if ( $file->is_browser_displayable_image() ) {
+        $self->_stream->tag(
+            img => (
+                src   => $file->uri( view => 'small' ),
+                alt   => 'Image - ' . $file->file_name(),
+                class => 'attachment-image',
+            ),
+        );
+    }
+
     $self->_stream()->text( $p->{text} );
     $self->_stream()->tag( '_a' );
 }

@@ -119,21 +119,36 @@ sub _download {
     $c->detach();
 }
 
+sub small_image : Chained('_set_file') : PathPart('small') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_serve_image( $c, 'small_image_file' );
+}
+
 sub thumbnail : Chained('_set_file') : PathPart('thumbnail') : Args(0) {
     my $self = shift;
     my $c    = shift;
+
+    $self->_serve_image( $c, 'thumbnail_file' );
+}
+
+sub _serve_image {
+    my $self = shift;
+    my $c    = shift;
+    my $meth = shift;
 
     my $file = $c->stash()->{file};
 
     $c->status_not_found()
         unless $file->is_browser_displayable_image();
 
-    my $thumbnail = $file->thumbnail_file();
+    my $image = $file->$meth();
 
     $c->response()->status(200);
     $c->response()->content_type( $file->mime_type() );
-    $c->response()->content_length( -s $thumbnail );
-    $c->response()->header( 'X-Sendfile' => $thumbnail );
+    $c->response()->content_length( -s $image );
+    $c->response()->header( 'X-Sendfile' => $image );
 
     $c->detach();
 }

@@ -52,6 +52,14 @@ has file_on_disk => (
     clearer  => '_clear_file_on_disk',    # for testing
 );
 
+has small_image_file => (
+    is       => 'ro',
+    isa      => Maybe[File],
+    init_arg => undef,
+    lazy     => 1,
+    builder  => '_build_small_image_file',
+);
+
 has thumbnail_file => (
     is       => 'ro',
     isa      => Maybe[File],
@@ -114,6 +122,31 @@ sub _build_file_on_disk {
     open my $fh, '>', $file;
     print {$fh} $self->contents();
     close $fh;
+
+    return $file;
+}
+
+sub _build_small_image_file {
+    my $self = shift;
+
+    return unless $self->is_browser_displayable_image();
+
+    my $dir = Silki::Config->new()->small_image_dir();
+
+    my $file = $dir->file( $self->_file_name_with_hash() );
+
+    return $file
+        if -f $file
+            && ( File::stat::populate( CORE::stat(_) ) )->mtime()
+            >= $self->creation_datetime()->epoch();
+
+    Image::Thumbnail->new(
+        module     => 'Image::Magick',
+        size       => '150x400',
+        create     => 1,
+        inputpath  => $self->file_on_disk()->stringify(),
+        outputpath => $file->stringify(),
+    );
 
     return $file;
 }
