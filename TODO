@@ -1,14 +1,3 @@
-= Navigation
-
-* Tabs (Home, etc) should all refer to current wiki
-* include link to "real" home page in small upper right links
-
-= System admin
-
-* List of all wikis
-* List of all users
-* System admin can edit other users
-
 = Random features
 
 * Backlinks for attachments?
@@ -24,7 +13,6 @@
 * Page views, edits, creation, deletion
 * Attachment views, edits
 * Added users?
-** This is probably only necessary if there are plans to charge per-user-in-a-wiki, which seems like a big PITA
 * Created wiki, deleted wiki
 
 = Archiving feature
