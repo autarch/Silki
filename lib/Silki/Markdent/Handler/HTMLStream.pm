@@ -92,9 +92,10 @@ sub _link_to_file {
             img => (
                 src   => $file->uri( view => 'small' ),
                 alt   => 'Image - ' . $file->file_name(),
-                class => 'attachment-image',
-            ),
+            )
         );
+
+        $self->_stream()->tag( 'br' );
     }
 
     $self->_stream()->text( $p->{text} );
