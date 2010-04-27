@@ -144,13 +144,6 @@ class_has _AllUserSelect => (
     builder => '_BuildAllUserSelect',
 );
 
-class_has _UserCountSelect => (
-    is      => 'ro',
-    isa     => 'Fey::SQL::Select',
-    lazy    => 1,
-    builder => '_BuildUserCountSelect',
-);
-
 {
     my $select = __PACKAGE__->_MemberWikiCountSelect();
 
@@ -967,36 +960,6 @@ sub _BuildAllUserSelect {
     $select->select($user_t)
            ->from($user_t)
            ->order_by($order_by);
-
-    return $select;
-}
-
-sub Count {
-    my $class = shift;
-
-    my $select = $class->_UserCountSelect();
-
-    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
-
-    my $vals = $dbh->selectrow_arrayref( $select->sql($dbh) );
-
-    return $vals ? $vals->[0] : 0;
-}
-
-sub _BuildUserCountSelect {
-    my $class = shift;
-
-    my $user_t = $Schema->table('User');
-
-    my $count = Fey::Literal::Function->new(
-        'COUNT',
-        $user_t->column('user_id')
-    );
-
-    my $select = Silki::Schema->SQLFactoryClass()->new_select();
-    $select
-        ->select($count)
-        ->from($user_t);
 
     return $select;
 }
