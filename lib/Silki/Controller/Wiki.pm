@@ -436,7 +436,7 @@ sub search_GET_html {
     $c->redirect_and_detach( $wiki->uri() )
         if string_is_empty($search);
 
-    $c->stash()->{pages} = $wiki->text_search( query => $search );
+    $c->stash()->{search_results} = $wiki->text_search( query => $search );
     $c->stash()->{search} = $search;
 
     $c->stash()->{template} = '/wiki/search_results';

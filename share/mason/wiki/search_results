@@ -6,31 +6,30 @@
       <th><% loc('Last Edited By') %></th>
     </tr>
   </thead>
-% while ( my ( $page, $revision ) = $pages->next() ) {
+% while ( my ( $page, $revision, $result ) = $search_results->next() ) {
   <tbody>
-    <tr class="has-child-row <% $pages->index() % 2 ? 'odd' : 'even' %>">
-      <td><a href="<% $page->uri() %>"><% $page->title() %></a> (<% loc( 'revision %1', $revision->revision_number() ) %>)</td>
+    <tr class="has-child-row <% $search_results->index() % 2 ? 'odd' : 'even' %>">
+      <td><a href="<% $page->uri() %>"><% $result->title_for_display( $page->title() ) | n %></a> (<% loc( 'revision %1', $revision->revision_number() ) %>)</td>
       <td><% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $revision->creation_datetime() ) ) %></td>
       <td><a href="<% $wiki->uri( view => 'user/' . $revision->user()->user_id() ) %>"><% $revision->user()->best_name() %></a></td>
     </tr>
-%   my $raw = $pages->raw_row();
-    <tr class="<% $pages->index() % 2 ? 'odd' : 'even' %>">
-      <td colspan="3"><% $raw->[-1] | n %></td>
+    <tr class="<% $search_results->index() % 2 ? 'odd' : 'even' %>">
+      <td colspan="3"><% $result->body_for_display() | n %></td>
     </tr>
   </tbody>
 % }
+
 <%doc>
 <& /lib/table/pager.mas,
-   index     => $pages->index(),
+   index     => $search_results->index(),
    pager     => $pager,
-   uri_maker => sub { $wiki->uri( view => 'recent', @_ ) } &>
+   uri_maker => sub { $wiki->uri( view => 'search', { search => $search } ) } &>
 </%doc>
 </table>
 
-
 <%args>
 $search
-$pages
+$search_results
 $wiki
 </%args>
 

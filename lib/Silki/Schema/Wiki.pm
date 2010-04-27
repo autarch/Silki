@@ -16,6 +16,7 @@ use Silki::Schema::File;
 use Silki::Schema::Page;
 use Silki::Schema::Permission;
 use Silki::Schema::Role;
+use Silki::Schema::TextSearchResult;
 use Silki::Schema::UserWikiRole;
 use Silki::Schema::WantedPage;
 use Silki::Schema::WikiRolePermission;
@@ -953,17 +954,19 @@ sub text_search {
 
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    my $headline = Fey::Literal::Function->new(
+    my $marker = Silki::Schema::TextSearchResult->HighlightMarker();
+    my $result = Fey::Literal::Function->new(
         'TS_HEADLINE',
         Fey::Literal::Term->new( q{title || E'\n' || content}, ),
-        $query
+        $query,
+        "StartSel = $marker, StopSel = $marker",
     );
-    $headline->set_alias_name('headline');
+    $result->set_alias_name('result');
 
     my $star = Fey::Literal::Term->new('*');
     $star->set_can_have_alias(0);
 
-    $select->select( $star, $headline )
+    $select->select( $star, $result )
            ->from($search_select);
 
     my $x = 0;
@@ -985,10 +988,20 @@ sub text_search {
         };
     }
 
+    # Need to skip the rank item in the row
+    $attribute_map{++$x} = {
+        class     => 'Silki::Schema::TextSearchResult',
+        attribute => 'result',
+    };
+
     return Fey::Object::Iterator::FromSelect->new(
-        classes => [ 'Silki::Schema::Page', 'Silki::Schema::PageRevision' ],
-        select  => $select,
-        dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
+        classes => [
+            'Silki::Schema::Page',
+            'Silki::Schema::PageRevision',
+            'Silki::Schema::TextSearchResult'
+        ],
+        select => $select,
+        dbh    => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
         bind_params   => [ $query, $self->wiki_id() ],
         attribute_map => \%attribute_map,
     );
