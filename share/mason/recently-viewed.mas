@@ -11,6 +11,9 @@
     </a>
   </li>
 % }
+% unless ( $views->index() ) {
+  <li><% loc( q{Looks like you haven't seen any pages at all yet.} ) %></li>
+% }
 </ul>
 
 <%init>
