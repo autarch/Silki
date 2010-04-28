@@ -83,6 +83,8 @@ sub page_edit_form : Chained('_set_page') : PathPart('edit_form') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
+    $self->_require_permission_for_wiki( $c, $c->stash()->{wiki}, 'Edit' );
+
     my $page = $c->stash()->{page};
 
     $c->stash()->{html} = $page->most_recent_revision()->content_as_html(
@@ -96,6 +98,8 @@ sub page_edit_form : Chained('_set_page') : PathPart('edit_form') : Args(0) {
 sub page_PUT {
     my $self = shift;
     my $c    = shift;
+
+    $self->_require_permission_for_wiki( $c, $c->stash()->{wiki} );
 
     my $page = Silki::Schema::Page->new(
         page_id => $c->request()->params()->{page_id} );

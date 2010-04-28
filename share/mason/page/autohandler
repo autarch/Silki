@@ -8,10 +8,12 @@ return $m->call_next();
       <a href="<% $page->uri() %>"
          title="<% loc('View this page') %>"><% loc('View') %></a>
     </li>
+% if ( $c->user()->has_permission_in_wiki( wiki => $wiki, permission => Silki::Schema::Permission->Edit()) ) {
     <li>
       <a href="<% $page->uri( view => 'edit_form' ) %>"
          title="<% loc('Edit this page') %>"><% loc('Edit') %></a>
     </li>
+% }
     <li>
       <a href="<% $page->uri( view => 'attachments' ) %>"
          title="<% loc('Attachments for this page') %>"><% loc('Attachments') %></a>
@@ -24,6 +26,7 @@ return $m->call_next();
 
 <%args>
 $page
+$wiki
 </%args>
 </%method>
 

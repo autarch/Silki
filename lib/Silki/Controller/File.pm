@@ -59,8 +59,9 @@ sub file_DELETE {
     my $self = shift;
     my $c    = shift;
 
-    # No need to for authen check since that happens automatically for DELETE
-    # method requests.
+    my $wiki = $c->stash()->{wiki};
+
+    $self->_require_permission_for_wiki( $c, $wiki, 'Delete' );
 
     my $file = $c->stash()->{file};
 
@@ -70,7 +71,7 @@ sub file_DELETE {
 
     $c->session_object()->add_message($msg);
 
-    $c->redirect_and_detach( $c->stash()->{wiki}->uri( with_host => 1 ) );
+    $c->redirect_and_detach( $wiki->uri( with_host => 1 ) );
 }
 
 sub content : Chained('_set_file') : PathPart('content') : Args(0) {
@@ -157,12 +158,7 @@ sub delete_confirmation : Chained('_set_file') : PathPart('delete_confirmation')
     my $self = shift;
     my $c    = shift;
 
-    my $wiki = $c->stash()->{wiki};
-    $c->redirect_and_detach( $wiki->uri( with_host => 1 ) )
-        unless $c->user()->has_permission_in_wiki(
-        wiki       => $wiki,
-        permission => Silki::Schema::Permission->Delete(),
-        );
+    $self->_require_permission_for_wiki( $c, $c->stash()->{wiki}, 'Delete' );
 
     $c->stash()->{template} = '/file/delete-confirmation';
 }
