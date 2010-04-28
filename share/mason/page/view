@@ -1,3 +1,15 @@
+<div id="tags">
+% if (@tags) {
+  <ul>
+%   for my $tag (@tags) {
+    <li>
+      <a href="<% $wiki->uri( view => 'tag/' . $tag->tag_id() ) %>"><% $tag->tag() %></a>
+    </li>
+%   }
+  </ul>
+% }
+</div>
+
 % unless ($is_current_revision) {
 <p>
   <a href="<% $page->uri() %>"><% loc('Back to current revision') %></a>
@@ -46,6 +58,10 @@ $wiki
 $is_current_revision
 $html
 </%args>
+
+<%init>
+my @tags = $page->tags()->all();
+</%init>
 
 <%method title>
 <% $page->title() %>

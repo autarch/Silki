@@ -34,6 +34,12 @@ has_one wiki => (
     handles => ['domain'],
 );
 
+has_many tags => (
+    table       => $Schema->table('Tag'),
+    select      => __PACKAGE__->_TagsSelect(),
+    bind_params => sub { $_[0]->page_id() },
+);
+
 has revision_count => (
     metaclass   => 'FromSelect',
     is          => 'ro',
@@ -321,6 +327,18 @@ sub URIPathToTitle {
     $path =~ s/_/%20/g;
 
     return decode( 'utf-8', uri_unescape($path) );
+}
+
+sub _TagsSelect {
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    $select->select( $Schema->table('Tag') )
+           ->from( $Schema->tables( 'PageTag', 'Tag' ) )
+           ->where( $Schema->table('Tag')->column('tag_id'), '=',
+                    Fey::Placeholder->new() )
+           ->order_by( $Schema->table('Tag')->column('tag') );
 }
 
 sub _MostRecentRevisionSelect {
