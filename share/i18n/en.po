@@ -941,7 +941,7 @@ msgstr "Public, log-in to edit"
 
 #: share/mason/wiki/permissions_form:27
 msgid "public-read-only"
-msgstr "Public can read, log-in to edit"
+msgstr "Public can read, members can edit"
 
 #. ($revision->revision_number()
 #: lib/Silki/Role/Controller/RevisionsAtomFeed.pm:29 share/mason/wiki/recent:13 share/mason/wiki/search_results:12
