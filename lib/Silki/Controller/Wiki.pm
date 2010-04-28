@@ -377,8 +377,7 @@ sub _process_new_members {
     }
 }
 
-sub new_page_form : Chained('_set_wiki') : PathPart('new_page_form') : Args(0)
-{
+sub new_page_form : Chained('_set_wiki') : PathPart('new_page_form') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
