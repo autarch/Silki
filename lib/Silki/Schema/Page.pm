@@ -324,17 +324,18 @@ sub URIPathToTitle {
 }
 
 sub _MostRecentRevisionSelect {
-    my $self = shift;
+    my $class = shift;
 
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
     $select->select( $Schema->table('PageRevision') )
-        ->from( $Schema->table('PageRevision') )->where(
-        $Schema->table('PageRevision')->column('page_id'),
-        '=', Fey::Placeholder->new()
-        )
-        ->order_by( $Schema->table('PageRevision')->column('revision_number'),
-        'DESC' )->limit(1);
+           ->from( $Schema->table('PageRevision') )
+           ->where( $Schema->table('PageRevision')->column('page_id'),
+                    '=', Fey::Placeholder->new()
+                  )
+           ->order_by( $Schema->table('PageRevision')->column('revision_number'),
+                       'DESC' )
+           ->limit(1);
 
     return $select;
 }
@@ -345,13 +346,13 @@ sub _FirstRevisionSelect {
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
     $select->select( $Schema->table('PageRevision') )
-        ->from( $Schema->table('PageRevision') )->where(
-        $Schema->table('PageRevision')->column('page_id'),
-        '=', Fey::Placeholder->new()
-        )->and(
-        $Schema->table('PageRevision')->column('revision_number'),
-        '=', Fey::Placeholder->new()
-        );
+           ->from( $Schema->table('PageRevision') )
+           ->where( $Schema->table('PageRevision')->column('page_id'),
+                    '=', Fey::Placeholder->new()
+                  )
+           ->and( $Schema->table('PageRevision')->column('revision_number'),
+                  '=', Fey::Placeholder->new()
+                );
 
     return $select;
 }
@@ -365,8 +366,8 @@ sub _IncomingLinkCountSelect {
         $page_link_t->column('from_page_id') );
 
     $select->select($count)->from($page_link_t)
-        ->where( $page_link_t->column('to_page_id'), '=',
-        Fey::Placeholder->new() );
+           ->where( $page_link_t->column('to_page_id'), '=',
+                    Fey::Placeholder->new() );
 
     return $select;
 }
@@ -381,8 +382,8 @@ sub _IncomingLinkSelect {
     $Schema->foreign_keys_between_tables( $page_t, $page_link_t );
 
     $select->select($page_t)->from( $page_t, $page_link_t, $fk )
-        ->where( $page_link_t->column('to_page_id'), '=',
-        Fey::Placeholder->new() )->order_by( $page_t->column('title') );
+           ->where( $page_link_t->column('to_page_id'), '=',
+                    Fey::Placeholder->new() )->order_by( $page_t->column('title') );
 
     return $select;
 }
@@ -425,8 +426,8 @@ sub _RevisionCountSelect {
         $page_revision_t->column('page_id') );
 
     $select->select($count)->from($page_revision_t)
-        ->where( $page_revision_t->column('page_id'), '=',
-        Fey::Placeholder->new() );
+           ->where( $page_revision_t->column('page_id'), '=',
+                    Fey::Placeholder->new() );
 
     return $select;
 }
@@ -456,9 +457,9 @@ sub _BuildRevisionsSelect {
     my $page_revision_t = $Schema->table('PageRevision');
 
     $select->select($page_revision_t)->from($page_revision_t)
-        ->where( $page_revision_t->column('page_id'), '=',
-        Fey::Placeholder->new() )
-        ->order_by( $page_revision_t->column('revision_number'), 'DESC' );
+           ->where( $page_revision_t->column('page_id'), '=',
+                    Fey::Placeholder->new() )
+           ->order_by( $page_revision_t->column('revision_number'), 'DESC' );
 
     return $select;
 }
