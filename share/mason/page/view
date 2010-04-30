@@ -4,9 +4,22 @@
 %   for my $tag (@tags) {
     <li>
       <a href="<% $wiki->uri( view => 'tag/' . $tag->tag_id() ) %>"><% $tag->tag() %></a>
+%     if ($can_edit) {
+      <a href="<% $page->uri( view => 'tag/' . $tag->tag_id() ) %>"><sup>x</sup></a>
+%     }
     </li>
 %   }
   </ul>
+% }
+
+% if ($can_edit) {
+  <form id="tags" action="<% $page->uri( view => 'tags' ) %>" method="post">
+    <input type="text" name="tags" />
+    <p>
+      <% loc( 'Enter tags separated by commas ("Financial, Big Projects, Dogs")' ) %>
+    </p>
+    <input type="submit" value="<% loc('Add Tags') %>" />
+  </form>
 % }
 </div>
 
@@ -61,6 +74,9 @@ $html
 
 <%init>
 my @tags = $page->tags()->all();
+
+my $can_edit =
+    $c->user()->has_permission_in_wiki( wiki => $wiki, permission => Silki::Schema::Permission->Edit() );
 </%init>
 
 <%method title>
