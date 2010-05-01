@@ -5,7 +5,7 @@
 </div>
 
 <& /lib/forms/attachment-upload.mas,
-   uri    => $page->uri( view => 'file' ),
+   uri    => $page->uri( view => 'files' ),
    legend => loc('Upload a file for this page')
  &>
 % }

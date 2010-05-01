@@ -231,7 +231,7 @@ sub attachments : Chained('_set_page') : PathPart('attachments') : Args(0) {
     $c->stash()->{template} = '/page/attachments';
 }
 
-sub file_collection : Chained('_set_page') : PathPart('file') : Args(0) : ActionClass('+Silki::Action::REST') {
+sub file_collection : Chained('_set_page') : PathPart('files') : Args(0) : ActionClass('+Silki::Action::REST') {
 }
 
 sub file_collection_POST {
