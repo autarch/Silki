@@ -3,7 +3,7 @@ package Silki::Web::Javascript;
 use strict;
 use warnings;
 
-use JavaScript::Squish;
+use JavaScript::Minifier::XS qw( minify );
 use JSAN::ServerSide 0.04;
 use Path::Class;
 use Silki::Config;
@@ -57,10 +57,7 @@ sub _target_file {
         return $code
             unless Silki::Config->instance()->is_production();
 
-        return JavaScript::Squish->squish(
-            \$code,
-            remove_comments_exceptions => \@Exceptions,
-        );
+        return minify($code);
     }
 }
 
