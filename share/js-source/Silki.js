@@ -1,9 +1,9 @@
-JSAN.use('Data.Dump');
 JSAN.use('DOM.Ready');
 JSAN.use('Silki.FileView');
 JSAN.use('Silki.PageEdit');
 JSAN.use('Silki.PageTags');
 JSAN.use('Silki.User');
+JSAN.use('Pure');
 
 if ( typeof Silki == "undefined" ) {
     Silki = {};
