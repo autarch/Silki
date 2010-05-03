@@ -252,6 +252,83 @@ sub file_collection_POST {
     $c->redirect_and_detach( $c->stash()->{page}->uri( view => 'attachments' ) );
 }
 
+sub tag_collection : Chained('_set_page') : PathPart('tags') : Args(0) : ActionClass('+Silki::Action::REST') {
+}
+
+sub tag_collection_GET {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_tags_as_entity_response($c);
+}
+
+sub tag_collection_POST {
+    my $self = shift;
+    my $c    = shift;
+
+    my @tag_names = map { s/^\s+|\s+$//; $_ } split /\s*,\s*/,
+        ( $c->request()->params()->{tags} || q{} );
+
+    my $page = $c->stash()->{page};
+
+    $page->add_tags( tags => \@tag_names ) if @tag_names;
+
+    $self->_tags_as_entity_response($c);
+}
+
+sub tag : Chained('_set_page') : PathPart('tag') : Args(1) : ActionClass('+Silki::Action::REST') {
+}
+
+sub tag_DELETE {
+    my $self = shift;
+    my $c    = shift;
+    my $tag  = shift;
+
+    my $page = $c->stash()->{page};
+
+    unless (
+        $c->user()->has_permission_in_wiki(
+            wiki       => $page->wiki(),
+            permission => Silki::Schema::Permission->Edit(),
+        )
+        ) {
+        $c->response->status(404);
+        return;
+    }
+
+    $page->delete_tag($tag);
+
+    $self->_tags_as_entity_response($c);
+}
+
+sub _tags_as_entity_response {
+    my $self = shift;
+    my $c    = shift;
+
+    my $page = $c->stash()->{page};
+
+    my @tags = map { $_->serialize() } $page->tags()->all();
+    $_->{'delete_uri'} = $page->uri( view => 'tag/' . $_->{tag} )
+        for @tags;
+
+    my $html = $c->view('Mason')->render(
+        $c,
+        '/page/tag_list.mas', {
+            page     => $page,
+            can_edit => 1,
+        },
+    );
+
+    $self->status_ok(
+        $c,
+        entity => {
+            page_id       => $page->page_id(),
+            tags          => \@tags,
+            tag_list_html => $html,
+        },
+    );
+}
+
 no Moose;
 
 __PACKAGE__->meta()->make_immutable();

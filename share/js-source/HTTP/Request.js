@@ -83,12 +83,6 @@ if ( typeof( HTTP.Request ) == "undefined" ) {
 
         this.options[name] = value;
 
-        if ( name == "method" ) {
-            if ( ! ( this.options.method == "get" || this.options.method == "post" || this.options.method == "head" ) ) {
-                this.options.method = "post";
-            }
-        }
-
         if ( name == "transport" ) {
             if ( typeof( value ) != "function" ) {
                 this.options.transport = HTTP.Request.Transport;

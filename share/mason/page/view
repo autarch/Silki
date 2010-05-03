@@ -1,26 +1,19 @@
-<div id="tags">
-% if (@tags) {
-  <ul>
-%   for my $tag (@tags) {
-    <li>
-      <a href="<% $wiki->uri( view => 'tag/' . $tag->tag_id() ) %>"><% $tag->tag() %></a>
-%     if ($can_edit) {
-      <a href="<% $page->uri( view => 'tag/' . $tag->tag_id() ) %>"><sup>x</sup></a>
-%     }
-    </li>
-%   }
-  </ul>
-% }
+<div class="yui-g">
+  <div class="yui-u first">
+    <& /page/tag_list.mas, page => $page, can_edit => $can_edit &>
+  </div>
 
+  <div class="yui-u">
 % if ($can_edit) {
-  <form id="tags" action="<% $page->uri( view => 'tags' ) %>" method="post">
-    <input type="text" name="tags" />
-    <p>
-      <% loc( 'Enter tags separated by commas ("Financial, Big Projects, Dogs")' ) %>
-    </p>
-    <input type="submit" value="<% loc('Add Tags') %>" />
-  </form>
+    <form id="tags-form" action="<% $page->uri( view => 'tags' ) %>" method="post">
+      <p>
+        <% loc( 'Enter tags separated by commas ("Financial, Big Projects, Dogs")' ) %>
+      </p>
+      <input type="text" name="tags" />\
+&nbsp;<input type="submit" value="<% loc('Add Tags') %>" />
+    </form>
 % }
+  </div>
 </div>
 
 % unless ($is_current_revision) {
@@ -67,13 +60,12 @@
 <%args>
 $page
 $revision
-$wiki
 $is_current_revision
 $html
 </%args>
 
 <%init>
-my @tags = $page->tags()->all();
+my $wiki = $page->wiki();
 
 my $can_edit =
     $c->user()->has_permission_in_wiki( wiki => $wiki, permission => Silki::Schema::Permission->Edit() );

@@ -1,5 +1,4 @@
 JSAN.use('DOM.Events');
-JSAN.use('DOM.Find');
 JSAN.use('DOM.Utils');
 JSAN.use('Textarea');
 
@@ -69,7 +68,7 @@ Silki.PageEdit._makeTagTextFunction = function ( open, close, textarea ) {
     };
 
     return func;
-}
+};
 
 Silki.PageEdit._instrumentButton = function ( button, func, textarea ) {
     var on_click = function () {
@@ -142,7 +141,7 @@ Silki.PageEdit._makeInsertHeaderFunction = function (header) {
     };
 
     return func;
-}
+};
 
 Silki.PageEdit._Buttons = [ [ "h2", Silki.PageEdit._makeInsertHeaderFunction('##') ],
                             [ "h3", Silki.PageEdit._makeInsertHeaderFunction('###') ],

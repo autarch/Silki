@@ -11,8 +11,10 @@ use Silki::Config;
 use Silki::Schema::PageRevision;
 use Silki::Schema;
 use Silki::Schema::File;
+use Silki::Schema::PageTag;
+use Silki::Schema::Tag;
 use Silki::Schema::Wiki;
-use Silki::Types qw( Bool Int );
+use Silki::Types qw( ArrayRef Bool Int Str );
 use URI::Escape qw( uri_escape_utf8 uri_unescape );
 
 use Fey::ORM::Table;
@@ -336,7 +338,7 @@ sub _TagsSelect {
 
     $select->select( $Schema->table('Tag') )
            ->from( $Schema->tables( 'PageTag', 'Tag' ) )
-           ->where( $Schema->table('Tag')->column('tag_id'), '=',
+           ->where( $Schema->table('PageTag')->column('page_id'), '=',
                     Fey::Placeholder->new() )
            ->order_by( $Schema->table('Tag')->column('tag') );
 }
@@ -480,6 +482,66 @@ sub _BuildRevisionsSelect {
            ->order_by( $page_revision_t->column('revision_number'), 'DESC' );
 
     return $select;
+}
+
+sub add_tags {
+    my $self = shift;
+    my ($tags) = validated_list(
+        \@_,
+        tags => ArrayRef,
+    );
+
+    my @tag_ids;
+    for my $tag_name ( @{$tags} ) {
+        my %tag_p = (
+            tag     => $tag_name,
+            wiki_id => $self->wiki_id(),
+        );
+
+        my $tag;
+        if ( $tag = Silki::Schema::Tag->new(%tag_p) ) {
+            next
+                if Silki::Schema::PageTag->new(
+                page_id => $self->page_id(),
+                tag_id  => $tag->tag_id(),
+                );
+
+            push @tag_ids, $tag->tag_id()
+        }
+        else {
+            $tag = Silki::Schema::Tag->insert(%tag_p);
+
+            push @tag_ids, $tag->tag_id();
+        }
+    }
+
+    Silki::Schema::PageTag->insert_many(
+        map { { page_id => $self->page_id(), tag_id => $_, } } @tag_ids )
+            if @tag_ids;
+
+    return;
+}
+
+sub delete_tag {
+    my $self = shift;
+    my ($tag_name) = pos_validated_list(
+        \@_,
+        Str,
+    );
+
+    my $tag = Silki::Schema::Tag->new(
+        tag     => $tag_name,
+        wiki_id => $self->wiki_id()
+    ) or return;
+
+    my $pt = Silki::Schema::PageTag->new(
+        page_id => $self->page_id(),
+        tag_id  => $tag->tag_id(),
+    ) or return;
+
+    $pt->delete();
+
+    return;
 }
 
 no Fey::ORM::Table;

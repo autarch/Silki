@@ -1,0 +1,26 @@
+    <ul id="tags-list">
+% while ( my $tag = $tags->next() ) {
+      <li>
+        <a class="view-tag" href="<% $tag->uri() %>"
+           title="<% loc( 'Other pages tagged %1', $tag->tag() ) %>">\
+<% $tag->tag() | h, nbsp %></a>\
+%   if ($can_edit) {
+&nbsp;<a class="delete-tag" href="<% $page->uri( view => 'tag/' . uri_escape( $tag->tag() ) ) %>"
+         title="<% loc('Remove this tag') %>"><sup>x</sup></a>
+%   }
+      </li>
+% }
+    </ul>
+
+<%args>
+$can_edit
+$page
+</%args>
+
+<%init>
+my $tags = $page->tags();
+</%init>
+
+<%flags>
+inherit => undef
+</%flags>

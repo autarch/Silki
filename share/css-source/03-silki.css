@@ -186,6 +186,31 @@ h1 {
     font-size: 170%;
 }
 
+/* === Page View === */
+
+#tags-list {
+    margin: 0 0 1em 0;
+    padding: 0;
+}
+
+#tags-list li { 
+    display: inline;
+    margin-right: 0.5em;
+}
+
+#tags-list li img {
+    margin-right: 2px;
+}
+
+#tags-list li a { 
+    text-decoration: none;
+}
+
+#tags-list li a.view-tag { 
+    background: white url('/images/icons/tag_blue.png') no-repeat left bottom;
+    padding-left: 18px;
+}
+
 #compare-to-previous {
     font-size: 90%;
     padding: 0.1em 0em;
