@@ -61,32 +61,12 @@ has permissions_name => (
     clearer  => '_clear_permissions_name',
 );
 
-query revision_count => (
-    select      => __PACKAGE__->_DistinctRevisionCountSelect(),
-    bind_params => sub { $_[0]->wiki_id() },
-);
-
 has front_page_title => (
     is       => 'ro',
     isa      => Str,
     lazy     => 1,
     init_arg => 1,
     builder  => '_build_front_page_title',
-);
-
-query orphaned_page_count => (
-    select      => __PACKAGE__->_OrphanedPageCountSelect(),
-    bind_params => sub { $_[0]->wiki_id(), $_[0]->front_page_title() },
-);
-
-query wanted_page_count => (
-    select      => __PACKAGE__->_WantedPageCountSelect(),
-    bind_params => sub { $_[0]->wiki_id() },
-);
-
-query file_count => (
-    select      => __PACKAGE__->_FileCountSelect(),
-    bind_params => sub { $_[0]->wiki_id() },
 );
 
 class_has _RecentChangesSelect => (
@@ -145,6 +125,27 @@ class_has _ActiveUsersSelect => (
     builder => '_BuildActiveUsersSelect',
 );
 
+class_has _PagesByTagSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildPagesByTagSelect',
+);
+
+class_has _PagesByTagCountSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildPagesByTagCountSelect',
+);
+
+class_has _PopularTagsSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildPopularTagsSelect',
+);
+
 class_has _PublicWikiCountSelect => (
     is      => 'ro',
     isa     => 'Fey::SQL::Select',
@@ -164,6 +165,33 @@ class_has _AllWikiSelect => (
     isa     => 'Fey::SQL::Select',
     lazy    => 1,
     builder => '_BuildAllWikiSelect',
+);
+
+class_has _MaxRevisionSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildMaxRevisionSelect',
+);
+
+query revision_count => (
+    select      => __PACKAGE__->_DistinctRevisionCountSelect(),
+    bind_params => sub { $_[0]->wiki_id() },
+);
+
+query orphaned_page_count => (
+    select      => __PACKAGE__->_OrphanedPageCountSelect(),
+    bind_params => sub { $_[0]->wiki_id(), $_[0]->front_page_title() },
+);
+
+query wanted_page_count => (
+    select      => __PACKAGE__->_WantedPageCountSelect(),
+    bind_params => sub { $_[0]->wiki_id() },
+);
+
+query file_count => (
+    select      => __PACKAGE__->_FileCountSelect(),
+    bind_params => sub { $_[0]->wiki_id() },
 );
 
 my $FrontPage = <<'EOF';
@@ -422,25 +450,19 @@ sub _RevisionCountSelect {
 }
 
 sub _DistinctRevisionCountSelect {
+    my $class = shift;
+
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
     my ( $page_t, $page_revision_t )
         = $Schema->tables( 'Page', 'PageRevision' );
 
-    my $max_func = Fey::Literal::Function->new( 'MAX',
-        $page_revision_t->column('revision_number') );
+    my $max_revision = $class->_MaxRevisionSelect();
 
-    my $max_revision = Silki::Schema->SQLFactoryClass()->new_select();
-    $max_revision
-        ->select($max_func)
-        ->from( $page_revision_t )
-        ->where(
-            $page_revision_t->column('page_id'),
-            '=', $page_t->column('page_id')
-        );
-
-    my $count = Fey::Literal::Function->new( 'COUNT',
-        $page_revision_t->column('page_id') );
+    my $count = Fey::Literal::Function->new(
+        'COUNT',
+        $page_revision_t->column('page_id'),
+    );
 
     my $count_select = Silki::Schema->SQLFactoryClass()->new_select();
     $count_select
@@ -502,14 +524,7 @@ sub _BuildDistinctRecentChangesSelect {
     my $max_func = Fey::Literal::Function->new( 'MAX',
         $Schema->table('PageRevision')->column('revision_number') );
 
-    my $max_revision = Silki::Schema->SQLFactoryClass()->new_select();
-    $max_revision
-        ->select($max_func)
-        ->from( $Schema->table('PageRevision') )
-        ->where(
-            $Schema->table('PageRevision')->column('page_id'),
-            '=', $page_t->column('page_id')
-        );
+    my $max_revision = $class->_MaxRevisionSelect();
 
     my $pages_select = Silki::Schema->SQLFactoryClass()->new_select();
     $pages_select
@@ -820,7 +835,6 @@ sub _BuildMembersSelect {
 
 sub active_users {
     my $self = shift;
-
     my ( $limit, $offset ) = validated_list(
         \@_,
         limit  => { isa => Int, optional => 1 },
@@ -923,13 +937,7 @@ sub text_search {
     my $max_func = Fey::Literal::Function->new( 'MAX',
         $Schema->table('PageRevision')->column('revision_number') );
 
-    my $max_revision = Silki::Schema->SQLFactoryClass()->new_select();
-    $max_revision
-        ->select($max_func)
-        ->from( $Schema->table('PageRevision') )
-        ->where( $Schema->table('PageRevision')->column('page_id'),
-                 '=', $page_t->column('page_id')
-               );
+    my $max_revision = $self->_MaxRevisionSelect();
 
     my $rank = Fey::Literal::Function->new(
         'TS_RANK',
@@ -1005,6 +1013,149 @@ sub text_search {
         bind_params   => [ $query, $self->wiki_id() ],
         attribute_map => \%attribute_map,
     );
+}
+
+sub pages_tagged {
+    my $self = shift;
+    my ( $tag_name, $limit, $offset ) = validated_list(
+        \@_,
+        tag    => { isa => Str },
+        limit  => { isa => Int, optional => 1 },
+        offset => { isa => Int, default => 0 },
+    );
+
+    my $tag = $self->_find_tag_by_name($tag_name)
+        or return;
+
+    my $select = $self->_PagesByTagSelect()->clone();
+
+    $select->limit( $limit, $offset );
+
+    return Fey::Object::Iterator::FromSelect->new(
+        classes => [ 'Silki::Schema::Page', 'Silki::Schema::PageRevision' ],
+        select  => $select,
+        dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
+        bind_params => [ $tag->tag_id() ],
+    );
+}
+
+sub _BuildPagesByTagSelect {
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my ( $page_t, $page_revision_t, $page_tag_t )
+        = $Schema->tables( 'Page', 'PageRevision', 'PageTag' );
+
+    my $max_revision = $class->_MaxRevisionSelect();
+
+    $select
+        ->select( $page_t, $page_revision_t )
+        ->from( $page_t, $page_revision_t )
+        ->from( $page_t, $page_tag_t )
+        ->where( $page_tag_t->column('tag_id'), '=', Fey::Placeholder->new() )
+        ->and( $page_revision_t->column('revision_number'),
+               '=', $max_revision
+             )
+        ->order_by( $page_t->column('title') );
+
+    return $select;
+}
+
+sub pages_tagged_count {
+    my $self = shift;
+    my ( $tag_name ) = validated_list(
+        \@_,
+        tag    => { isa => Str },
+    );
+
+    my $tag = $self->_find_tag_by_name($tag_name)
+        or return 0;
+
+    my $select = $self->_PagesByTagCountSelect();
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
+
+    my $vals = $dbh->selectrow_arrayref(
+        $select->sql($dbh),
+        {},
+        $tag->tag_id(),
+    );
+
+    return $vals ? $vals->[0] : 0;
+}
+
+sub _BuildPagesByTagCountSelect {
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my ($page_tag_t) = $Schema->table('PageTag');
+
+    my $count = Fey::Literal::Function->new(
+        'COUNT',
+        $page_tag_t->column('page_id'),
+    );
+
+    $select
+        ->select($count)
+        ->from($page_tag_t)
+        ->where( $page_tag_t->column('tag_id'), '=', Fey::Placeholder->new() );
+
+    return $select;
+}
+
+sub _find_tag_by_name {
+    my $self = shift;
+    my $name = shift;
+
+    return Silki::Schema::Tag->new(
+        tag     => $name,
+        wiki_id => $self->wiki_id(),
+    );
+}
+
+sub popular_tags {
+    my $self = shift;
+    my ( $limit, $offset ) = validated_list(
+        \@_,
+        limit  => { isa => Int, optional => 1 },
+        offset => { isa => Int, default  => 0 },
+    );
+
+    my $select = $self->_PopularTagsSelect()->clone();
+    $select->limit( $limit, $offset );
+
+    return Fey::Object::Iterator::FromSelect->new(
+        classes => [ 'Silki::Schema::Tag' ],
+        select  => $select,
+        dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
+        bind_params => [ $self->wiki_id() ],
+    );
+}
+
+sub _BuildPopularTagsSelect {
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my ( $tag_t, $page_tag_t ) = $Schema->tables( 'Tag', 'PageTag' );
+
+    my $count = Fey::Literal::Function->new(
+        'COUNT',
+        $page_tag_t->column('page_id'),
+    );
+
+    $select
+        ->select( $tag_t, $count )
+        ->from( $tag_t, $page_tag_t )
+        ->where( $tag_t->column('wiki_id'), '=',
+                 Fey::Placeholder->new() )
+        ->group_by( $tag_t->columns() )
+        ->order_by( $count,                'DESC',
+                    $tag_t->column('tag'), 'ASC' );
+
+    return $select;
 }
 
 sub PublicWikiCount {
@@ -1115,6 +1266,28 @@ sub _BuildAllWikiSelect {
            ->order_by( $wiki_t->column('title') );
 
     return $select;
+}
+
+sub _BuildMaxRevisionSelect {
+    my $class = shift;
+
+    my ( $page_t, $page_revision_t )
+        = $Schema->tables( 'Page', 'PageRevision' );
+
+    my $max_func = Fey::Literal::Function->new(
+        'MAX',
+        $page_revision_t->column('revision_number'),
+    );
+
+    my $max_revision = Silki::Schema->SQLFactoryClass()->new_select();
+    $max_revision
+        ->select($max_func)
+        ->from( $Schema->table('PageRevision') )
+        ->where( $Schema->table('PageRevision')->column('page_id'),
+                 '=', $page_t->column('page_id')
+               );
+
+    return $max_revision;
 }
 
 no Fey::ORM::Table;

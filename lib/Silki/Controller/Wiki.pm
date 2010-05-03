@@ -91,6 +91,8 @@ sub dashboard : Chained('_set_wiki') : PathPart('dashboard') : Args(0) {
 
     $c->stash()->{views} = $wiki->recently_viewed_pages( limit => 10 );
 
+    $c->stash()->{tags} = $wiki->popular_tags( limit => 10 );
+
     $c->stash()->{users} = $wiki->active_users( limit => 10 );
 
     $c->stash()->{template} = '/wiki/dashboard';
@@ -439,6 +441,24 @@ sub search_GET_html {
     $c->stash()->{search} = $search;
 
     $c->stash()->{template} = '/wiki/search_results';
+}
+
+sub tag : Chained('_set_wiki') : PathPart('tag') : Args(1) : ActionClass('+Silki::Action::REST') {
+}
+
+sub tag_GET_html {
+    my $self = shift;
+    my $c    = shift;
+    my $tag  = shift;
+
+    my $wiki = $c->stash()->{wiki};
+
+    $c->stash()->{tag} = $tag;
+    $c->stash()->{page_count} = $wiki->pages_tagged_count( tag => $tag );
+    $c->stash()->{pages} = $wiki->pages_tagged( tag => $tag )
+        if $c->stash()->{page_count};
+
+    $c->stash()->{template} = '/wiki/tag';
 }
 
 sub wiki_collection : Path('/wikis') : Args(0) {

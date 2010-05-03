@@ -39,6 +39,24 @@
   <div class="yui-g">
     <div class="yui-u first">
       <div class="dashboard-item">
+        <h2>Popular Tags</h2>
+
+        <ul>
+% while ( my $tag = $tags->next() ) {
+          <li>
+            <a href="<% $tag->uri() %>"><% $tag->tag() %>
+              - <% loc( '%quant( %1, page, pages )', $tags->raw_row()->[-1] ) %></a>
+          </li>
+% }
+% unless ( $tags->index() ) {
+          <li><% loc( q{Looks like no pages have been tagged in this wiki yet.} ) %></li>
+% }
+        </ul>
+      </div>
+    </div>
+
+    <div class="yui-u">
+      <div class="dashboard-item">
         <h2>Active Users</h2>
 
         <ul>
@@ -57,6 +75,7 @@
 <%args>
 $wiki
 $changes
+$tags
 $views
 $users
 </%args>
