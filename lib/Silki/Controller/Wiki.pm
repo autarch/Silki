@@ -450,7 +450,11 @@ sub tag_collection_GET_html {
     my $self = shift;
     my $c    = shift;
 
-    $c->stash()->{tags} = $c->stash()->{wiki}->popular_tags();
+    my $wiki = $c->stash()->{wiki};
+
+    $c->stash()->{tag_count} = $wiki->tag_count();
+    $c->stash()->{tags} = $wiki->popular_tags()
+        if $c->stash()->{tag_count};
 
     $c->stash()->{template} = '/wiki/tags';
 }
