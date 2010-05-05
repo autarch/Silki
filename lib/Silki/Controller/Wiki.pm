@@ -443,6 +443,18 @@ sub search_GET_html {
     $c->stash()->{template} = '/wiki/search_results';
 }
 
+sub tag_collection : Chained('_set_wiki') : PathPart('tags') : Args(0) : ActionClass('+Silki::Action::REST') {
+}
+
+sub tag_collection_GET_html {
+    my $self = shift;
+    my $c    = shift;
+
+    $c->stash()->{tags} = $c->stash()->{wiki}->popular_tags();
+
+    $c->stash()->{template} = '/wiki/tags';
+}
+
 sub tag : Chained('_set_wiki') : PathPart('tag') : Args(1) : ActionClass('+Silki::Action::REST') {
 }
 

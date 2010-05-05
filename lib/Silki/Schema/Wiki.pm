@@ -179,6 +179,11 @@ query revision_count => (
     bind_params => sub { $_[0]->wiki_id() },
 );
 
+query tag_count => (
+    select      => __PACKAGE__->_TagCountSelect(),
+    bind_params => sub { $_[0]->wiki_id() },
+);
+
 query orphaned_page_count => (
     select      => __PACKAGE__->_OrphanedPageCountSelect(),
     bind_params => sub { $_[0]->wiki_id(), $_[0]->front_page_title() },
@@ -1154,6 +1159,31 @@ sub _BuildPopularTagsSelect {
         ->group_by( $tag_t->columns() )
         ->order_by( $count,                'DESC',
                     $tag_t->column('tag'), 'ASC' );
+
+    return $select;
+}
+
+sub _TagCountSelect {
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my ( $page_t, $page_tag_t, $tag_t )
+        = $Schema->tables( 'Page', 'PageTag', 'Tag' );
+
+    my $distinct = Fey::Literal::Term->new(
+        'DISTINCT ',
+        $page_tag_t->column('tag_id'),
+    );
+
+    my $count = Fey::Literal::Function->new( 'COUNT', $distinct );
+
+    $select
+        ->select($count)
+        ->from( $page_t, $page_tag_t )
+        ->from( $page_tag_t, $tag_t )
+        ->where( $tag_t->column('wiki_id'), '=',
+                 Fey::Placeholder->new() );
 
     return $select;
 }

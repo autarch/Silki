@@ -1,0 +1,16 @@
+<ul>
+% while ( my $tag = $tags->next() ) {
+<& tag-as-li.mas, tag => $tag, count => $tags->raw_row()->[-1] &>
+% }
+</ul>
+
+<%args>
+$tags
+</%args>
+
+<%method title>
+<% loc( q{Tags in Use for %1}, $wiki->title() ) %>
+<%args>
+$wiki
+</%args>
+</%method>

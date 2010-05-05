@@ -211,6 +211,14 @@ h1 {
     padding-left: 18px;
 }
 
+#tags-form {
+    font-size: 80%;
+}
+
+#tags-form p {
+    margin: 0 0 0.1em 0;
+}
+
 #compare-to-previous {
     font-size: 90%;
     padding: 0.1em 0em;

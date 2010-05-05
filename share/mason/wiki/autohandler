@@ -5,6 +5,10 @@ return $m->call_next();
 <%method local_nav>
   <ul>
     <li>
+      <a href="<% $wiki->uri( view => 'tags' ) %>"
+         title="<% loc( 'All tags in this wiki' ) %>"><% loc( 'Tags (%1)', $wiki->tag_count() ) %></a>
+    </li>
+    <li>
       <a href="<% $wiki->uri( view => 'attachments' ) %>"
          title="<% loc('All attachments in this wiki') %>"><% loc( 'All Attachments (%1)', $wiki->file_count() ) %></a>
     </li>
@@ -14,7 +18,7 @@ return $m->call_next();
     </li>
     <li>
       <a href="<% $wiki->uri( view => 'wanted' ) %>"
-         title="<% loc( 'Links to pages which do not yet exist' ) %>"><% loc( 'Wanted Pages (%1)', $wiki->wanted_page_count() ) %></a> 
+         title="<% loc( 'Links to pages which do not yet exist' ) %>"><% loc( 'Wanted Pages (%1)', $wiki->wanted_page_count() ) %></a>
     </li>
 % if ( $c->user()->has_permission_in_wiki( wiki => $wiki, permission => Silki::Schema::Permission->Manage() ) ) {
     <li>
