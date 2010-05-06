@@ -1,19 +1,21 @@
-<div class="yui-g">
-  <div class="yui-u first">
+<div id="tags">
+  <h2>Tags</h2>
+
+%# We need an extra div so we can replace the list wholesale by replacing list.parentNode.innerHTML
+  <div>
     <& /page/tag_list.mas, page => $page, can_edit => $can_edit &>
   </div>
 
-  <div class="yui-u">
 % if ($can_edit) {
-    <form id="tags-form" action="<% $page->uri( view => 'tags' ) %>" method="post">
-      <p>
-        <% loc( 'Enter tags separated by commas ("Financial, Big Projects, Dogs")' ) %>
-      </p>
-      <input type="text" name="tags" />\
-&nbsp;<input type="submit" value="<% loc('Add Tags') %>" />
-    </form>
+  <form id="tags-form" action="<% $page->uri( view => 'tags' ) %>" method="post">
+    <p>
+      <% loc( 'Enter tags separated by commas ("Financial, Big Projects, Dogs")' ) %>
+    </p>
+    <input type="text" name="tags" />\
+    <br />
+    <input type="submit" value="<% loc('Add Tags') %>" />
+  </form>
 % }
-  </div>
 </div>
 
 % unless ($is_current_revision) {

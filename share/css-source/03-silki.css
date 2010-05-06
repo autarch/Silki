@@ -188,6 +188,41 @@ h1 {
 
 /* === Page View === */
 
+#tags {
+    border: 1px solid #21379d;
+    border-radius-topleft: 6px;
+    border-radius-topright: 6px;
+    border-radius-bottomleft: 6px;
+    border-radius-bottomright: 6px;
+    -moz-border-radius-topleft: 6px;
+    -moz-border-radius-topright: 6px;
+    -moz-border-radius-bottomleft: 6px;
+    -moz-border-radius-bottomright: 6px;
+    -webkit-border-radius-topleft: 6px;
+    -webkit-border-radius-topright: 6px;
+    -webkit-border-radius-bottomleft: 6px;
+    -webkit-border-radius-bottomright: 6px;
+    float: right;
+    margin-left: 1em;
+    width: 16em;
+}
+
+#tags h2 {
+    background-color: #21379d;
+    color: white;
+    margin-top: 0;
+    padding: 0.2em 0.4em;
+}
+
+#tags ul, #tags form {
+    margin-right: 1em;
+    margin-left: 1em;
+}
+
+#tags form {
+    margin-bottom: 1em;
+}
+
 #tags-list {
     margin: 0 0 1em 0;
     padding: 0;
@@ -207,7 +242,7 @@ h1 {
 }
 
 #tags-list li a.view-tag { 
-    background: white url('/images/icons/tag_blue.png') no-repeat left bottom;
+    background: transparent url('/images/icons/tag_blue.png') no-repeat left bottom;
     padding-left: 18px;
 }
 
