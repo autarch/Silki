@@ -440,7 +440,7 @@ sub _CreateSpecialUser {
 
     my $email = 'silki-' . $username . q{@} . $domain->email_hostname();
 
-    my $display_name = 'Silki ' . join ' ', map {ucfirst} split /-/, $username;
+    my $display_name = join ' ', map {ucfirst} split /-/, $username;
 
     return $class->insert(
         display_name   => $display_name,
