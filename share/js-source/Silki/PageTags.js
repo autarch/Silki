@@ -7,10 +7,9 @@ if ( typeof Silki == "undefined" ) {
 }
 
 Silki.PageTags = function () {
-    var list = $("tags-list");
     var form = $("tags-form");
 
-    if ( ! ( list && form ) ) {
+    if (form) {
         return;
     }
 
