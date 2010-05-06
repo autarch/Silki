@@ -9,7 +9,7 @@ if ( typeof Silki == "undefined" ) {
 Silki.PageTags = function () {
     var form = $("tags-form");
 
-    if (form) {
+    if (! form) {
         return;
     }
 
