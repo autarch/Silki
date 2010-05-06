@@ -203,6 +203,7 @@ h1 {
     -webkit-border-radius-bottomleft: 6px;
     -webkit-border-radius-bottomright: 6px;
     float: right;
+    margin-bottom: 1em;
     margin-left: 1em;
     width: 16em;
 }
@@ -261,6 +262,7 @@ h1 {
 
 #attribution {
     border-top: 2px solid #11a844;
+    clear: both;
     font-size: 90%;
     font-style: italic;
     padding: 0.1em 0;
