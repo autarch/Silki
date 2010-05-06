@@ -31,7 +31,7 @@
 </head>
 <body>
 
-<div id="doc3" class="<% $show_nav ? 'yui-t5' : q{} %>">
+<div id="doc3" class="<% $show_sidebar ? 'yui-t5' : q{} %>">
 
 <& header.mas, %ARGS, request_comp => $m->request_comp() &>
 
@@ -51,7 +51,7 @@
       </div>
     </div>
 
-% if ($show_nav) {
+% if ($show_sidebar) {
 <& sidebar.mas, %ARGS &>
 % }
 	
@@ -70,13 +70,13 @@ $page => undef
 </%args>
 
 <%init>
-my $show_nav = $m->request_comp()->attr('show_nav');
+my $show_sidebar = $m->request_comp()->attr('show_sidebar');
 </%init>
 
 <%attr>
-show_title => 1
-show_nav   => 1
-sidebar    => []
+show_title   => 1
+show_sidebar => 1
+sidebar      => []
 </%attr>
 
 <%def .messages>

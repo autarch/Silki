@@ -15,9 +15,8 @@ $file
 </%args>
 
 <%attr>
-sidebar => []
-show_title => 0
-show_nav => 0
+sidebar      => []
+show_sidebar => 0
 </%attr>
 
 <%method title>
