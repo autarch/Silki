@@ -43,10 +43,7 @@
 
         <ul>
 % while ( my $tag = $tags->next() ) {
-          <li>
-            <a href="<% $tag->uri() %>"><% $tag->tag() %>
-              - <% loc( '%quant( %1, page, pages )', $tags->raw_row()->[-1] ) %></a>
-          </li>
+<& tag-as-li.mas, tag => $tag, count => $tags->raw_row()->[-1] &>
 % }
 % unless ( $tags->index() ) {
           <li><% loc( q{Looks like no pages have been tagged in this wiki yet.} ) %></li>
