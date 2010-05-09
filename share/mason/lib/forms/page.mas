@@ -34,7 +34,7 @@
         </li>
       </ul>
     </div>
-    <form action="<% $action %>" method="post">
+    <form class="flush-left" action="<% $action %>" method="post">
 % if ($page) {
       <input type="hidden" name="x-tunneled-method" value="PUT" />
       <input type="hidden" name="page_id" value="<% $page->page_id() %>" />
@@ -44,7 +44,7 @@
 
       <textarea id="page-content" name="content"><% $page ? $page->content() : q{} %></textarea>
 
-      <input type="submit" value="<% loc('Submit') %>" />
+      <input class="submit" type="submit" value="<% loc('Submit') %>" />
     </form>
   </div>
   <div id="preview">
