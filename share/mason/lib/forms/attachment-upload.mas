@@ -17,7 +17,7 @@
 % }
     </div>
 
-    <input value="Upload" type="submit" />
+    <input class="submit" value="Upload" type="submit" />
   </fieldset>
 </form>
 </&>
