@@ -184,6 +184,11 @@ query tag_count => (
     bind_params => sub { $_[0]->wiki_id() },
 );
 
+query page_count => (
+    select      => __PACKAGE__->_PageCountSelect(),
+    bind_params => sub { $_[0]->wiki_id() },
+);
+
 query orphaned_page_count => (
     select      => __PACKAGE__->_OrphanedPageCountSelect(),
     bind_params => sub { $_[0]->wiki_id(), $_[0]->front_page_title() },
@@ -564,6 +569,23 @@ sub orphaned_pages {
         dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
         bind_params => [ $self->wiki_id(), $self->front_page_title() ],
     );
+}
+
+sub _PageCountSelect {
+    my $class = shift;
+
+    my $page_t = $Schema->table('Page');
+
+    my $count = Fey::Literal::Function->new(
+        'COUNT',
+        $page_t->column('page_id')
+    );
+
+    my $pages_select = Silki::Schema->SQLFactoryClass()->new_select();
+    $pages_select
+        ->select($count)
+        ->from($page_t)
+        ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() );
 }
 
 sub _OrphanedPageCountSelect {
