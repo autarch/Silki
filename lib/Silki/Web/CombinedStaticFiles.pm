@@ -2,6 +2,7 @@ package Silki::Web::CombinedStaticFiles;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use autodie;
 use DateTime;
@@ -65,8 +66,6 @@ sub create_single_file {
     move( $tempfile => $target )
         or die "Cannot move $tempfile => $target: $!";
 }
-
-no Moose;
 
 __PACKAGE__->meta()->make_immutable();
 
