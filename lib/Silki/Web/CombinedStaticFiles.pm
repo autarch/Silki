@@ -17,30 +17,44 @@ use Silki::Config;
 use Silki::Util qw( string_is_empty );
 use Time::HiRes;
 
-use Moose;
+use Moose::Role;
 
-has 'files' => (
+has files => (
     is      => 'ro',
     isa     => 'ArrayRef[Path::Class::File]',
     lazy    => 1,
-    builder => '_files',
+    builder => '_build_files',
 );
 
-has 'target_file' => (
+has target_file => (
     is      => 'ro',
     isa     => 'Path::Class::File',
     lazy    => 1,
-    builder => '_target_file',
+    builder => '_build_target_file',
 );
 
-has 'header' => (
+has header => (
     is      => 'ro',
     isa     => 'Str',
-    default => '',
+    builder => '_build_header',
 );
+
+requires qw( _squish );
+
+sub _build_header {
+    return q{};
+}
 
 sub create_single_file {
     my $self = shift;
+
+    my $target = $self->target_file();
+
+    my $target_mod = -f $target ? $target->stat()->mtime() : 0;
+
+    return
+        unless grep { $_->stat()->mtime() >= $target_mod }
+            @{ $self->files() };
 
     my ( $fh, $tempfile ) = tempfile( UNLINK => 0 );
 
@@ -57,16 +71,20 @@ sub create_single_file {
 
     for my $file ( @{ $self->files() } ) {
         print {$fh} "\n\n/* $file */\n\n";
-        print {$fh} $self->_squish( scalar read_file( $file->stringify() ) );
+        print {$fh} $self->_squish( $self->_process($file) );
     }
 
     close $fh;
 
-    my $target = $self->target_file();
     move( $tempfile => $target )
         or die "Cannot move $tempfile => $target: $!";
 }
 
-__PACKAGE__->meta()->make_immutable();
+sub _process {
+    my $self = shift;
+    my $file = shift;
+
+    return scalar read_file( $file->stringify() );
+}
 
 1;

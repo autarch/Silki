@@ -10,13 +10,13 @@ use Silki::Config;
 
 use Moose;
 
-extends 'Silki::Web::CombinedStaticFiles';
+with 'Silki::Web::CombinedStaticFiles';
 
-has '+header' => (
-    default => q[var JSAN = { "use": function () {} };] . "\n",
-);
+sub _build_header {
+    return q[var JSAN = { "use": function () {} };] . "\n";
+}
 
-sub _files {
+sub _build_files {
     my $dir = dir( Silki::Config->new()->share_dir(), 'js-source' );
 
     # Works around an error that comes from JSAN::Parse::FileDeps
@@ -35,7 +35,7 @@ sub _files {
     return [ map { file($_) } $js->files() ];
 }
 
-sub _target_file {
+sub _build_target_file {
     my $js_dir = dir( Silki::Config->new()->var_lib_dir(), 'js' );
 
     $js_dir->mkpath( 0, 0755 );
