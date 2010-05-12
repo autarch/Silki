@@ -239,7 +239,7 @@ sub preferences_form : Chained('_set_user') : PathPart('preferences_form') : Arg
 
     $c->tab_by_id('preferences')->set_is_selected(1);
 
-    $c->stash()->{template} = '/user/preferences_form';
+    $c->stash()->{template} = '/user/preferences-form';
 }
 
 no Moose::Role;
