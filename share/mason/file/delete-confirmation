@@ -1,5 +1,5 @@
 <p>
-  <% loc('Are you sure you want to delete this file? Once you do, it cannot be recovered.') %>
+  <% loc('Are you sure you want to delete this file? Once you do, the file cannot be recovered.') %>
 </p>
 
 <p>
