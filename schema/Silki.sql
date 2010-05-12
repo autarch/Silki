@@ -182,7 +182,7 @@ CREATE TABLE "PageRevision" (
        comment                  TEXT            NULL,
        is_restoration_of_revision_number        INTEGER         NULL,
        PRIMARY KEY ( page_id, revision_number ),
-       CONSTRAINT is_restoration_of_revision_number_is_lower_than_current_revision
+       CONSTRAINT is_restoration_of_revision_number_is_lower_than_revision_number
            CHECK ( is_restoration_of_revision_number IS NULL
                    OR
                    is_restoration_of_revision_number < revision_number )
