@@ -3,5 +3,6 @@
 <ul>
   <li><a href="/users"><% loc('All users') %></li>
   <li><a href="/wikis"><% loc('All wikis') %></li>
+  <li><a href="/logs"><% loc('System Logs') %></li>
 </ul>
 

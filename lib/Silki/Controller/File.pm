@@ -67,7 +67,7 @@ sub file_DELETE {
 
     my $msg = loc( 'Deleted the file %1', $file->file_name() );
 
-    $file->delete();
+    $file->delete( user => $c->user() );
 
     $c->session_object()->add_message($msg);
 

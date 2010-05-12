@@ -16,6 +16,7 @@ use Silki::Types qw( Str Bool File Maybe );
 use Fey::ORM::Table;
 
 with 'Silki::Role::Schema::URIMaker';
+with 'Silki::Role::Schema::SystemLogger' => { methods => ['delete'] };
 
 my $Schema = Silki::Schema->Schema();
 
@@ -75,6 +76,20 @@ has _file_name_with_hash => (
     lazy     => 1,
     builder  => '_build_file_name_with_hash',
 );
+
+sub _system_log_values_for_delete {
+    my $self = shift;
+
+    return (
+        wiki_id   => $self->wiki_id(),
+        message   => 'Deleted file: ' . $self->file_name(),
+        data_blob => {
+            file_name => $self->file_name(),
+            mime_type => $self->mime_type(),
+            file_size => $self->file_size(),
+        },
+    );
+}
 
 sub _base_uri_path {
     my $self = shift;

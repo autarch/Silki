@@ -91,7 +91,7 @@ sub page_DELETE {
 
     my $msg = loc( 'Deleted the page %1', $page->title() );
 
-    $page->delete();
+    $page->delete( user => $c->user() );
 
     $c->session_object()->add_message($msg);
 

@@ -22,6 +22,7 @@ use MooseX::ClassAttribute;
 use MooseX::Params::Validate qw( validated_list pos_validated_list );
 
 with 'Silki::Role::Schema::URIMaker';
+with 'Silki::Role::Schema::SystemLogger' => { methods => ['delete'] };
 
 my $Schema = Silki::Schema->Schema();
 
@@ -240,6 +241,22 @@ sub insert_with_content {
     );
 
     return $page;
+}
+
+sub _system_log_values_for_delete {
+    my $self = shift;
+
+    my $revision = $self->most_recent_revision();
+
+    return (
+        wiki_id   => $self->wiki_id(),
+        message   => 'Deleted page: ' . $self->title(),
+        data_blob => {
+            title     => $self->title(),
+            revisions => $revision->revision_number(),
+            content   => $revision->content(),
+        },
+    );
 }
 
 sub add_revision {
