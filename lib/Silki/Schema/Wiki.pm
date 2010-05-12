@@ -346,25 +346,25 @@ sub _build_permissions {
         'public' => {
             Guest         => [qw( Read Edit )],
             Authenticated => [qw( Read Edit )],
-            Member        => [qw( Read Edit Delete Upload )],
+            Member        => [qw( Read Edit Upload )],
             Admin         => [qw( Read Edit Delete Upload Invite Manage )],
         },
         'public-authenticate-to-edit' => {
             Guest         => [qw( Read )],
             Authenticated => [qw( Read Edit )],
-            Member        => [qw( Read Edit Delete Upload )],
+            Member        => [qw( Read Edit Upload )],
             Admin         => [qw( Read Edit Delete Upload Invite Manage )],
         },
         'public-read-only' => {
             Guest         => [qw( Read )],
             Authenticated => [qw( Read )],
-            Member        => [qw( Read Edit Delete Upload )],
+            Member        => [qw( Read Edit Upload )],
             Admin         => [qw( Read Edit Delete Upload Invite Manage )],
         },
         'private' => {
             Guest         => [],
             Authenticated => [],
-            Member        => [qw( Read Edit Delete Upload )],
+            Member        => [qw( Read Edit Upload )],
             Admin         => [qw( Read Edit Delete Upload Invite Manage )],
         },
     );
