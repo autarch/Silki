@@ -35,8 +35,8 @@ CREATE TABLE "User" (
        is_admin                 BOOLEAN         NOT NULL DEFAULT FALSE,
        is_system_user           BOOLEAN         NOT NULL DEFAULT FALSE,
        is_disabled              BOOLEAN         NOT NULL DEFAULT FALSE,
-       creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-       last_modified_datetime   TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       creation_datetime        TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       last_modified_datetime   TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
        time_zone                VARCHAR(50)     NOT NULL DEFAULT 'UTC',
        locale_code              VARCHAR(20)     NOT NULL DEFAULT 'en_US',
        created_by_user_id       INT8            NULL,
@@ -72,7 +72,7 @@ CREATE TABLE "Wiki" (
        domain_id                INT8            NOT NULL,
        account_id               INT8            NOT NULL,
        user_id                  INT8            NOT NULL,
-       creation_datetime  TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       creation_datetime        TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
        CONSTRAINT valid_title CHECK ( title != '' )
 );
 
@@ -178,7 +178,7 @@ CREATE TABLE "PageRevision" (
        revision_number          revision        NOT NULL,
        content                  TEXT            NOT NULL,
        user_id                  INT8            NOT NULL,
-       creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       creation_datetime        TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
        comment                  TEXT            NULL,
        is_restoration_of_revision_number        INTEGER         NULL,
        PRIMARY KEY ( page_id, revision_number )
@@ -291,8 +291,8 @@ CREATE TABLE "Comment" (
        revision_number          revision        NOT NULL,
        title                    VARCHAR(255)    NOT NULL,
        body                     TEXT            NOT NULL,
-       creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-       last_modified_datetime   TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       creation_datetime        TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       last_modified_datetime   TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
        CONSTRAINT valid_body CHECK ( body != '' )
 );
 
@@ -325,7 +325,7 @@ CREATE INDEX "PendingPageLink_to_wiki_id_to_page_title" ON "PendingPageLink" (to
 CREATE TABLE "PageView" (
        page_id                  INT8            NOT NULL,
        user_id                  INT8            NOT NULL,
-       view_datetime            TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       view_datetime            TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
        PRIMARY KEY ( page_id, user_id, view_datetime )
 );
 
@@ -340,7 +340,7 @@ CREATE TABLE "File" (
        mime_type                VARCHAR(255)    NOT NULL,
        file_size                INTEGER         NOT NULL,
        contents                 BYTEA           NOT NULL,
-       creation_datetime        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       creation_datetime        TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
        user_id                  INT8            NOT NULL,
        wiki_id                  INT8            NOT NULL,
        CONSTRAINT valid_file_name CHECK ( file_name != '' ),
