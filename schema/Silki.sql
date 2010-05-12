@@ -181,7 +181,11 @@ CREATE TABLE "PageRevision" (
        creation_datetime        TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
        comment                  TEXT            NULL,
        is_restoration_of_revision_number        INTEGER         NULL,
-       PRIMARY KEY ( page_id, revision_number )
+       PRIMARY KEY ( page_id, revision_number ),
+       CONSTRAINT is_restoration_of_revision_number_is_lower_than_current_revision
+           CHECK ( is_restoration_of_revision_number IS NULL
+                   OR
+                   is_restoration_of_revision_number < revision_number )
 );
 
 CREATE INDEX "PageRevision_user_id" ON "PageRevision" (user_id);
