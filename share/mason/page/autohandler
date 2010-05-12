@@ -22,6 +22,12 @@ return $m->call_next();
       <a href="<% $page->uri( view => 'history' ) %>"
          title="<% loc( q{This page's history of revisions} ) %>"><% loc('History') %></a> 
     </li>
+% if ( $c->user()->has_permission_in_wiki( wiki => $wiki, permission => Silki::Schema::Permission->Delete()) ) {
+    <li>
+      <a href="<% $page->uri( view => 'delete_confirmation' ) %>"
+         title="<% loc('Delete this page') %>"><% loc('Delete') %></a>
+    </li>
+% }
   </ul>
 
 <%args>

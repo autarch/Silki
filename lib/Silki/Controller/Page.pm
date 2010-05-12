@@ -79,6 +79,25 @@ sub page_GET_html {
     $c->stash()->{template} = '/page/view';
 }
 
+sub page_DELETE {
+    my $self = shift;
+    my $c    = shift;
+
+    my $wiki = $c->stash()->{wiki};
+
+    $self->_require_permission_for_wiki( $c, $wiki, 'Delete' );
+
+    my $page = $c->stash()->{page};
+
+    my $msg = loc( 'Deleted the page %1', $page->title() );
+
+    $page->delete();
+
+    $c->session_object()->add_message($msg);
+
+    $c->redirect_and_detach( $wiki->uri( with_host => 1 ) );
+}
+
 sub page_edit_form : Chained('_set_page') : PathPart('edit_form') : Args(0) {
     my $self = shift;
     my $c    = shift;
@@ -327,6 +346,15 @@ sub _tags_as_entity_response {
             tag_list_html => $html,
         },
     );
+}
+
+sub delete_confirmation : Chained('_set_page') : PathPart('delete_confirmation') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_permission_for_wiki( $c, $c->stash()->{wiki}, 'Delete' );
+
+    $c->stash()->{template} = '/page/delete-confirmation';
 }
 
 no Moose;
