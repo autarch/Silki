@@ -347,6 +347,16 @@ CREATE TABLE "File" (
        CONSTRAINT valid_file_size CHECK ( file_size > 0 )
 );
 
+CREATE TABLE "SystemLog" (
+       log_id             SERIAL8            PRIMARY KEY,
+       user_id            INT8               NOT NULL,
+       wiki_id            INT8               NULL,
+       page_id            INT8               NULL,
+       log_datetime       TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       message            VARCHAR(255)       NOT NULL,
+       data_blob          BYTEA              NULL
+);
+
 CREATE TABLE "Session" (
        id                 CHAR(72)           PRIMARY KEY,
        session_data       BYTEA              NOT NULL,
@@ -491,6 +501,18 @@ ALTER TABLE "File" ADD CONSTRAINT "File_user_id"
 
 ALTER TABLE "File" ADD CONSTRAINT "File_wiki_id"
   FOREIGN KEY ("wiki_id") REFERENCES "Wiki" ("wiki_id")
+  ON DELETE RESTRICT ON UPDATE CASCADE;
+
+ALTER TABLE "SystemLog" ADD CONSTRAINT "SystemLog_user_id"
+  FOREIGN KEY ("user_id") REFERENCES "User" ("user_id")
+  ON DELETE RESTRICT ON UPDATE CASCADE;
+
+ALTER TABLE "SystemLog" ADD CONSTRAINT "SystemLog_wiki_id"
+  FOREIGN KEY ("wiki_id") REFERENCES "Wiki" ("wiki_id")
+  ON DELETE SET NULL ON UPDATE CASCADE;
+
+ALTER TABLE "SystemLog" ADD CONSTRAINT "SystemLog_page_id"
+  FOREIGN KEY ("page_id") REFERENCES "Page" ("page_id")
   ON DELETE RESTRICT ON UPDATE CASCADE;
 
 INSERT INTO "Version" (version) VALUES (1);
