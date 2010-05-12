@@ -92,7 +92,7 @@ sub page_edit_form : Chained('_set_page') : PathPart('edit_form') : Args(0) {
         for_editor => 1,
     );
 
-    $c->stash()->{template} = '/page/edit_form';
+    $c->stash()->{template} = '/page/edit-form';
 }
 
 sub page_PUT {
@@ -313,7 +313,7 @@ sub _tags_as_entity_response {
 
     my $html = $c->view('Mason')->render(
         $c,
-        '/page/tag_list.mas', {
+        '/page/tag-list.mas', {
             page     => $page,
             can_edit => 1,
         },

@@ -200,7 +200,7 @@ sub permissions_form : Chained('_set_wiki') : PathPart('permissions_form') : Arg
 
     $self->_require_permission_for_wiki( $c, $c->stash()->{wiki}, 'Manage' );
 
-    $c->stash()->{template} = '/wiki/permissions_form';
+    $c->stash()->{template} = '/wiki/permissions-form';
 }
 
 sub permissions : Chained('_set_wiki') : PathPart('permissions') : Args(0) : ActionClass('+Silki::Action::REST') {
@@ -232,7 +232,7 @@ sub members_form : Chained('_set_wiki') : PathPart('members_form') : Args(0) {
 
     $c->stash()->{members} = $c->stash()->{wiki}->members();
 
-    $c->stash()->{template} = '/wiki/members_form';
+    $c->stash()->{template} = '/wiki/members-form';
 }
 
 sub members : Chained('_set_wiki') : PathPart('members') : Args(0) : ActionClass('+Silki::Action::REST') {
@@ -384,7 +384,7 @@ sub new_page_form : Chained('_set_wiki') : PathPart('new_page_form') : Args(0) {
     my $c    = shift;
 
     $c->stash()->{title}    = $c->request()->params()->{title};
-    $c->stash()->{template} = '/wiki/new_page_form';
+    $c->stash()->{template} = '/wiki/new-page-form';
 }
 
 sub page_collection : Chained('_set_wiki') : PathPart('pages') : Args(0) : ActionClass('+Silki::Action::REST') {
@@ -440,7 +440,7 @@ sub search_GET_html {
     $c->stash()->{search_results} = $wiki->text_search( query => $search );
     $c->stash()->{search} = $search;
 
-    $c->stash()->{template} = '/wiki/search_results';
+    $c->stash()->{template} = '/wiki/search-results';
 }
 
 sub tag_collection : Chained('_set_wiki') : PathPart('tags') : Args(0) : ActionClass('+Silki::Action::REST') {

@@ -3,7 +3,7 @@
 
 %# We need an extra div so we can replace the list wholesale by replacing list.parentNode.innerHTML
   <div>
-    <& /page/tag_list.mas, page => $page, can_edit => $can_edit &>
+    <& /page/tag-list.mas, page => $page, can_edit => $can_edit &>
   </div>
 
 % if ($can_edit) {

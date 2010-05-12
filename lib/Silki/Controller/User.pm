@@ -68,21 +68,21 @@ sub pending_activation : Chained('_set_activation') : PathPart('status') : Args(
     my $self = shift;
     my $c    = shift;
 
-    $c->stash()->{template} = '/user/pending_activation';
+    $c->stash()->{template} = '/user/pending-activation';
 }
 
 sub activation_form : Chained('_set_activation') : PathPart('preferences_form') : Args(0)  {
     my $self = shift;
     my $c    = shift;
 
-    $c->stash()->{template} = '/user/activation_form';
+    $c->stash()->{template} = '/user/activation-form';
 }
 
 sub login_form : Local {
     my $self = shift;
     my $c    = shift;
 
-    $c->stash()->{template} = '/user/login_form';
+    $c->stash()->{template} = '/user/login-form';
 }
 
 sub authentication : Local : ActionClass('+Silki::Action::REST') {
@@ -202,7 +202,7 @@ sub new_user_form : Local {
     my $self = shift;
     my $c    = shift;
 
-    $c->stash()->{template} = '/user/new_user_form';
+    $c->stash()->{template} = '/user/new-user-form';
 }
 
 sub users_collection : Path('/users') : ActionClass('+Silki::Action::REST') {
