@@ -141,12 +141,23 @@ sub _require_permission_for_wiki {
         $c->redirect_and_detach($uri);
     }
     else {
-        $c->session_object()->add_message(
-            loc(
-                'You must be a member of the %1 wiki to perform this action.',
-                $wiki->title()
-            )
-        );
+        if ( $user->is_wiki_member($wiki) ) {
+            $c->session_object()->add_message(
+                loc(
+                    'You do not have %1 permissions in this wiki.',
+                    lc $perm
+                )
+            );
+
+        }
+        else {
+            $c->session_object()->add_message(
+                loc(
+                    'You must be a member of the %1 wiki to perform this action.',
+                    $wiki->title()
+                )
+            );
+        }
 
         my $role = $user->role_in_wiki($wiki);
 
