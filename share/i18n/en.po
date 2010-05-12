@@ -19,33 +19,43 @@ msgstr ""
 msgid "# of Revisions"
 msgstr ""
 
+#. ($wiki->title()
+#: share/mason/wiki/dashboard:81
+msgid "%1 Dashboard "
+msgstr ""
+
+#. ($wiki->title()
+#: lib/Silki/Controller/Wiki.pm:57
+msgid "%1 Front Page"
+msgstr ""
+
+#. ($wiki->title()
+#: lib/Silki/Controller/Wiki.pm:52
+msgid "%1 dashboard"
+msgstr ""
+
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:300
+#: lib/Silki/Controller/Wiki.pm:320
 msgid "%1 is already a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:272
+#: lib/Silki/Controller/Wiki.pm:292
 msgid "%1 is no longer an admin for this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:318
+#: lib/Silki/Controller/Wiki.pm:338
 msgid "%1 is now a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:264
+#: lib/Silki/Controller/Wiki.pm:284
 msgid "%1 is now an admin for this wiki."
 msgstr ""
 
-#. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:47
-msgid "%1 overview"
-msgstr ""
-
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:251
+#: lib/Silki/Controller/Wiki.pm:271
 msgid "%1 was removed as a wiki member."
 msgstr ""
 
@@ -54,8 +64,18 @@ msgid "%date(%1) %at_time(%1)"
 msgstr ""
 
 #. ($c->user()
-#: share/mason/lib/table/attachments-table.mas:29 share/mason/page/history:30 share/mason/site/admin/users:24 share/mason/site/admin/wikis:19 share/mason/wiki/recent:14 share/mason/wiki/search_results:13
+#: share/mason/lib/table/attachments-table.mas:29 share/mason/page/history:30 share/mason/site/admin/users:24 share/mason/site/admin/wikis:21 share/mason/wiki/dashboard:12 share/mason/wiki/recent:14 share/mason/wiki/search-results:13 share/mason/wiki/tag:19
 msgid "%datetime(%1)"
+msgstr ""
+
+#. ($count)
+#: share/mason/wiki/tag-as-li.mas:4
+msgid "%quant( %1, page, pages )"
+msgstr ""
+
+#. ($raw->[-1])
+#: share/mason/wiki/dashboard:28
+msgid "%quant( %1, view, views )"
 msgstr ""
 
 #: lib/Silki/Markdent/Role/WikiLinkResolver.pm:116
@@ -63,7 +83,7 @@ msgid "(Link to non-existent file)"
 msgstr ""
 
 #. ($address->address()
-#: lib/Silki/Controller/Wiki.pm:350
+#: lib/Silki/Controller/Wiki.pm:370
 msgid "A user account for %1 has been created, and this person has been invited to join this wiki."
 msgstr ""
 
@@ -75,13 +95,17 @@ msgstr ""
 msgid "Account Preferences"
 msgstr ""
 
-#: share/mason/user/activation_form:20
+#: share/mason/user/activation-form:20
 msgid "Activate Your Account"
 msgstr ""
 
 #. ($self->domain()
-#: lib/Silki/Schema/User.pm:849
+#: lib/Silki/Schema/User.pm:900
 msgid "Activate your user account on the %1 server"
+msgstr ""
+
+#: share/mason/page/view:16
+msgid "Add Tags"
 msgstr ""
 
 #: lib/Silki/Schema/Role.pm:19
@@ -89,7 +113,7 @@ msgid "Admin"
 msgstr ""
 
 #. ($wiki->file_count()
-#: share/mason/wiki/autohandler:9
+#: share/mason/wiki/autohandler:13
 msgid "All Attachments (%1)"
 msgstr ""
 
@@ -98,8 +122,12 @@ msgstr ""
 msgid "All Attachments in the %1 wiki"
 msgstr ""
 
-#: share/mason/wiki/autohandler:9
+#: share/mason/wiki/autohandler:13
 msgid "All attachments in this wiki"
+msgstr ""
+
+#: share/mason/wiki/autohandler:9
+msgid "All tags in this wiki"
 msgstr ""
 
 #: share/mason/admin.mas:4
@@ -111,15 +139,19 @@ msgid "All wikis"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:310
+#: lib/Silki/Controller/Wiki.pm:330
 msgid "An unactived account for %1 already exists. Once the account is activated, this user will be able to access this wiki."
 msgstr ""
 
 #: share/mason/file/delete-confirmation:2
-msgid "Are you sure you want to delete this file? Once you do, it cannot be recovered."
+msgid "Are you sure you want to delete this file? Once you do, the file cannot be recovered."
 msgstr ""
 
-#: share/mason/page/autohandler:17
+#: share/mason/page/delete-confirmation:2
+msgid "Are you sure you want to delete this page? Once you do, the page cannot be recovered."
+msgstr ""
+
+#: share/mason/page/autohandler:19
 msgid "Attachments"
 msgstr ""
 
@@ -128,7 +160,7 @@ msgstr ""
 msgid "Attachments for %1"
 msgstr ""
 
-#: share/mason/page/autohandler:17
+#: share/mason/page/autohandler:19
 msgid "Attachments for this page"
 msgstr ""
 
@@ -136,15 +168,15 @@ msgstr ""
 msgid "Authenticated"
 msgstr ""
 
-#: share/mason/page/diff:2 share/mason/page/view:3
+#: share/mason/page/diff:2 share/mason/page/view:23
 msgid "Back to current revision"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:504
+#: lib/Silki/Schema/User.pm:505
 msgid "Cannot make an activation uri for a user which does not need activation.\n"
 msgstr ""
 
-#: share/mason/wiki/autohandler:22
+#: share/mason/wiki/autohandler:26
 msgid "Change settings for this wiki"
 msgstr ""
 
@@ -152,7 +184,7 @@ msgstr ""
 msgid "Compare"
 msgstr ""
 
-#: share/mason/page/view:38
+#: share/mason/page/view:58
 msgid "Compare to previous revision"
 msgstr ""
 
@@ -162,7 +194,7 @@ msgid "Contents of %1"
 msgstr ""
 
 #. ($title)
-#: share/mason/wiki/new_page_form:8
+#: share/mason/wiki/new-page-form:4
 msgid "Create %1"
 msgstr ""
 
@@ -170,11 +202,11 @@ msgstr ""
 msgid "Created"
 msgstr ""
 
-#: share/mason/site/admin/wikis:7 share/mason/wiki/orphans:10
+#: share/mason/site/admin/wikis:8 share/mason/wiki/orphans:10
 msgid "Created By"
 msgstr ""
 
-#: share/mason/site/admin/wikis:8
+#: share/mason/site/admin/wikis:9
 msgid "Created On"
 msgstr ""
 
@@ -184,17 +216,34 @@ msgstr ""
 msgid "Created by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
-#: share/mason/page/history:10 share/mason/wiki/recent:5
+#: share/mason/page/history:10
 msgid "Date"
+msgstr ""
+
+#: share/mason/page/autohandler:28
+msgid "Delete"
 msgstr ""
 
 #: share/mason/file/delete-confirmation:19
 msgid "Delete this file?"
 msgstr ""
 
+#: share/mason/page/autohandler:28
+msgid "Delete this page"
+msgstr ""
+
+#: share/mason/page/delete-confirmation:19
+msgid "Delete this page?"
+msgstr ""
+
 #. ($file->file_name()
-#: lib/Silki/Controller/File.pm:67
+#: lib/Silki/Controller/File.pm:68
 msgid "Deleted the file %1"
+msgstr ""
+
+#. ($page->title()
+#: lib/Silki/Controller/Page.pm:92
+msgid "Deleted the page %1"
 msgstr ""
 
 #: share/mason/site/admin/users:48
@@ -205,16 +254,16 @@ msgstr ""
 msgid "Download this file"
 msgstr ""
 
-#: share/mason/page/autohandler:13
+#: share/mason/page/autohandler:14
 msgid "Edit"
 msgstr ""
 
 #. ($page->title()
-#: share/mason/page/edit_form:8
+#: share/mason/page/edit-form:4
 msgid "Edit %1"
 msgstr ""
 
-#: share/mason/page/autohandler:13
+#: share/mason/page/autohandler:14
 msgid "Edit this page"
 msgstr ""
 
@@ -222,7 +271,7 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: share/mason/wiki/members_form:44
+#: share/mason/wiki/members-form:44
 msgid "Email addresses"
 msgstr ""
 
@@ -230,11 +279,15 @@ msgstr ""
 msgid "Enable"
 msgstr ""
 
-#: share/mason/wiki/members_form:48
+#: share/mason/wiki/members-form:48
 msgid "Enter email addresses for each new member, one per line."
 msgstr ""
 
-#: share/mason/wiki/members_form:6
+#: share/mason/page/view:12
+msgid "Enter tags separated by commas (\"Financial, Big Projects, Dogs\")"
+msgstr ""
+
+#: share/mason/wiki/members-form:6
 msgid "Existing Members"
 msgstr ""
 
@@ -252,8 +305,12 @@ msgstr ""
 msgid "Files cannot be larger than %1."
 msgstr ""
 
-#: share/mason/user/login_form:12
+#: share/mason/user/login-form:12
 msgid "For most people, this will be your email address."
+msgstr ""
+
+#: lib/Silki/Controller/Wiki.pm:56
+msgid "Front Page"
 msgstr ""
 
 #: lib/Silki/Schema/Role.pm:16
@@ -264,12 +321,12 @@ msgstr ""
 msgid "Hi,"
 msgstr ""
 
-#: share/mason/page/autohandler:21
+#: share/mason/page/autohandler:23
 msgid "History"
 msgstr ""
 
 #. ($page->title()
-#: lib/Silki/Controller/Page.pm:169 share/mason/autohandler:36
+#: lib/Silki/Controller/Page.pm:199 share/mason/autohandler:23
 msgid "History for %1"
 msgstr ""
 
@@ -277,7 +334,7 @@ msgstr ""
 msgid "If you provide an OpenID you do not need a password."
 msgstr ""
 
-#: share/mason/wiki/permissions_form:13
+#: share/mason/wiki/permissions-form:13
 msgid "In a public wiki, anyone can read and edit pages without logging in. However, only wiki members can delete pages or upload files."
 msgstr ""
 
@@ -326,28 +383,40 @@ msgstr ""
 msgid "Insert an image"
 msgstr ""
 
-#: share/mason/wiki/orphans:12 share/mason/wiki/search_results:6
+#: share/mason/wiki/orphans:12 share/mason/wiki/search-results:6
 msgid "Last Edited By"
 msgstr ""
 
-#: share/mason/wiki/search_results:5
+#: share/mason/wiki/search-results:5
 msgid "Last Edited On"
 msgstr ""
 
+#: share/mason/wiki/tag:7
+msgid "Last Revised"
+msgstr ""
+
+#: share/mason/wiki/tag:8
+msgid "Last Revised By"
+msgstr ""
+
 #. ($wiki->uri( view => 'user/' . $revision->user_id()
-#: share/mason/page/view:13
+#: share/mason/page/view:33
 msgid "Last edited by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
-#: share/mason/wiki/permissions_form:31
+#: share/mason/wiki/tag:6
+msgid "Latest Revision"
+msgstr ""
+
+#: share/mason/wiki/permissions-form:31
 msgid "Like a public wiki, but only explicitly invited members may edit pages."
 msgstr ""
 
-#: share/mason/wiki/permissions_form:22
+#: share/mason/wiki/permissions-form:22
 msgid "Like a public wiki, but users must log-in to edit. However, users do not have to be explicitly invited to become members."
 msgstr ""
 
-#: share/mason/wiki/autohandler:17
+#: share/mason/wiki/autohandler:21
 msgid "Links to pages which do not yet exist"
 msgstr ""
 
@@ -357,6 +426,22 @@ msgstr ""
 
 #: share/mason/header.mas:4
 msgid "Log out"
+msgstr ""
+
+#: share/mason/wiki/dashboard:49
+msgid "Looks like no pages have been tagged in this wiki yet."
+msgstr ""
+
+#: share/mason/wiki/dashboard:32
+msgid "Looks like there hasn't been any page view activity in this wiki yet."
+msgstr ""
+
+#: share/mason/wiki/dashboard:64
+msgid "Looks like there hasn't been any user activity in this wiki yet."
+msgstr ""
+
+#: share/mason/recently-viewed.mas:15
+msgid "Looks like you haven't seen any pages at all yet."
 msgstr ""
 
 #: share/mason/lib/forms/page.mas:15
@@ -376,7 +461,7 @@ msgid "Members"
 msgstr ""
 
 #. ($wiki->title()
-#: share/mason/wiki/members_form:80
+#: share/mason/wiki/members-form:80
 msgid "Members in %1"
 msgstr ""
 
@@ -388,7 +473,7 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: share/mason/wiki/members_form:41
+#: share/mason/wiki/members-form:41
 msgid "New Members"
 msgstr ""
 
@@ -401,7 +486,7 @@ msgstr ""
 msgid "Once you <a href=\"%html(%1)\">activate your user account</a>, you will be a member of the wiki."
 msgstr ""
 
-#: share/mason/wiki/permissions_form:40
+#: share/mason/wiki/permissions-form:40
 msgid "Only explicitly invited members may access this wiki."
 msgstr ""
 
@@ -414,8 +499,13 @@ msgid "Orphaned pages are pages which no other page in the system links to, maki
 msgstr ""
 
 #. ($wiki->orphaned_page_count()
-#: share/mason/wiki/autohandler:13
+#: share/mason/wiki/autohandler:17
 msgid "Orphans (%1)"
+msgstr ""
+
+#. ($tag->tag()
+#: share/mason/page/tag-list.mas:5
+msgid "Other pages tagged %1"
 msgstr ""
 
 #. ($page_num)
@@ -423,8 +513,12 @@ msgstr ""
 msgid "Page %1 of history"
 msgstr ""
 
+#: share/mason/site/admin/wikis:6
+msgid "Page count"
+msgstr ""
+
 #. ($wiki->uri( view => 'user/' . $page->user_id()
-#: share/mason/page/view:25
+#: share/mason/page/view:45
 msgid "Page created by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
@@ -432,7 +526,22 @@ msgstr ""
 msgid "Page:"
 msgstr ""
 
-#: share/mason/wiki/autohandler:13
+#. ($page->title()
+#: share/mason/page/delete-confirmation:6
+msgid "Page: <em>%html(%1)</em>"
+msgstr ""
+
+#. ($tag)
+#: share/mason/wiki/tag:43
+msgid "Pages Tagged With \"%1\""
+msgstr ""
+
+#. ($tag->tag()
+#: share/mason/wiki/tag-as-li.mas:2
+msgid "Pages tagged %1"
+msgstr ""
+
+#: share/mason/wiki/autohandler:17
 msgid "Pages with no incoming links"
 msgstr ""
 
@@ -440,33 +549,33 @@ msgstr ""
 msgid "Password (again):"
 msgstr ""
 
-#: share/mason/lib/forms/user.mas:29 share/mason/user/login_form:18
+#: share/mason/lib/forms/user.mas:29 share/mason/user/login-form:18
 msgid "Password:"
 msgstr ""
 
 #. ($wiki->title()
-#: share/mason/wiki/permissions_form:56
+#: share/mason/wiki/permissions-form:56
 msgid "Permission for %1"
 msgstr ""
 
-#: share/mason/site/admin/wikis:5 share/mason/wiki/permissions_form:6 share/mason/wiki/settings:3
+#: share/mason/wiki/permissions-form:6 share/mason/wiki/settings:3
 msgid "Permissions"
 msgstr ""
 
 #. ($perm_loc)
-#: lib/Silki/Controller/Wiki.pm:202
+#: lib/Silki/Controller/Wiki.pm:222
 msgid "Permissions for this wiki have been set to %1"
 msgstr ""
 
-#: share/mason/wiki/members_form:54
+#: share/mason/wiki/members-form:54
 msgid "Personal message"
 msgstr ""
 
-#: share/mason/user/activation_form:3
+#: share/mason/user/activation-form:3
 msgid "Please confirm the information below to activate your account. If you already chose a password, you do not need to re-enter it."
 msgstr ""
 
-#: share/mason/user/activation_form:5
+#: share/mason/user/activation-form:5
 msgid "Please pick a password or provide an OpenID for future logins to activate your account."
 msgstr ""
 
@@ -480,24 +589,32 @@ msgid "Preferences for "
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Role/Controller/User.pm:58 share/mason/user/preferences_form:18
+#: lib/Silki/Role/Controller/User.pm:58 share/mason/user/preferences-form:18
 msgid "Preferences for %1"
+msgstr ""
+
+#: share/mason/site/admin/wikis:5
+msgid "Privacy"
 msgstr ""
 
 #: share/mason/site/dashboard:12
 msgid "Public Wikis"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:51
+#: share/mason/quick-search.mas:1
+msgid "Quick Search"
+msgstr ""
+
+#: lib/Silki/Controller/Wiki.pm:61
 msgid "Recent Changes"
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:111 share/mason/autohandler:31 share/mason/wiki/recent:37
+#: lib/Silki/Controller/Wiki.pm:131 share/mason/autohandler:18 share/mason/wiki/recent:37
 msgid "Recent Changes in %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:52
+#: lib/Silki/Controller/Wiki.pm:62
 msgid "Recent activity in this wiki"
 msgstr ""
 
@@ -505,7 +622,7 @@ msgstr ""
 msgid "Register"
 msgstr ""
 
-#: share/mason/user/new_user_form:9
+#: share/mason/user/new-user-form:9
 msgid "Register as a New User"
 msgstr ""
 
@@ -513,8 +630,12 @@ msgstr ""
 msgid "Remove existing members, invite new ones, and give members management privileges."
 msgstr ""
 
-#: share/mason/wiki/members_form:24
+#: share/mason/wiki/members-form:24
 msgid "Remove this member"
+msgstr ""
+
+#: share/mason/page/tag-list.mas:9
+msgid "Remove this tag"
 msgstr ""
 
 #: share/mason/page/history:9
@@ -529,7 +650,7 @@ msgid "Revision %1"
 msgstr ""
 
 #. ($revision->revision_number()
-#: share/mason/page/view:57
+#: share/mason/page/view:79
 msgid "Revision %1 of %2"
 msgstr ""
 
@@ -539,7 +660,7 @@ msgid "Revision %1 versus %2"
 msgstr ""
 
 #. ($search)
-#: share/mason/wiki/search_results:38
+#: share/mason/wiki/search-results:37
 msgid "Search Results for \"%1\""
 msgstr ""
 
@@ -547,7 +668,7 @@ msgstr ""
 msgid "Set your preferences"
 msgstr ""
 
-#: share/mason/wiki/autohandler:22
+#: share/mason/wiki/autohandler:26
 msgid "Settings"
 msgstr ""
 
@@ -573,15 +694,25 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#: share/mason/lib/forms/page.mas:47 share/mason/lib/forms/user.mas:63 share/mason/user/login_form:22
+#: share/mason/lib/forms/page.mas:47 share/mason/lib/forms/user.mas:63 share/mason/user/login-form:22
 msgid "Submit"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:369
+#. ($wiki->tag_count()
+#: share/mason/wiki/autohandler:9
+msgid "Tags (%1)"
+msgstr ""
+
+#. ($wiki->title()
+#: share/mason/wiki/tags:19
+msgid "Tags in Use for %1"
+msgstr ""
+
+#: lib/Silki/Schema/User.pm:370
 msgid "The OpenID URI you provided is already in use by another user."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:343
+#: lib/Silki/Schema/User.pm:344
 msgid "The OpenID you provided is not a valid URI."
 msgstr ""
 
@@ -600,15 +731,15 @@ msgstr ""
 msgid "The contents of <em>%html(%1)</em>"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:325
+#: lib/Silki/Schema/User.pm:326
 msgid "The email address you provided is already in use by another user."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:240
+#: lib/Silki/Controller/Page.pm:270
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:144
+#: lib/Silki/Controller/Wiki.pm:164
 msgid "The file has been uploaded."
 msgstr ""
 
@@ -626,6 +757,11 @@ msgstr ""
 
 #: lib/Silki/Controller/User.pm:147
 msgid "The username or password you provided was not valid."
+msgstr ""
+
+#. ($tag)
+#: share/mason/wiki/tag:31
+msgid "There are no pages tagged with \"%1\" in this wiki."
 msgstr ""
 
 #: share/mason/wiki/wanted:26
@@ -649,12 +785,12 @@ msgstr ""
 msgid "This page has %quant(%1,revision,revisions)"
 msgstr ""
 
-#: share/mason/page/autohandler:21
+#: share/mason/page/autohandler:23
 msgid "This page's history of revisions"
 msgstr ""
 
 #. ($revision->user()
-#: share/mason/page/view:18
+#: share/mason/page/view:38
 msgid "This revision was created by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
@@ -672,6 +808,10 @@ msgstr ""
 
 #: share/mason/wiki/attachments:17
 msgid "This wiki does not have any attachments."
+msgstr ""
+
+#: share/mason/wiki/tags:9
+msgid "This wiki does not have any tagged pages yet."
 msgstr ""
 
 #: share/mason/wiki/orphans:34
@@ -695,7 +835,7 @@ msgstr ""
 msgid "Time Zone:"
 msgstr ""
 
-#: share/mason/wiki/orphans:9 share/mason/wiki/recent:4 share/mason/wiki/search_results:4 share/mason/wiki/wanted:9
+#: share/mason/wiki/orphans:9 share/mason/wiki/recent:4 share/mason/wiki/search-results:4 share/mason/wiki/tag:5 share/mason/wiki/wanted:9
 msgid "Title"
 msgstr ""
 
@@ -739,11 +879,11 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: share/mason/site/admin/wikis:6
+#: share/mason/site/admin/wikis:7
 msgid "User count"
 msgstr ""
 
-#: share/mason/user/login_form:8
+#: share/mason/user/login-form:8
 msgid "Username:"
 msgstr ""
 
@@ -760,7 +900,7 @@ msgstr ""
 msgid "View details about your profile"
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:47 share/mason/page/autohandler:9
+#: lib/Silki/Controller/Page.pm:51 share/mason/page/autohandler:9
 msgid "View this page"
 msgstr ""
 
@@ -769,12 +909,16 @@ msgid "Wanted Pages"
 msgstr ""
 
 #. ($wiki->wanted_page_count()
-#: share/mason/wiki/autohandler:17
+#: share/mason/wiki/autohandler:21
 msgid "Wanted Pages (%1)"
 msgstr ""
 
 #: share/mason/wiki/wanted:10
 msgid "Wanted by X other pages"
+msgstr ""
+
+#: share/mason/wiki/recent:5
+msgid "When"
 msgstr ""
 
 #: share/mason/page/history:11 share/mason/wiki/recent:6
@@ -799,7 +943,7 @@ msgstr ""
 msgid "Wikis readable by %1"
 msgstr ""
 
-#: share/mason/file/delete-confirmation:11
+#: share/mason/file/delete-confirmation:11 share/mason/page/delete-confirmation:11
 msgid "Yes, delete it"
 msgstr ""
 
@@ -823,11 +967,11 @@ msgid ""
 "           of which you are a member."
 msgstr ""
 
-#: share/mason/wiki/members_form:58
+#: share/mason/wiki/members-form:58
 msgid "You can include a personal message for the users invited to join the wiki."
 msgstr ""
 
-#: share/mason/wiki/members_form:14
+#: share/mason/wiki/members-form:14
 msgid "You cannot remove yourself as an admin."
 msgstr ""
 
@@ -835,8 +979,13 @@ msgstr ""
 msgid "You did not select a file to upload."
 msgstr ""
 
+#. (lc $perm)
+#: lib/Silki/Controller/Base.pm:149
+msgid "You do not have %1 permissions in this wiki."
+msgstr ""
+
 #. ($wiki->title()
-#: lib/Silki/Schema/User.pm:844
+#: lib/Silki/Schema/User.pm:895
 msgid "You have been invited to join the %1 wiki at %2"
 msgstr ""
 
@@ -851,7 +1000,7 @@ msgid "You have created a user account on the %1 server. You must <a href=\"%htm
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Base.pm:131 lib/Silki/Controller/Base.pm:147
+#: lib/Silki/Controller/Base.pm:131 lib/Silki/Controller/Base.pm:157
 msgid "You must be a member of the %1 wiki to perform this action."
 msgstr ""
 
@@ -860,7 +1009,7 @@ msgstr ""
 msgid "You must log in to to perform this action in the %1 wiki."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:261
+#: lib/Silki/Schema/User.pm:262
 msgid "You must provide a password or OpenID."
 msgstr ""
 
@@ -868,7 +1017,7 @@ msgstr ""
 msgid "You must provide a password."
 msgstr ""
 
-#: share/mason/user/pending_activation:14
+#: share/mason/user/pending-activation:14
 msgid "Your Account Requires Confirmation"
 msgstr ""
 
@@ -882,7 +1031,7 @@ msgid "Your account has been activated. Welcome to the site, %1"
 msgstr ""
 
 #. ($user->email_address()
-#: share/mason/user/pending_activation:2
+#: share/mason/user/pending-activation:2
 msgid "Your account will be active once you confirm your email address. An email has been sent to %1 with an activation uri."
 msgstr ""
 
@@ -927,24 +1076,24 @@ msgstr ""
 msgid "on %date(%1) %at_time(%1)"
 msgstr ""
 
-#: share/mason/wiki/permissions_form:36
+#: share/mason/wiki/permissions-form:36
 msgid "private"
 msgstr "Members-only"
 
-#: share/mason/wiki/permissions_form:9
+#: share/mason/wiki/permissions-form:9
 msgid "public"
 msgstr "Public"
 
-#: share/mason/wiki/permissions_form:18
+#: share/mason/wiki/permissions-form:18
 msgid "public-authenticate-to-edit"
 msgstr "Public, log-in to edit"
 
-#: share/mason/wiki/permissions_form:27
+#: share/mason/wiki/permissions-form:27
 msgid "public-read-only"
 msgstr "Public can read, members can edit"
 
 #. ($revision->revision_number()
-#: lib/Silki/Role/Controller/RevisionsAtomFeed.pm:29 share/mason/wiki/recent:13 share/mason/wiki/search_results:12
+#: lib/Silki/Role/Controller/RevisionsAtomFeed.pm:29 share/mason/wiki/dashboard:11 share/mason/wiki/recent:13 share/mason/wiki/search-results:12
 msgid "revision %1"
 msgstr ""
 
