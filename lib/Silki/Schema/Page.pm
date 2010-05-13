@@ -248,9 +248,15 @@ sub _system_log_values_for_delete {
 
     my $revision = $self->most_recent_revision();
 
+    my $msg
+        = 'Deleted page, '
+        . $self->title()
+        . ', in wiki '
+        . $self->wiki()->title();
+
     return (
         wiki_id   => $self->wiki_id(),
-        message   => 'Deleted page: ' . $self->title(),
+        message   => $msg,
         data_blob => {
             title     => $self->title(),
             revisions => $revision->revision_number(),

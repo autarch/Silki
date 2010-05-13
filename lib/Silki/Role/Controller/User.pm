@@ -126,7 +126,10 @@ sub user_PUT {
         && $c->user()->is_admin()
         && $c->user()->user_id() != $user->user_id() ) {
 
-        $user->update( is_disabled => $params->{is_disabled} );
+        $user->update(
+            is_disabled => $params->{is_disabled},
+            user        => $c->user(),
+        );
 
         $message
             = $params->{is_disabled}
@@ -150,7 +153,7 @@ sub user_PUT {
         my @errors = $self->_check_passwords_match( \%update );
 
         unless (@errors) {
-            eval { $user->update(%update) };
+            eval { $user->update( %update, user => $c->user(), ); };
 
             my $e = $@;
             die $e if $e && !ref $e;

@@ -6,6 +6,7 @@
       <th><% loc('Wiki') %></th>
       <th><% loc('Page') %></th>
       <th><% loc('Message') %></th>
+      <th></th>
     </tr>
   </thead>
 
@@ -25,10 +26,12 @@
 %  }
       </td>
       <td><% $log->message() %></td>
+      <td>
+        <a href="#" class="toggle-more" id="toggle-more-<% $log->log_id() %>"><% loc('more') %></a>
+      </td>
     </tr>
     <tr class="<% $logs->index() % 2 ? 'odd' : 'even' %>">
-      <td colspan="5">
-        <a href="#" class="toggle-more" id="toggle-more-<% $log->log_id() %>"><% loc('more') %></a>
+      <td colspan="6">
         <pre id="more-<% $log->log_id() %>"
              class="log-blog"
              style="display: none"

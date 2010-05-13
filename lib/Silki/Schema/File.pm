@@ -80,9 +80,15 @@ has _file_name_with_hash => (
 sub _system_log_values_for_delete {
     my $self = shift;
 
+    my $msg
+        = 'Deleted file, '
+        . $self->file_name()
+        . ', in wiki '
+        . $self->wiki()->title();
+
     return (
         wiki_id   => $self->wiki_id(),
-        message   => 'Deleted file: ' . $self->file_name(),
+        message   => $msg,
         data_blob => {
             file_name => $self->file_name(),
             mime_type => $self->mime_type(),

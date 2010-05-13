@@ -27,7 +27,7 @@ role {
             my $self = shift;
             my %p    = @_;
 
-            my $user = $p{user};
+            my $user = delete $p{user};
 
             # XXX - it'd be better to use MX::Params::Validate, but that
             # module doesn't yet allow you to ignore extra arguments, and we
@@ -44,7 +44,7 @@ role {
             my $trans = sub {
                 Silki::Schema::SystemLog->insert(
                     user_id => $user->user_id(),
-                    $self->$values_meth(),
+                    $self->$values_meth(%p),
                 );
 
                 $self->$orig(%p);

@@ -33,6 +33,8 @@ my $Schema = Silki::Schema->Schema();
 
 with 'Silki::Role::Schema::URIMaker';
 
+with 'Silki::Role::Schema::SystemLogger' => { methods => ['update'] };
+
 with 'Silki::Role::Schema::DataValidator' => {
     steps => [
         '_has_password_or_openid_uri',
@@ -232,6 +234,33 @@ around update => sub {
 
     return $self->$orig(%p);
 };
+
+sub _system_log_values_for_update {
+    my $self = shift;
+    my %p    = @_;
+
+    my $msg = 'Updated user, ' . $self->best_name();
+    if (   exists $p{is_disabled}
+        && $p{is_disabled}
+        && !$self->is_disabled() ) {
+
+        $msg .= ' - disabling user';
+    }
+    elsif ($self->is_disabled()
+        && exists $p{is_disabled}
+        && !$p{is_disabled} ) {
+
+        $msg .= ' - enabling user';
+    }
+
+    my %blob = %p;
+    delete $blob{last_modified_datetime};
+
+    return (
+        message   => $msg,
+        data_blob => \%blob,
+    );
+}
 
 after update => sub {
     $_[0]->_clear_best_name();
