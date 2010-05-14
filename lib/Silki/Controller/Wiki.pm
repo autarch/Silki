@@ -38,7 +38,7 @@ sub _set_wiki : Chained('/') : PathPart('wiki') : CaptureArgs(1) {
     $c->redirect_and_detach( $c->domain()->uri( with_host => 1 ) )
         unless $wiki;
 
-    $self->_require_permission_for_wiki( $c, $wiki );
+    $self->_require_permission_for_wiki( $c, $wiki, 'Read' );
 
     my $front_page = Silki::Schema::Page->new(
         title   => $wiki->front_page_title(),
@@ -385,6 +385,8 @@ sub new_page_form : Chained('_set_wiki') : PathPart('new_page_form') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
+    $self->_require_permission_for_wiki( $c, $c->stash()->{wiki}, 'Edit' );
+
     $c->stash()->{title}    = $c->request()->params()->{title};
     $c->stash()->{template} = '/wiki/new-page-form';
 }
@@ -395,6 +397,8 @@ sub page_collection : Chained('_set_wiki') : PathPart('pages') : Args(0) : Actio
 sub page_collection_POST {
     my $self = shift;
     my $c    = shift;
+
+    $self->_require_permission_for_wiki( $c, $c->stash()->{wiki}, 'Edit' );
 
     my $wiki = $c->stash()->{wiki};
 
