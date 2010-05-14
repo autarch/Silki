@@ -43,7 +43,10 @@ Silki.PageTags.prototype._submitForm = function () {
 
     var self = this;
 
-    var on_success = function (trans) { self._updateTagList(trans); };
+    var on_success = function (trans) {
+        self._form.tags.value = "";
+        self._updateTagList(trans);
+    };
 
     new HTTP.Request( {
         "uri":        this._form.action,
