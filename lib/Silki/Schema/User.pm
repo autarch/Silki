@@ -255,19 +255,24 @@ sub _system_log_values_for_update {
     my $self = shift;
     my %p    = @_;
 
-    my $msg = 'Updated user, ' . $self->best_name();
+    my $msg;
     if (   exists $p{is_disabled}
         && $p{is_disabled}
         && !$self->is_disabled() ) {
 
-        $msg .= ' - disabling user';
+        $msg = 'Disabled user';
     }
     elsif ($self->is_disabled()
         && exists $p{is_disabled}
         && !$p{is_disabled} ) {
 
-        $msg .= ' - enabling user';
+        $msg = 'Enabled user';
     }
+    else {
+        $msg = 'Updated user';
+    }
+
+    $msg .= ': ' . $self->best_name();
 
     my %blob = %p;
     delete $blob{last_modified_datetime};
