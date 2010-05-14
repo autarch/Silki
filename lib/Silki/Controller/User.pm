@@ -239,7 +239,12 @@ sub users_collection_POST {
 
     my $user;
     unless (@errors) {
-        $user = eval { Silki::Schema::User->insert(%insert) };
+        $user = eval {
+            Silki::Schema::User->insert(
+                %insert,
+                user => $c->user(),
+            );
+        };
 
         my $e = $@;
         die $e if $e && ! ref $e;

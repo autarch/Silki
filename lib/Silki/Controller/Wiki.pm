@@ -356,6 +356,7 @@ sub _process_new_members {
                     ? ( display_name => $address->phrase() )
                     : ()
                 ),
+                user => $c->user(),
             );
 
             $user->send_activation_email(
