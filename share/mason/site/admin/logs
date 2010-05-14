@@ -51,7 +51,7 @@
 <& /lib/table/pager.mas,
    index     => $logs->index(),
    pager     => $pager,
-   uri_maker => sub { site_uri( path => '/logs', @_ ) } &>
+   uri_maker => sub { $c->domain()->application_uri( path => '/logs', @_ ) } &>
 
 </table>     
 
