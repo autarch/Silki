@@ -292,6 +292,8 @@ sub tag_collection_POST {
     my $self = shift;
     my $c    = shift;
 
+    $self->_require_permission_for_wiki( $c, $c->stash()->{wiki} );
+
     my @tag_names = map { s/^\s+|\s+$//; $_ } split /\s*,\s*/,
         ( $c->request()->params()->{tags} || q{} );
 
