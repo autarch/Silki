@@ -1,4 +1,4 @@
-<div class="yui-ge">
+<div class="yui-gc">
   <div class="yui-u first">
     <h1><& SELF:title, %ARGS &></h1>
 
