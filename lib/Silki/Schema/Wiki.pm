@@ -28,6 +28,8 @@ use MooseX::Params::Validate qw( pos_validated_list validated_list );
 
 with 'Silki::Role::Schema::URIMaker';
 
+with 'Silki::Role::Schema::SystemLogger' => { methods => ['insert'] };
+
 my $Schema = Silki::Schema->Schema();
 
 has_policy 'Silki::Schema::Policy';
@@ -218,15 +220,18 @@ This needs some content.
 Link to a [[Wanted Page]].
 EOF
 
-sub insert {
+around insert => sub {
+    my $orig  = shift;
     my $class = shift;
     my %p     = @_;
+
+    $p{user_id} = $p{user}->user_id();
 
     my $wiki;
 
     $class->SchemaClass()->RunInTransaction(
         sub {
-            $wiki = $class->SUPER::insert(%p);
+            $wiki = $class->$orig(%p);
 
             Silki::Schema::Page->insert_with_content(
                 title          => 'Front Page',
@@ -247,6 +252,18 @@ sub insert {
     );
 
     return $wiki;
+};
+
+sub _system_log_values_for_insert {
+    my $class = shift;
+    my %p    = @_;
+
+    my $msg = 'Created wiki: ' . $p{title};
+
+    return (
+        message   => $msg,
+        data_blob => \%p,
+    );
 }
 
 sub _base_uri_path {

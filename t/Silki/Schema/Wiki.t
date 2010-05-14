@@ -30,8 +30,8 @@ my $user = Silki::Schema::User->SystemUser();
         title      => 'Public',
         short_name => 'public',
         domain_id  => Silki::Schema::Domain->DefaultDomain()->domain_id(),
-        user_id    => $user->user_id(),
         account_id => $account->account_id(),
+        user       => $user,
     );
 
     $wiki->set_permissions('public');
@@ -101,7 +101,7 @@ my $user = Silki::Schema::User->SystemUser();
         Guest         => { map { $_ => 1 } qw( Read Edit ) },
         Authenticated => { map { $_ => 1 } qw( Read Edit ) },
         Member        => {
-            map { $_ => 1 } qw( Read Edit Delete Upload )
+            map { $_ => 1 } qw( Read Edit Upload )
         },
         Admin => {
             map { $_ => 1 } qw( Read Edit Delete Upload Invite Manage )
@@ -122,7 +122,7 @@ my $user = Silki::Schema::User->SystemUser();
 
     %perms = (
         Member        => {
-            map { $_ => 1 } qw( Read Edit Delete Upload )
+            map { $_ => 1 } qw( Read Edit Upload )
         },
         Admin => {
             map { $_ => 1 } qw( Read Edit Delete Upload Invite Manage )
@@ -245,7 +245,7 @@ my $user = Silki::Schema::User->SystemUser();
         content => 'Whatever',
     );
 
-    my @active = $wiki->active_users()->all();
+    @active = $wiki->active_users()->all();
     is( scalar @active, 2, 'wiki has two active users' );
     is_deeply(
         [ map { $_->username() } @active ],
@@ -305,8 +305,8 @@ my $user = Silki::Schema::User->SystemUser();
         title      => 'New',
         short_name => 'new',
         domain_id  => Silki::Schema::Domain->DefaultDomain()->domain_id(),
-        user_id    => $user->user_id(),
         account_id => $account->account_id(),
+        user       => $user,
     );
 
     check_members( $wiki, [] );
@@ -328,6 +328,7 @@ my $user = Silki::Schema::User->SystemUser();
     my $user1 = Silki::Schema::User->insert(
         email_address => 'user1@example.com',
         password      => 'foo',
+        user          => Silki::Schema::User->SystemUser(),
     );
 
     $wiki->add_user( user => $user1, role => Silki::Schema::Role->Member() );
@@ -337,6 +338,7 @@ my $user = Silki::Schema::User->SystemUser();
     my $user2 = Silki::Schema::User->insert(
         email_address => 'user2@example.com',
         password      => 'foo',
+        user          => Silki::Schema::User->SystemUser(),
     );
 
     $wiki->add_user( user => $user2, role => Silki::Schema::Role->Member() );
@@ -429,8 +431,8 @@ sub check_members {
         title      => 'Clean',
         short_name => 'clean',
         domain_id  => Silki::Schema::Domain->DefaultDomain()->domain_id(),
-        user_id    => $user->user_id(),
         account_id => $account->account_id(),
+        user       => $user,
     );
 
     check_search(

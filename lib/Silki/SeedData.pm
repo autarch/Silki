@@ -157,8 +157,8 @@ sub _make_wiki {
         title      => $title,
         short_name => $name,
         domain_id  => Silki::Schema::Domain->DefaultDomain()->domain_id(),
-        user_id    => Silki::Schema::User->SystemUser()->user_id(),
         account_id => $account->account_id(),
+        user       => Silki::Schema::User->SystemUser(),
     );
 
     my $uri = $wiki->uri( with_host => 1 );
