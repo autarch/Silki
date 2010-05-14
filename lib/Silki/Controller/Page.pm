@@ -85,7 +85,7 @@ sub page_DELETE {
 
     my $wiki = $c->stash()->{wiki};
 
-    $self->_require_permission_for_wiki( $c, $wiki, 'Delete' );
+    $self->_require_permission_for_wiki( $c, $wiki );
 
     my $page = $c->stash()->{page};
 
