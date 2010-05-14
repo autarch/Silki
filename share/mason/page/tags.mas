@@ -1,0 +1,24 @@
+    <div id="tags">
+      <h2>Tags</h2>
+
+%# We need an extra div so we can replace the list wholesale by replacing list.parentNode.innerHTML
+      <div>
+        <& /page/tag-list.mas, page => $page, can_edit => $can_edit &>
+      </div>
+
+% if ($can_edit) {
+      <form id="tags-form" action="<% $page->uri( view => 'tags' ) %>" method="post">
+        <p>
+          <% loc( 'Enter tags separated by commas ("Financial, Big Projects, Dogs")' ) %>
+        </p>
+        <input type="text" name="tags" />
+        <br />
+        <input type="submit" value="<% loc('Add Tags') %>" />
+      </form>
+% }
+    </div>
+
+<%args>
+$page
+$can_edit
+</%args>
