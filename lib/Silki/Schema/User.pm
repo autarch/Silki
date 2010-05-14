@@ -33,7 +33,8 @@ my $Schema = Silki::Schema->Schema();
 
 with 'Silki::Role::Schema::URIMaker';
 
-with 'Silki::Role::Schema::SystemLogger' => { methods => ['update'] };
+with 'Silki::Role::Schema::SystemLogger' =>
+    { methods => [ 'insert', 'update' ] };
 
 with 'Silki::Role::Schema::DataValidator' => {
     steps => [
@@ -206,6 +207,9 @@ around insert => sub {
 
     $p{username} //= $p{email_address};
 
+    $p{created_by_user_id} = $p{user}->user_id()
+        if $p{user};
+
     return $class->$orig(%p);
 };
 
@@ -234,6 +238,18 @@ around update => sub {
 
     return $self->$orig(%p);
 };
+
+sub _system_log_values_for_insert {
+    my $class = shift;
+    my %p    = @_;
+
+    my $msg = 'Created user: ' . $p{username};
+
+    return (
+        message   => $msg,
+        data_blob => \%p,
+    );
+}
 
 sub _system_log_values_for_update {
     my $self = shift;
@@ -440,7 +456,10 @@ sub EnsureRequiredUsersExist {
     sub _FindOrCreateGuestUser {
         my $class = shift;
 
-        return $class->_FindOrCreateSpecialUser($GuestUsername);
+        return $class->_FindOrCreateSpecialUser(
+            $GuestUsername,
+            Silki::Schema::User->SystemUser(),
+        );
     }
 
     sub is_guest {
@@ -453,23 +472,28 @@ sub EnsureRequiredUsersExist {
 sub _FindOrCreateSpecialUser {
     my $class    = shift;
     my $username = shift;
+    my $creator  = shift;
 
     my $user = eval { $class->new( username => $username ) };
 
     return $user if $user;
 
-    return $class->_CreateSpecialUser($username);
+    return $class->_CreateSpecialUser( $username, $creator );
 }
 
 sub _CreateSpecialUser {
     my $class    = shift;
     my $username = shift;
+    my $creator  = shift;
 
     my $domain = Silki::Schema::Domain->DefaultDomain();
 
     my $email = 'silki-' . $username . q{@} . $domain->email_hostname();
 
     my $display_name = join ' ', map {ucfirst} split /-/, $username;
+
+    local $Silki::Role::Schema::SystemLogger::SkipLog = 1
+        unless $creator;
 
     return $class->insert(
         display_name   => $display_name,
@@ -478,6 +502,7 @@ sub _CreateSpecialUser {
         password       => q{},
         disable_login  => 1,
         is_system_user => 1,
+        user           => $creator,
     );
 }
 

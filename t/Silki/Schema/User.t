@@ -27,6 +27,7 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         display_name  => 'Example User',
         password      => $pw,
         time_zone     => 'America/New_York',
+        user          => Silki::Schema::User->SystemUser(),
     );
 
     like(
@@ -49,7 +50,16 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         'check_password returns false for invalid pw'
     );
 
-    $user->update( password => 'new pw' );
+    is(
+        $user->created_by_user_id(),
+        Silki::Schema::User->SystemUser()->user_id(),
+        'created_by_user_id matches system user'
+    );
+
+    $user->update(
+        password => 'new pw',
+        user     => $user,
+    );
 
     ok(
         $user->check_password('new pw'),
@@ -61,6 +71,7 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
     $user->update(
         password          => q{},
         preserve_password => 1,
+        user              => $user,
     );
 
     ok(
@@ -72,7 +83,11 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 
     ok( $user->has_login_credentials(), 'user has login credentials' );
 
-    $user->update( disable_login => 1 );
+    $user->update(
+        disable_login => 1,
+        user          => $user,
+    );
+
     ok( ! $user->has_login_credentials(), 'user does not have login credentials' );
 
     ok(
@@ -113,7 +128,7 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
             $admin_user,
             'guest-user',
             $joe_user,
-            , 'system-user',
+            'system-user',
             'user@example.com',
         ],
         'All returns all users'
@@ -156,6 +171,7 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         email_address => $email,
         display_name  => 'Example User',
         disable_login => 1,
+        user          => Silki::Schema::User->SystemUser(),
     );
 
     is(
@@ -181,6 +197,7 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         display_name        => 'Example User',
         password            => $pw,
         requires_activation => 1,
+        user                => Silki::Schema::User->SystemUser(),
     );
 
     ok( length $user->activation_key(),
@@ -209,7 +226,10 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         'activation_uri() with explicit view'
     );
 
-    $user->update( activation_key => undef );
+    $user->update(
+        activation_key => undef,
+        user           => $user,
+    );
 
     throws_ok(
         sub { $user->activation_uri() },
@@ -224,6 +244,8 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
             Silki::Schema::User->insert(
                 email_address => 'fail@example.com',
                 display_name  => 'Faily McFail',
+                user          => Silki::Schema::User->SystemUser(),
+
             );
         },
         qr/\QYou must provide a password or OpenID./,
@@ -236,6 +258,7 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
                 email_address => 'fail@example.com',
                 display_name  => 'Faily McFail',
                 openid_uri    => q{},
+                user          => Silki::Schema::User->SystemUser(),
             );
         },
         qr/\QYou must provide a password or OpenID./,
@@ -251,11 +274,15 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         email_address => $email,
         display_name  => 'Example User',
         password      => $pw,
+        user          => Silki::Schema::User->SystemUser(),
     );
 
     throws_ok(
         sub {
-            $user->update( password => undef );
+            $user->update(
+                password => undef,
+                user     => $user,
+            );
         },
         qr/\QYou must provide a password or OpenID./,
         'Cannot update a user to not have a password'
@@ -266,6 +293,7 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
             $user->update(
                 openid_uri => 'http://example.com',
                 password   => undef,
+                user       => $user,
             );
         },
         'Can update a user to unset the password but add an openid_uri'
@@ -273,7 +301,10 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 
     lives_ok(
         sub {
-            $user->update( password => undef );
+            $user->update(
+                password => undef,
+                user     => $user,
+            );
         },
         'Can update a user to not have a password if they have an openid_uri in the dbms'
     );
@@ -283,6 +314,7 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
             $user->update(
                 openid_uri => undef,
                 password   => q{},
+                user       => $user,
             );
         },
         qr/\QYou must provide a password or OpenID./,
@@ -295,7 +327,10 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 
     throws_ok(
         sub {
-            $user->update( openid_uri => 'not a uri' );
+            $user->update(
+                openid_uri => 'not a uri',
+                user       => $user,
+            );
         },
         qr/\QThe OpenID you provided is not a valid URI./,
         'Cannot update a user with an invalid openid_uri (not a uri at all)'
@@ -303,7 +338,10 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 
     throws_ok(
         sub {
-            $user->update( openid_uri => 'ftp://example.com/dir' );
+            $user->update(
+                openid_uri => 'ftp://example.com/dir',
+                user       => $user,
+            );
         },
         qr/\QThe OpenID you provided is not a valid URI./,
         'Cannot update a user with an invalid openid_uri (ftp uri)'
@@ -311,7 +349,10 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 
     throws_ok(
         sub {
-            $user->update( openid_uri => undef );
+            $user->update(
+                openid_uri => undef,
+                user       => $user,
+            );
         },
         qr/\QYou must provide a password or OpenID./,
         'Cannot update a user to not have a password or openid'
@@ -323,6 +364,7 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
                 email_address => 'user5@example.com',
                 display_name  => 'Example User',
                 openid_uri    => 'http://example.com',
+                user          => Silki::Schema::User->SystemUser(),
             );
         },
         qr/The OpenID URI you provided is already in use by another user./,
@@ -331,7 +373,10 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 
     lives_ok(
         sub {
-            $user->update( openid_uri => 'http://example.com' );
+            $user->update(
+                openid_uri => 'http://example.com',
+                user       => $user,
+            );
         },
         q{can update a user's openid to the same openid it already has}
     );
@@ -340,11 +385,15 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         email_address => 'userr@example.com',
         display_name  => 'Example User',
         openid_uri    => 'http://example.com/foo',
+        user          => Silki::Schema::User->SystemUser(),
     );
 
     throws_ok(
         sub {
-            $user5->update( openid_uri => 'http://example.com' );
+            $user5->update(
+                openid_uri => 'http://example.com',
+                user       => $user5,
+            );
         },
         qr/The OpenID URI you provided is already in use by another user./,
         'Cannot update a user to the same openid_uri as an existing usre',
@@ -356,6 +405,7 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
                 email_address => 'user4@example.com',
                 display_name  => 'Example User',
                 password      => 'whatever',
+                user          => Silki::Schema::User->SystemUser(),
             );
         },
         qr/The email address you provided is already in use by another user./,
@@ -364,13 +414,21 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 
     lives_ok(
         sub {
-            $user->update( email_address => $email );
+            $user->update(
+                email_address => $email,
+                user          => $user,
+            );
         },
         q{can update a user's email address to the same email address it already has}
     );
 
     throws_ok(
-        sub { $user->update( email_address => 'user@example.com' ) },
+        sub {
+            $user->update(
+                email_address => 'user@example.com',
+                user          => $user,
+            );
+        },
         qr/The email address you provided is already in use by another user./,
         'Cannot update a user to the same email_address as an existing user',
     );
@@ -378,11 +436,15 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
     $user->update(
         password   => 'foo',
         openid_uri => undef,
+        user       => $user,
     );
 
     lives_ok(
         sub {
-            $user->update( openid_uri => undef );
+            $user->update(
+                openid_uri => undef,
+                user       => $user,
+            );
         },
         'Can update a user to not have an openid_uri if they have a password in the dbms'
     );
@@ -392,6 +454,7 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
             $user->update(
                 openid_uri => undef,
                 password   => undef,
+                user       => $user,
             );
         },
         qr/\QYou must provide a password or OpenID./,
@@ -404,16 +467,19 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         email_address => 'admin@example.com',
         password      => 'foo',
         is_admin      => 1,
+        user          => Silki::Schema::User->SystemUser(),
     );
 
     my $reg1 = Silki::Schema::User->insert(
         email_address => 'reg1@example.com',
         password      => 'foo',
+        user          => Silki::Schema::User->SystemUser(),
     );
 
     my $reg2 = Silki::Schema::User->insert(
         email_address => 'reg2@example.com',
         password      => 'foo',
+        user          => Silki::Schema::User->SystemUser(),
     );
 
     ok( $admin->can_edit_user($admin), 'admin can edit self' );
@@ -520,7 +586,7 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 
     $wiki->add_user( user => $user, role => Silki::Schema::Role->Member() );
 
-    @perms{ qw( Read Edit Delete Upload ) } = (1) x 5;
+    @perms{ qw( Read Edit Upload ) } = (1) x 5;
     test_permissions( $user, $wiki, \%perms );
 
     is(
@@ -585,11 +651,13 @@ sub test_permissions {
     my $reg3 = Silki::Schema::User->insert(
         email_address => 'reg3@example.com',
         password      => 'foo',
+        user          => Silki::Schema::User->SystemUser(),
     );
 
     my $reg4 = Silki::Schema::User->insert(
         email_address => 'reg4@example.com',
         password      => 'foo',
+        user          => Silki::Schema::User->SystemUser(),
     );
 
     my @wikis = $reg3->wikis_shared_with($reg4)->all();
@@ -670,6 +738,7 @@ sub test_permissions {
     my $reg5 = Silki::Schema::User->insert(
         email_address => 'reg5@example.com',
         password      => 'foo',
+        user          => Silki::Schema::User->SystemUser(),
     );
 
     is(
