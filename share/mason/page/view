@@ -44,7 +44,7 @@
 <% loc( 'Page created by <a href="%html(%1)">%html(%2)</a> %on_datetime(%3).',
         $wiki->uri( view => 'user/' . $page->user_id() ),
         $page->user()->best_name(),
-        $c->user->set_time_zone_for_dt( $revision->creation_datetime() ) ) | n %>
+        $c->user->set_time_zone_for_dt( $page->creation_datetime() ) ) | n %>
 </div>
 
 % if ( $c->request()->params()->{debug} ) {
