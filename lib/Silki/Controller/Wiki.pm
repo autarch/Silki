@@ -396,7 +396,15 @@ sub page_collection_POST {
 
     my $wiki = $c->stash()->{wiki};
 
-    my $wikitext = $self->_wikitext_from_form( $c, $wiki );
+    my $wikitext = eval { $self->_wikitext_from_form( $c, $wiki ) };
+
+    if ( my $e = $@ ) {
+        $c->redirect_with_error(
+            errors    => $e,
+            uri       => $wiki->uri( view => 'new_page_form' ),
+            form_data => $c->request()->params(),
+        );
+    }
 
     my $page = Silki::Schema::Page->insert_with_content(
         title   => $c->request()->params()->{title},

@@ -120,10 +120,17 @@ sub page_PUT {
 
     $self->_require_permission_for_wiki( $c, $c->stash()->{wiki} );
 
-    my $page = Silki::Schema::Page->new(
-        page_id => $c->request()->params()->{page_id} );
+    my $page = $c->stash()->{page};
 
-    my $wikitext = $self->_wikitext_from_form( $c, $page->wiki() );
+    my $wikitext = eval { $self->_wikitext_from_form( $c, $page->wiki() ) };
+
+    if ( my $e = $@ ) {
+        $c->redirect_with_error(
+            error     => $e,
+            uri       => $page->uri( view => 'edit_form' ),
+            form_data => $c->request()->params(),
+        );
+    }
 
     $page->add_revision(
         content => $wikitext,

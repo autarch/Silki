@@ -188,6 +188,20 @@ has system_hostname => (
     builder => '_build_system_hostname',
 );
 
+has antispam_key => (
+    is      => 'ro',
+    isa     => Str,
+    lazy    => 1,
+    builder => '_build_antispam_key',
+);
+
+has antispam_server => (
+    is      => 'ro',
+    isa     => Str,
+    lazy    => 1,
+    builder => '_build_antispam_server',
+);
+
 has secret => (
     is      => 'ro',
     isa     => Str,
@@ -594,6 +608,18 @@ sub _build_system_hostname {
     }
 
     die 'Cannot determine system hostname.';
+}
+
+sub _build_antispam_key {
+    my $self = shift;
+
+    return $self->_config_hash()->{Antispam}{key} || q{};
+}
+
+sub _build_antispam_server {
+    my $self = shift;
+
+    return $self->_config_hash()->{Antispam}{server} || q{};
 }
 
 sub _build_secret {
