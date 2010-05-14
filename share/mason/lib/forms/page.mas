@@ -34,6 +34,7 @@
         </li>
       </ul>
     </div>
+   <&| /lib/filter/form.mas, objects => [ $page ? $page : () ] &>
     <form class="flush-left" action="<% $action %>" method="post">
 % if ($page) {
       <input type="hidden" name="x-tunneled-method" value="PUT" />
@@ -46,6 +47,7 @@
 
       <input class="submit" type="submit" value="<% loc('Submit') %>" />
     </form>
+    </&>
   </div>
   <div id="preview">
     <div id="preview-content">
