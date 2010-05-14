@@ -18,11 +18,18 @@ $ENV{HARNESS_ACTIVE} = 0;
 {
     my $config = Silki::Config->instance();
 
-    is_deeply(
-        $config->_build_config_hash(),
-        {},
-        'config hash is empty by default'
-    );
+    {
+        # We need to make sure that we ignore any existing config file in
+        # ~/.silki
+        no warnings 'redefine';
+        local *Silki::Config::_home_dir = sub { dir('/path/to/nonexistent') };
+
+        is_deeply(
+            $config->_build_config_hash(),
+            {},
+            'config hash is empty by default'
+        );
+    }
 
     is(
         $config->_build_secret, 'a big secret',
