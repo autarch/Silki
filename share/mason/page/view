@@ -11,7 +11,7 @@
     <p>
       <% loc( 'Enter tags separated by commas ("Financial, Big Projects, Dogs")' ) %>
     </p>
-    <input type="text" name="tags" />\
+    <input type="text" name="tags" />
     <br />
     <input type="submit" value="<% loc('Add Tags') %>" />
   </form>
