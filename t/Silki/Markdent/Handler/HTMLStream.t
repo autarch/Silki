@@ -17,14 +17,15 @@ my $user = Silki::Schema::User->insert(
     display_name  => 'Example User',
     password      => 'foobar',
     time_zone     => 'America/New_York',
+    user          => Silki::Schema::User->SystemUser(),
 );
 
 my $wiki = Silki::Schema::Wiki->insert(
     title      => 'Public',
     short_name => 'public',
     domain_id  => Silki::Schema::Domain->DefaultDomain()->domain_id(),
-    user_id    => $user->user_id(),
     account_id => $account->account_id(),
+    user       => Silki::Schema::User->SystemUser(),
 );
 
 $wiki->set_permissions('public');
@@ -184,8 +185,8 @@ open my $fh, '>', \$buffer;
         title      => 'Other',
         short_name => 'other',
         domain_id  => Silki::Schema::Domain->DefaultDomain()->domain_id(),
-        user_id    => $user->user_id(),
         account_id => $account->account_id(),
+        user       => $user,
     );
 
     $wiki2->set_permissions('public');

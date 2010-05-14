@@ -15,12 +15,14 @@ my $user1 = Silki::Schema::User->insert(
     display_name  => 'Joe Smith',
     email_address => 'joe@example.com',
     password      => 'foo',
+    user          => Silki::Schema::User->SystemUser(),
 );
 
 my $user2 = Silki::Schema::User->insert(
     display_name  => 'Bjork',
     email_address => 'bjork@example.com',
     password      => 'foo',
+    user          => Silki::Schema::User->SystemUser(),
 );
 
 my $wiki = Silki::Schema::Wiki->new( title => 'First Wiki' );
@@ -64,13 +66,14 @@ my $user3 = Silki::Schema::User->insert(
     email_address       => 'colin@example.com',
     password            => 'foo',
     requires_activation => 1,
+    user                => Silki::Schema::User->SystemUser(),
 );
 
 $user3->send_activation_email( sender => Silki::Schema::User->SystemUser() );
 
 test_email(
     {
-        From => qr{\Q"Silki System User" <silki-system-user@\E.+?\Q>},
+        From => qr{\Q"System User" <silki-system-user@\E.+?\Q>},
         To   => q{"Colin" <colin@example.com>},
         Subject =>
             qr{^\QActivate your user account on the \E\S+\Q server},

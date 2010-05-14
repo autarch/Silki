@@ -730,9 +730,9 @@ sub test_permissions {
     my $wiki = Silki::Schema::Wiki->insert(
         title      => 'Alt Domain',
         short_name => 'alt',
-        user_id    => Silki::Schema::User->SystemUser()->user_id(),
         account_id => $account->account_id(),
         domain_id  => $domain->domain_id(),
+        user       => Silki::Schema::User->SystemUser(),
     );
 
     my $reg5 = Silki::Schema::User->insert(

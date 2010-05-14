@@ -227,7 +227,7 @@ my $user = Silki::Schema::User->SystemUser();
         'wanted pages returns expected list of pages'
     );
 
-    my @active = $wiki->active_users()->all();
+    @active = $wiki->active_users()->all();
     is( scalar @active, 1, 'wiki has one active user' );
     is_deeply(
         [ map { $_->username() } @active ],
