@@ -5,24 +5,33 @@ use warnings;
 
 use Silki::Config;
 use Silki::Schema;
-use Silki::Types qw( Bool HashRef Str );
+use Silki::Types qw( Bool HashRef Int Str );
 use URI;
 
 use Fey::ORM::Table;
 use MooseX::ClassAttribute;
-use MooseX::Params::Validate qw( validated_hash );
+use MooseX::Params::Validate qw( validated_hash validated_list );
 
 with 'Silki::Role::Schema::URIMaker';
 
 has_policy 'Silki::Schema::Policy';
 
-has_table( Silki::Schema->Schema()->table('Domain') );
+my $Schema = Silki::Schema->Schema();
+
+has_table( $Schema->table('Domain') );
 
 class_has 'DefaultDomain' => (
     is      => 'ro',
     isa     => __PACKAGE__,
     lazy    => 1,
     default => sub { __PACKAGE__->_FindOrCreateDefaultDomain() },
+);
+
+class_has _AllDomainSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildAllDomainSelect',
 );
 
 has uri_params => (
@@ -79,6 +88,41 @@ sub application_uri {
     );
 
     return $self->_make_uri(%p);
+}
+
+sub All {
+    my $class = shift;
+    my ( $limit, $offset ) = validated_list(
+        \@_,
+        limit  => { isa => Int, optional => 1 },
+        offset => { isa => Int, default  => 0 },
+    );
+
+    my $select = $class->_AllDomainSelect()->clone();
+    $select->limit( $limit, $offset );
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
+
+    return Fey::Object::Iterator::FromSelect->new(
+        classes     => 'Silki::Schema::Domain',
+        select      => $select,
+        dbh         => $dbh,
+        bind_params => [ $select->bind_params() ],
+    );
+}
+
+sub _BuildAllDomainSelect {
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $domain_t = $Schema->table('Domain');
+
+    $select->select($domain_t)
+           ->from($domain_t)
+           ->order_by( $domain_t->column('web_hostname') );
+
+    return $select;
 }
 
 no Fey::ORM::Table;

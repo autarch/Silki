@@ -177,6 +177,15 @@ sub _require_permission_for_wiki {
 
 }
 
+sub _require_site_admin {
+    my $self = shift;
+    my $c    = shift;
+
+    return if $c->user()->is_admin();
+
+    $c->redirect_and_detach( $c->domain()->application_uri( path => '/' ) );
+}
+
 no Moose;
 
 __PACKAGE__->meta()->make_immutable();

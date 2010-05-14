@@ -11,6 +11,7 @@ use Silki::Config;
 use Silki::Formatter::HTMLToWiki;
 use Silki::I18N qw( loc );
 use Silki::Schema::Page;
+use Silki::Schema::Role;
 use Silki::Schema::Wiki;
 use Silki::Util qw( string_is_empty );
 use XML::Atom::SimpleFeed;
@@ -486,14 +487,14 @@ sub tag_GET_html {
     $c->stash()->{template} = '/wiki/tag';
 }
 
-sub wiki_collection : Path('/wikis') : Args(0) {
+sub wiki_collection : Path('/wikis') : Args(0) : ActionClass('+Silki::Action::REST') {
+}
+
+sub wiki_collection_GET_html {
     my $self = shift;
     my $c    = shift;
 
-    unless ( $c->user()->is_admin() ) {
-        $c->redirect_and_detach(
-            $c->domain()->application_uri( path => '/' ) );
-    }
+    $self->_require_site_admin($c);
 
     my ( $limit, $offset ) = $self->_make_pager( $c, Silki::Schema::Wiki->Count() );
 
@@ -503,6 +504,47 @@ sub wiki_collection : Path('/wikis') : Args(0) {
     );
 
     $c->stash()->{template} = '/site/admin/wikis';
+}
+
+sub wiki_collection_POST {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_site_admin($c);
+
+    my $params = $c->request()->params();
+
+    my $wiki;
+
+    eval {
+        Silki::Schema->RunInTransaction(
+            sub {
+                $wiki = Silki::Schema::Wiki->insert(
+                    title      => $params->{title},
+                    domain_id  => $params->{domain_id},
+                    account_id => $params->{account_id},
+                    user       => $c->user(),
+                );
+
+                $wiki->set_permissions( $params->{permissions} );
+
+                $wiki->add_user(
+                    user => $c->user(),
+                    role => Silki::Schema::Role->Admin(),
+                );
+            }
+        );
+    };
+
+    if ( my $e = $@ ) {
+        $c->redirect_with_error(
+            error => $e,
+            uri   => $c->domain()->application_uri( path => 'new_wiki_form' ),
+            form_data => $params,
+        );
+    }
+
+    $c->redirect_and_detach( $wiki->uri() );
 }
 
 no Moose;

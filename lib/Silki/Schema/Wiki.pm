@@ -225,6 +225,12 @@ around insert => sub {
     my $class = shift;
     my %p     = @_;
 
+    if ( ! exists $p{short_name} ) {
+        my $name = $p{title};
+        $name =~ s/ +/-/g;
+        $p{short_name} = lc $name;
+    }
+
     $p{user_id} = $p{user}->user_id();
 
     my $wiki;
