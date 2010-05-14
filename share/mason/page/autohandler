@@ -37,5 +37,5 @@ $wiki
 </%method>
 
 <%attr>
-sidebar => [ 'quick-search', 'incoming-links', 'recently-viewed' ]
+sidebar => [ 'quick-search', 'recently-viewed' ]
 </%attr>

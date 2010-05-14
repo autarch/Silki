@@ -1,4 +1,4 @@
-      <div id="backlinks">
+      <div id="incoming-links">
         <h2><% loc('Incoming Links') %></h2>
 
 % if ($links) {

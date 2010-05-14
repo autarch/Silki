@@ -1,21 +1,13 @@
-<div id="tags">
-  <h2>Tags</h2>
+<div class="yui-ge">
+  <div class="yui-u first">
+    <h1><& SELF:title, %ARGS &></h1>
 
-%# We need an extra div so we can replace the list wholesale by replacing list.parentNode.innerHTML
-  <div>
-    <& /page/tag-list.mas, page => $page, can_edit => $can_edit &>
+    <% $html | n %>
   </div>
-
-% if ($can_edit) {
-  <form id="tags-form" action="<% $page->uri( view => 'tags' ) %>" method="post">
-    <p>
-      <% loc( 'Enter tags separated by commas ("Financial, Big Projects, Dogs")' ) %>
-    </p>
-    <input type="text" name="tags" />
-    <br />
-    <input type="submit" value="<% loc('Add Tags') %>" />
-  </form>
-% }
+  <div class="yui-u">
+    <& tags.mas, page => $page, can_edit => $can_edit &>
+    <& incoming-links.mas, page => $page &>
+  </div>
 </div>
 
 % unless ($is_current_revision) {
@@ -23,8 +15,6 @@
   <a href="<% $page->uri() %>"><% loc('Back to current revision') %></a>
 </p>
 % }
-
-<% $html | n %>
 
 <div id="attribution">
 % if ( $revision->revision_number() > 1 ) {
@@ -72,6 +62,10 @@ my $wiki = $page->wiki();
 my $can_edit =
     $c->user()->has_permission_in_wiki( wiki => $wiki, permission => Silki::Schema::Permission->Edit() );
 </%init>
+
+<%attr>
+show_title => 0
+</%attr>
 
 <%method title>
 <% $page->title() %>

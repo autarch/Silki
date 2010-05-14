@@ -21,6 +21,19 @@
     .rounded-corners-bottom(@radius);
 }
 
+.rounded-box (@radius: 6px, @color: black) {
+    .rounded-corners-both(@radius);
+    border: 1px solid @color;
+    margin-bottom: 1em;
+}     
+
+.rounded-box-h2 (@color: black) {
+    background-color: @color;
+    color: white;
+    margin-top: 0;
+    padding: 0.2em 0.4em;
+}
+
 @light-blue: #a3d3e3;
 @dark-blue: #13708f;
 @dark-purple: #21379d;
@@ -205,25 +218,28 @@ h1 {
 
 /* === Page View === */
 
-#tags {
-    border: 1px solid @dark-purple;
-    .rounded-corners-both(6px);
-    float: right;
-    margin-bottom: 1em;
+#tags, #incoming-links {
+    .rounded-box(6px, @dark-purple);
     margin-left: 1em;
-    width: 16em;
+
     h2 {
-        background-color: @dark-purple;
-        color: white;
-        margin-top: 0;
-        padding: 0.2em 0.4em;
+        .rounded-box-h2(@dark-purple);
     }
+}
+
+#tags {
     ul, form {
         margin-right: 1em;
         margin-left: 1em;
     }
     form {
         margin-bottom: 1em;
+    }
+}
+
+#incoming-links {
+    ul li {
+        list-style: none;
     }
 }
 
@@ -275,15 +291,12 @@ h1 {
 }
 
 .dashboard-item {
-    border: 1px solid @dark-purple;
-    .rounded-corners-both(6px);
+    .rounded-box(6px, @dark-purple);
     margin-top: 1em;
+    margin-bottom: 0;
 
     h2 {
-        background-color: @dark-purple;
-        color: white;
-        margin-top: 0;
-        padding: 0.2em 0.4em;
+        .rounded-box-h2(@dark-purple);
     }
 }
 
