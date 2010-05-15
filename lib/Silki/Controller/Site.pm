@@ -30,15 +30,6 @@ sub site : Path('/') : Args(0) {
     $c->stash()->{template} = '/site/dashboard';
 }
 
-sub new_wiki_form : Path('/new_wiki_form') : Args(0) {
-    my $self = shift;
-    my $c    = shift;
-
-    $self->_require_site_admin($c);
-
-    $c->stash()->{template} = '/site/admin/new-wiki-form';
-}
-
 sub system_log : Path('/logs') : Args(0) {
     my $self = shift;
     my $c    = shift;

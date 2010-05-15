@@ -18,6 +18,18 @@ sub user_params {
     return %p;
 }
 
+sub wiki_params {
+    my $self = shift;
+
+    return $self->_params_for_classes('Silki::Schema::Wiki');
+}
+
+sub domain_params {
+    my $self = shift;
+
+    return $self->_params_for_classes('Silki::Schema::Domain');
+}
+
 sub _bool {
     return $_[0] ? 1 : 0;
 }

@@ -14,6 +14,13 @@ use MooseX::Params::Validate qw( validated_hash validated_list );
 
 with 'Silki::Role::Schema::URIMaker';
 
+with 'Silki::Role::Schema::DataValidator' => {
+    steps => [
+        '_web_hostname_is_unique',
+        '_email_hostname_is_unique',
+    ],
+};
+
 has_policy 'Silki::Schema::Policy';
 
 my $Schema = Silki::Schema->Schema();
@@ -41,6 +48,52 @@ has uri_params => (
     builder  => '_build_uri_params',
     init_arg => undef,
 );
+
+around insert => sub {
+    my $orig  = shift;
+    my $class = shift;
+    my %p     = @_;
+
+    $p{email_hostname} //= $p{web_hostname};
+
+    return $class->$orig(%p);
+};
+
+sub _web_hostname_is_unique {
+    my $self      = shift;
+    my $p         = shift;
+    my $is_insert = shift;
+
+    return
+        if !$is_insert && exists $p->{web_hostname} && $p->{web_hostname} eq $self->web_hostname();
+
+    return unless __PACKAGE__->new( web_hostname => $p->{web_hostname} );
+
+    return {
+        field   => 'web_hostname',
+        message => loc(
+            'The web hostname you provided is already in use by another domain.'
+        ),
+    };
+}
+
+sub _email_hostname_is_unique {
+    my $self      = shift;
+    my $p         = shift;
+    my $is_insert = shift;
+
+    return
+        if !$is_insert && exists $p->{email_hostname} && $p->{email_hostname} eq $self->email_hostname();
+
+    return unless __PACKAGE__->new( email_hostname => $p->{email_hostname} );
+
+    return {
+        field   => 'email_hostname',
+        message => loc(
+            'The email hostname you provided is already in use by another domain.'
+        ),
+    };
+}
 
 sub _base_uri_path {
     return q{};
