@@ -3,6 +3,7 @@
     <tr>
       <th><% loc('Wiki') %></th>
       <th><% loc('Privacy') %></th>
+      <th><% loc('Domain') %></th>
       <th><% loc('Page count') %></th>
       <th><% loc('User count') %></th>
       <th><% loc('Created By') %></th>
@@ -15,6 +16,7 @@
     <tr class="<% $wikis->index() % 2 ? 'odd' : 'even' %>">
       <td><a href="<% $wiki->uri() %>"><% $wiki->title() %></a></td>
       <td><% loc( $wiki->permissions_name() ) %></td>
+      <td><a href="<% $wiki->domain()->uri() %>"><% $wiki->domain()->web_hostname() %></a></td>
       <td><% $wiki->page_count() %></td>
       <td>X</td>
       <td><a href="<% $wiki->creator()->uri() %>"><% $wiki->creator()->best_name() %></td>
