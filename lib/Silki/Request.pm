@@ -36,10 +36,6 @@ sub account_params {
     return $self->_params_for_classes('Silki::Schema::Account');
 }
 
-sub _bool {
-    return $_[0] ? 1 : 0;
-}
-
 sub _params_for_classes {
     my $self    = shift;
     my $classes = shift;
@@ -62,6 +58,11 @@ sub _params_for_classes {
             my $key = $name;
             $key .= q{-} . $suffix
                 if $suffix;
+
+            if ( $col->generic_type() eq 'boolean' ) {
+                $found{$name} = $params->{$key} ? 1 : 0;
+                next;
+            }
 
             if ( string_is_empty( $params->{$key} ) ) {
                 if ( $col->is_nullable() ) {
