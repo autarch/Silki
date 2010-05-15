@@ -5,13 +5,8 @@
     <legend>Credentials</legend>
 
     <div class="form-item">
-      <label for="username" class="for-field"><% loc('Username:') %></label>
+      <label for="username" class="for-field"><% loc('Email Address:') %></label>
       <input type="text" class="text" name="username" id="username" />
-      <div class="help-text">
-        <p>
-          <% loc('For most people, this will be your email address.') %>
-        </p>
-      </div>
     </div>
 
     <div class="form-item">
