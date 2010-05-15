@@ -29,39 +29,33 @@ sub seed_data {
     Silki::Schema::User->EnsureRequiredUsersExist();
 
     require Silki::Schema::Account;
+
+    Silki::Schema::Account->EnsureRequiredAccountsExist();
+
     require Silki::Schema::Role;
 
     print "\n" if $VERBOSE;
 
-    my $account = _make_account();
-    my $admin   = _make_admin_user($account);
-    my $regular = _make_regular_user($account);
-    _make_first_wiki( $admin, $regular, $account );
-    _make_second_wiki( $admin, $regular, $account );
-    _make_third_wiki( $admin, $regular, $account );
+    my $admin   = _make_admin_user();
+    my $regular = _make_regular_user();
+    _make_first_wiki( $admin, $regular );
+    _make_second_wiki( $admin, $regular );
+    _make_third_wiki( $admin, $regular );
 
-}
-
-sub _make_account {
-    return Silki::Schema::Account->insert( name => 'Default Account' );
 }
 
 sub _make_admin_user {
-    my $account = shift;
-
     my $email
         = 'admin@' . Silki::Schema::Domain->DefaultDomain()->email_hostname();
 
     my $admin = _make_user( 'Angela D. Min', $email, 1 );
 
-    $account->add_admin($admin);
+    Silki::Schema::Account->DefaultAccount()->add_admin($admin);
 
     return $admin;
 }
 
 sub _make_regular_user {
-    my $account = shift;
-
     my $email
         = 'joe@' . Silki::Schema::Domain->DefaultDomain()->email_hostname();
 
@@ -102,9 +96,8 @@ EOF
 sub _make_first_wiki {
     my $admin   = shift;
     my $regular = shift;
-    my $account = shift;
 
-    my $wiki = _make_wiki( 'First Wiki', 'first-wiki', $account );
+    my $wiki = _make_wiki( 'First Wiki', 'first-wiki' );
 
     $wiki->set_permissions('public');
 
@@ -118,9 +111,8 @@ sub _make_first_wiki {
 sub _make_second_wiki {
     my $admin   = shift;
     my $regular = shift;
-    my $account = shift;
 
-    my $wiki = _make_wiki( 'Second Wiki', 'second-wiki', $account );
+    my $wiki = _make_wiki( 'Second Wiki', 'second-wiki' );
 
     $wiki->set_permissions('private');
 
@@ -134,9 +126,8 @@ sub _make_second_wiki {
 sub _make_third_wiki {
     my $admin   = shift;
     my $regular = shift;
-    my $account = shift;
 
-    my $wiki = _make_wiki( 'Third Wiki', 'third-wiki', $account );
+    my $wiki = _make_wiki( 'Third Wiki', 'third-wiki' );
 
     $wiki->set_permissions('private');
 
@@ -147,9 +138,8 @@ sub _make_third_wiki {
 }
 
 sub _make_wiki {
-    my $title   = shift;
-    my $name    = shift;
-    my $account = shift;
+    my $title = shift;
+    my $name  = shift;
 
     require Silki::Schema::Wiki;
 
@@ -157,7 +147,6 @@ sub _make_wiki {
         title      => $title,
         short_name => $name,
         domain_id  => Silki::Schema::Domain->DefaultDomain()->domain_id(),
-        account_id => $account->account_id(),
         user       => Silki::Schema::User->SystemUser(),
     );
 

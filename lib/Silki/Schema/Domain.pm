@@ -27,6 +27,11 @@ my $Schema = Silki::Schema->Schema();
 
 has_table( $Schema->table('Domain') );
 
+query wiki_count => (
+    select      => __PACKAGE__->_WikiCountSelect(),
+    bind_params => sub { $_[0]->domain_id() },
+);
+
 class_has 'DefaultDomain' => (
     is      => 'ro',
     isa     => __PACKAGE__,
@@ -113,10 +118,7 @@ sub _FindOrCreateDefaultDomain {
     my $domain = $class->new( web_hostname => $hostname );
     return $domain if $domain;
 
-    return $class->insert(
-        web_hostname   => $hostname,
-        email_hostname => $hostname,
-    );
+    return $class->insert( web_hostname => $hostname );
 }
 
 sub domain { $_[0] }
@@ -141,6 +143,25 @@ sub application_uri {
     );
 
     return $self->_make_uri(%p);
+}
+
+sub _WikiCountSelect {
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $wiki_t = $Schema->table('Wiki');
+
+    my $count
+        = Fey::Literal::Function->new( 'COUNT', $wiki_t->column('wiki_id') );
+
+    $select
+        ->select($count)
+        ->from( $wiki_t )
+        ->where( $wiki_t->column('domain_id'), '=',
+                 Fey::Placeholder->new() );
+
+    return $select;
 }
 
 sub All {

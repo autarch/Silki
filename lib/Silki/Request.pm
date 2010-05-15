@@ -30,6 +30,12 @@ sub domain_params {
     return $self->_params_for_classes('Silki::Schema::Domain');
 }
 
+sub account_params {
+    my $self = shift;
+
+    return $self->_params_for_classes('Silki::Schema::Account');
+}
+
 sub _bool {
     return $_[0] ? 1 : 0;
 }

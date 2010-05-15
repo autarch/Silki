@@ -241,6 +241,8 @@ around insert => sub {
 
     $p{user_id} = $p{user}->user_id();
 
+    $p{account_id} = Silki::Schema::Account->DefaultAccount()->account_id();
+
     my $wiki;
 
     $class->SchemaClass()->RunInTransaction(

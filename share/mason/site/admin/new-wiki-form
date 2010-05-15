@@ -25,16 +25,6 @@
       </select>
     </div>
 
-    <div class="form-item">
-      <label for="account_id" class="for-field"><% loc('Account:') %></label>
-      <select name="account_id" id="account_id">
-% while ( my $account = $accounts->next() ) {
-        <option value="<% $account->account_id() %>">
-          <% $account->name() %>
-        </option>
-% }
-      </select>
-    </div>
   </fieldset>
 
   <& /wiki/permissions-fieldset.mas &>

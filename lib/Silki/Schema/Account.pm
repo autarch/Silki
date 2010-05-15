@@ -17,6 +17,13 @@ my $Schema = Silki::Schema->Schema();
 
 has_table( $Schema->table('Account') );
 
+class_has 'DefaultAccount' => (
+    is      => 'ro',
+    isa     => __PACKAGE__,
+    lazy    => 1,
+    default => sub { __PACKAGE__->_FindOrCreateDefaultAccount() },
+);
+
 class_has _AllAccountSelect => (
     is      => 'ro',
     isa     => 'Fey::SQL::Select',
@@ -36,6 +43,23 @@ sub add_admin {
     );
 
     return;
+}
+
+sub EnsureRequiredAccountsExist {
+    my $class = shift;
+
+    $class->_FindOrCreateDefaultAccount();
+}
+
+sub _FindOrCreateDefaultAccount {
+    my $class = shift;
+
+    my $hostname = Silki::Config->new()->system_hostname();
+
+    my $account = $class->new( name => 'Default Account' );
+    return $account if $account;
+
+    return $class->insert( name => 'Default Account' );
 }
 
 sub All {
