@@ -1,4 +1,4 @@
-<&| /lib/filter/form.mas &>
+<&| /lib/filter/form.mas, data => { permissions => 'private' } &>
 <form action="<% $c->domain()->application_uri( path => '/wikis' ) %>" method="post">
 
   <fieldset>
