@@ -525,7 +525,8 @@ sub wiki_collection_POST {
 
     $self->_require_site_admin($c);
 
-    my $params = $c->request()->params();
+    my %form_data = $c->request()->wiki_params();
+    my $perms = $c->request()->params()->{permissions};
 
     my $wiki;
 
@@ -533,13 +534,11 @@ sub wiki_collection_POST {
         Silki::Schema->RunInTransaction(
             sub {
                 $wiki = Silki::Schema::Wiki->insert(
-                    title      => $params->{title},
-                    domain_id  => $params->{domain_id},
-                    account_id => $params->{account_id},
-                    user       => $c->user(),
+                    %form_data,
+                    user => $c->user(),
                 );
 
-                $wiki->set_permissions( $params->{permissions} );
+                $wiki->set_permissions($perms);
 
                 $wiki->add_user(
                     user => $c->user(),
@@ -553,7 +552,7 @@ sub wiki_collection_POST {
         $c->redirect_with_error(
             error => $e,
             uri   => $c->domain()->application_uri( path => 'new_wiki_form' ),
-            form_data => $params,
+            form_data => { %form_data, permissions => $perms },
         );
     }
 
