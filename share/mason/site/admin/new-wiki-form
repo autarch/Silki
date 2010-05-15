@@ -2,7 +2,7 @@
 <form action="<% $c->domain()->application_uri( path => '/wikis' ) %>" method="post">
 
   <fieldset>
-    <legend><% loc('Wiki Preferences') %></legend>
+    <legend><% loc('Wiki Settings') %></legend>
 
     <div class="form-item">
       <label for="title" class="for-field"><% loc('Wiki Title:') %></label>
