@@ -43,6 +43,8 @@
 @light-orange-brown: @orange-brown + #222;
 @dark-orange-brown: @orange-brown - #222;
 
+@error-orange: #fcc841;
+
 /* See http://colorschemedesigner.com/#3p61TsOsOK-K- for the scheme. */
 
 html {
@@ -117,7 +119,7 @@ a {
 
 #global-nav li a {
     color: #111;
-    padding-left: 0.5em;
+    padding-left: 1.1em;
 }
 
 #tabs {
@@ -446,7 +448,7 @@ fieldset.last {
 
 form {
     div.form-error {
-        background-color: #FCC841;
+        background-color: @error-orange;
         border: 1px solid black;
         margin: 0.3em 0 0.3em 0;
         padding: 0.3em;
@@ -457,11 +459,11 @@ form {
     }
 
     div.error {
-        background-color: #FCC841;
+        background-color: @error-orange;
         margin-top: 2px;
 
         p.error-message {
-            margin-bottom: 0.1em;
+            margin-bottom: 0.2em;
             margin-left: 12.5em;
         }
 
