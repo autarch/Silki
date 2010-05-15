@@ -10,6 +10,7 @@ use Fey::Object::Iterator::FromSelect;
 use Fey::SQL;
 use List::AllUtils qw( uniq );
 use Silki::Config;
+use Silki::I18N qw( loc );
 use Silki::Schema;
 use Silki::Schema::Domain;
 use Silki::Schema::File;
@@ -29,6 +30,13 @@ use MooseX::Params::Validate qw( pos_validated_list validated_list );
 with 'Silki::Role::Schema::URIMaker';
 
 with 'Silki::Role::Schema::SystemLogger' => { methods => ['insert'] };
+
+with 'Silki::Role::Schema::DataValidator' => {
+    steps => [
+        '_title_is_unique',
+        '_short_name_is_unique',
+    ],
+};
 
 my $Schema = Silki::Schema->Schema();
 
@@ -270,6 +278,41 @@ sub _system_log_values_for_insert {
         message   => $msg,
         data_blob => \%p,
     );
+}
+
+sub _title_is_unique {
+    my $self      = shift;
+    my $p         = shift;
+    my $is_insert = shift;
+
+    return
+        if !$is_insert && exists $p->{title} && $p->{title} eq $self->title();
+
+    return unless __PACKAGE__->new( title => $p->{title} );
+
+    return {
+        field   => 'title',
+        message => loc(
+            'The title you provided is already in use by another wiki.'
+        ),
+    };
+}
+
+sub _short_name_is_unique {
+    my $self      = shift;
+    my $p         = shift;
+    my $is_insert = shift;
+
+    return
+        if !$is_insert && exists $p->{short_name} && $p->{short_name} eq $self->short_name();
+
+    return unless __PACKAGE__->new( short_name => $p->{short_name} );
+
+    return {
+        message => loc(
+            'The title you provided generates the same URI as an existing wiki.'
+        ),
+    };
 }
 
 sub _base_uri_path {
