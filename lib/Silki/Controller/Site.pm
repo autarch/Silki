@@ -44,7 +44,7 @@ sub system_log : Path('/logs') : Args(0) {
         offset => $offset,
     );
 
-    $c->stash()->{template} = '/site/admin/logs';
+    $c->stash()->{template} = '/log/logs';
 }
 
 __PACKAGE__->meta()->make_immutable();

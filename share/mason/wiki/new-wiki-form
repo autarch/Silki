@@ -40,3 +40,7 @@ my $accounts = Silki::Schema::Account->All();
 <%method title>
 <% loc('Create a New Wiki') %>
 </%method>
+
+<%flags>
+inherit => '/autohandler'
+</%flags>

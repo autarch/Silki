@@ -497,7 +497,7 @@ sub new_wiki_form : Path('/new_wiki_form') : Args(0) {
 
     $self->_require_site_admin($c);
 
-    $c->stash()->{template} = '/site/admin/new-wiki-form';
+    $c->stash()->{template} = '/wiki/new-wiki-form';
 }
 
 sub wiki_collection : Path('/wikis') : Args(0) : ActionClass('+Silki::Action::REST') {
@@ -516,7 +516,7 @@ sub wiki_collection_GET_html {
         offset => $offset,
     );
 
-    $c->stash()->{template} = '/site/admin/wikis';
+    $c->stash()->{template} = '/wiki/wikis';
 }
 
 sub wiki_collection_POST {

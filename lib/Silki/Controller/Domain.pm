@@ -21,7 +21,7 @@ sub new_domain_form : Path('/new_domain_form') : Args(0) {
 
     $self->_require_site_admin($c);
 
-    $c->stash()->{template} = '/site/admin/new-domain-form';
+    $c->stash()->{template} = '/domain/new-domain-form';
 }
 
 sub domain_collection : Path('/domains') : Args(0) : ActionClass('+Silki::Action::REST') {
@@ -40,7 +40,7 @@ sub domain_collection_GET_html {
         offset => $offset,
     );
 
-    $c->stash()->{template} = '/site/admin/domains';
+    $c->stash()->{template} = '/domain/domains';
 }
 
 sub domain_collection_POST {

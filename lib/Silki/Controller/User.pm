@@ -221,7 +221,7 @@ sub users_collection_GET_html {
         offset => $offset,
     );
 
-    $c->stash()->{template} = '/site/admin/users';
+    $c->stash()->{template} = '/user/users';
 }
 
 sub users_collection_POST {

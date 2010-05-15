@@ -44,3 +44,7 @@ All Wikis
 <%attr>
 sidebar => [ 'admin' ]
 </%attr>
+
+<%flags>
+inherit => '/autohandler'
+</%flags>
