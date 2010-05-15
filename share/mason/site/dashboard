@@ -21,7 +21,7 @@
   <% loc( 'You are not logged in, and can only see public wikis.
            Please <a href="%html(%1)">login</a> to see wikis
            of which you are a member.',
-           $c->domain()->uri( view => '/user/login_form' ) ) | n %>
+           $c->domain()->application_uri( path => '/user/login_form' ) ) | n %>
 </p>
 %   } else {
 <p>
