@@ -15,6 +15,58 @@ with qw(
     Silki::Role::Controller::Pager
 );
 
+sub _set_domain : Chained('/') : PathPart('domain') : CaptureArgs(1) {
+    my $self      = shift;
+    my $c         = shift;
+    my $domain_id = shift;
+
+    my $domain = Silki::Schema::Domain->new( domain_id => $domain_id );
+
+    $c->redirect_and_detach( $c->domain()->uri( with_host => 1 ) )
+        unless $domain;
+
+    $c->stash()->{domain} = $domain;
+}
+
+sub edit_form : Chained('_set_domain') : PathPart('edit_form') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_site_admin($c);
+
+    $c->stash()->{template} = '/domain/edit-form';
+}
+
+sub domain : Chained('_set_domain') : PathPart('') : Args(0) : ActionClass('+Silki::Action::REST') {
+}
+
+sub domain_PUT {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_site_admin($c);
+
+    my %form_data = $c->request()->domain_params();
+
+    my $domain = $c->stash()->{domain};
+
+    eval { $domain->update(%form_data) };
+
+    if ( my $e = $@ ) {
+        $c->redirect_with_error(
+            error     => $e,
+            uri       => $domain->entity_uri( view => 'edit_form' ),
+            form_data => \%form_data,
+        );
+    }
+
+    $c->session_object()
+        ->add_message(
+        loc( 'The %1 domain has been updated.', $domain->web_hostname() ) );
+
+    $c->redirect_and_detach( $c->domain()->application_uri( path => '/domains' ) );
+}
+
 sub new_domain_form : Path('/new_domain_form') : Args(0) {
     my $self = shift;
     my $c    = shift;
@@ -63,6 +115,8 @@ sub domain_collection_POST {
 
     $c->redirect_and_detach( $domain->uri() );
 }
+
+
 
 __PACKAGE__->meta()->make_immutable();
 

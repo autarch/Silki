@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Silki::Config;
+use Silki::I18N qw( loc );
 use Silki::Schema;
 use Silki::Types qw( Bool HashRef Int Str );
 use URI;
@@ -101,7 +102,16 @@ sub _email_hostname_is_unique {
 }
 
 sub _base_uri_path {
-    return q{};
+    return q{/};
+}
+
+sub entity_uri {
+    my $self = shift;
+    my %p    = @_;
+
+    $p{view} = 'domain/' . $self->domain_id() . ( $p{view} ? q{/} . $p{view} : q{} );
+
+    return $self->uri(%p);
 }
 
 sub EnsureRequiredDomainsExist {

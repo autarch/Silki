@@ -28,7 +28,7 @@ sub uri {
 
     my $path = $self->_base_uri_path();
     unless ( string_is_empty( $p{view} ) ) {
-        $path .= q{/} if length $path;
+        $path .= q{/} unless $path =~ m{/$};
         $path .= $p{view};
     }
 

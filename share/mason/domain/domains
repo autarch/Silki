@@ -18,7 +18,7 @@
       <td><% $domain->requires_ssl() ? loc('Yes') : loc('No') %></td>
       <td><% $domain->wiki_count() %></td>
       <td><% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $domain->creation_datetime() ) ) %></td>
-      <td></td>
+      <td><a href="<% $domain->entity_uri( view => 'edit_form' ) %>"><% loc('edit') %></a></td>
     </tr>
   </tbody>
 % }
