@@ -47,6 +47,13 @@ sub system_log : Path('/logs') : Args(0) {
     $c->stash()->{template} = '/log/logs';
 }
 
+sub help : Path('/help') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $c->stash()->{template} = '/site/help.en';
+}
+
 __PACKAGE__->meta()->make_immutable();
 
 1;

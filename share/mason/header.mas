@@ -1,5 +1,6 @@
   <div id="hd">
     <ul id="global-nav">
+      <li><a href="<% $c->domain()->application_uri( path => '/' ) %>"><% loc('Home') %></a></li>
 % if ( $c->user()->is_authenticated() ) {
       <li><a href="<% $c->domain()->application_uri( path => '/user/authentication', query => { 'x-tunneled-method' => 'DELETE', return_to => $c->request()->uri() } ) %>"><% loc('Log out') %></a></li>
       <li><a href="<% $c->user()->uri( view => 'preferences_form' ) %>"><% loc('Preferences') %></a></li>
@@ -9,7 +10,7 @@
       <li><a href="<% $c->domain()->application_uri( path => '/user/new_user_form' ) %>"><% loc('Register') %></a></li>
 %   }
 % }
-      <li><a href="<% $c->domain()->application_uri( path => '/' ) %>"><% loc('Home') %></a></li>
+      <li><a href="<% $c->domain()->application_uri( path => '/help' ) %>"><% loc('Help') %></a></li>
     </ul>
 
 <!--
