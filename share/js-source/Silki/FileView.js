@@ -8,7 +8,7 @@ if ( typeof Silki.FileView == "undefined" ) {
     Silki.FileView = {};
 }
 
-Silki.FileView.instrumentIframe = function () {
+Silki.FileView = function () {
     var iframe = $("file-view-iframe");
 
     if ( ! iframe ) {
