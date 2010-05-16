@@ -9,6 +9,7 @@ use File::MimeInfo qw( describe );
 use File::stat;
 use Image::Magick;
 use Image::Thumbnail;
+use List::AllUtils qw( any );
 use Silki::Config;
 use Silki::Schema;
 use Silki::Types qw( Str Bool File Maybe );
@@ -121,11 +122,28 @@ sub mime_type_description_for_lang {
     }
 }
 
-sub _build_is_displayable_in_browser {
-    my $self = shift;
+{
+    my @displayable = (
+        qr{^text/},
+        qr{^application/ecmascript$},
+        qr{^application/javascript$},
+        qr{^application/x-httpd-php.*},
+        qr{^application/x-perl$},
+        qr{^application/x-ruby$},
+        qr{^application/x-shellscript$},
+        qr{^application/sgml},
+        qr{^application/xml},
+        qr{^application/.+\+xml$}
+    );
 
-    return $self->is_browser_displayable_image()
-        || $self->mime_type() =~ m{^text/};
+    sub _build_is_displayable_in_browser {
+        my $self = shift;
+
+        my $type = $self->mime_type();
+
+        return $self->is_browser_displayable_image()
+            || any { $type =~ $_ } @displayable;
+    }
 }
 
 sub _build_file_on_disk {

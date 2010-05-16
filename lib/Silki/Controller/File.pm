@@ -107,6 +107,10 @@ sub _download {
     my $content_type = shift || $file->mime_type();
 
     $c->response()->status(200);
+
+    $content_type = 'text/plain'
+        if $disposition eq 'inline' && $content_type =~ /^application/;
+
     $c->response()->content_type($content_type);
 
     my $name = $file->file_name();
