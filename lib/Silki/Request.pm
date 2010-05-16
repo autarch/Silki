@@ -2,6 +2,7 @@ package Silki::Request;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Moose::Role;
 use Silki::Util qw( string_is_empty );
@@ -78,8 +79,6 @@ sub _params_for_classes {
 
     return %found;
 }
-
-no Moose::Role;
 
 1;
 

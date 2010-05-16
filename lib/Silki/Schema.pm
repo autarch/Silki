@@ -2,6 +2,7 @@ package Silki::Schema;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Carp;
 use DBI;
@@ -61,9 +62,6 @@ sub LoadAllClasses {
         die $@ if $@ && $@ !~ /\Qcan't locate $path/i;
     }
 }
-
-no Fey::ORM::Schema;
-no Moose;
 
 __PACKAGE__->meta()->make_immutable();
 

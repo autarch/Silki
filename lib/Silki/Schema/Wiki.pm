@@ -2,6 +2,7 @@ package Silki::Schema::Wiki;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Data::Dumper qw( Dumper );
 use DateTime::Format::Pg;
@@ -1431,9 +1432,6 @@ sub _BuildMaxRevisionSelect {
 
     return $max_revision;
 }
-
-no Fey::ORM::Table;
-no Moose;
 
 __PACKAGE__->meta()->make_immutable();
 

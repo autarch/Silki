@@ -82,8 +82,6 @@ sub _build_lessc_path {
     die "Cannot find lessc in your path or at $default";
 }
 
-no Moose;
-
 __PACKAGE__->meta()->make_immutable();
 
 1;

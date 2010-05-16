@@ -2,6 +2,7 @@ package Silki::Web::Form;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use HTML::DOM;
 
@@ -228,8 +229,6 @@ sub _form_html_from_dom {
         $clone->SUPER::as_HTML(@_);
     }
 }
-
-no Moose;
 
 __PACKAGE__->meta()->make_immutable();
 

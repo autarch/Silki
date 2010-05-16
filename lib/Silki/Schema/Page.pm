@@ -2,6 +2,7 @@ package Silki::Schema::Page;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Encode qw( decode );
 use Fey::Object::Iterator::FromSelect;
@@ -566,9 +567,6 @@ sub delete_tag {
 
     return;
 }
-
-no Fey::ORM::Table;
-no MooseX::ClassAttribute;
 
 __PACKAGE__->meta()->make_immutable();
 

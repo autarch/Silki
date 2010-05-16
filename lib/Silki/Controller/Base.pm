@@ -2,6 +2,7 @@ package Silki::Controller::Base;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use autodie;
 use Carp qw( croak );
@@ -185,8 +186,6 @@ sub _require_site_admin {
 
     $c->redirect_and_detach( $c->domain()->application_uri( path => '/' ) );
 }
-
-no Moose;
 
 __PACKAGE__->meta()->make_immutable();
 

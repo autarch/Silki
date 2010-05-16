@@ -2,6 +2,7 @@ package Silki::Schema::Domain;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Silki::Config;
 use Silki::I18N qw( loc );
@@ -208,10 +209,6 @@ sub _BuildAllDomainSelect {
 
     return $select;
 }
-
-no Fey::ORM::Table;
-no Moose;
-no MooseX::ClassAttribute;
 
 __PACKAGE__->meta()->make_immutable();
 

@@ -2,6 +2,7 @@ package Silki::Web::Javascript;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use JavaScript::Minifier::XS qw( minify );
 use JSAN::ServerSide 0.04;
@@ -60,8 +61,6 @@ sub _build_target_file {
         return minify($code);
     }
 }
-
-no Moose;
 
 __PACKAGE__->meta()->make_immutable();
 

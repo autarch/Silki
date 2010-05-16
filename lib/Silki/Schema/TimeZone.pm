@@ -2,6 +2,7 @@ package Silki::Schema::TimeZone;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Fey::Object::Iterator::FromSelect;
 use Silki::Schema;
@@ -58,8 +59,6 @@ sub CreateDefaultZones {
         }
     }
 }
-
-no Fey::ORM::Table;
 
 __PACKAGE__->meta()->make_immutable();
 

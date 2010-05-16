@@ -2,6 +2,7 @@ package Silki::Controller::Root;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Moose;
 
@@ -16,8 +17,6 @@ sub robots_txt : Path('/robots.txt') : Args(0) {
     $c->response()->content_type('text/plain');
     $c->response()->body("User-agent: *\nDisallow: /\n");
 }
-
-no Moose;
 
 __PACKAGE__->meta()->make_immutable();
 

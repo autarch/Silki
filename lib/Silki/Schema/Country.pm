@@ -2,6 +2,7 @@ package Silki::Schema::Country;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Silki::Schema;
 
@@ -41,8 +42,6 @@ sub CreateDefaultCountries {
         );
     }
 }
-
-no Fey::ORM::Table;
 
 __PACKAGE__->meta()->make_immutable();
 

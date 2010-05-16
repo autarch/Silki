@@ -2,6 +2,7 @@ package Silki::Controller::User;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Silki::I18N qw( loc );
 use Silki::Schema::TimeZone;
@@ -270,8 +271,6 @@ sub users_collection_POST {
     );
 
 }
-
-no Moose;
 
 __PACKAGE__->meta()->make_immutable();
 

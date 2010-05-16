@@ -2,6 +2,7 @@ package Silki::Role::Schema::DataValidator;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Lingua::EN::Inflect qw( A );
 use Silki::Exceptions qw( data_validation_error );
@@ -149,7 +150,5 @@ role {
         };
     }
 };
-
-no MooseX::Role::Parameterized;
 
 1;

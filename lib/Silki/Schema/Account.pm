@@ -2,6 +2,7 @@ package Silki::Schema::Account;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Silki::Schema;
 use Silki::Schema::AccountAdmin;
@@ -96,8 +97,6 @@ sub _BuildAllAccountSelect {
 
     return $select;
 }
-
-no Fey::ORM::Table;
 
 __PACKAGE__->meta()->make_immutable();
 

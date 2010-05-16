@@ -2,6 +2,7 @@ package Silki::Controller::Page;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use List::AllUtils qw( all );
 use Silki::I18N qw( loc );
@@ -365,8 +366,6 @@ sub delete_confirmation : Chained('_set_page') : PathPart('delete_confirmation')
 
     $c->stash()->{template} = '/page/delete-confirmation';
 }
-
-no Moose;
 
 __PACKAGE__->meta()->make_immutable();
 

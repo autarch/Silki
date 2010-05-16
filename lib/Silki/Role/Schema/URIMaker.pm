@@ -2,6 +2,7 @@ package Silki::Role::Schema::URIMaker;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use MooseX::Params::Validate qw( validate );
 use Silki::Types qw( Bool HashRef Str );
@@ -67,7 +68,5 @@ sub _host_params_for_uri {
         )
     );
 }
-
-no Moose::Role;
 
 1;

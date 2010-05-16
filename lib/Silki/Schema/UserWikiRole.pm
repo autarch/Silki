@@ -2,6 +2,7 @@ package Silki::Schema::UserWikiRole;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Silki::Schema;
 
@@ -12,8 +13,6 @@ has_policy 'Silki::Schema::Policy';
 my $Schema = Silki::Schema->Schema();
 
 has_table( $Schema->table('UserWikiRole') );
-
-no Fey::ORM::Table;
 
 __PACKAGE__->meta()->make_immutable();
 

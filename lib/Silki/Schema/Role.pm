@@ -2,6 +2,7 @@ package Silki::Schema::Role;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Silki::Schema;
 
@@ -37,9 +38,6 @@ sub _CreateOrFindRole {
 
     return $role;
 }
-
-no Fey::ORM::Table;
-no MooseX::ClassAttribute;
 
 __PACKAGE__->meta()->make_immutable();
 

@@ -2,6 +2,7 @@ package Silki::Schema::PageRevision;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Algorithm::Diff qw( sdiff );
 use List::AllUtils qw( all any );
@@ -285,8 +286,6 @@ sub content_as_html {
 
     return $buffer;
 }
-
-no Fey::ORM::Table;
 
 __PACKAGE__->meta()->make_immutable();
 

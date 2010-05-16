@@ -2,6 +2,7 @@ package Silki::Schema::Locale;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use DateTime::Locale;
 use Silki::Schema;
@@ -30,8 +31,6 @@ sub CreateDefaultLocales {
         $class->insert( locale_code => $code );
     }
 }
-
-no Fey::ORM::Table;
 
 __PACKAGE__->meta()->make_immutable();
 

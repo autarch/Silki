@@ -2,6 +2,7 @@ package Silki::Controller::File;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Silki::I18N qw( loc );
 use Silki::Schema::File;
@@ -166,8 +167,6 @@ sub delete_confirmation : Chained('_set_file') : PathPart('delete_confirmation')
 
     $c->stash()->{template} = '/file/delete-confirmation';
 }
-
-no Moose;
 
 __PACKAGE__->meta()->make_immutable();
 

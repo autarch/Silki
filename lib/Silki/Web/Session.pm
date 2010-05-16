@@ -2,6 +2,7 @@ package Silki::Web::Session;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Silki::Types qw( ArrayRef HashRef NonEmptyStr ErrorForSession );
 
@@ -67,8 +68,6 @@ sub _error_text {
         return $e . q{};
     }
 }
-
-no Moose;
 
 __PACKAGE__->meta()->make_immutable();
 

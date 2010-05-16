@@ -2,6 +2,7 @@ package Silki::Schema::File;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use autodie;
 use Digest::SHA qw( sha256_hex );
@@ -222,8 +223,6 @@ sub _build_file_name_with_hash {
         sha256_hex( $self->file_id(), Silki::Config->new()->secret() ),
         $self->file_name();
 }
-
-no Fey::ORM::Table;
 
 __PACKAGE__->meta()->make_immutable();
 

@@ -2,6 +2,7 @@ package Silki::Schema::WantedPage;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Silki::Schema::Page;
 use Silki::Schema::Wiki;
@@ -54,8 +55,6 @@ around uri => sub {
 
     return $self->$orig(%p);
 };
-
-no Moose;
 
 __PACKAGE__->meta()->make_immutable();
 

@@ -2,6 +2,7 @@ package Silki::Role::Controller::User;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Silki::I18N qw( loc );
 
@@ -244,8 +245,6 @@ sub preferences_form : Chained('_set_user') : PathPart('preferences_form') : Arg
 
     $c->stash()->{template} = '/user/preferences-form';
 }
-
-no Moose::Role;
 
 1;
 

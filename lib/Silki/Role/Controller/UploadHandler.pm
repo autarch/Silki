@@ -2,6 +2,7 @@ package Silki::Role::Controller::UploadHandler;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use File::MimeInfo qw( mimetype );
 use Silki::I18N qw( loc );
@@ -111,7 +112,5 @@ sub handler {
     }
 }
 }
-
-no Moose::Role;
 
 1;

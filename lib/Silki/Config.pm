@@ -2,6 +2,7 @@ package Silki::Config;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Config::INI::Reader;
 use File::HomeDir;
@@ -631,7 +632,5 @@ sub _build_secret {
 }
 
 __PACKAGE__->meta()->make_immutable();
-
-no Moose;
 
 1;

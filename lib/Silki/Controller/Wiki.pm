@@ -2,6 +2,7 @@ package Silki::Controller::Wiki;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use DateTime::Format::W3CDTF 0.05;
 use Email::Address;
@@ -558,8 +559,6 @@ sub wiki_collection_POST {
 
     $c->redirect_and_detach( $wiki->uri() );
 }
-
-no Moose;
 
 __PACKAGE__->meta()->make_immutable();
 

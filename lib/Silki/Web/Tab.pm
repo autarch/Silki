@@ -2,6 +2,7 @@ package Silki::Web::Tab;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Moose;
 use MooseX::SemiAffordanceAccessor;
@@ -39,6 +40,5 @@ has is_selected => (
 );
 
 __PACKAGE__->meta()->make_immutable();
-no Moose;
 
 1;
