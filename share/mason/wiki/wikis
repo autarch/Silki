@@ -5,7 +5,7 @@
       <th><% loc('Privacy') %></th>
       <th><% loc('Domain') %></th>
       <th><% loc('Page count') %></th>
-      <th><% loc('User count') %></th>
+      <th><% loc('Member count') %></th>
       <th><% loc('Created By') %></th>
       <th><% loc('Created On') %></th>
     </tr>
@@ -18,7 +18,7 @@
       <td><% loc( $wiki->permissions_name() ) %></td>
       <td><a href="<% $wiki->domain()->uri() %>"><% $wiki->domain()->web_hostname() %></a></td>
       <td><% $wiki->page_count() %></td>
-      <td>X</td>
+      <td><% $wiki->member_count() %></td>
       <td><a href="<% $wiki->creator()->uri() %>"><% $wiki->creator()->best_name() %></td>
       <td><% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $wiki->creation_datetime() ) ) %></td>
     </tr>

@@ -209,6 +209,11 @@ query wanted_page_count => (
     bind_params => sub { $_[0]->wiki_id() },
 );
 
+query member_count => (
+    select      => __PACKAGE__->_MemberCountSelect(),
+    bind_params => sub { $_[0]->wiki_id() },
+);
+
 query file_count => (
     select      => __PACKAGE__->_FileCountSelect(),
     bind_params => sub { $_[0]->wiki_id() },
@@ -835,6 +840,23 @@ sub _BuildRecentlyViewedPagesSelect {
         );
 
     return $viewed_select;
+}
+
+sub _MemberCountSelect {
+    my $class = shift;
+
+    my $uwr_t = $Schema->table('UserWikiRole');
+
+    my $count
+        = Fey::Literal::Function->new( 'COUNT', $uwr_t->column('user_id') );
+
+    my $file_count_select = Silki::Schema->SQLFactoryClass()->new_select();
+    $file_count_select
+        ->select($count)
+        ->from($uwr_t)
+        ->where( $uwr_t->column('wiki_id'), '=', Fey::Placeholder->new() );
+
+    return $file_count_select;
 }
 
 sub _FileCountSelect {
