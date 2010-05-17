@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
+use Silki::Help::Dir;
 use Silki::Schema::User;
 use Silki::Schema::Wiki;
 
@@ -51,7 +52,9 @@ sub help : Path('/help') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
-    $c->stash()->{template} = '/site/help.en';
+    $c->stash()->{help} = Silki::Help::Dir->new( locale_code => 'en' );
+
+    $c->stash()->{template} = '/site/help';
 }
 
 __PACKAGE__->meta()->make_immutable();

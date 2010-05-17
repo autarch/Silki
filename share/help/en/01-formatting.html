@@ -1,0 +1,254 @@
+<h2>Text Formatting</h2>
+
+<p>
+Silki uses an extended dialect of
+the <a href="http://daringfireball.net/projects/markdown/">Markdown</a> text
+formatting language. Markdown is designed to be a natural language for adding
+formatting to plain text.
+</p>
+
+<h3>Paragraphs</h3>
+
+<p>
+A paragraph is one or more lines of text. Paragraphs are separated by a blank
+line.
+</p>
+
+<pre class="markup-docs">
+This is a paragraph. It has several sentences. It
+also has a line break.
+
+This is a separate paragraph consisting of a single
+sentence on two lines.
+</pre>
+
+<h3>Headers</h3>
+
+<p class="advice">
+We recommend that you don't use first-level headers in pages. The page title
+itself should serve as the first-level header. Inside the page, start with
+second-level headers and work from there.
+</p>
+
+<p>
+Headers come in two variants. underlined and prefixed. The underlined variant
+puts the header text on one line and the header markers on the next:
+</p>
+
+<pre class="markup-docs fixed">
+Second-level Header
+-------------------
+</pre>
+
+<p>
+You can also create headers by prefixing the text with hash marks (#):
+</p>
+
+<pre class="markup-docs">
+## Second-level Header
+
+### Third-level Header
+</pre>
+
+<h3>Wiki Links</h3>
+
+<p>
+Linking a page in the same wiki is simple, just wrap the page title in double
+square brackets:
+</p>
+
+<pre class="markup-docs">
+[[Page Title]]
+</pre>
+
+<p>
+If you want to link to a page in another wiki on the same server, you need to
+include the wiki name with the page name, separated by a slash (/):
+</p>
+
+<pre class="markup-docs">
+[[Other Wiki/Page Title]]
+</pre>
+
+<h3>External Links</h3>
+
+<p>
+When linking to an external site, you can set the link text (the text people
+see in the page), and the URL:
+</p>
+
+<pre class="markup-docs">
+(a great directory of veg-friendly restaurants)[http://www.vegguide.org]
+</pre>
+
+<p>This will be formatted as:</p>
+
+<p class="markup-docs">
+<a href="http://www.vegguide.org/">a great directory of veg-friendly restaurants</a>
+</p>
+
+<p>
+If you just want to put a URL in the text, wrap it in angle brackets:
+</p>
+
+<pre class="markup-docs">
+<http://www.vegguide.org>
+</pre>
+
+<h3>Linking to Files</h3>
+
+TODO
+
+<h3>Linking to Images</h3>
+
+TODO
+
+<h3>Bold and Italics</h3>
+
+<p>
+To make some text bold, wrap it with two asterisks (**):
+</p>
+
+<pre class="markup-docs">
+A **bold chunk** in the middle.
+</pre>
+
+<p>
+To make text italic, wrap it with one asterisk (*):
+</p>
+
+<pre class="markup-docs">
+An *italic chunk* in the middle.
+</pre>
+
+<h3>Lists</h3>
+
+<p>
+You can create bullet lists and numbered lists by prefixing each line with
+either a bullet (*) or a number (1., 2.).
+</p>
+
+<pre class="markup-docs">
+* Bullet 1
+* Bullet 2
+
+1. Number 1
+2. Number 2
+</pre>
+
+<p>
+You can also nest lists using indentation:
+</p>
+
+<pre class="markup-docs">
+* 1-A
+* 1-B
+    * 2-B
+    * 3-B
+* 1-C
+    * 2-C
+        * three
+* 1-D
+</pre>
+
+<p>
+This becomes:
+</p>
+
+<div class="markup-docs">
+<ul>
+  <li>1-A</li>
+  <li>1-B
+    <ul>
+      <li>2-B</li>
+      <li>2-C</li>
+    </ul>
+  </li>
+  <li>1-C
+    <ul>
+      <li>2-C
+        <ul>
+          <li>three</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>1-D</li>
+</ul>
+</div>
+
+<h3>Tables</h3>
+
+<p>
+While Markdown does not support
+
+<h3>Blockquotes</h3>
+
+<p>
+Use a blockquote for extended quotes of material from somewhere else. A
+blockquote is created by prefixing each line with an greater-than (>):
+<p>
+
+<pre class="markup-docs">
+> This is our hope. This is the faith that I go back to the South with. With
+> this faith we will be able to hew out of the mountain of despair a stone of
+> hope. With this faith we will be able to transform the jangling discords of
+> our nation into a beautiful symphony of brotherhood. With this faith we will
+> be able to work together, to pray together, to struggle together, to go to
+> jail together, to stand up for freedom together, knowing that we will be free
+> one day.
+>
+> -- Martin Luther King, Jr.
+</pre>
+
+<h3>Horizontal Rule</h3>
+
+<p>
+You can insert a horizontal rule into a page by inserting four or more dashes
+(-) surrounded by blank lines
+</p>
+
+<pre class="markup-docs">
+Content ...
+
+----
+
+More content ...
+</pre>
+
+<h3>Monospace</h3>
+
+<p>
+If you want to insert code (monospaced text) inside some text, you can
+surround it by backticks (`). If you want a standalone pre-formatted monospace
+block, simply indent each line by four spaces:
+</p>
+
+<pre class="markup-docs">
+To set the variable `$foo`, write `$foo = $value`.
+
+    while ( $x > 1 ) {
+        ....
+    }
+</pre>
+
+<p>This will be formatted as:</p>
+
+<div class="markup-docs">
+<p>
+To set the variable <code>$foo</code>, write <code>$foo = $value</code>.
+
+<pre><code>while ( $x > 1 ) {
+    ....
+}</code></pre>
+</pre>
+</div>
+
+<h3>More Info</h3>
+
+<p>
+We have purposely only documented a part of the full Markdown specification
+here, in order to keep things simple. However, we do support
+the <a href="http://daringfireball.net/projects/markdown/">full Markdown
+language</a>.
+</p>

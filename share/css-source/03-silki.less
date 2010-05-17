@@ -34,6 +34,7 @@
     padding: 0.2em 0.4em;
 }
 
+@light-yellow: #ffffd9;
 @light-blue: #a3d3e3;
 @dark-blue: #13708f;
 @dark-purple: #21379d;
@@ -202,7 +203,7 @@ a {
 }
 
 #messages {
-    background-color: #FFFFD9;
+    background-color: @light-yellow;
     font-size: 90%;
 }
 
@@ -690,4 +691,25 @@ textarea#page-content {
 
 #file-view-iframe {
     border: 1px solid #bbb;
+}
+
+/* Help */
+
+.advice {
+    background-color: @light-yellow;
+    font-style: italic;
+    margin-left: 1em;
+    padding: 0.5em;
+}
+
+.markup-docs {
+    background-color: #eee;
+    font-family: sans-serif;
+    line-height: 1.21;
+    margin-left: 1em;
+    padding: 0.5em;
+}
+
+.fixed {
+    font-family: monospace;
 }
