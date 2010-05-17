@@ -92,7 +92,7 @@ If you just want to put a URL in the text, wrap it in angle brackets:
 </p>
 
 <pre class="markup-docs">
-<http://www.vegguide.org>
+&lt;http://www.vegguide.org&gt;
 </pre>
 
 <h3>Linking to Files</h3>
@@ -180,14 +180,15 @@ This becomes:
 <h3>Tables</h3>
 
 <p>
-While Markdown does not support
+Silki extends Markdown to add table support.
+</p>
 
 <h3>Blockquotes</h3>
 
 <p>
 Use a blockquote for extended quotes of material from somewhere else. A
 blockquote is created by prefixing each line with an greater-than (>):
-<p>
+</p>
 
 <pre class="markup-docs">
 > This is our hope. This is the faith that I go back to the South with. With
@@ -237,11 +238,12 @@ To set the variable `$foo`, write `$foo = $value`.
 <div class="markup-docs">
 <p>
 To set the variable <code>$foo</code>, write <code>$foo = $value</code>.
+</p>
 
 <pre><code>while ( $x > 1 ) {
     ....
 }</code></pre>
-</pre>
+
 </div>
 
 <h3>More Info</h3>
