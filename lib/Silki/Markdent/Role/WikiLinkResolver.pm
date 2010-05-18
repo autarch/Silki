@@ -17,53 +17,7 @@ has _wiki => (
     init_arg => 'wiki',
 );
 
-sub _resolve_link {
-    my $self         = shift;
-    my $link         = shift;
-    my $display_text = shift;
-
-    if ( $link =~ m{^(?:[^/]+/)?file:.+} ) {
-        return $self->_parse_file_link( $link, $display_text );
-    }
-    else {
-        return $self->_parse_page_link( $link, $display_text );
-    }
-}
-
-sub _parse_file_link {
-    my $self         = shift;
-    my $file_id      = shift;
-    my $display_text = shift;
-
-    my $wiki = $self->_wiki();
-
-    if ( $file_id =~ m{^([^/]+)/file:([^/]+)$} ) {
-        $wiki = Silki::Schema::Wiki->new( short_name => $1 )
-            or return;
-
-        $file_id = $2;
-    }
-    else {
-        $file_id =~ s/^file://;
-    }
-
-    my $file = Silki::Schema::File->new( file_id => $file_id );
-
-    unless ( defined $display_text ) {
-        $display_text = $self->_link_text_for_file(
-            $wiki,
-            $file,
-            $file_id,
-        );
-    }
-
-    return {
-        file => $file,
-        text => $display_text,
-    };
-}
-
-sub _parse_page_link {
+sub _resolve_page_link {
     my $self         = shift;
     my $link         = shift;
     my $display_text = shift;
@@ -108,6 +62,51 @@ sub _link_text_for_page {
     return $text;
 }
 
+sub _page_for_title {
+    my $self  = shift;
+    my $title = shift;
+    my $wiki  = shift;
+
+    return Silki::Schema::Page->new(
+        title   => $title,
+        wiki_id => $wiki->wiki_id(),
+    ) || undef;
+}
+
+sub _resolve_file_link {
+    my $self         = shift;
+    my $file_id      = shift;
+    my $display_text = shift;
+
+    my $wiki = $self->_wiki();
+
+    if ( $file_id =~ m{^([^/]+)/file:([^/]+)$} ) {
+        $wiki = Silki::Schema::Wiki->new( short_name => $1 )
+            or return;
+
+        $file_id = $2;
+    }
+    else {
+        $file_id =~ s/^file://;
+    }
+
+    my $file = Silki::Schema::File->new( file_id => $file_id );
+
+    unless ( defined $display_text ) {
+        $display_text = $self->_link_text_for_file(
+            $wiki,
+            $file,
+            $file_id,
+        );
+    }
+
+    return {
+        file => $file,
+        text => $display_text,
+        wiki => $wiki,
+    };
+}
+
 sub _link_text_for_file {
     my $self = shift;
     my $wiki = shift;
@@ -121,17 +120,6 @@ sub _link_text_for_file {
         unless $wiki->wiki_id() == $self->_wiki()->wiki_id();
 
     return $text;
-}
-
-sub _page_for_title {
-    my $self  = shift;
-    my $title = shift;
-    my $wiki  = shift;
-
-    return Silki::Schema::Page->new(
-        title   => $title,
-        wiki_id => $wiki->wiki_id(),
-    ) || undef;
 }
 
 # These classes may in turn load other classes which use this role, so they

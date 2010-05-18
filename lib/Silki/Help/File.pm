@@ -6,6 +6,7 @@ use namespace::autoclean;
 
 use File::Slurp qw( read_file );
 use HTML::Entities qw( encode_entities );
+use HTML::Mason::Interp;
 use Silki::Types qw( ArrayRef File HashRef Str );
 
 use Moose;
@@ -25,10 +26,19 @@ has content => (
     builder  => '_build_content',
 );
 
+my $Body;
+my $Interp = HTML::Mason::Interp->new(
+    out_method => \$Body,
+    %{ Silki::Config->new()->mason_config_for_email() },
+);
+
 sub _build_content {
     my $self = shift;
 
-    return read_file( $self->file()->stringify() );
+    $Body = q{};
+    $Interp->exec( $self->file()->stringify() );
+
+    return $Body;
 }
 
 __PACKAGE__->meta()->make_immutable();

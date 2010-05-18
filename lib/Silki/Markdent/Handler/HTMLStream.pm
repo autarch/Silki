@@ -16,13 +16,9 @@ use Moose;
 use MooseX::SemiAffordanceAccessor;
 use MooseX::StrictConstructor;
 
-extends 'Markdent::Handler::HTMLStream';
+extends 'Markdent::Handler::HTMLStream::Fragment';
 
 with 'Silki::Markdent::Role::WikiLinkResolver';
-
-has '+title' => (
-    required => 0,
-);
 
 has for_editor => (
     is      => 'ro',
@@ -37,69 +33,21 @@ has _user => (
     init_arg => 'user',
 );
 
-# We don't want to generate a complete HTML document
-sub start_document { }
-sub end_document   { }
-
 sub wiki_link {
     my $self = shift;
     my ( $link, $display_text ) = validated_list(
         \@_,
         link_text    => { isa => Str },
         display_text => { isa => Str, optional => 1 },
-
     );
 
-    my $link_data = $self->_resolve_link( $link, $display_text );
+    my $link_data = $self->_resolve_page_link( $link, $display_text );
 
     return unless $link_data;
 
-    return exists $link_data->{file}
-        ? $self->_link_to_file($link_data)
-        : $self->_link_to_page($link_data);
-}
+    $self->_link_to_page($link_data);
 
-sub _link_to_file {
-    my $self = shift;
-    my $p    = shift;
-
-    my $file = $p->{file};
-
-    unless ( defined $file ) {
-        $self->_stream()->text( $p->{text} );
-        return;
-    }
-
-    unless (
-        $self->_user()->has_permission_in_wiki(
-            wiki       => $file->wiki(),
-            permission => Silki::Schema::Permission->Read(),
-        )
-        ) {
-
-        $self->_stream()->text( loc('Inaccessible file') );
-        return;
-    }
-
-    my $file_uri = $file->uri();
-
-    my $dl = loc("Download this file");
-
-    $self->_stream()->tag( a => ( href => $file_uri, title => $dl ) );
-
-    if ( $file->is_browser_displayable_image() ) {
-        $self->_stream->tag(
-            img => (
-                src   => $file->uri( view => 'small' ),
-                alt   => 'Image - ' . $file->file_name(),
-            )
-        );
-
-        $self->_stream()->tag( 'br' );
-    }
-
-    $self->_stream()->text( $p->{text} );
-    $self->_stream()->tag( '_a' );
+    return;
 }
 
 sub _link_to_page {
@@ -121,14 +69,67 @@ sub _link_to_page {
     my $uri
         = $page
         ? $page->uri()
-        : $p->{wiki}->uri( view => 'new_page_form', query => { title => $p->{title} } );
+        : $p->{wiki}
+        ->uri( view => 'new_page_form', query => { title => $p->{title} } );
 
     my $class = $page ? 'existing-page' : 'new-page';
 
     $self->_stream()->tag( a => ( href => $uri, class => $class ) );
     $self->_stream()->text( $p->{text} );
-    $self->_stream()->tag( '_a' );
+    $self->_stream()->tag('_a');
 
+}
+
+sub file_link {
+    my $self = shift;
+    my ( $link, $display_text ) = validated_list(
+        \@_,
+        link_text    => { isa => Str },
+        display_text => { isa => Str, optional => 1 },
+    );
+
+    my $link_data = $self->_resolve_file_link( $link, $display_text );
+
+    return unless $link_data;
+
+    $self->_link_to_file($link_data);
+
+    return;
+}
+
+sub _link_to_file {
+    my $self         = shift;
+    my $p            = shift;
+    my $display_text = shift;
+
+    my $file = $p->{file};
+
+    unless ( defined $file ) {
+        $self->_stream()->text( $p->{text} );
+        return;
+    }
+
+    unless (
+        $self->_user()->has_permission_in_wiki(
+            wiki       => $file->wiki(),
+            permission => Silki::Schema::Permission->Read(),
+        )
+        ) {
+
+        $self->_stream()->text( loc('Inaccessible file') );
+        return;
+    }
+
+    my $file_uri = $file->uri();
+
+    my $title
+        = $file->is_displayable_in_browser()
+        ? loc('View this file')
+        : loc('Download this file');
+
+    $self->_stream()->tag( a => ( href => $file_uri, title => $title ) );
+    $self->_stream()->text( $p->{text} );
+    $self->_stream()->tag('_a');
 }
 
 1;

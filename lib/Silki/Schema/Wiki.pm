@@ -225,13 +225,13 @@ Welcome to your new wiki.
 
 A wiki is a set of web pages that can be read and edited by a group of people. You use simple syntax to add things like *italics* and **bold** to the text. Wikis are designed to make linking to other pages easy.
 
-For more information about wikis in general and Silki in particular, see the [[Help]] page.
+For more information about wikis in general and Silki in particular, see the ((Help)) page.
 EOF
 
 my $Help = <<'EOF';
 This needs some content.
 
-Link to a [[Wanted Page]].
+Link to a ((Wanted Page)).
 EOF
 
 around insert => sub {

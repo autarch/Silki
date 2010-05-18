@@ -90,7 +90,7 @@ open my $fh, '>', \$buffer;
     $buffer = q{};
     seek $fh, 0, 0;
 
-    $stream->wiki_link( link_text => 'file:1' );
+    $stream->file_link( link_text => 'file:1' );
 
     is(
         $buffer,
@@ -122,25 +122,25 @@ open my $fh, '>', \$buffer;
     $buffer = q{};
     seek $fh, 0, 0;
 
-    $stream->wiki_link( link_text => $file_link );
+    $stream->file_link( link_text => $file_link );
 
     is(
         $buffer,
-        qq{<a href="$uri" title="Download this file">test.txt</a>},
+        qq{<a href="$uri" title="View this file">test.txt</a>},
         'link to existing file, no alternate link text'
     );
 
     $buffer = q{};
     seek $fh, 0, 0;
 
-    $stream->wiki_link(
+    $stream->file_link(
         link_text    => $file_link,
         display_text => 'test file',
     );
 
     is(
         $buffer,
-        qq{<a href="$uri" title="Download this file">test file</a>},
+        qq{<a href="$uri" title="View this file">test file</a>},
         'link to existing file, with alternate link text'
     );
 
@@ -149,7 +149,7 @@ open my $fh, '>', \$buffer;
     $buffer = q{};
     seek $fh, 0, 0;
 
-    $stream->wiki_link( link_text => $file_link );
+    $stream->file_link( link_text => $file_link );
 
     is(
         $buffer,
@@ -263,26 +263,57 @@ open my $fh, '>', \$buffer;
     $buffer = q{};
     seek $fh, 0, 0;
 
-    $stream->wiki_link( link_text => $file_link );
+    $stream->file_link( link_text => $file_link );
 
     is(
         $buffer,
-        qq{<a href="$uri" title="Download this file">test2.txt (Other)</a>},
+        qq{<a href="$uri" title="View this file">test2.txt (Other)</a>},
         'link to another wiki existing file, no alternate link text'
     );
 
     $buffer = q{};
     seek $fh, 0, 0;
 
-    $stream->wiki_link(
+    $stream->file_link(
         link_text    => $file_link,
         display_text => 'test file',
     );
 
     is(
         $buffer,
-        qq{<a href="$uri" title="Download this file">test file</a>},
+        qq{<a href="$uri" title="View this file">test file</a>},
         'link to another wiki existing file, with alternate link text'
+    );
+}
+
+{
+    my $stream = Silki::Markdent::Handler::HTMLStream->new(
+        output => $fh,
+        user   => $user,
+        wiki   => $wiki,
+    );
+
+    my $file = Silki::Schema::File->insert(
+        file_name => 'test.tif',
+        mime_type => 'image/tiff',
+        file_size => 3,
+        contents  => q{foo},
+        user_id   => $user->user_id(),
+        wiki_id   => $wiki->wiki_id(),
+    );
+
+    my $file_link = 'file:' . $file->file_id();
+    my $uri       = $file->uri();
+
+    $buffer = q{};
+    seek $fh, 0, 0;
+
+    $stream->file_link( link_text => $file_link );
+
+    is(
+        $buffer,
+        qq{<a href="$uri" title="Download this file">test.tif</a>},
+        'link to a file that cannot be viewed in a browser'
     );
 }
 
