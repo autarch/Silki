@@ -9,6 +9,7 @@ my %Requires = (
     'Catalyst::Plugin::Session::Store::DBI' => '0.15',
     'Data::Localize'                        => '0.00013_03',
     'Fey::ORM'                              => '0.32',
+    'Markdent'                              => '0.10',
     'MooseX::ClassAttribute'                => '0',
     'MooseX::StrictConstructor'             => '0',
 );
