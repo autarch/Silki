@@ -315,6 +315,50 @@ open my $fh, '>', \$buffer;
         qq{<a href="$uri" title="Download this file">test.tif</a>},
         'link to a file that cannot be viewed in a browser'
     );
+
+    $buffer = q{};
+    seek $fh, 0, 0;
+
+    $stream->image_link( link_text => $file_link );
+
+    is(
+        $buffer,
+        qq{<a href="$uri" title="Download this file">test.tif</a>},
+        'image link for a tiff ends up as a regular file link'
+    );
+}
+
+{
+    my $stream = Silki::Markdent::Handler::HTMLStream->new(
+        output => $fh,
+        user   => $user,
+        wiki   => $wiki,
+    );
+
+    my $file = Silki::Schema::File->insert(
+        file_name => 'test.png',
+        mime_type => 'image/png',
+        file_size => 3,
+        contents  => q{foo},
+        user_id   => $user->user_id(),
+        wiki_id   => $wiki->wiki_id(),
+    );
+
+    my $file_link = 'file:' . $file->file_id();
+    my $uri       = $file->uri();
+    my $small_uri = $file->uri( view => 'small' );
+    my $filename  = $file->file_name();
+
+    $buffer = q{};
+    seek $fh, 0, 0;
+
+    $stream->image_link( link_text => $file_link );
+
+    is(
+        $buffer,
+        qq{<a href="$uri" title="View this file"><img src="$small_uri" alt="$filename" /></a>},
+        'image link for a png embeds the image'
+    );
 }
 
 done_testing();

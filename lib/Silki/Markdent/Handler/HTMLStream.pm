@@ -101,14 +101,21 @@ sub image_link {
     my $self = shift;
     my $link = validated_list(
         \@_,
-        link_text    => { isa => Str },
+        link_text => { isa => Str },
     );
 
-    my $link_data = $self->_resolve_file_link( $link, $display_text );
+    my $link_data = $self->_resolve_file_link($link);
 
     return unless $link_data;
 
-    $self->_link_to_file($link_data);
+    if (   $link_data->{file}
+        && $link_data->{file}->is_browser_displayable_image() ) {
+
+        $self->_link_to_file( $link_data, undef, 'as image' );
+    }
+    else {
+        $self->_link_to_file($link_data);
+    }
 
     return;
 }
@@ -117,6 +124,7 @@ sub _link_to_file {
     my $self         = shift;
     my $p            = shift;
     my $display_text = shift;
+    my $as_image     = shift;
 
     my $file = $p->{file};
 
@@ -143,8 +151,26 @@ sub _link_to_file {
         ? loc('View this file')
         : loc('Download this file');
 
-    $self->_stream()->tag( a => ( href => $file_uri, title => $title ) );
-    $self->_stream()->text( $p->{text} );
+    $self->_stream()->tag(
+        a => (
+            href  => $file_uri,
+            title => $title,
+        )
+    );
+
+    if ($as_image) {
+        $self->_stream->tag(
+            img => (
+                src => $file->uri( view => 'small' ),
+                alt => $file->file_name(),
+            ),
+            '/', # XXX - should fix HTML::Stream to not need this
+        );
+    }
+    else {
+        $self->_stream()->text( $p->{text} );
+    }
+
     $self->_stream()->tag('_a');
 }
 
