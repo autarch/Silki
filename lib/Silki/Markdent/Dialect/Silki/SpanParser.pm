@@ -50,9 +50,9 @@ sub _match_wiki_link {
 
     return unless ${$text} =~ / \G
                                 (?:
-                                  \{
+                                  \[
                                   ($nested_brackets)
-                                  \}
+                                  \]
                                 )?
                                 \(\(
                                 ([^]]+)
