@@ -4,8 +4,6 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
-use HTML::Toc;
-use HTML::TocInsertor;
 use Silki::Config;
 use Silki::Help::File;
 use Silki::Types qw( ArrayRef Str );
@@ -49,23 +47,21 @@ sub _build_files {
         unless -d $lang_dir;
 
     return [
-        map { Silki::Help::File->new( file => $_ ) }
+        map {
+            Silki::Help::File->new(
+                file        => $_,
+                locale_code => $self->locale_code(),
+                )
+            }
         sort { $a cmp $b }
-        grep { ! $_->is_dir() } $lang_dir->children()
+        grep { !$_->is_dir() } $lang_dir->children()
     ];
 }
 
 sub _build_content {
     my $self = shift;
 
-    my $html = join "\n", map { $_->content() } $self->files();
-
-    my $toc = HTML::Toc->new();
-    my $ins = HTML::TocInsertor->new();
-
-    $ins->insert( $toc, $html, { output => \$html } );
-
-    return $toc->format() . "\n" . $html;
+    return join "\n", map { $_->content() } $self->files();
 }
 
 __PACKAGE__->meta()->make_immutable();

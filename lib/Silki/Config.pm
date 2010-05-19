@@ -107,6 +107,13 @@ has mason_config_for_email => (
     builder => '_build_mason_config_for_email',
 );
 
+has mason_config_for_help => (
+    is      => 'ro',
+    isa     => HashRef,
+    lazy    => 1,
+    builder => '_build_mason_config_for_help',
+);
+
 has _home_dir => (
     is      => 'ro',
     isa     => 'Path::Class::Dir',
@@ -574,6 +581,24 @@ sub _build_mason_config_for_email {
             $self->cache_dir()->subdir( 'mason', 'email' )->stringify(),
         error_mode => 'fatal',
         in_package => 'Silki::Mason::Email',
+    );
+
+    if ( $self->is_production() ) {
+        $config{static_source} = 1;
+        $config{static_source_touch_file}
+            = $self->etc_dir()->file('mason-touch')->stringify();
+    }
+
+    return \%config;
+}
+
+sub _build_mason_config_for_help {
+    my $self = shift;
+
+    my %config = (
+        error_mode           => 'fatal',
+        in_package           => 'Silki::Mason::Help',
+        default_escape_flags => 'h',
     );
 
     if ( $self->is_production() ) {

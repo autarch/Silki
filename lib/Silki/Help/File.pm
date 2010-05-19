@@ -18,6 +18,12 @@ has file => (
     required => 1,
 );
 
+has locale_code => (
+    is       => 'ro',
+    isa      => Str,
+    required => 1,
+);
+
 has content => (
     is       => 'ro',
     isa      => Str,
@@ -26,19 +32,24 @@ has content => (
     builder  => '_build_content',
 );
 
-my $Body;
-my $Interp = HTML::Mason::Interp->new(
-    out_method => \$Body,
-    %{ Silki::Config->new()->mason_config_for_email() },
-);
-
 sub _build_content {
     my $self = shift;
 
-    $Body = q{};
-    $Interp->exec( $self->file()->stringify() );
+    my $config = Silki::Config->new();
 
-    return $Body;
+    my $body   = q{};
+    my $interp = HTML::Mason::Interp->new(
+        out_method => \$body,
+        comp_root  => $self->file()->dir()->stringify(),
+        data_dir =>
+            $config->cache_dir()
+            ->subdir( 'mason', 'help', $self->locale_code() )->stringify(),
+        %{ $config->mason_config_for_help() },
+    );
+
+    $interp->exec( q{/} . $self->file()->basename() );
+
+    return $body;
 }
 
 __PACKAGE__->meta()->make_immutable();
