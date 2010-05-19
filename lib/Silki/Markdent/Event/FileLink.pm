@@ -17,6 +17,12 @@ has link_text => (
     required => 1,
 );
 
+has display_text => (
+    is        => 'ro',
+    isa       => Str,
+    predicate => 'has_display_text',
+);
+
 with 'Markdent::Role::Event';
 
 __PACKAGE__->meta()->make_immutable();

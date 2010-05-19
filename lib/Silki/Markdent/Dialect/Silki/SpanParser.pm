@@ -74,11 +74,27 @@ sub _match_file_link {
     my $self = shift;
     my $text = shift;
 
+
+    return unless ${$text} =~ / \G
+                                (?:
+                                  \[
+                                  ($nested_brackets)
+                                  \]
+                                )?
+                                {{
+                                \s*
+                                image:
+                                \s*
+                                ([^}]+)
+                                \s*
+                                }}
+                              /xmgc;
+
     my ( $display_text, $arg ) = $self->_parse_wiki_command( $text, 'file' )
         or return;
 
-    my %p = ( link_text => $arg );
-    $p{display_text} = $display_text if defined $display_text;
+    my %p = ( link_text => $2 );
+    $p{display_text} = $1 if defined $1;
 
     my $event = $self->_make_event( 'Silki::Markdent::Event::FileLink' => %p );
 
@@ -91,40 +107,23 @@ sub _match_image_link {
     my $self = shift;
     my $text = shift;
 
-    my ( $display_text, $arg ) = $self->_parse_wiki_command( $text, 'file' )
-        or return;
-
-    my %p = ( link_text => $arg );
-    $p{display_text} = $display_text if defined $display_text;
-
-    my $event = $self->_make_event( 'Silki::Markdent::Event::ImageLink' => %p );
-
-    $self->_markup_event($event);
-
-    return 1;
-}
-
-sub _parse_wiki_command {
-    my $self    = shift;
-    my $text    = shift;
-    my $command = shift;
-
     return unless ${$text} =~ / \G
-                                (?:
-                                  \[
-                                  ($nested_brackets)
-                                  \]
-                                )?
                                 {{
                                 \s*
-                                \Q$command\E:
+                                image:
                                 \s*
                                 ([^}]+)
                                 \s*
                                 }}
                               /xmgc;
 
-    return ( $1, $2 );
+    my %p = ( link_text => $1 );
+
+    my $event = $self->_make_event( 'Silki::Markdent::Event::ImageLink' => %p );
+
+    $self->_markup_event($event);
+
+    return 1;
 }
 
 __PACKAGE__->meta()->make_immutable();

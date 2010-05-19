@@ -97,6 +97,22 @@ sub file_link {
     return;
 }
 
+sub image_link {
+    my $self = shift;
+    my $link = validated_list(
+        \@_,
+        link_text    => { isa => Str },
+    );
+
+    my $link_data = $self->_resolve_file_link( $link, $display_text );
+
+    return unless $link_data;
+
+    $self->_link_to_file($link_data);
+
+    return;
+}
+
 sub _link_to_file {
     my $self         = shift;
     my $p            = shift;
