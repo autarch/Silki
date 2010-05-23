@@ -7,6 +7,7 @@ use namespace::autoclean;
 use Silki::Config;
 use Silki::Help::File;
 use Silki::Types qw( ArrayRef Str );
+use Text::TOC::HTML;
 
 use Moose;
 
@@ -58,10 +59,29 @@ sub _build_files {
     ];
 }
 
+my $toc_filter = sub {
+    my $node = shift;
+
+    return if $node->parentNode()->className() =~ /markdown-output/;
+
+    return $node->tagName() =~ /^h[2-4]$/i;
+};
+
 sub _build_content {
     my $self = shift;
 
-    return join "\n", map { $_->content() } $self->files();
+    my $toc = Text::TOC::HTML->new( filter => $toc_filter );
+
+    $toc->add_file(
+        file    => $_->file(),
+        content => $_->content(),
+    ) for $self->files();
+
+    my $page = $toc->toc()->innerHTML();
+    $page .= "\n";
+    $page .= join "\n", map { $_->innerHTML() } $toc->documents();
+
+    return $page;
 }
 
 __PACKAGE__->meta()->make_immutable();
