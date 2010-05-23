@@ -54,11 +54,11 @@ You can also create headers by prefixing the text with hash marks (#):
 
 <p>
 Linking a page in the same wiki is simple, just wrap the page title in double
-square brackets:
+parentheses:
 </p>
 
 <pre class="markdown-docs">
-[[Page Title]]
+((Page Title))
 </pre>
 
 <p>
@@ -67,7 +67,7 @@ include the wiki name with the page name, separated by a slash (/):
 </p>
 
 <pre class="markdown-docs">
-[[Other Wiki/Page Title]]
+((Other Wiki/Page Title))
 </pre>
 
 <h3>External Links</h3>
@@ -78,8 +78,7 @@ see in the page), and the URL:
 </p>
 
 <&| .markdown-and-output &>
-[a great directory of
- veg-friendly restaurants](http://www.vegguide.org)
+[a great directory of veg-friendly restaurants](http://www.vegguide.org)
 </&>
 
 <p>
@@ -92,11 +91,66 @@ If you just want to put a URL in the text, wrap it in angle brackets:
 
 <h3>Linking to Files</h3>
 
-TODO
+<p>
+You can link to files in the current wiki, or any other wiki you have access
+to.
+</p>
+
+<pre class="markdown-example">Take a look at the PDF: {{file: file.pdf}}</pre>
+
+<div class="markdown-output">
+  <p>Take a look at the PDF: <a href="#" title="Download this file">file.pdf</a></p>
+</div>
+
+<p>
+If you want to change the link text, put the link text in square brackets
+before the link:
+</p>
+
+<pre class="markdown-example">Take a look at [the attached PDF]{{file: file.pdf}}</pre>
+
+<div class="markdown-output">
+  <p>Take a look at <a href="#" title="Download this file">the attached PDF</a></p>
+</div>
+
+<p>
+You can also link to files in other wikis. Of course, if a user viewing the
+page does not have access to the other wiki, they won't be able to see the
+file.
+</p>
+
+<pre class="markdown-example">Take a look at the PDF: {{file: Other Wiki/file.pdf}}</pre>
+
+<div class="markdown-output">
+  <p>Take a look at the PDF: <a href="#" title="Download this file">file.pdf</a></p>
+</div>
 
 <h3>Linking to Images</h3>
 
-TODO
+<p>
+Image links look like file links, but they embed the image in the wiki
+page:</p>
+</p>
+
+<pre class="markdown-example">The attached logo: {{image: logo.png}}</pre>
+
+<div class="markdown-output">
+  <p>
+    The attached logo:
+    <a href="<% Silki::URI::static_uri( '/images/vegguide-logo.png' ) %>" title="View this file"
+       ><img src="<% Silki::URI::static_uri( '/images/vegguide-logo.png' ) %>"
+             alt="vegguide-logo.png"
+             height="66"
+             width="400"
+             /></a>
+  </p>
+</div>
+
+<p>
+The image will be scaled down so that is no wider than 400 pixels, and no
+taller than 150 pixels. The image will also link to a larger version of
+itself.
+</p>
 
 <h3>Bold and Italics</h3>
 
@@ -260,7 +314,7 @@ Content ...
 More content ...
 </&>
 
-<h3>Monospace</h3>
+<h3>Monospace / Code</h3>
 
 <p>
 If you want to insert code (monospaced text) inside some text, you can
@@ -272,7 +326,7 @@ block, simply indent each line by four spaces:
 To set the variable `$foo`, write `$foo = $value`.
 </&>
 
-<&| .markdown-and-output, fixed => 1 &>
+<&| .markdown-and-output, fixed => 1,  &>
     while ( $x > 1 ) {
         ....
     }
@@ -292,14 +346,8 @@ my $simple = Markdent::Simple::Fragment->new();
 </%once>
 
 <%def .markdown-and-output>
-<div class="yui-g">
-  <div class="yui-u first">
-    <pre class="markdown-example <% $fixed ? 'fixed' : q{} %>"><% $markdown %></pre>
-  </div>
-  <div class="yui-u">
-    <div class="markdown-output"><% $formatted | n %></div>
-  </div>
-</div>
+<pre class="markdown-example <% $fixed ? 'fixed' : q{} %>"><% $markdown %></pre>
+<div class="markdown-output"><% $formatted | n %></div>
 
 <%args>
 $fixed => 0
