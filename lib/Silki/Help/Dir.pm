@@ -77,9 +77,10 @@ sub _build_content {
         content => $_->content(),
     ) for $self->files();
 
-    my $page = $toc->toc()->innerHTML();
+    my $page = $toc->html_for_toc();
     $page .= "\n";
-    $page .= join "\n", map { $_->innerHTML() } $toc->documents();
+    $page .= join "\n",
+        map { $toc->html_for_document( $_->file() ) } $self->files();
 
     return $page;
 }
