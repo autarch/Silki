@@ -82,6 +82,8 @@ sub _build_content {
     $page .= join "\n",
         map { $toc->html_for_document( $_->file() ) } $self->files();
 
+    $page =~ s{<html><head></head><body>(.+)</body></html>}{$1}s;
+
     return $page;
 }
 
