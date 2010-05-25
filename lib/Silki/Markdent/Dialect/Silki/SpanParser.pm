@@ -55,13 +55,13 @@ sub _match_wiki_link {
                                   \]
                                 )?
                                 \(\(
-                                ([^]]+)
+                                (.+?)
                                 \)\)
                               /xmgc;
 
-    my %p = ( link_text => $1 );
-    $p{display_text} = $2
-        if defined $2;
+    my %p = ( link_text => $2 );
+    $p{display_text} = $1
+        if defined $1;
 
     my $event = $self->_make_event( 'Silki::Markdent::Event::WikiLink' => %p );
 
@@ -83,15 +83,12 @@ sub _match_file_link {
                                 )?
                                 {{
                                 \s*
-                                image:
+                                file:
                                 \s*
                                 ([^}]+)
                                 \s*
                                 }}
                               /xmgc;
-
-    my ( $display_text, $arg ) = $self->_parse_wiki_command( $text, 'file' )
-        or return;
 
     my %p = ( link_text => $2 );
     $p{display_text} = $1 if defined $1;
@@ -122,6 +119,50 @@ sub _match_image_link {
     my $event = $self->_make_event( 'Silki::Markdent::Event::ImageLink' => %p );
 
     $self->_markup_event($event);
+
+    return 1;
+}
+
+sub _match_plain_text {
+    my $self = shift;
+    my $text = shift;
+
+    my $escape_re = $self->_escape_re();
+
+    # Note that we're careful not to consume any of the characters marking the
+    # (possible) end of the plain text. If those things turn out to _not_ be
+    # markup, we'll get them on the next pass, because we always match at
+    # least one character, so we should never get stuck in a loop.
+    return unless
+        ${$text} =~ /\G
+                     ( .+? )              # at least one character followed by ...
+                     (?=
+                       $escape_re
+                       |
+                       \*                 #   possible span markup
+                       |
+                       _
+                       |
+                       \p{SpaceSeparator}* \`
+                       |
+                       \(\(               #   possible wiki link
+                       |
+                       \{\{               #   possible wiki command
+                       |
+                       !?\[               #   possible image or link
+                       |
+                       < [^>]+ >          #   an HTML tag
+                       |
+                       &\S+;              #   an HTML entity
+                       |
+                       \z                 #   or the end of the string
+                     )
+                    /xgcs;
+
+    $self->_print_debug( "Interpreting as plain text\n\n[$1]\n" )
+        if $self->debug();
+
+    $self->_save_span_text($1);
 
     return 1;
 }
