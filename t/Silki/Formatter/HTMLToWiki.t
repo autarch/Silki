@@ -101,7 +101,7 @@ EOF
         if ( $p{file_id} == 1 ) {
             return bless {
                 file_id   => 1,
-                file_name => 'foo.txt',
+                filename => 'foo.txt',
                 },
                 'Silki::Schema::File';
         }

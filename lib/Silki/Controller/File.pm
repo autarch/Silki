@@ -35,14 +35,14 @@ sub file_GET_html {
     my $file = $c->stash()->{file};
 
     if ( $file->is_displayable_in_browser() ) {
-        my $name = $file->file_name();
+        my $name = $file->filename();
         $name = substr( $name, 0, 16 ) . q{ ...} if length $name > 16;
 
         $c->add_tab(
             {
                 uri         => $file->uri(),
                 label       => $name,
-                tooltip     => loc( 'Contents of %1', $file->file_name() ),
+                tooltip     => loc( 'Contents of %1', $file->filename() ),
                 is_selected => 1,
             }
         );
@@ -66,7 +66,7 @@ sub file_DELETE {
 
     my $file = $c->stash()->{file};
 
-    my $msg = loc( 'Deleted the file %1', $file->file_name() );
+    my $msg = loc( 'Deleted the file %1', $file->filename() );
 
     $file->delete( user => $c->user() );
 
@@ -114,7 +114,7 @@ sub _download {
 
     $c->response()->content_type($content_type);
 
-    my $name = $file->file_name();
+    my $name = $file->filename();
     $name =~ s/\"/\\"/g;
 
     $c->response()

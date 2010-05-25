@@ -1,5 +1,5 @@
 <p>
-  <% loc( 'The contents of <em>%html(%1)</em>', $file->file_name() ) | n %>
+  <% loc( 'The contents of <em>%html(%1)</em>', $file->filename() ) | n %>
 </p>
 
 <iframe src="<% $file->uri( view => 'content' ) %>"
@@ -20,7 +20,7 @@ show_sidebar => 0
 </%attr>
 
 <%method title>
-<% $file->file_name() %>
+<% $file->filename() %>
 <%args>
 $file
 </%args>

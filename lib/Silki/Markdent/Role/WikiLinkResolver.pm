@@ -84,10 +84,10 @@ sub _resolve_file_link {
         $wiki = Silki::Schema::Wiki->new( short_name => $1 )
             or return;
 
-        $file_id = $2;
+        $filename = $2;
     }
     else {
-        $file_id =~ s/^file://;
+        $filename =~ s/^file://;
     }
 
     my $file = Silki::Schema::File->new( file_id => $file_id );
@@ -114,7 +114,7 @@ sub _link_text_for_file {
 
     return loc('(Link to non-existent file)') unless $file;
 
-    my $text = $file->file_name();
+    my $text = $file->filename();
 
     $text .= ' (' . $wiki->title() . ')'
         unless $wiki->wiki_id() == $self->_wiki()->wiki_id();

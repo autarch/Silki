@@ -335,19 +335,20 @@ CREATE TABLE "PageView" (
 
 CREATE INDEX "PageView_user_id" ON "PageView" (user_id);
 
-CREATE DOMAIN file_name AS VARCHAR(255)
+CREATE DOMAIN filename AS VARCHAR(255)
        CONSTRAINT no_slashes CHECK ( VALUE ~ E'^[^\\\\/]+$' );
 
 CREATE TABLE "File" (
        file_id                  SERIAL8         PRIMARY KEY,
-       file_name                file_name       NOT NULL,
+       filename                filename       NOT NULL,
        mime_type                VARCHAR(255)    NOT NULL,
        file_size                INTEGER         NOT NULL,
        contents                 BYTEA           NOT NULL,
        creation_datetime        TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
        user_id                  INT8            NOT NULL,
        wiki_id                  INT8            NOT NULL,
-       CONSTRAINT valid_file_name CHECK ( file_name != '' ),
+       UNIQUE (filename, wiki_id),
+       CONSTRAINT valid_filename CHECK ( filename != '' ),
        CONSTRAINT valid_file_size CHECK ( file_size > 0 )
 );
 

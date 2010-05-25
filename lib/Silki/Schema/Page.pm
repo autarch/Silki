@@ -291,7 +291,7 @@ sub add_file {
     my $new_content = $last_rev->content();
 
     $new_content =~ s/\n*$/\n\n/;
-    $new_content .= '{{file:' . $file->file_name() . '}}';
+    $new_content .= '{{file:' . $file->filename() . '}}';
     $new_content .= "\n";
 
     $self->add_revision(
@@ -456,7 +456,7 @@ sub _FileSelect {
            ->from( $page_file_link_t, $file_t )
            ->where( $page_file_link_t->column('page_id'), '=',
                     Fey::Placeholder->new() )
-           ->order_by( $file_t->column('file_name') );
+           ->order_by( $file_t->column('filename') );
 
     return $select;
 }

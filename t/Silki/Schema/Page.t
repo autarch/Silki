@@ -135,7 +135,7 @@ my $user = Silki::Schema::User->GuestUser();
 
     my $text = "This is some plain text.\n";
     my $file1 = Silki::Schema::File->insert(
-        file_name => 'test1.txt',
+        filename => 'test1.txt',
         mime_type => 'text/plain',
         file_size => length $text,
         contents  => $text,
@@ -161,7 +161,7 @@ my $user = Silki::Schema::User->GuestUser();
 
     $text = "This is some more plain text.\n";
     my $file2 = Silki::Schema::File->insert(
-        file_name => 'test2.txt',
+        filename => 'test2.txt',
         mime_type => 'text/plain',
         file_size => length $text,
         contents  => $text,
@@ -175,7 +175,7 @@ my $user = Silki::Schema::User->GuestUser();
     # files in the wiki or some other wrong result.
     $text  = "This is even more plain text.\n";
     my $file3 = Silki::Schema::File->insert(
-        file_name => 'test3.txt',
+        filename => 'test3.txt',
         mime_type => 'text/plain',
         file_size => length $text,
         contents  => $text,
@@ -185,7 +185,7 @@ my $user = Silki::Schema::User->GuestUser();
 
     is( $page->file_count(), 2, 'file_count is 2' );
     is_deeply(
-        [ sort map { $_->file_name() } $page->files()->all() ],
+        [ sort map { $_->filename() } $page->files()->all() ],
         [qw( test1.txt test2.txt )],
         'files returns the right two files',
     );

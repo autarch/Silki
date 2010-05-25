@@ -162,7 +162,7 @@ sub _link_to_file {
         $self->_stream->tag(
             img => (
                 src => $file->uri( view => 'small' ),
-                alt => $file->file_name(),
+                alt => $file->filename(),
             ),
             '/', # XXX - should fix HTML::Stream to not need this
         );

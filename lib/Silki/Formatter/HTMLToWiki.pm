@@ -232,7 +232,7 @@ sub _handle_a_as_wiki_link {
 
         my $file = Silki::Schema::File->new( file_id => $2 );
 
-        $default_text = $file ? $file->file_name() : q{};
+        $default_text = $file ? $file->filename() : q{};
     }
     else {
         return $self->_handle_a_as_external_link( $node, $href );

@@ -13,7 +13,7 @@
   <tbody>
     <tr class="<% $files->index() % 2 ? 'odd' : 'even' %>">
       <td>
-        <a href="<% $file->uri() %>" title="<% loc('Download this file') %>"><% $file->file_name() %></a>
+        <a href="<% $file->uri() %>" title="<% loc('Download this file') %>"><% $file->filename() %></a>
 %   if ( $file->is_browser_displayable_image() ) {
         <br />
         <a href="<% $file->uri() %>" title="<% loc('Download this file') %>"><img src="<% $file->uri( view => 'thumbnail' ) %>" /></a>

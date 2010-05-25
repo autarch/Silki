@@ -71,12 +71,12 @@ has thumbnail_file => (
     builder  => '_build_thumbnail_file',
 );
 
-has _file_name_with_hash => (
+has _filename_with_hash => (
     is       => 'ro',
     isa      => Str,
     init_arg => undef,
     lazy     => 1,
-    builder  => '_build_file_name_with_hash',
+    builder  => '_build_filename_with_hash',
 );
 
 sub _system_log_values_for_delete {
@@ -84,7 +84,7 @@ sub _system_log_values_for_delete {
 
     my $msg
         = 'Deleted file, '
-        . $self->file_name()
+        . $self->filename()
         . ', in wiki '
         . $self->wiki()->title();
 
@@ -92,7 +92,7 @@ sub _system_log_values_for_delete {
         wiki_id   => $self->wiki_id(),
         message   => $msg,
         data_blob => {
-            file_name => $self->file_name(),
+            filename => $self->filename(),
             mime_type => $self->mime_type(),
             file_size => $self->file_size(),
         },
@@ -152,7 +152,7 @@ sub _build_file_on_disk {
 
     my $dir = Silki::Config->new()->files_dir();
 
-    my $file = $dir->file( $self->_file_name_with_hash() );
+    my $file = $dir->file( $self->_filename_with_hash() );
 
     return $file
         if -f $file
@@ -173,7 +173,7 @@ sub _build_small_image_file {
 
     my $dir = Silki::Config->new()->small_image_dir();
 
-    my $file = $dir->file( $self->_file_name_with_hash() );
+    my $file = $dir->file( $self->_filename_with_hash() );
 
     return $file
         if -f $file
@@ -198,7 +198,7 @@ sub _build_thumbnail_file {
 
     my $dir = Silki::Config->new()->thumbnails_dir();
 
-    my $file = $dir->file( $self->_file_name_with_hash() );
+    my $file = $dir->file( $self->_filename_with_hash() );
 
     return $file
         if -f $file
@@ -216,12 +216,12 @@ sub _build_thumbnail_file {
     return $file;
 }
 
-sub _build_file_name_with_hash {
+sub _build_filename_with_hash {
     my $self = shift;
 
     return join q{-},
         sha256_hex( $self->file_id(), Silki::Config->new()->secret() ),
-        $self->file_name();
+        $self->filename();
 }
 
 __PACKAGE__->meta()->make_immutable();

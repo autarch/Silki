@@ -906,7 +906,7 @@ sub _BuildFilesSelect {
         ->select($file_t)
         ->from($file_t)
         ->where( $file_t->column('wiki_id'), '=', Fey::Placeholder->new() )
-        ->order_by( $file_t->column('file_name'), 'ASC' );
+        ->order_by( $file_t->column('filename'), 'ASC' );
 
     return $files_select;
 }

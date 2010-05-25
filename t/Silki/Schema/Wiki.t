@@ -264,7 +264,7 @@ my $user = Silki::Schema::User->SystemUser();
 
     my $text = "This is some plain text.\n";
     my $file1 = Silki::Schema::File->insert(
-        file_name => 'test1.txt',
+        filename => 'test1.txt',
         mime_type => 'text/plain',
         file_size => length $text,
         contents  => $text,
@@ -279,7 +279,7 @@ my $user = Silki::Schema::User->SystemUser();
 
     $text = "This is some more plain text.\n";
     my $file2 = Silki::Schema::File->insert(
-        file_name => 'test2.txt',
+        filename => 'test2.txt',
         mime_type => 'text/plain',
         file_size => length $text,
         contents  => $text,
@@ -294,7 +294,7 @@ my $user = Silki::Schema::User->SystemUser();
 
     my @files = $wiki->files()->all();
     is_deeply(
-        [ sort map { $_->file_name() } @files ],
+        [ sort map { $_->filename() } @files ],
         [ 'test1.txt', 'test2.txt' ],
         'files returns all files in the wiki'
     );

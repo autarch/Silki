@@ -3,7 +3,7 @@
 </p>
 
 <p>
-  <% loc( 'File: <em>%html(%1)</em>', $file->file_name() ) | n %>
+  <% loc( 'File: <em>%html(%1)</em>', $file->filename() ) | n %>
 </p>
 
 <form action="<% $file->uri() %>" method="post">

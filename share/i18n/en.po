@@ -188,7 +188,7 @@ msgstr ""
 msgid "Compare to previous revision"
 msgstr ""
 
-#. ($file->file_name()
+#. ($file->filename()
 #: lib/Silki/Controller/File.pm:44
 msgid "Contents of %1"
 msgstr ""
@@ -236,7 +236,7 @@ msgstr ""
 msgid "Delete this page?"
 msgstr ""
 
-#. ($file->file_name()
+#. ($file->filename()
 #: lib/Silki/Controller/File.pm:68
 msgid "Deleted the file %1"
 msgstr ""
@@ -295,7 +295,7 @@ msgstr ""
 msgid "File"
 msgstr ""
 
-#. ($file->file_name()
+#. ($file->filename()
 #: share/mason/file/delete-confirmation:6
 msgid "File: <em>%html(%1)</em>"
 msgstr ""
@@ -726,7 +726,7 @@ msgstr ""
 msgid "The account for %1 has been enabled."
 msgstr ""
 
-#. ($file->file_name()
+#. ($file->filename()
 #: share/mason/file/view-in-frame:2
 msgid "The contents of <em>%html(%1)</em>"
 msgstr ""

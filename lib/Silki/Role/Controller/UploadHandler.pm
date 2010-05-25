@@ -46,7 +46,7 @@ sub _handle_upload {
     Silki::Schema->RunInTransaction(
         sub {
             $file = Silki::Schema::File->insert(
-                file_name => $basename,
+                filename => $basename,
                 mime_type => mimetype( $upload->tempname() ),
                 file_size => $upload->size(),
                 contents  => do { my $fh = $upload->fh(); local $/; <$fh> },
