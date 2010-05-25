@@ -121,10 +121,8 @@ my $user = Silki::Schema::User->SystemUser();
     $wiki->set_permissions('private');
 
     %perms = (
-        Member        => {
-            map { $_ => 1 } qw( Read Edit Upload )
-        },
-        Admin => {
+        Member => { map { $_ => 1 } qw( Read Edit Upload ) },
+        Admin  => {
             map { $_ => 1 } qw( Read Edit Delete Upload Invite Manage )
         },
     );
@@ -143,7 +141,8 @@ my $user = Silki::Schema::User->SystemUser();
 {
     my $wiki = Silki::Schema::Wiki->new( title => 'First Wiki' );
 
-    my $admin_username = 'admin@' . Silki::Schema::Domain->DefaultDomain()->email_hostname();
+    my $admin_username
+        = 'admin@' . Silki::Schema::Domain->DefaultDomain()->email_hostname();
     my $admin_user = Silki::Schema::User->new( username => $admin_username );
 
     my @active = $wiki->active_users()->all();
@@ -235,7 +234,8 @@ my $user = Silki::Schema::User->SystemUser();
         'active users returns expected user'
     );
 
-    my $joe_username = 'joe@' . Silki::Schema::Domain->DefaultDomain()->email_hostname();
+    my $joe_username
+        = 'joe@' . Silki::Schema::Domain->DefaultDomain()->email_hostname();
     my $joe_user = Silki::Schema::User->new( username => $joe_username );
 
     Silki::Schema::Page->insert_with_content(
@@ -262,9 +262,9 @@ my $user = Silki::Schema::User->SystemUser();
         'wiki has no files'
     );
 
-    my $text = "This is some plain text.\n";
+    my $text  = "This is some plain text.\n";
     my $file1 = Silki::Schema::File->insert(
-        filename => 'test1.txt',
+        filename  => 'test1.txt',
         mime_type => 'text/plain',
         file_size => length $text,
         contents  => $text,
@@ -279,7 +279,7 @@ my $user = Silki::Schema::User->SystemUser();
 
     $text = "This is some more plain text.\n";
     my $file2 = Silki::Schema::File->insert(
-        filename => 'test2.txt',
+        filename  => 'test2.txt',
         mime_type => 'text/plain',
         file_size => length $text,
         contents  => $text,
@@ -382,7 +382,8 @@ my $user = Silki::Schema::User->SystemUser();
         'cannot add a user in the Guest role'
     );
 
-    $wiki->add_user( user => $user1, role => Silki::Schema::Role->Authenticated() );
+    $wiki->add_user( user => $user1,
+        role => Silki::Schema::Role->Authenticated() );
 
     check_members(
         $wiki,

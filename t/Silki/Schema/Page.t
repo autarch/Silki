@@ -14,7 +14,7 @@ use Silki::Schema::Page;
 use Silki::Schema::PendingPageLink;
 use Silki::Schema::Wiki;
 
-my $dbh = Silki::Schema->DBIManager()->default_source()->dbh();
+my $dbh  = Silki::Schema->DBIManager()->default_source()->dbh();
 my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 my $user = Silki::Schema::User->GuestUser();
 
@@ -26,8 +26,10 @@ my $user = Silki::Schema::User->GuestUser();
         wiki_id => $wiki->wiki_id(),
     );
 
-    is( $page->uri_path(), 'Some_Page',
-        'title is converted to uri_path on page insert' );
+    is(
+        $page->uri_path(), 'Some_Page',
+        'title is converted to uri_path on page insert'
+    );
     is( $page->uri(), '/wiki/first-wiki/page/Some_Page', 'uri() for page' );
 
     is_deeply(
@@ -69,8 +71,10 @@ my $user = Silki::Schema::User->GuestUser();
         wiki_id => $wiki->wiki_id(),
     );
 
-    ok( $page->is_front_page(),
-        'is_front_page is true for page where title is Front Page' );
+    ok(
+        $page->is_front_page(),
+        'is_front_page is true for page where title is Front Page'
+    );
 }
 
 {
@@ -130,12 +134,14 @@ my $user = Silki::Schema::User->GuestUser();
     );
 
     my $first_rev = $page->first_revision();
-    is( $first_rev->revision_number(), 1,
-        'first_revision returns the right object' );
+    is(
+        $first_rev->revision_number(), 1,
+        'first_revision returns the right object'
+    );
 
-    my $text = "This is some plain text.\n";
+    my $text  = "This is some plain text.\n";
     my $file1 = Silki::Schema::File->insert(
-        filename => 'test1.txt',
+        filename  => 'test1.txt',
         mime_type => 'text/plain',
         file_size => length $text,
         contents  => $text,
@@ -161,7 +167,7 @@ my $user = Silki::Schema::User->GuestUser();
 
     $text = "This is some more plain text.\n";
     my $file2 = Silki::Schema::File->insert(
-        filename => 'test2.txt',
+        filename  => 'test2.txt',
         mime_type => 'text/plain',
         file_size => length $text,
         contents  => $text,
@@ -173,9 +179,9 @@ my $user = Silki::Schema::User->GuestUser();
 
     # Creating this so that we know $page->files() doesn't just return all the
     # files in the wiki or some other wrong result.
-    $text  = "This is even more plain text.\n";
+    $text = "This is even more plain text.\n";
     my $file3 = Silki::Schema::File->insert(
-        filename => 'test3.txt',
+        filename  => 'test3.txt',
         mime_type => 'text/plain',
         file_size => length $text,
         contents  => $text,
@@ -190,7 +196,7 @@ my $user = Silki::Schema::User->GuestUser();
         'files returns the right two files',
     );
 
-    ok( ! $page->is_front_page(), 'page is not the front page' );
+    ok( !$page->is_front_page(), 'page is not the front page' );
 
     is( $page->incoming_link_count(), 1, 'page has one incoming link' );
     my @links = $page->incoming_links()->all();

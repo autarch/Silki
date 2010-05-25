@@ -19,7 +19,7 @@ my $user = Silki::Schema::User->GuestUser();
 {
     my $text = 'text in a file';
     my $file = Silki::Schema::File->insert(
-        filename => 'test.txt',
+        filename  => 'test.txt',
         mime_type => 'text/plain',
         file_size => length $text,
         contents  => $text,
@@ -95,7 +95,7 @@ my $user = Silki::Schema::User->GuestUser();
 {
     my $tiff = read_file('t/share/data/test.tif');
     my $file = Silki::Schema::File->insert(
-        filename => 'test.tif',
+        filename  => 'test.tif',
         mime_type => 'image/tiff',
         file_size => length $tiff,
         contents  => $tiff,
@@ -123,7 +123,7 @@ my $user = Silki::Schema::User->GuestUser();
 {
     my $jpg  = read_file('t/share/data/test.jpg');
     my $file = Silki::Schema::File->insert(
-        filename => 'test.jpg',
+        filename  => 'test.jpg',
         mime_type => 'image/jpeg',
         file_size => length $jpg,
         contents  => $jpg,
