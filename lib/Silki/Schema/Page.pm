@@ -291,7 +291,7 @@ sub add_file {
     my $new_content = $last_rev->content();
 
     $new_content =~ s/\n*$/\n\n/;
-    $new_content .= '[[file:' . $file->file_id() . ']]';
+    $new_content .= '{{file:' . $file->file_name() . '}}';
     $new_content .= "\n";
 
     $self->add_revision(
