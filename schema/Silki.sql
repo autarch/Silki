@@ -340,7 +340,7 @@ CREATE DOMAIN filename AS VARCHAR(255)
 
 CREATE TABLE "File" (
        file_id                  SERIAL8         PRIMARY KEY,
-       filename                filename       NOT NULL,
+       filename                 filename       NOT NULL,
        mime_type                VARCHAR(255)    NOT NULL,
        file_size                INTEGER         NOT NULL,
        contents                 BYTEA           NOT NULL,
