@@ -93,6 +93,35 @@ my $user = Silki::Schema::User->GuestUser();
 }
 
 {
+    my $text = 'foobar';
+
+    throws_ok {
+        Silki::Schema::File->insert(
+            filename  => 'test.txt',
+            mime_type => 'text/plain',
+            file_size => length $text,
+            contents  => $text,
+            user_id   => $user->user_id(),
+            wiki_id   => $wiki->wiki_id(),
+        );
+    }
+    qr/already in use/, 'cannot insert two files of the same name in a wiki';
+
+    my $wiki2 = Silki::Schema::Wiki->new( short_name => 'second-wiki' );
+    lives_ok {
+        Silki::Schema::File->insert(
+            filename  => 'test.txt',
+            mime_type => 'text/plain',
+            file_size => length $text,
+            contents  => $text,
+            user_id   => $user->user_id(),
+            wiki_id   => $wiki2->wiki_id(),
+        );
+    }
+    'can insert two files of the same name in different wikis';
+}
+
+{
     my $tiff = read_file('t/share/data/test.tif');
     my $file = Silki::Schema::File->insert(
         filename  => 'test.tif',

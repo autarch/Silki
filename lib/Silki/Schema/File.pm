@@ -12,13 +12,21 @@ use Image::Magick;
 use Image::Thumbnail;
 use List::AllUtils qw( any );
 use Silki::Config;
+use Silki::I18N qw( loc );
 use Silki::Schema;
 use Silki::Types qw( Str Bool File Maybe );
 
 use Fey::ORM::Table;
 
 with 'Silki::Role::Schema::URIMaker';
+
 with 'Silki::Role::Schema::SystemLogger' => { methods => ['delete'] };
+
+with 'Silki::Role::Schema::DataValidator' => {
+    steps => [
+        '_filename_is_unique_in_wiki',
+    ],
+};
 
 my $Schema = Silki::Schema->Schema();
 
@@ -97,6 +105,31 @@ sub _system_log_values_for_delete {
             file_size => $self->file_size(),
         },
     );
+}
+
+sub _filename_is_unique_in_wiki {
+    my $self      = shift;
+    my $p         = shift;
+    my $is_insert = shift;
+
+    return
+        if !$is_insert
+            && exists $p->{filename}
+            && $p->{filename} eq $self->filename();
+
+    return unless exists $p->{filename};
+
+    return
+        unless __PACKAGE__->new(
+        filename => $p->{filename},
+        wiki_id  => $p->{wiki_id},
+        );
+
+    return {
+        message => loc(
+            'The filename you provided is already in use for another file in this wiki.'
+        ),
+    };
 }
 
 sub _base_uri_path {

@@ -75,28 +75,29 @@ sub _page_for_title {
 
 sub _resolve_file_link {
     my $self         = shift;
-    my $file_id      = shift;
+    my $link_text    = shift;
     my $display_text = shift;
 
     my $wiki = $self->_wiki();
 
-    if ( $file_id =~ m{^([^/]+)/file:([^/]+)$} ) {
+    return unless $link_text =~ m{^file:\s*(?:([^/]+)/)?([^/]+)$};
+
+    if ($1) {
         $wiki = Silki::Schema::Wiki->new( short_name => $1 )
             or return;
-
-        $filename = $2;
-    }
-    else {
-        $filename =~ s/^file://;
     }
 
-    my $file = Silki::Schema::File->new( file_id => $file_id );
+    my $filename = $2;
+
+    my $file = Silki::Schema::File->new(
+        wiki_id  => $wiki->wiki_id(),
+        filename => $filename,
+    );
 
     unless ( defined $display_text ) {
         $display_text = $self->_link_text_for_file(
             $wiki,
             $file,
-            $file_id,
         );
     }
 
