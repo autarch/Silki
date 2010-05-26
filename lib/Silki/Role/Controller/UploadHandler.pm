@@ -43,21 +43,31 @@ sub _handle_upload {
     $basename = ( File::Spec::Unix->splitpath($basename) )[2];
 
     my $file;
-    Silki::Schema->RunInTransaction(
-        sub {
-            $file = Silki::Schema::File->insert(
-                filename => $basename,
-                mime_type => mimetype( $upload->tempname() ),
-                file_size => $upload->size(),
-                contents  => do { my $fh = $upload->fh(); local $/; <$fh> },
-                user_id   => $c->user()->user_id(),
-                wiki_id   => $c->stash()->{wiki}->wiki_id(),
-            );
+    eval {
+        Silki::Schema->RunInTransaction(
+            sub {
+                $file = Silki::Schema::File->insert(
+                    filename  => $basename,
+                    mime_type => mimetype( $upload->tempname() ),
+                    file_size => $upload->size(),
+                    contents =>
+                        do { my $fh = $upload->fh(); local $/; <$fh> },
+                    user_id => $c->user()->user_id(),
+                    wiki_id => $c->stash()->{wiki}->wiki_id(),
+                );
 
-            $c->stash()->{page}->add_file($file)
-                if $c->stash()->{page};
-        }
-    );
+                $c->stash()->{page}->add_file($file)
+                    if $c->stash()->{page};
+            }
+        );
+    };
+
+    if ( my $e = $@ ) {
+        $c->redirect_with_error(
+            error => $e,
+            uri   => $on_error,
+        );
+    }
 }
 
 {
