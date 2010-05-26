@@ -211,7 +211,7 @@ my $user = Silki::Schema::User->SystemUser();
         title   => 'Wants',
         wiki_id => $wiki->wiki_id(),
         user_id => $admin_user->user_id(),
-        content => 'A link to [[Something New]]',
+        content => 'A link to ((Something New))',
     );
 
     is(

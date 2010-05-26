@@ -80,7 +80,7 @@ sub _resolve_file_link {
 
     my $wiki = $self->_wiki();
 
-    return unless $link_text =~ m{^file:\s*(?:([^/]+)/)?([^/]+)$};
+    return unless $link_text =~ m{^(?:([^/]+)/)?([^/]+)$};
 
     if ($1) {
         $wiki = Silki::Schema::Wiki->new( short_name => $1 )

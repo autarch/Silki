@@ -17,7 +17,7 @@ my $user = Silki::Schema::User->GuestUser();
 {
     my $page = Silki::Schema::Page->insert_with_content(
         title   => 'Some Page',
-        content => 'This is a page with a link to a [[Pending Page]]',
+        content => 'This is a page with a link to a ((Pending Page))',
         user_id => $user->user_id(),
         wiki_id => $wiki->wiki_id(),
     );

@@ -90,7 +90,7 @@ open my $fh, '>', \$buffer;
     $buffer = q{};
     seek $fh, 0, 0;
 
-    $stream->file_link( link_text => 'file:1' );
+    $stream->file_link( link_text => 'nonexistent.foo' );
 
     is(
         $buffer,
@@ -110,7 +110,7 @@ open my $fh, '>', \$buffer;
         wiki_id   => $wiki->wiki_id(),
     );
 
-    my $file_link = 'file:' . $file->filename();
+    my $file_link = $file->filename();
     my $uri       = $file->uri();
 
     my $stream = Silki::Markdent::Handler::HTMLStream->new(
@@ -257,7 +257,7 @@ open my $fh, '>', \$buffer;
         wiki_id   => $wiki2->wiki_id(),
     );
 
-    my $file_link = 'file:other/' . $file->filename();
+    my $file_link = 'other/' . $file->filename();
     my $uri       = $file->uri();
 
     $buffer = q{};
@@ -302,7 +302,7 @@ open my $fh, '>', \$buffer;
         wiki_id   => $wiki->wiki_id(),
     );
 
-    my $file_link = 'file:' . $file->filename();
+    my $file_link = $file->filename();
     my $uri       = $file->uri();
 
     $buffer = q{};
@@ -344,7 +344,7 @@ open my $fh, '>', \$buffer;
         wiki_id   => $wiki->wiki_id(),
     );
 
-    my $file_link = 'file:' . $file->filename();
+    my $file_link = $file->filename();
     my $uri       = $file->uri();
     my $small_uri = $file->uri( view => 'small' );
     my $filename  = $file->filename();

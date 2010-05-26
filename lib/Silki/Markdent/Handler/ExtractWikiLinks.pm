@@ -2,12 +2,13 @@ package Silki::Markdent::Handler::ExtractWikiLinks;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 our $VERSION = '0.01';
 
+use List::AllUtils qw( any );
 use Silki::Types qw( HashRef );
 
-use namespace::autoclean;
 use Moose;
 use MooseX::SemiAffordanceAccessor;
 use MooseX::StrictConstructor;
@@ -25,14 +26,23 @@ has links => (
     },
 );
 
+my @types = map { 'Silki::Markdent::Event::' . $_ } qw( WikiLink FileLink ImageLink );
+
 sub handle_event {
     my $self  = shift;
     my $event = shift;
 
-    return unless $event->isa('Silki::Markdent::Event::WikiLink');
+    return unless any {  $event->isa($_) } @types;
 
-    my $link_data
-        = $self->_resolve_page_link( $event->link_text(), $event->display_text() );
+    my $link_data;
+    if ( $event->isa('Silki::Markdent::Event::WikiLink') ) {
+        $link_data = $self->_resolve_page_link( $event->link_text() );
+    }
+    else {
+        $link_data = $self->_resolve_file_link( $event->link_text() );
+    }
+
+    return unless $link_data;
 
     $self->_add_link( $event->link_text() => $link_data );
 

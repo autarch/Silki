@@ -21,7 +21,7 @@ my $user = Silki::Schema::User->GuestUser();
 {
     my $page = Silki::Schema::Page->insert_with_content(
         title   => 'Some Page',
-        content => 'This is a page with a link to a [[Pending Page]]',
+        content => 'This is a page with a link to a ((Pending Page))',
         user_id => $user->user_id(),
         wiki_id => $wiki->wiki_id(),
     );
@@ -157,7 +157,7 @@ my $user = Silki::Schema::User->GuestUser();
         'adding a file to a page creates a new revision'
     );
 
-    my $link = '[[file:' . $file1->file_id() . ']]';
+    my $link = '{{file:' . $file1->filename() . '}}';
     like(
         $revision->content(), qr/\Q$link/,
         'new revision has a link to the added file'
