@@ -42,7 +42,7 @@ sub handle_event {
         $link_data = $self->_resolve_file_link( $event->link_text() );
     }
 
-    return unless $link_data;
+    return unless $link_data && ( $link_data->{page} || $link_data->{file} );
 
     $self->_add_link( $event->link_text() => $link_data );
 

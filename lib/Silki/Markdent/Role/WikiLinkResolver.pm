@@ -27,7 +27,9 @@ sub _resolve_page_link {
 
     if ( $link =~ m{^([^/]+)/([^/]+)$} ) {
         $wiki = Silki::Schema::Wiki->new( short_name => $1 )
-            or return loc( '(Link to non-existent wiki - %1)', $link );
+            or return {
+            text => loc( '(Link to non-existent wiki - %1)', $link ),
+            };
 
         $page_title = $2;
     }

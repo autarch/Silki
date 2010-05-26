@@ -43,12 +43,7 @@ sub wiki_link {
 
     my $link_data = $self->_resolve_page_link( $link, $display_text );
 
-    if ( ref $link_data ) {
-        $self->_link_to_page($link_data);
-    }
-    else {
-        $self->_stream()->text($link_data);
-    }
+    $self->_link_to_page($link_data);
 
     return;
 }
@@ -56,6 +51,11 @@ sub wiki_link {
 sub _link_to_page {
     my $self = shift;
     my $p    = shift;
+
+    unless ( $p->{page} || $p->{wiki} ) {
+        $self->_stream()->text( $p->{text} );
+        return;
+    }
 
     my $page = $p->{page};
 

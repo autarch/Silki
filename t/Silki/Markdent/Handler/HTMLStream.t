@@ -284,6 +284,17 @@ open my $fh, '>', \$buffer;
         qq{<a href="$uri" title="View this file">test file</a>},
         'link to another wiki existing file, with alternate link text'
     );
+
+    $buffer = q{};
+    seek $fh, 0, 0;
+
+    $stream->wiki_link( link_text => 'bad interwiki/Foo' );
+
+    is(
+        $buffer,
+        qq{(Link to non-existent wiki - bad interwiki/Foo)},
+        'bad interwiki link (wiki name does not resolve)'
+    );
 }
 
 {
