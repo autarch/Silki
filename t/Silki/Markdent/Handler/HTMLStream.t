@@ -94,7 +94,7 @@ open my $fh, '>', \$buffer;
 
     is(
         $buffer,
-        q{(Link to non-existent file)},
+        q{(Link to non-existent file - nonexistent.foo)},
         'link to non-existent file'
     );
 }
