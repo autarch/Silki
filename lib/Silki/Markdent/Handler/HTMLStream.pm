@@ -43,9 +43,12 @@ sub wiki_link {
 
     my $link_data = $self->_resolve_page_link( $link, $display_text );
 
-    return unless $link_data;
-
-    $self->_link_to_page($link_data);
+    if ( ref $link_data ) {
+        $self->_link_to_page($link_data);
+    }
+    else {
+        $self->_stream()->text($link_data);
+    }
 
     return;
 }
@@ -90,8 +93,6 @@ sub file_link {
 
     my $link_data = $self->_resolve_file_link( $link, $display_text );
 
-    return unless $link_data;
-
     $self->_link_to_file($link_data);
 
     return;
@@ -105,8 +106,6 @@ sub image_link {
     );
 
     my $link_data = $self->_resolve_file_link($link);
-
-    return unless $link_data;
 
     if (   $link_data->{file}
         && $link_data->{file}->is_browser_displayable_image() ) {

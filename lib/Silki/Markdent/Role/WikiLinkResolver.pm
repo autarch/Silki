@@ -27,7 +27,7 @@ sub _resolve_page_link {
 
     if ( $link =~ m{^([^/]+)/([^/]+)$} ) {
         $wiki = Silki::Schema::Wiki->new( short_name => $1 )
-            or return;
+            or return loc( '(Link to non-existent wiki - %1)', $link );
 
         $page_title = $2;
     }
@@ -98,6 +98,7 @@ sub _resolve_file_link {
         $display_text = $self->_link_text_for_file(
             $wiki,
             $file,
+            $filename,
         );
     }
 
@@ -109,11 +110,12 @@ sub _resolve_file_link {
 }
 
 sub _link_text_for_file {
-    my $self = shift;
-    my $wiki = shift;
-    my $file = shift;
+    my $self     = shift;
+    my $wiki     = shift;
+    my $file     = shift;
+    my $filename = shift;
 
-    return loc('(Link to non-existent file)') unless $file;
+    return loc( '(Link to non-existent file - %1)', $filename ) unless $file;
 
     my $text = $file->filename();
 
