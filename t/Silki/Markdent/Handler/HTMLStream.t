@@ -211,6 +211,17 @@ open my $fh, '>', \$buffer;
     $buffer = q{};
     seek $fh, 0, 0;
 
+    $stream->wiki_link( link_text => 'Other/Front Page' );
+
+    is(
+        $buffer,
+        q{<a href="/wiki/other/page/Front_Page" class="existing-page">Front Page (Other)</a>},
+        'link to another wiki front page, using wiki title'
+    );
+
+    $buffer = q{};
+    seek $fh, 0, 0;
+
     $stream->wiki_link(
         link_text    => 'other/Front Page',
         display_text => 'the front page',
