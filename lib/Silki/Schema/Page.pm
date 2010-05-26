@@ -9,6 +9,7 @@ use Fey::Object::Iterator::FromSelect;
 use Fey::Placeholder;
 use List::AllUtils qw( first );
 use Silki::Config;
+use Silki::I18N qw( loc );
 use Silki::Schema::PageRevision;
 use Silki::Schema;
 use Silki::Schema::File;
@@ -23,7 +24,14 @@ use MooseX::ClassAttribute;
 use MooseX::Params::Validate qw( validated_list pos_validated_list );
 
 with 'Silki::Role::Schema::URIMaker';
+
 with 'Silki::Role::Schema::SystemLogger' => { methods => ['delete'] };
+
+with 'Silki::Role::Schema::DataValidator' => {
+    steps => [
+        '_title_does_not_contain_double_parens',
+    ],
+};
 
 my $Schema = Silki::Schema->Schema();
 
@@ -264,6 +272,24 @@ sub _system_log_values_for_delete {
             content   => $revision->content(),
         },
     );
+}
+
+sub _title_does_not_contain_double_parens {
+    my $self      = shift;
+    my $p         = shift;
+    my $is_insert = shift;
+
+    return
+        if !$is_insert
+            && !exists $p->{title};
+
+    return unless $p->{title} =~ /\)\)/;
+
+    return {
+        message => loc(
+            q{Page titles cannot contain the characters "))", since this conflicts with the wiki link syntax.}
+        ),
+    };
 }
 
 sub add_revision {
