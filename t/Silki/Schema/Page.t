@@ -214,6 +214,16 @@ my $user = Silki::Schema::User->GuestUser();
     }
     qr/\Qcannot contain the characters "))"/,
         'cannot use "))" in a page title';
+
+    throws_ok {
+        Silki::Schema::Page->insert_with_content(
+            title   => 'Bad title / here',
+            content => 'foo',
+            user_id => $user->user_id(),
+            wiki_id => $wiki->wiki_id(),
+        );
+    }
+    qr/\Qcannot contain a slash/, 'cannot use / in a page title';
 }
 
 done_testing();

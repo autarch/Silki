@@ -29,7 +29,7 @@ with 'Silki::Role::Schema::SystemLogger' => { methods => ['delete'] };
 
 with 'Silki::Role::Schema::DataValidator' => {
     steps => [
-        '_title_does_not_contain_double_parens',
+        '_title_is_valid',
     ],
 };
 
@@ -274,7 +274,7 @@ sub _system_log_values_for_delete {
     );
 }
 
-sub _title_does_not_contain_double_parens {
+sub _title_is_valid {
     my $self      = shift;
     my $p         = shift;
     my $is_insert = shift;
@@ -283,13 +283,23 @@ sub _title_does_not_contain_double_parens {
         if !$is_insert
             && !exists $p->{title};
 
-    return unless $p->{title} =~ /\)\)/;
+    if ( $p->{title} =~ /\)\)/ ) {
+        return {
+            message => loc(
+                q{Page titles cannot contain the characters "))", since this conflicts with the wiki link syntax.}
+            ),
+        };
+    }
 
-    return {
-        message => loc(
-            q{Page titles cannot contain the characters "))", since this conflicts with the wiki link syntax.}
-        ),
-    };
+    if ( $p->{title} =~ /\// ) {
+        return {
+            message => loc(
+                q{Page titles cannot contain a slash "/", since this conflicts with the syntax to link to another wiki.}
+            ),
+        };
+    }
+
+    return;
 }
 
 sub add_revision {
