@@ -27,4 +27,7 @@ override dispatch => sub {
     return super();
 };
 
+# Intentionally not immutable. Catalyst should take care of this for us, I
+# think.
+
 1;
