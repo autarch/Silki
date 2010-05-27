@@ -37,7 +37,6 @@ __PACKAGE__->config(
     %{ $Config->catalyst_config() },
 );
 
-__PACKAGE__->request_class('Catalyst::Request::REST::ForBrowsers');
 __PACKAGE__->apply_request_class_roles('Silki::Request');
 
 Silki::Schema->EnableObjectCaches();
@@ -59,31 +58,33 @@ __PACKAGE__->meta()->make_immutable( replace_constructor => 1 );
 
 1;
 
-=head1 NAME
+# ABSTRACT: Silki is a Catalyst-based wiki hosting application
 
-Silki - Catalyst based application
+__END__
+
+=pod
 
 =head1 SYNOPSIS
 
-    script/silk_server.pl
+    script/silki_server.pl
 
 =head1 DESCRIPTION
 
-[enter your description here]
+Silki is a wiki hosting application with several core goals.
 
-=head1 SEE ALSO
+First, Silki aims to be easy to use. Many wiki applications seem to be aimed
+at hackers, which is great, but wikis are useful in many fields, not just
+geekery. Silki aims to be easy to use. That means building a simple UI,
+providing hand-holding wherever it's needed, and avoiding jargon. It also
+means that features take a back seat to usability. A bloated application is a
+hard-to-use application.
 
-L<Silki::Controller::Root>, L<Catalyst>
+Second, Silki is a I<wiki hosting platform>. That means that it can host
+multiple wikis in a single installation. User identity is global to a single
+installation, and users are members of zero or more wikis. Silki supports
+various degrees of openness in a wiki, from "guests can edit" to "members
+only".
 
-=head1 AUTHOR
-
-Dave Rolsky,,,
-
-=head1 LICENSE
-
-This library is free software, you can redistribute it and/or modify
-it under the same terms as Perl itself.
+Third, 
 
 =cut
-
-1;

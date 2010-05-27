@@ -8,6 +8,8 @@ use Silki::Util qw( string_is_empty );
 
 use Moose::Role;
 
+with 'Catalyst::TraitFor::Request::REST::ForBrowsers';
+
 sub user_params {
     my $self = shift;
 
