@@ -116,8 +116,6 @@ sub domain_collection_POST {
     $c->redirect_and_detach( $domain->uri() );
 }
 
-
-
 __PACKAGE__->meta()->make_immutable();
 
 1;
