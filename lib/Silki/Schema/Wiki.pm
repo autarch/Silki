@@ -35,6 +35,7 @@ with 'Silki::Role::Schema::SystemLogger' => { methods => ['insert'] };
 with 'Silki::Role::Schema::DataValidator' => {
     steps => [
         '_title_is_unique',
+        '_title_is_valid',
         '_short_name_is_unique',
     ],
 };
@@ -225,13 +226,13 @@ Welcome to your new wiki.
 
 A wiki is a set of web pages that can be read and edited by a group of people. You use simple syntax to add things like *italics* and **bold** to the text. Wikis are designed to make linking to other pages easy.
 
-For more information about wikis in general and Silki in particular, see the ((Help)) page.
+For more information about wikis in general and Silki in particular, click on the Help link in the upper right.
+
+You can also play around on the ((Scratch Pad)) page.
 EOF
 
-my $Help = <<'EOF';
-This needs some content.
-
-Link to a ((Wanted Page)).
+my $Scratch = <<'EOF';
+Feel free experiment with the wiki here.
 EOF
 
 around insert => sub {
@@ -264,8 +265,8 @@ around insert => sub {
             );
 
             Silki::Schema::Page->insert_with_content(
-                title          => 'Help',
-                content        => $Help,
+                title          => 'Scratch Pad',
+                content        => $Scratch,
                 wiki_id        => $wiki->wiki_id(),
                 user_id        => $wiki->user_id(),
                 can_be_renamed => 0,
@@ -304,6 +305,31 @@ sub _title_is_unique {
             'The title you provided is already in use by another wiki.'
         ),
     };
+}
+
+sub _title_is_valid {
+    my $self      = shift;
+    my $p         = shift;
+
+    return unless exists $p->{title};
+
+    if ( $p->{title} =~ /\)\)/ ) {
+        return {
+            message => loc(
+                q{Wiki titles cannot contain the characters "))", since this conflicts with the wiki link syntax.}
+            ),
+        };
+    }
+
+    if ( $p->{title} =~ /\// ) {
+        return {
+            message => loc(
+                q{Wiki titles cannot contain a slash (/), since this conflicts with the syntax to link to another wiki.}
+            ),
+        };
+    }
+
+    return;
 }
 
 sub _short_name_is_unique {

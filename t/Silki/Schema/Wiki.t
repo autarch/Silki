@@ -1,8 +1,7 @@
 use strict;
 use warnings;
 
-use Test::Exception;
-use Test::More;
+use Test::Most;
 
 use lib 't/lib';
 use Silki::Test::RealSchema;
@@ -89,8 +88,8 @@ my $user = Silki::Schema::User->SystemUser();
 
     is_deeply(
         [ sort map { $_->title() } @pages ],
-        [ 'Front Page', 'Help' ],
-        'new pages are called Front Page and Help'
+        [ 'Front Page', 'Scratch Pad' ],
+        'new pages are called Front Page and Scratch Pad'
     );
 }
 
@@ -160,8 +159,8 @@ my $user = Silki::Schema::User->SystemUser();
             sort { $a->[0]->title() cmp $b->[0]->title() } @revs
         ],
         [
-            [ 'Front Page', 1 ],
-            [ 'Help',       1 ],
+            [ 'Front Page',  1 ],
+            [ 'Scratch Pad', 1 ],
         ],
         'revisions returns expected revisions'
     );
@@ -203,11 +202,11 @@ my $user = Silki::Schema::User->SystemUser();
     );
 
     is(
-        $wiki->wanted_page_count(), 1,
-        'wiki has one wanted page'
+        $wiki->wanted_page_count(), 0,
+        'wiki has no wanted pages'
     );
 
-    Silki::Schema::Page->insert_with_content(
+    my $wants = Silki::Schema::Page->insert_with_content(
         title   => 'Wants',
         wiki_id => $wiki->wiki_id(),
         user_id => $admin_user->user_id(),
@@ -215,14 +214,14 @@ my $user = Silki::Schema::User->SystemUser();
     );
 
     is(
-        $wiki->wanted_page_count(), 2,
+        $wiki->wanted_page_count(), 1,
         'wiki has two wanted pages'
     );
 
     my @wanted = $wiki->wanted_pages()->all();
     is_deeply(
         [ sort map { $_->title() } @wanted ],
-        [ 'Something New', 'Wanted Page' ],
+        [ 'Something New' ],
         'wanted pages returns expected list of pages'
     );
 
@@ -446,7 +445,7 @@ sub check_members {
     check_search(
         $wiki,
         'page',
-        [ 'Front Page', 'Help' ],
+        [ 'Front Page' ],
     );
 }
 
@@ -487,6 +486,31 @@ sub check_search {
         Silki::Schema::Wiki->PublicWikiCount(), 0,
         'there are no public wikis'
     );
+}
+
+{
+    throws_ok {
+        Silki::Schema::Wiki->insert(
+            title      => 'Has )) parens',
+            short_name => 'public',
+            domain_id  => Silki::Schema::Domain->DefaultDomain()->domain_id(),
+            account_id => $account->account_id(),
+            user       => $user,
+        );
+    }
+    qr/\Qcannot contain the characters "))"/,
+        q{wiki title cannot contain "))"};
+
+    throws_ok {
+        Silki::Schema::Wiki->insert(
+            title      => 'Has a / slash',
+            short_name => 'public',
+            domain_id  => Silki::Schema::Domain->DefaultDomain()->domain_id(),
+            account_id => $account->account_id(),
+            user       => $user,
+        );
+    }
+    qr{\Qcannot contain a slash (/)}, q{wiki title cannot contain a slash};
 }
 
 done_testing();
