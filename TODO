@@ -22,3 +22,10 @@
 = Users
 
 * allow email aliases for purposes of logging in
+
+= Other
+
+* Remove all monkey-patching (Session plugin, ErrorHandling, HTTP::Body
+  filename preservation hack)
+** session unhacking would ideally involve building an alternate, much simpler
+   session mechanism
