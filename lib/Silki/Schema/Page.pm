@@ -294,7 +294,7 @@ sub _title_is_valid {
     if ( $p->{title} =~ /\// ) {
         return {
             message => loc(
-                q{Page titles cannot contain a slash "/", since this conflicts with the syntax to link to another wiki.}
+                q{Page titles cannot contain a slash (/), since this conflicts with the syntax to link to another wiki.}
             ),
         };
     }
