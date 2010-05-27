@@ -4,8 +4,6 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
-our $VERSION = '0.01';
-
 use Catalyst::Runtime 5.8;
 
 use CatalystX::RoleApplicator;

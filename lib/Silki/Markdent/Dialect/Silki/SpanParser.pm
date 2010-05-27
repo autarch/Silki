@@ -3,8 +3,6 @@ package Silki::Markdent::Dialect::Silki::SpanParser;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
-
 use List::AllUtils qw( insert_after_string );
 use Silki::Markdent::Event::FileLink;
 use Silki::Markdent::Event::ImageLink;

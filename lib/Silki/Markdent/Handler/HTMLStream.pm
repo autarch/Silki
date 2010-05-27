@@ -3,8 +3,6 @@ package Silki::Markdent::Handler::HTMLStream;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
-
 use MooseX::Params::Validate qw( validated_list );
 use Silki::I18N qw( loc );
 use Silki::Schema::Page;

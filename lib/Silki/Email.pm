@@ -3,8 +3,6 @@ package Silki::Email;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
-
 use Email::Date qw( format_date );
 use Email::MessageID;
 use Email::MIME::CreateHTML;
@@ -46,6 +44,8 @@ sub send_email {
     my $text_body = Silki::HTML::FormatText->new( leftmargin => 0 )
         ->format_string($html_body);
 
+    my $version = $Silki::Email::VERSION || 'from working copy';
+
     my $email = Email::MIME->create_html(
         header => [
             From         => $from,
@@ -53,7 +53,7 @@ sub send_email {
             Subject      => $subject,
             'Message-ID' => Email::MessageID->new()->in_brackets(),
             Date         => format_date(),
-            'X-Sender'   => "Silki version $VERSION",
+            'X-Sender'   => "Silki version $version",
         ],
         body            => $html_body,
         body_attributes => { content_type => 'text/html; charset=utf-8' },

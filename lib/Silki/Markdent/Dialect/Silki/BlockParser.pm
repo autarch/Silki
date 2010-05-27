@@ -3,8 +3,6 @@ package Silki::Markdent::Dialect::Silki::BlockParser;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
-
 use namespace::autoclean;
 use Moose;
 use MooseX::SemiAffordanceAccessor;

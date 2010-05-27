@@ -3,8 +3,6 @@ package Silki::Markdent::Role::WikiLinkResolver;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
-
 use Silki::I18N qw( loc );
 
 use namespace::autoclean;

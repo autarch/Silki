@@ -4,8 +4,6 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
-our $VERSION = '0.01';
-
 use List::AllUtils qw( any );
 use Silki::Types qw( HashRef );
 

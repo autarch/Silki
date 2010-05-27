@@ -3,8 +3,6 @@ package Silki::Markdent::Event::WikiLink;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
-
 use Markdent::Types qw( Str );
 
 use namespace::autoclean;
