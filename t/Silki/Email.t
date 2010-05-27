@@ -47,13 +47,14 @@ Silki::Email::send_email(
     template_params => { uri => 'http://example.com' },
 );
 
+my $version = $Silki::Email::VERSION || 'from working copy';
 test_email(
     {
         From         => 'foo@example.com',
         To           => 'bar@example.com',
         Subject      => 'Test email',
         'Message-ID' => qr/^<.+>$/,
-        'X-Sender'   => "Silki version $Silki::Email::VERSION",
+        'X-Sender'   => "Silki version $version",
     },
     qr{<p>
        \s+
