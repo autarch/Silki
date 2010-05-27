@@ -2,10 +2,10 @@ package Silki::Markdent::Event::ImageLink;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Markdent::Types qw( Str );
 
-use namespace::autoclean;
 use Moose;
 use MooseX::StrictConstructor;
 

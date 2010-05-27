@@ -2,6 +2,7 @@ package Silki::Markdent::Handler::HTMLStream;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use MooseX::Params::Validate qw( validated_list );
 use Silki::I18N qw( loc );
@@ -9,7 +10,6 @@ use Silki::Schema::Page;
 use Silki::Schema::Permission;
 use Silki::Types qw( Bool Str );
 
-use namespace::autoclean;
 use Moose;
 use MooseX::SemiAffordanceAccessor;
 use MooseX::StrictConstructor;
@@ -170,5 +170,7 @@ sub _link_to_file {
 
     $self->_stream()->tag('_a');
 }
+
+__PACKAGE__->meta()->make_immutable();
 
 1;

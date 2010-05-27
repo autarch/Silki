@@ -2,13 +2,13 @@ package Silki::Markdent::Dialect::Silki::SpanParser;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use List::AllUtils qw( insert_after_string );
 use Silki::Markdent::Event::FileLink;
 use Silki::Markdent::Event::ImageLink;
 use Silki::Markdent::Event::WikiLink;
 
-use namespace::autoclean;
 use Moose;
 use MooseX::SemiAffordanceAccessor;
 use MooseX::StrictConstructor;

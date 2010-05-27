@@ -4,8 +4,9 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
-use Moose::Role;
 use Silki::Util qw( string_is_empty );
+
+use Moose::Role;
 
 sub user_params {
     my $self = shift;
@@ -81,4 +82,3 @@ sub _params_for_classes {
 }
 
 1;
-

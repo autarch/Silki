@@ -2,10 +2,10 @@ package Silki::Markdent::Role::WikiLinkResolver;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 
 use Silki::I18N qw( loc );
 
-use namespace::autoclean;
 use Moose::Role;
 
 has _wiki => (

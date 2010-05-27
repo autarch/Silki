@@ -2,8 +2,8 @@ package Silki::Markdent::Dialect::Silki::BlockParser;
 
 use strict;
 use warnings;
-
 use namespace::autoclean;
+
 use Moose;
 use MooseX::SemiAffordanceAccessor;
 use MooseX::StrictConstructor;

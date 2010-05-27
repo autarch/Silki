@@ -57,7 +57,6 @@ sub formatted_content {
     return sprintf( $format, $content );
 }
 
-
 __PACKAGE__->meta()->make_immutable();
 
 1;

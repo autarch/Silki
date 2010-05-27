@@ -47,4 +47,6 @@ sub handle_event {
     return;
 }
 
+__PACKAGE__->meta()->make_immutable();
+
 1;
