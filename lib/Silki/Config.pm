@@ -72,6 +72,13 @@ has catalyst_imports => (
     builder => '_build_catalyst_imports',
 );
 
+has serve_static_files => (
+    is      => 'ro',
+    isa     => Bool,
+    lazy    => 1,
+    builder => '_build_serve_static_files',
+);
+
 has catalyst_roles => (
     is      => 'ro',
     isa     => ArrayRef[Str],
@@ -278,15 +285,25 @@ sub _find_config_file {
 
         my @imports = @StandardImports;
         push @imports, 'Static::Simple'
-            unless $ENV{MOD_PERL}
-                || $self->is_production()
-                || $self->is_profiling();
+            if $self->serve_static_files();
 
         push @imports, 'StackTrace'
             unless $self->is_production() || $self->is_profiling();
 
         return \@imports;
     }
+}
+
+sub _build_serve_static_files {
+    my $self = shift;
+
+    if ( exists $self->_config_hash()->{Silki}{static} ) {
+        return $self->_config_hash()->{Silki}{static};
+    }
+
+    return !( $ENV{MOD_PERL}
+        || $self->is_production()
+        || $self->is_profiling() );
 }
 
 {
@@ -330,9 +347,18 @@ sub _build_var_lib_dir {
 sub _build_share_dir {
     my $self = shift;
 
+    # I'd like to use File::ShareDir, but it blows up if the directory doesn't
+    # exist, which isn't very fucking helpful. This is equivalent to
+    # dist_dir('Silki')
+    my $share_dir = dir(
+        dir( $INC{'Silki/Config.pm'} )->parent(),
+        'auto', 'share', 'dist',
+        'Silki'
+    )->absolute()->cleanup();
+
     return $self->_dir(
         ['share'],
-        '/usr/local/share/silki',
+        $share_dir,
         dir('share')->absolute(),
     );
 }

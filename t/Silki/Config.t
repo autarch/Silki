@@ -123,13 +123,24 @@ Silki::Config->_clear_instance();
         Unicode
     );
 
+    ok( $config->serve_static_files(), 'by default we serve static files' );
+
     is_deeply(
         $config->_build_catalyst_imports(),
         [ @base_imports, 'Static::Simple', 'StackTrace' ],
         'catalyst imports by default in dev setting'
     );
 
+    Silki::Config->_clear_instance();
+
+    $config = Silki::Config->instance();
+
     $config->_set_is_production(1);
+
+    ok(
+        !$config->serve_static_files(),
+        'does not serve static files in production'
+    );
 
     is_deeply(
         $config->_build_catalyst_imports(),
@@ -137,9 +148,18 @@ Silki::Config->_clear_instance();
         'catalyst imports by default in production setting'
     );
 
+    Silki::Config->_clear_instance();
+
+    $config = Silki::Config->instance();
+
     $config->_set_is_production(0);
 
     $config->_set_is_profiling(1);
+
+    ok(
+        !$config->serve_static_files(),
+        'does not serve static files when profiling'
+    );
 
     is_deeply(
         $config->_build_catalyst_imports(),
@@ -147,10 +167,19 @@ Silki::Config->_clear_instance();
         'catalyst imports by default in profiling setting'
     );
 
+    Silki::Config->_clear_instance();
+
+    $config = Silki::Config->instance();
+
     $config->_set_is_profiling(0);
 
     {
         local $ENV{MOD_PERL} = 1;
+
+        ok(
+            !$config->serve_static_files(),
+            'does not serve static files under mod_perl'
+        );
 
         is_deeply(
             $config->_build_catalyst_imports(),
@@ -257,9 +286,15 @@ Silki::Config->_clear_instance();
         'var lib dir defaults to /var/lib/silki in production'
     );
 
+    my $share_dir = dir(
+        dir( $INC{'Silki/Config.pm'} )->parent(),
+        'auto', 'share', 'dist',
+        'Silki'
+    )->absolute()->cleanup();
+
     is(
         $config->_build_share_dir(),
-        '/usr/local/share/silki',
+        $share_dir,
         'share dir defaults to /usr/local/share/silki in production'
     );
 
@@ -447,11 +482,11 @@ Silki::Config->_clear_instance();
 
     my $home_dir = dir( File::HomeDir->my_home() );
 
+    my $share_dir = $config->share_dir();
+
     is_deeply(
         $config->_build_mason_config(), {
-            comp_root =>
-                dir( dirname( abs_path($0) ), '..', '..', 'share', 'mason' )
-                ->resolve(),
+            comp_root => $share_dir->subdir('mason'),
             data_dir =>
                 $home_dir->subdir( '.silki', 'cache', 'mason', 'web' ),
             error_mode           => 'fatal',
@@ -473,9 +508,11 @@ Silki::Config->_clear_instance();
 
     $config->_set_is_production(1);
 
+    my $share_dir = $config->share_dir();
+
     is_deeply(
         $config->_build_mason_config(), {
-            comp_root                => '/usr/local/share/silki/mason',
+            comp_root                => $share_dir->subdir('mason'),
             data_dir                 => '/var/cache/silki/mason/web',
             error_mode               => 'fatal',
             in_package               => 'Silki::Mason::Web',
@@ -495,16 +532,15 @@ Silki::Config->_clear_instance();
 
     my $home_dir = dir( File::HomeDir->my_home() );
 
+    my $share_dir = $config->share_dir();
+
     is_deeply(
         $config->_build_mason_config_for_email(), {
-            comp_root => dir(
-                dirname( abs_path($0) ), '..', '..', 'share',
-                'email-templates'
-                )->resolve(),
+            comp_root => $share_dir->subdir('email-templates'),
             data_dir =>
                 $home_dir->subdir( '.silki', 'cache', 'mason', 'email' ),
-            error_mode           => 'fatal',
-            in_package           => 'Silki::Mason::Email',
+            error_mode => 'fatal',
+            in_package => 'Silki::Mason::Email',
         },
         'default mason config for email'
     );
@@ -520,13 +556,15 @@ Silki::Config->_clear_instance();
 
     $config->_set_is_production(1);
 
+    my $share_dir = $config->share_dir();
+
     is_deeply(
         $config->_build_mason_config_for_email(), {
-            comp_root            => '/usr/local/share/silki/email-templates',
-            data_dir             => '/var/cache/silki/mason/email',
-            error_mode           => 'fatal',
-            in_package           => 'Silki::Mason::Email',
-            static_source        => 1,
+            comp_root                => $share_dir->subdir('email-templates'),
+            data_dir                 => '/var/cache/silki/mason/email',
+            error_mode               => 'fatal',
+            in_package               => 'Silki::Mason::Email',
+            static_source            => 1,
             static_source_touch_file => '/etc/silki/mason-touch',
         },
         'mason config for email in production'
