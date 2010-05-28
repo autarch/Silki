@@ -17,4 +17,4 @@ Makefile
 Makefile.old
 pm_to_blib*
 t/lib/Silki/Test/FakeSchema.pm
-
+Silki-*
