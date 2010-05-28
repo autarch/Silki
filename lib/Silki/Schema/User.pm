@@ -8,7 +8,7 @@ use feature ':5.10';
 
 use Authen::Passphrase::BlowfishCrypt;
 use DateTime;
-use Digest::SHA1 qw( sha1_hex );
+use Digest::SHA qw( sha1_hex );
 use Fey::Literal::Function;
 use Fey::Object::Iterator::FromSelect;
 use Fey::ORM::Exceptions qw( no_such_row );
