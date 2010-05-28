@@ -8,10 +8,13 @@ use lib './lib';
 
 use FindBin;
 use MIME::Base64 qw( encode_base64 );
+use Silki::Config;
 use Storable qw( nfreeze );
 
+Silki::Config->dbi_config()->{name} = 'SilkiDev';
+
 unless ( grep { $_ eq '--existing' } @ARGV ) {
-    system("$FindBin::Bin/silki-initialize");
+    system("$FindBin::Bin/initialize-db --db SilkiDev --no-seed");
 }
 
 require Silki::Schema;
