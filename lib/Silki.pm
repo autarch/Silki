@@ -58,33 +58,82 @@ __PACKAGE__->meta()->make_immutable( replace_constructor => 1 );
 
 1;
 
-# ABSTRACT: Silki is a Catalyst-based wiki hosting application
+# ABSTRACT: Silki is a Catalyst-based wiki hosting platform
 
 __END__
 
 =pod
 
-=head1 SYNOPSIS
-
-    script/silki_server.pl
-
 =head1 DESCRIPTION
 
 Silki is a wiki hosting application with several core goals.
 
-First, Silki aims to be easy to use. Many wiki applications seem to be aimed
-at hackers, which is great, but wikis are useful in many fields, not just
-geekery. Silki aims to be easy to use. That means building a simple UI,
-providing hand-holding wherever it's needed, and avoiding jargon. It also
-means that features take a back seat to usability. A bloated application is a
-hard-to-use application.
+Usability is a core value for Silki. Many wiki applications seem to be aimed
+at geeks, which is great, but wikis are useful in many fields, not just
+geekery. Ease of use means providing a simple, well thought-out UI, offering
+hand-holding wherever it's needed, and avoiding jargon. It also means that
+features take a back seat to usability. A bloated application is a hard-to-use
+application.
 
-Second, Silki is a I<wiki hosting platform>. That means that it can host
-multiple wikis in a single installation. User identity is global to a single
-installation, and users are members of zero or more wikis. Silki supports
-various degrees of openness in a wiki, from "guests can edit" to "members
-only".
+Silki is a I<wiki hosting platform>. That means that it can host multiple
+wikis in a single installation. User identity is global to the installation,
+and users are members of zero or more wikis. Silki supports various degrees of
+openness in each wiki, from "guests can edit" to "members only".
 
-Third, 
+Silki is built with Modern Perl, including L<Catalyst>, L<Moose>, and
+L<Fey::ORM>. One of my goals for Silki is to explore best practices in
+creating web applications.
+
+=head2 Alpha Warning
+
+This software is still in the early stages of development, and should not be
+considered stable. It is being released to "get it out there" and to let
+people play with it.
+
+=head1 REQUIREMENTS
+
+Silki requires the following software:
+
+=over 4
+
+=item * Perl 5, Version 10 (5.10.0)
+
+=item * Postgres 8.3+
+
+Silki has been tested with Postgres 8.3 and 8.4. We use the built-in Postgress
+full text search engine, which was integrated into the Postgres core in
+8.3. It may be possible to use Silki with an earlier version of Postgres,
+using the full text search included as a contrib module.
+
+=back
+
+=head1 INSTALLATION
+
+...
+
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<bug-silki@rt.cpan.org>, or
+through the web interface at L<http://rt.cpan.org>.  I will be notified, and
+then you'll automatically be notified of progress on your bug as I make
+changes.
+
+=head1 DONATIONS
+
+If you'd like to thank me for the work I've done on this module, please
+consider making a "donation" to me via PayPal. I spend a lot of free time
+creating free software, and would appreciate any support you'd care to offer.
+
+Please note that B<I am not suggesting that you must do this> in order for me
+to continue working on this particular software. I will continue to do so,
+inasmuch as I have in the past, for as long as it interests me.
+
+Similarly, a donation made in this way will probably not make me work on this
+software much more, unless I get so many donations that I can consider working
+on free software full time, which seems unlikely at best.
+
+To donate, log into PayPal and send money to autarch@urth.org or use the
+button on this page: L<http://www.urth.org/~autarch/fs-donation.html>
 
 =cut
