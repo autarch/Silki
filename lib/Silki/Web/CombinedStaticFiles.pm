@@ -9,7 +9,6 @@ use DateTime;
 use File::Copy qw( move );
 use File::Slurp qw( read_file );
 use File::Temp qw( tempfile );
-use JavaScript::Squish;
 use JSAN::ServerSide 0.04;
 use List::AllUtils qw( all );
 use Path::Class;
@@ -58,26 +57,31 @@ sub create_single_file {
 
     my ( $fh, $tempfile ) = tempfile( UNLINK => 0 );
 
-    my $now = DateTime->from_epoch(
-        epoch     => time,
-        time_zone => 'local',
-    )->strftime('%Y-%m-%d %H:%M:%S.%{nanosecond} %{time_zone_long_name}');
-
-    print {$fh} "/* Generated at $now */\n\n";
-
-    my $header = $self->header();
-    print {$fh} $header
-        unless string_is_empty($header);
-
-    for my $file ( @{ $self->files() } ) {
-        print {$fh} "\n\n/* $file */\n\n";
-        print {$fh} $self->_squish( $self->_process($file) );
-    }
-
-    close $fh;
+    print {$fh} $self->create_content();
 
     move( $tempfile => $target )
         or die "Cannot move $tempfile => $target: $!";
+}
+
+sub create_content {
+    my $self = shift;
+
+    my $now = DateTime->now(
+        time_zone => 'local',
+    )->strftime('%Y-%m-%d %H:%M:%S.%{nanosecond} %{time_zone_long_name}');
+
+    my $content = "/* Generated at $now */\n\n";
+
+    my $header = $self->header();
+    $content .= $header
+        unless string_is_empty($header);
+
+    for my $file ( @{ $self->files() } ) {
+        $content .= "\n\n/* $file */\n\n";
+        $content .= $self->_squish( $self->_process($file) );
+    }
+
+    return $content;
 }
 
 sub _process {
