@@ -11,10 +11,10 @@ use MIME::Base64 qw( encode_base64 );
 use Silki::Config;
 use Storable qw( nfreeze );
 
-Silki::Config->dbi_config()->{name} = 'SilkiDev';
+Silki::Config->dbi_config()->{name} = 'SilkiTest';
 
 unless ( grep { $_ eq '--existing' } @ARGV ) {
-    system("$FindBin::Bin/initialize-db --db SilkiDev --no-seed");
+    system("$FindBin::Bin/initialize-db --db SilkiTest --no-seed");
 }
 
 require Silki::Schema;
