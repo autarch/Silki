@@ -109,8 +109,7 @@ using the full text search included as a contrib module.
 
 =head1 INSTALLATION
 
-...
-
+Please see L<Silki::Manual::Admin> for details.
 
 =head1 BUGS
 

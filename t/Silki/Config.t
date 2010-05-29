@@ -7,6 +7,7 @@ use autodie;
 use Cwd qw( abs_path );
 use File::Basename qw( dirname );
 use File::HomeDir;
+use File::Slurp qw( read_file );
 use File::Temp qw( tempdir );
 use Path::Class qw( dir );
 use Silki::Config;
@@ -16,36 +17,45 @@ my $dir = tempdir( CLEANUP => 1 );
 $ENV{HARNESS_ACTIVE} = 0;
 
 {
+    # We need to make sure that we ignore any existing config file in
+    # ~/.silki
+    no warnings 'redefine';
+    local *Silki::Config::_home_dir = sub { dir('/path/to/nonexistent') };
+    local *Silki::Config::_etc_dir  = sub { dir('/path/to/nonexistent') };
+
     my $config = Silki::Config->instance();
 
-    {
-        # We need to make sure that we ignore any existing config file in
-        # ~/.silki
-        no warnings 'redefine';
-        local *Silki::Config::_home_dir = sub { dir('/path/to/nonexistent') };
+    is_deeply(
+        $config->_build_config_hash(),
+        {},
+        'config hash is empty by default'
+    );
+}
 
-        is_deeply(
-            $config->_build_config_hash(),
-            {},
-            'config hash is empty by default'
-        );
-    }
+{
+    my $config = Silki::Config->instance();
 
     is(
         $config->_build_secret, 'a big secret',
         'secret has a basic default in dev environment'
     );
+}
 
-    {
-        local $ENV{SILKI_CONFIG} = '/path/to/nonexistent/file.conf';
+{
+    local $ENV{SILKI_CONFIG} = '/path/to/nonexistent/file.conf';
 
-        throws_ok(
-            sub { $config->_build_config_hash() },
-            qr/\QNonexistent config file in SILKI_CONFIG env var/,
-            'SILKI_CONFIG pointing to bad file throws an error'
-        );
-    }
+    my $config = Silki::Config->instance();
 
+    $config->_clear_config_file();
+
+    throws_ok(
+        sub { $config->_build_config_hash() },
+        qr/\QNonexistent config file in SILKI_CONFIG env var/,
+        'SILKI_CONFIG pointing to bad file throws an error'
+    );
+}
+
+{
     my $dir = tempdir( CLEANUP => 1 );
     my $file = "$dir/silki.conf";
     open my $fh, '>', $file;
@@ -55,8 +65,12 @@ secret = foobar
 EOF
     close $fh;
 
+    my $config = Silki::Config->instance();
+
     {
         local $ENV{SILKI_CONFIG} = $file;
+
+        $config->_clear_config_file();
 
         is_deeply(
             $config->_build_config_hash(), {
@@ -76,13 +90,14 @@ EOF
     {
         local $ENV{SILKI_CONFIG} = $file;
 
+        $config->_clear_config_file();
+
         throws_ok(
             sub { $config->_build_config_hash() },
             qr/\QYou must supply a value for [Silki] - secret when running Silki in production/,
             'If is_production is true in config, there must be a secret defined'
         );
     }
-
 
     open $fh, '>', $file;
     print {$fh} <<'EOF';
@@ -94,6 +109,8 @@ EOF
 
     {
         local $ENV{SILKI_CONFIG} = $file;
+
+        $config->_clear_config_file();
 
         is_deeply(
             $config->_build_config_hash(), {
@@ -144,7 +161,7 @@ Silki::Config->_clear_instance();
 
     is_deeply(
         $config->_build_catalyst_imports(),
-        [ @base_imports ],
+        [@base_imports],
         'catalyst imports by default in production setting'
     );
 
@@ -163,7 +180,7 @@ Silki::Config->_clear_instance();
 
     is_deeply(
         $config->_build_catalyst_imports(),
-        [ @base_imports ],
+        [@base_imports],
         'catalyst imports by default in profiling setting'
     );
 
@@ -452,7 +469,7 @@ Silki::Config->_clear_instance();
     my $file = "$dir/silki.conf";
     open my $fh, '>', $file;
     print {$fh} <<'EOF';
-[db]
+[database]
 name = Foo
 host = example.com
 port = 9876
@@ -501,10 +518,11 @@ Silki::Config->_clear_instance();
 Silki::Config->_clear_instance();
 
 {
-    my $config = Silki::Config->instance();
-
     no warnings 'redefine';
+    local *Silki::Config::_home_dir   = sub { dir('/path/to/nonexistent') };
     local *Silki::Config::_ensure_dir = sub {return};
+
+    my $config = Silki::Config->instance();
 
     $config->_set_is_production(1);
 
@@ -549,10 +567,11 @@ Silki::Config->_clear_instance();
 Silki::Config->_clear_instance();
 
 {
-    my $config = Silki::Config->instance();
-
     no warnings 'redefine';
+    local *Silki::Config::_home_dir   = sub { dir('/path/to/nonexistent') };
     local *Silki::Config::_ensure_dir = sub {return};
+
+    my $config = Silki::Config->instance();
 
     $config->_set_is_production(1);
 
@@ -585,7 +604,7 @@ Silki::Config->_clear_instance();
 Silki::Config->_clear_instance();
 
 {
-    my $dir = tempdir( CLEANUP => 1 );
+    my $dir     = tempdir( CLEANUP => 1 );
     my $etc_dir = tempdir( CLEANUP => 1 );
 
     my $file = "$dir/silki.conf";
@@ -594,11 +613,6 @@ Silki::Config->_clear_instance();
 [dirs]
 etc = $etc_dir
 EOF
-    close $fh;
-
-    my $rev_file = "$etc_dir/revision";
-    open $fh, '>', $rev_file;
-    print {$fh} '42';
     close $fh;
 
     local $ENV{SILKI_CONFIG} = $file;
@@ -607,16 +621,17 @@ EOF
 
     $config->_set_is_production(1);
 
+    my $version = $Silki::Config::VERSION || 'wc';
     is(
-        $config->static_path_prefix(), q{/42},
-        'in prod environment, static path prefix includes revision number'
+        $config->static_path_prefix(), q{/} . $version,
+        'in prod environment, static path prefix includes a version'
     );
 }
 
 Silki::Config->_clear_instance();
 
 {
-    my $dir = tempdir( CLEANUP => 1 );
+    my $dir     = tempdir( CLEANUP => 1 );
     my $etc_dir = tempdir( CLEANUP => 1 );
 
     my $file = "$dir/silki.conf";
@@ -625,11 +640,6 @@ Silki::Config->_clear_instance();
 [dirs]
 etc = $etc_dir
 EOF
-    close $fh;
-
-    my $rev_file = "$etc_dir/revision";
-    open $fh, '>', $rev_file;
-    print {$fh} '47';
     close $fh;
 
     local $ENV{SILKI_CONFIG} = $file;
@@ -640,8 +650,10 @@ EOF
 
     $config->_set_path_prefix('/foo');
 
+    my $version = $Silki::Config::VERSION || 'wc';
+
     is(
-        $config->static_path_prefix(), q{/foo/47},
+        $config->static_path_prefix(), qq{/foo/$version},
         'in prod environment, static path prefix includes revision number and general prefix'
     );
 }
@@ -649,7 +661,7 @@ EOF
 Silki::Config->_clear_instance();
 
 {
-    my $config = Silki::Config->new();
+    my $config = Silki::Config->instance();
 
     my $dir = tempdir( CLEANUP => 1 );
 
@@ -658,6 +670,59 @@ Silki::Config->_clear_instance();
     $config->_ensure_dir($new_dir);
 
     ok( -d $new_dir, '_ensure_dir makes a new directory if needed' );
+}
+
+Silki::Config->_clear_instance();
+
+{
+    my $dir     = tempdir( CLEANUP => 1 );
+
+    my $file = "$dir/silki.conf";
+
+    my $config = Silki::Config->instance();
+
+    $config->_set_database_name('Foo');
+    $config->_set_database_username('fooer');
+    $config->_set_share_dir('/path/to/share');
+    $config->_set_antispam_key('abcdef');
+
+    $config->write_config_file( file => $file );
+
+    my $content = read_file($file);
+    like(
+        $content, qr/\Q; Config file for Silki version (\E[^)]+\)/,
+        'generated config file includes Silki version'
+    );
+
+    like(
+        $content, qr/\Q; is_production = 0/,
+        'generated config file includes default value for is_production, but does not actually set it'
+    );
+
+    like(
+        $content, qr/\Q; static =/,
+        'generated config file does not set static'
+    );
+
+    like(
+        $content, qr/\Qname = Foo/,
+        'generated config file includes explicit set value for database name'
+    );
+
+    like(
+        $content, qr/\Qusername = fooer/,
+        'generated config file includes explicit set value for database username'
+    );
+
+    like(
+        $content, qr/\[database\].+?name = Foo.+?username = fooer/s,
+        'generated config file keys are in order defined by meta description'
+    );
+
+    like(
+        $content, qr/\[Silki\].+?\[antispam\].+?\[database\]/s,
+        'section order is alphabetical, except that first section is Silki'
+    );
 }
 
 done_testing();

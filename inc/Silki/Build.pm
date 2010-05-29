@@ -26,6 +26,8 @@ sub ACTION_install {
     $self->SUPER::ACTION_install(@_);
 
     $self->dispatch('database');
+
+    $self->dispatch('config');
 }
 
 sub ACTION_database {
@@ -43,6 +45,14 @@ sub ACTION_database {
     }
 
     Silki::DBInstaller->new(%db_config)->update_or_install_db();
+}
+
+sub ACTION_config {
+    my $self = shift;
+
+    require Silki::Config;
+
+    
 }
 
 1;

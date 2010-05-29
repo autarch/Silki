@@ -3,35 +3,46 @@ package Silki::Config;
 use strict;
 use warnings;
 use namespace::autoclean;
+use autodie qw( :all );
 
 use Config::INI::Reader;
 use File::HomeDir;
-use File::Slurp qw( read_file );
+use File::Slurp qw( read_file write_file );
 use File::Temp qw( tempdir );
 use Net::Interface;
 use Path::Class;
-use Silki::Types qw( Bool Str Int ArrayRef HashRef );
+use Silki::Types qw( Bool Str Int ArrayRef HashRef Dir File Maybe );
 use Silki::Util qw( string_is_empty );
 use Socket qw( AF_INET );
 use Sys::Hostname qw( hostname );
+use Text::Autoformat qw( autoformat );
 
 use MooseX::MetaDescription;
+use MooseX::Params::Validate qw( validated_list );
 use MooseX::Singleton;
 
-has is_production => (
-    traits  => ['MooseX::MetaDescription::Meta::Trait'],
+has config_file => (
     is      => 'rw',
-    isa     => Bool,
+    isa     => Maybe [File],
     lazy    => 1,
-    default => sub { $_[0]->_from_config_path('is_production') || 0 },
+    builder => '_build_config_file',
+    clearer => '_clear_config_file',
+);
 
-    # for testing
-    writer      => '_set_is_production',
+has is_production => (
+    traits      => ['MooseX::MetaDescription::Meta::Trait'],
+    is          => 'rw',
+    isa         => Bool,
+    lazy        => 1,
+    default     => sub { $_[0]->_from_config_path('is_production') || 0 },
     description => {
         config_path => [ 'Silki', 'is_production' ],
         description =>
             'A flag indicating whether or not this is a production install. This should probably be true unless you are actively developing Silki.',
+        ignore_value => 0,
+        key_order    => 1,
     },
+    writer => '_set_is_production',
 );
 
 has max_upload_size => (
@@ -40,41 +51,29 @@ has max_upload_size => (
     isa     => Int,
     lazy    => 1,
     default => sub {
-        $_[0]->_from_config_path('max_upload_size') || ( 10 * 1024 * 1024 );
+        $_[0]->_from_config_path('max_upload_size') || ( 10 * 1000 * 1000 );
     },
     description => {
-        config_path => [ 'Silki', 'is_production' ],
+        config_path => [ 'Silki', 'max_upload-size' ],
         description =>
             'The maximum size of an upload in bytes. Defaults to 10 megabytes.',
+        ignore_value => ( 10 * 1000 * 1000 ),
+        key_order    => 2,
     },
 );
 
-has is_profiling => (
-    is      => 'rw',
-    isa     => Bool,
-    lazy    => 1,
-    builder => '_build_is_profiling',
-
-    # for testing
-    writer => '_set_is_profiling',
-);
-
-has _config_hash => (
-    is      => 'rw',
-    isa     => HashRef,
-    lazy    => 1,
-    builder => '_build_config_hash',
-
-    # for testing
-    writer  => '_set_config_hash',
-    clearer => '_clear_config_hash',
-);
-
-has catalyst_imports => (
-    is      => 'ro',
-    isa     => ArrayRef [Str],
-    lazy    => 1,
-    builder => '_build_catalyst_imports',
+has path_prefix => (
+    traits      => ['MooseX::MetaDescription::Meta::Trait'],
+    is          => 'rw',
+    isa         => Str,
+    default     => sub { $_[0]->_from_config_path('path_prefix') || q{} },
+    description => {
+        config_path => [ 'Silki', 'path_prefix' ],
+        description =>
+            'The URI path prefix for your Silki install. By default, this is empty. This affects URI generation and resolution.',
+        key_order => 3,
+    },
+    writer => '_set_path_prefix',
 );
 
 has serve_static_files => (
@@ -87,7 +86,49 @@ has serve_static_files => (
         config_path => [ 'Silki', 'static' ],
         description =>
             'If this is true, the Silki application will serve static files itself. Defaults to false when is_production is true.',
+        key_order         => 4,
+        skip_when_writing => 1,
     },
+);
+
+has secret => (
+    traits      => ['MooseX::MetaDescription::Meta::Trait'],
+    is          => 'rw',
+    isa         => Str,
+    lazy        => 1,
+    builder     => '_build_secret',
+    description => {
+        config_path => [ 'Silki', 'secret' ],
+        description =>
+            'A secret used as salt for digests in some URIs and for user authentication cookies. Changing this will invalidate all existing cookies.',
+        key_order    => 5,
+        ignore_value => 'a big secret',
+    },
+    writer => '_set_secret',
+);
+
+has is_profiling => (
+    is      => 'rw',
+    isa     => Bool,
+    lazy    => 1,
+    builder => '_build_is_profiling',
+    writer  => '_set_is_profiling',
+);
+
+has _config_hash => (
+    is      => 'rw',
+    isa     => HashRef,
+    lazy    => 1,
+    builder => '_build_config_hash',
+    writer  => '_set_config_hash',
+    clearer => '_clear_config_hash',
+);
+
+has catalyst_imports => (
+    is      => 'ro',
+    isa     => ArrayRef [Str],
+    lazy    => 1,
+    builder => '_build_catalyst_imports',
 );
 
 has catalyst_roles => (
@@ -111,69 +152,80 @@ has dbi_config => (
     builder => '_build_dbi_config',
 );
 
-has _db_name => (
-    traits      => ['MooseX::MetaDescription::Meta::Trait'],
-    is          => 'ro',
-    isa         => Str,
-    lazy        => 1,
-    default     => sub { $_[0]->_from_config_path('_db_name') || 'Silki' },
+has database_name => (
+    traits  => ['MooseX::MetaDescription::Meta::Trait'],
+    is      => 'rw',
+    isa     => Str,
+    lazy    => 1,
+    default => sub { $_[0]->_from_config_path('database_name') || 'Silki' },
     description => {
-        config_path => [ 'db', 'name' ],
+        config_path => [ 'database', 'name' ],
         description =>
             'The name of the database. Defaults to Silki.',
+        ignore_value => 'Silki',
+        key_order    => 1,
     },
+    writer => '_set_database_name',
 );
 
-has _db_username => (
-    traits      => ['MooseX::MetaDescription::Meta::Trait'],
-    is          => 'ro',
-    isa         => Str,
-    lazy        => 1,
-    default     => sub { $_[0]->_from_config_path('_db_username') || q{} },
+has database_username => (
+    traits  => ['MooseX::MetaDescription::Meta::Trait'],
+    is      => 'rw',
+    isa     => Str,
+    lazy    => 1,
+    default => sub { $_[0]->_from_config_path('database_username') || q{} },
     description => {
-        config_path => [ 'db', 'username' ],
+        config_path => [ 'database', 'username' ],
         description =>
             'The username to use when connecting to the database. By default, this is empty.',
+        key_order => 2,
     },
+    writer => '_set_database_username',
 );
 
-has _db_password => (
-    traits      => ['MooseX::MetaDescription::Meta::Trait'],
-    is          => 'ro',
-    isa         => Str,
-    lazy        => 1,
-    default     => sub { $_[0]->_from_config_path('_db_password') || q{} },
+has database_password => (
+    traits  => ['MooseX::MetaDescription::Meta::Trait'],
+    is      => 'rw',
+    isa     => Str,
+    lazy    => 1,
+    default => sub { $_[0]->_from_config_path('database_password') || q{} },
     description => {
-        config_path => [ 'db', 'password' ],
+        config_path => [ 'database', 'password' ],
         description =>
             'The password to use when connecting to the database. By default, this is empty.',
+        key_order => 3,
     },
+    writer => '_set_database_passwd',
 );
 
-has _db_host => (
+has database_host => (
     traits      => ['MooseX::MetaDescription::Meta::Trait'],
-    is          => 'ro',
+    is          => 'rw',
     isa         => Str,
     lazy        => 1,
-    default     => sub { $_[0]->_from_config_path('_db_host') || q{} },
+    default     => sub { $_[0]->_from_config_path('database_host') || q{} },
     description => {
-        config_path => [ 'db', 'host' ],
+        config_path => [ 'database', 'host' ],
         description =>
             'The host to use when connecting to the database. By default, this is empty.',
+        key_order => 4,
     },
+    writer => '_set_database_host',
 );
 
-has _db_port => (
+has database_port => (
     traits      => ['MooseX::MetaDescription::Meta::Trait'],
-    is          => 'ro',
+    is          => 'rw',
     isa         => Str,
     lazy        => 1,
-    default     => sub { $_[0]->_from_config_path('_db_port') || q{} },
+    default     => sub { $_[0]->_from_config_path('database_port') || q{} },
     description => {
-        config_path => [ 'db', 'port' ],
+        config_path => [ 'database', 'port' ],
         description =>
             'The port to use when connecting to the database. By default, this is empty.',
+        key_order => 5,
     },
+    writer => '_set_database_port',
 );
 
 has mason_config => (
@@ -198,8 +250,8 @@ has mason_config_for_help => (
 );
 
 has _home_dir => (
-    is      => 'ro',
-    isa     => 'Path::Class::Dir',
+    is      => 'rw',
+    isa     => Dir,
     lazy    => 1,
     default => sub { dir( File::HomeDir->my_home() ) },
     writer  => '_set_home_dir',
@@ -207,67 +259,70 @@ has _home_dir => (
 
 has var_lib_dir => (
     is      => 'ro',
-    isa     => 'Path::Class::Dir',
+    isa     => Dir,
     lazy    => 1,
     builder => '_build_var_lib_dir',
 );
 
 has share_dir => (
     traits      => ['MooseX::MetaDescription::Meta::Trait'],
-    is          => 'ro',
-    isa         => 'Path::Class::Dir',
+    is          => 'rw',
+    isa         => Dir,
     lazy        => 1,
     builder     => '_build_share_dir',
     description => {
         config_path => [ 'dirs', 'share' ],
         description =>
             'The directory where share files are located. By default, these are installed in the Perl module directory tree, but you might want to change this to something like /usr/local/share/Silki.',
+        key_order => 1,
     },
+    writer => '_set_share_dir',
+    coerce => 1,
 );
 
-has etc_dir => (
-    traits      => ['MooseX::MetaDescription::Meta::Trait'],
-    is          => 'ro',
-    isa         => 'Path::Class::Dir',
-    lazy        => 1,
-    builder     => '_build_etc_dir',
-    description => {
-        config_path => [ 'dirs', 'etc' ],
-        description =>
-            'The directory where config files are stored. Defaults to /etc/silki.',
+has _etc_dir => (
+    is      => 'rw',
+    isa     => Dir,
+    lazy    => 1,
+    default => sub {
+        $_[0]->config_file() ? $_[0]->config_file()->dir() : '/etc/silki';
     },
+    writer => '_set_etc_dir',
+    coerce => 1,
 );
 
 has cache_dir => (
     traits      => ['MooseX::MetaDescription::Meta::Trait'],
-    is          => 'ro',
-    isa         => 'Path::Class::Dir',
+    is          => 'rw',
+    isa         => Dir,
     lazy        => 1,
     builder     => '_build_cache_dir',
     description => {
         config_path => [ 'dirs', 'cache' ],
         description =>
             'The directory where generated files are stored. Defaults to /var/cache/silki.',
+        key_order => 2,
     },
+    writer => '_set_cache_dir',
 );
 
 has files_dir => (
     is      => 'ro',
-    isa     => 'Path::Class::Dir',
+    isa     => Dir,
     lazy    => 1,
     builder => '_build_files_dir',
 );
 
 has small_image_dir => (
     is      => 'ro',
-    isa     => 'Path::Class::Dir',
+    isa     => Dir,
     lazy    => 1,
     builder => '_build_small_image_dir',
 );
 
 has thumbnails_dir => (
     is      => 'ro',
-    isa     => 'Path::Class::Dir',
+    isa     => Dir,
     lazy    => 1,
     builder => '_build_thumbnails_dir',
 );
@@ -277,25 +332,8 @@ has static_path_prefix => (
     isa     => Str,
     lazy    => 1,
     builder => '_build_static_path_prefix',
-
-    # for testing
     writer  => '_set_static_path_prefix',
     clearer => '_clear_static_path_prefix',
-);
-
-has path_prefix => (
-    traits  => ['MooseX::MetaDescription::Meta::Trait'],
-    is      => 'rw',
-    isa     => Str,
-    default => sub { $_[0]->_from_config_path('path_prefix') || q{} },
-
-    # for testing
-    writer      => '_set_path_prefix',
-    description => {
-        config_path => [ 'Silki', 'path_prefix' ],
-        description =>
-            'The URI path prefix for your Silki install. By default, this is empty. This affects URI generation and resolution.',
-    },
 );
 
 has system_hostname => (
@@ -305,52 +343,40 @@ has system_hostname => (
     builder => '_build_system_hostname',
 );
 
+has antispam_server => (
+    traits      => ['MooseX::MetaDescription::Meta::Trait'],
+    is          => 'rw',
+    isa         => Str,
+    lazy        => 1,
+    default     => sub { $_[0]->_from_config_path('antispam_server') || q{} },
+    description => {
+        config_path => [ 'antispam', 'server' ],
+        description =>
+            'The antispam server to use. This defaults to api.antispam.typepad.com.',
+        key_order    => 1,
+    },
+    writer => '_set_antispam_server',
+);
+
 has antispam_key => (
     traits      => ['MooseX::MetaDescription::Meta::Trait'],
-    is          => 'ro',
+    is          => 'rw',
     isa         => Str,
     lazy        => 1,
     default     => sub { $_[0]->_from_config_path('antispam_key') || q{} },
     description => {
         config_path => [ 'antispam', 'key' ],
         description =>
-            'A key for your antispam server. If this is empty, this Silki installation will not be able to check for spam links.',
+            'A key for your antispam server. If this is empty, Silki will not be able to check for spam links.',
+        key_order => 2,
     },
-);
-
-has antispam_server => (
-    traits      => ['MooseX::MetaDescription::Meta::Trait'],
-    is          => 'ro',
-    isa         => Str,
-    lazy        => 1,
-    default     => sub { $_[0]->_from_config_path('antispam_server') || q{} },
-    description => {
-        config_path => [ 'antispam', 'key' ],
-        description =>
-            'The antispam server to use. This defaults to api.antispam.typepad.com.',
-    },
-);
-
-has secret => (
-    traits      => ['MooseX::MetaDescription::Meta::Trait'],
-    is          => 'ro',
-    isa         => Str,
-    lazy        => 1,
-    default     => sub { $_[0]->_from_config_path('secret') || q{} },
-    description => {
-        config_path => [ 'Silki', 'secret' ],
-        description =>
-            'A secret used as salt for digests in some URIs and for user authentication cookies. Changing this will invalidate all existing cookies.',
-    },
-
-    # for testing
-    writer => '_set_secret',
+    writer => '_set_antispam_key',
 );
 
 sub _build_config_hash {
     my $self = shift;
 
-    my $file = $self->_find_config_file()
+    my $file = $self->config_file()
         or return {};
 
     my $hash = Config::INI::Reader->read_file($file);
@@ -365,7 +391,7 @@ sub _build_config_hash {
     return $hash;
 }
 
-sub _find_config_file {
+sub _build_config_file {
     my $self = shift;
 
     if ( !string_is_empty( $ENV{SILKI_CONFIG} ) ) {
@@ -406,8 +432,9 @@ sub _from_config_path {
     my $hash = $self->_config_hash();
 
     for my $key ( @{$path} ) {
-        $hash = $hash->{$key}
-            or return;
+        $hash = $hash->{$key};
+
+        return if string_is_empty($hash);
     }
 
     if ( ref $hash ) {
@@ -707,20 +734,20 @@ sub _build_catalyst_config {
 sub _build_dbi_config {
     my $self = shift;
 
-    my $dsn = 'dbi:Pg:dbname=' . $self->_db_name();
+    my $dsn = 'dbi:Pg:dbname=' . $self->database_name();
 
-    if ( my $host = $self->_db_host() ) {
+    if ( my $host = $self->database_host() ) {
         $dsn .= ';host=' . $host;
     }
 
-    if ( my $port = $self->_db_port() ) {
+    if ( my $port = $self->database_port() ) {
         $dsn .= ';port=' . $port;
     }
 
     return {
         dsn      => $dsn,
-        username => ( $self->_db_username() || q{} ),
-        password => ( $self->_db_password() || q{} ),
+        username => ( $self->database_username() || q{} ),
+        password => ( $self->database_password() || q{} ),
     };
 }
 
@@ -739,7 +766,7 @@ sub _build_mason_config {
     if ( $self->is_production() ) {
         $config{static_source} = 1;
         $config{static_source_touch_file}
-            = $self->etc_dir()->file('mason-touch')->stringify();
+            = $self->_etc_dir()->file('mason-touch')->stringify();
     }
 
     return \%config;
@@ -760,7 +787,7 @@ sub _build_mason_config_for_email {
     if ( $self->is_production() ) {
         $config{static_source} = 1;
         $config{static_source_touch_file}
-            = $self->etc_dir()->file('mason-touch')->stringify();
+            = $self->_etc_dir()->file('mason-touch')->stringify();
     }
 
     return \%config;
@@ -778,7 +805,7 @@ sub _build_mason_config_for_help {
     if ( $self->is_production() ) {
         $config{static_source} = 1;
         $config{static_source_touch_file}
-            = $self->etc_dir()->file('mason-touch')->stringify();
+            = $self->_etc_dir()->file('mason-touch')->stringify();
     }
 
     return \%config;
@@ -789,13 +816,11 @@ sub _build_static_path_prefix {
 
     return $self->path_prefix() unless $self->is_production();
 
-    my $prefix
-        = string_is_empty( $self->path_prefix() )
-        ? q{}
-        : $self->path_prefix();
+    my $prefix = $self->path_prefix();
+    $prefix .= q{/};
+    $prefix .=  $Silki::Config::VERSION || 'wc';
 
-    return $prefix . q{/}
-        . read_file( $self->etc_dir()->file('revision')->stringify() );
+    return $prefix;
 }
 
 sub _build_system_hostname {
@@ -810,24 +835,88 @@ sub _build_system_hostname {
     die 'Cannot determine system hostname.';
 }
 
-sub _build_antispam_key {
-    my $self = shift;
-
-    return $self->_config_hash()->{Antispam}{key} || q{};
-}
-
-sub _build_antispam_server {
-    my $self = shift;
-
-    return $self->_config_hash()->{Antispam}{server} || q{};
-}
-
 sub _build_secret {
     my $self = shift;
 
     return 'a big secret' unless $self->is_production();
 
-    return $self->_config_hash()->{Silki}{secret};
+    return $_[0]->_from_config_path('secret');
+}
+
+sub write_config_file {
+    my $self = shift;
+    my ($file) = validated_list(
+        \@_,
+        file => { isa => File, coerce => 1 },
+    );
+
+    my %sections;
+    for my $attr ( grep { $_->can('description') }
+        $self->meta()->get_all_attributes() ) {
+
+        my $path = $attr->description()->{config_path};
+
+        $sections{ $path->[0] }{ $path->[1] } = $attr;
+    }
+
+    my $sort_by_section = sub {
+              $a eq 'Silki' && $b ne 'Silki' ? -1
+            : $b eq 'Silki' && $a ne 'Silki' ? 1
+            :                                  lc $a cmp lc $b;
+    };
+
+    my $version = $Silki::Config::VERSION || '(working copy)';
+    my $content = <<"EOF";
+; Config file for Silki version $version
+
+EOF
+    for my $section ( sort $sort_by_section keys %sections ) {
+        $content .= '[' . $section . ']';
+        $content .= "\n";
+
+        for my $key (
+            sort {
+                $sections{$section}{$a}->description()
+                    ->{key_order} <=> $sections{$section}{$b}->description()
+                    ->{key_order}
+            } keys %{ $sections{$section} }
+            ) {
+
+            my $attr = $sections{$section}{$key};
+
+            my $reader = $attr->reader();
+            my $value  = $self->$reader();
+
+            my $meta_desc = $attr->description();
+
+            my $wrapped = autoformat( $meta_desc->{description} );
+            $wrapped =~ s/\n\n+$/\n/;
+            $wrapped =~ s/^/; /gm;
+
+            $content .= $wrapped;
+
+            my $ignore = $meta_desc->{ignore_value};
+
+            if (   string_is_empty($value)
+                || ( defined $ignore && $ignore eq $value )
+                || $meta_desc->{skip_when_writing} ) {
+
+                $content .= "; $key =";
+                $content .= " $ignore" if defined $ignore;
+            }
+            else {
+                $content .= "$key = $value";
+            }
+
+            $content .= "\n\n";
+        }
+    }
+
+    $file->dir()->mkpath( 0, 0755 );
+
+    write_file( $file->stringify(), $content );
+
+    return;
 }
 
 __PACKAGE__->meta()->make_immutable();

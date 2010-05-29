@@ -181,13 +181,18 @@ sub _make_dbh {
 sub _build_existing_config {
     my $self = shift;
 
-    my $config = eval {
-        require Silki::Config;
+    require Silki::Config;
 
-        Silki::Config->instance()->_config_hash()->{db};
+    my $instance = Silki::Config->instance();
+
+    return {} unless $instance->config_file();
+
+    return {
+        map {
+            my $attr = 'database_' . $key;
+            $instance->$attr() ? ( $_ => $instance->$attr() ) : ()
+            } qw( name username password host port )
     };
-
-    return $config || {};
 }
 
 sub _get_next_version {
