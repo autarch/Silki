@@ -189,7 +189,7 @@ sub _build_existing_config {
 
     return {
         map {
-            my $attr = 'database_' . $key;
+            my $attr = 'database_' . $_;
             $instance->$attr() ? ( $_ => $instance->$attr() ) : ()
             } qw( name username password host port )
     };
