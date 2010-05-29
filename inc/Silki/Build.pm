@@ -3,6 +3,7 @@ package Silki::Build;
 use strict;
 use warnings;
 
+use File::Path qw( mkpath );
 use File::Spec;
 
 use base 'Module::Build';
@@ -19,7 +20,56 @@ sub new {
         'db-port'     => { type => '=s' },
     };
 
-    return $class->SUPER::new(%args);
+    my $self = $class->SUPER::new(%args);
+
+    $self->_update_from_existing_config();
+
+    return $self
+}
+
+sub _update_from_existing_config {
+    my $self = shift;
+
+    my $config = eval {
+        local $ENV{SILKI_CONFIG}
+            = $self->args('etc-dir')
+            ? File::Spec->catfile( $self->args('etc-dir'), 'silki.conf' )
+            : undef;
+
+        require Silki::Config;
+
+        Silki::Config->instance();
+    };
+
+    return unless $config;
+
+    for my $pair (
+        [ database_name     => 'db-name' ],
+        [ database_username => 'db-username' ],
+        [ database_password => 'db-password' ],
+        [ database_host     => 'db-host' ],
+        [ database_port     => 'db-port' ],
+        [ share_dir         => 'share-dir' ],
+        ) {
+
+        my ( $config_key, $mb_key ) = @{$pair};
+        my $value = $config->$config_key
+            or next;
+
+        $self->args( $mb_key => $value . q{} );
+    }
+
+    Silki::Config->_clear_instance();
+
+    return;
+}
+
+sub process_share_dir_files {
+    my $self = shift;
+
+    return if $self->args('share-dir');
+
+    return $self->SUPER::process_share_dir_files(@_);
 }
 
 sub ACTION_install {
@@ -27,9 +77,29 @@ sub ACTION_install {
 
     $self->SUPER::ACTION_install(@_);
 
+    $self->dispatch('share');
+
     $self->dispatch('database');
 
     $self->dispatch('config');
+}
+
+sub ACTION_share {
+    my $self = shift;
+
+    my $share_dir = $self->args('share-dir')
+        or return;
+
+    for my $file ( grep { -f } @{ $self->rscan_dir('share') } ) {
+        ( my $shareless = $file ) =~ s{share[/\\]}{};
+
+        $self->copy_if_modified(
+            from => $file,
+            to   => File::Spec->catfile( $share_dir, $shareless ),
+        );
+    }
+
+    return;
 }
 
 sub ACTION_database {
