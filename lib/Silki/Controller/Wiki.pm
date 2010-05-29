@@ -69,16 +69,44 @@ sub _set_wiki : Chained('/') : PathPart('wiki') : CaptureArgs(1) {
     $c->stash()->{wiki} = $wiki;
 }
 
-sub no_page : Chained('_set_wiki') : PathPart('') : Args(0) : ActionClass('+Silki::Action::REST') {
+sub wiki : Chained('_set_wiki') : PathPart('') : Args(0) : ActionClass('+Silki::Action::REST') {
 }
 
-sub no_page_GET_html {
+sub wiki_GET_html {
     my $self = shift;
     my $c    = shift;
 
     my $uri = $c->stash()->{wiki}->uri( view => 'dashboard' );
 
     $c->redirect_and_detach($uri);
+}
+
+sub delete_confirmation : Chained('_set_wiki') : PathPart('delete_confirmation') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_site_admin($c);
+
+    $c->stash()->{template} = '/wiki/delete-confirmation';
+}
+
+sub wiki_DELETE {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_site_admin($c);
+
+    my $wiki = $c->stash()->{wiki};
+
+    my $msg = loc( 'Deleted the wiki %1', $wiki->title() );
+
+    my $domain = $wiki->domain();
+
+    $wiki->delete( user => $c->user() );
+
+    $c->session_object()->add_message($msg);
+
+    $c->redirect_and_detach( $domain->uri( with_host => 1 ) );
 }
 
 sub dashboard : Chained('_set_wiki') : PathPart('dashboard') : Args(0) {

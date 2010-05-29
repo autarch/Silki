@@ -30,7 +30,8 @@ use MooseX::Params::Validate qw( pos_validated_list validated_list );
 
 with 'Silki::Role::Schema::URIMaker';
 
-with 'Silki::Role::Schema::SystemLogger' => { methods => ['insert'] };
+with 'Silki::Role::Schema::SystemLogger' =>
+    { methods => [ 'insert', 'delete' ] };
 
 with 'Silki::Role::Schema::DataValidator' => {
     steps => [
@@ -286,6 +287,16 @@ sub _system_log_values_for_insert {
     return (
         message   => $msg,
         data_blob => \%p,
+    );
+}
+
+sub _system_log_values_for_delete {
+    my $self = shift;
+
+    my $msg = 'Deleted wiki: ' . $self->title();
+
+    return (
+        message => $msg,
     );
 }
 
