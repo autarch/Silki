@@ -9,6 +9,9 @@
 
 * FT search for attachment content
 
+* Per-wiki user lists, sortable by something interesting (# of pages
+  edited/created, recency of edit, etc).
+
 = Reporting
 
 * Logins?
