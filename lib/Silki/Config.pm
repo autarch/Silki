@@ -196,7 +196,7 @@ has database_password => (
             'The password to use when connecting to the database. By default, this is empty.',
         key_order => 3,
     },
-    writer => '_set_database_passwd',
+    writer => '_set_database_password',
 );
 
 has database_host => (
