@@ -55,8 +55,6 @@ sub EnsureRequiredAccountsExist {
 sub _FindOrCreateDefaultAccount {
     my $class = shift;
 
-    my $hostname = Silki::Config->new()->system_hostname();
-
     my $account = $class->new( name => 'Default Account' );
     return $account if $account;
 
