@@ -225,28 +225,35 @@ sub _drop_and_create_db {
 
     my $name = $self->name();
 
-    my $command = <<"EOF";
-SET CLIENT_MIN_MESSAGES = ERROR;
-
-DROP DATABASE IF EXISTS "$name";
-
-CREATE DATABASE "$name"
-       ENCODING 'UTF8';
-EOF
-
-    my $dir = tempdir( CLEANUP => 1 );
-    my $file = file( $dir, 'recreate-db.sql' );
-
-    open my $fh, '>', $file;
-    print {$fh} $command;
-    close $fh;
-
     $self->_msg(
         "Dropping (if necessary) and creating the Silki database (database name = $name)"
     );
 
+    my $commands = <<"EOF";
+SET CLIENT_MIN_MESSAGES = ERROR;
+
+DROP DATABASE IF EXISTS "$name";
+
+EOF
+
+    $commands .= qq{CREATE DATABASE "$name" ENCODING 'UTF8'};
+    $commands .= ' OWNER ' . $self->username()
+        if defined $self->username();
+    $commands .= q{;};
+
+    local $ENV{PGPASSWORD} = $self->password();
+
+    # When trying to issue a DROP with -c (command), you cannot also set
+    # client_min_messages, so we make a temp file and feed it in with -f.
+    my $dir = tempdir( CLEANUP => 1 );
+    my $file = file( $dir, 'recreate-db.sql' );
+
+    open my $fh, '>', $file;
+    print {$fh} $commands;
+    close $fh;
+
     system(
-        'psql', 'template1', $self->_psql_args(), '-q', '-f',
+        'psql', 'template1', $self->_psql_args(), '-q', '-w', '-f',
         $file
     );
 }
@@ -258,8 +265,10 @@ sub _build_db {
 
     $self->_msg("Creating schema from $schema_file");
 
+    local $ENV{PGPASSWORD} = $self->password();
+
     system(
-        'psql', $self->name(), $self->_psql_args(), '-q', '-f',
+        'psql', $self->name(), $self->_psql_args(), '-q', '-w', '-f',
         $schema_file
     ) and die 'Cannot create Silki database with psql';
 }
@@ -271,10 +280,6 @@ sub _psql_args {
 
     if ( $self->username() ) {
         push @args, '-U', $self->username();
-    }
-
-    if ( $self->password() ) {
-        push @args, '-W', $self->password();
     }
 
     if ( $self->host() ) {
@@ -291,16 +296,18 @@ sub _psql_args {
 sub _seed_data {
     my $self = shift;
 
-    my %config = ( name => $self->name() );
-
-    for my $key (qw( username password host port )) {
-        $config{$key} = $self->$key()
-            if defined $self->$key();
-    }
-
     require Silki::Config;
 
-    local Silki::Config->_config_hash()->{db} = \%config;
+    my $config = Silki::Config->instance();
+    $config->_set_database_name( $self->name() );
+
+    for my $key (qw( username password host port )) {
+        if ( my $val = $self->$key() ) {
+            my $set_meth = '_set_database_' . $key;
+
+            $config->$set_meth($val);
+        }
+    }
 
     require Silki::SeedData;
 

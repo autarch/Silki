@@ -116,8 +116,11 @@ sub ACTION_database {
         $db_config{$no_prefix} = $args{$key};
     }
 
-    Silki::DBInstaller->new( %db_config, quiet => $self->quiet() )
-        ->update_or_install_db();
+    Silki::DBInstaller->new(
+        %db_config,
+        production => 1,
+        quiet      => $self->quiet(),
+    )->update_or_install_db();
 }
 
 sub ACTION_config {
