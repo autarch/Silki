@@ -109,7 +109,8 @@ sub update_or_install_db {
 
     my $version = $self->_get_installed_version();
 
-    print "\n";
+    print "\n" unless $self->quiet();
+
     my $name = $self->name();
     $self->_msg("Installing/updating your Silki database (database name = $name).");
 
