@@ -52,7 +52,7 @@ sub _build_file {
 
     my @dirs = dir('/etc/silki');
     push @dirs, $self->_home_dir()->subdir( '.silki', 'etc' )
-        if $>;
+        if $> && $self->_home_dir();
 
     for my $dir (@dirs) {
         my $file = $dir->file('silki.conf');
