@@ -12,10 +12,11 @@ use Silki::DBInstaller;
 use Storable qw( nfreeze );
 
 Silki::DBInstaller->new(
-    name  => 'SilkiTest',
-    drop  => 1,
-    seed  => 0,
-    quiet => 1,
+    name             => 'SilkiTest',
+    drop             => 1,
+    seed             => 0,
+    quiet            => 1,
+    _existing_config => {}, # XXX - uber hack!
 )->update_or_install_db();
 
 require Silki::Config;
