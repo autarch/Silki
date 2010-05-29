@@ -36,30 +36,34 @@ sub _update_from_existing_config {
             ? File::Spec->catfile( $self->args('etc-dir'), 'silki.conf' )
             : undef;
 
-        require Silki::Config;
+        require Silki::ConfigFile;
 
-        Silki::Config->instance();
+        Silki::ConfigFile->new()->raw_data();
     };
 
     return unless $config;
 
-    for my $pair (
-        [ database_name     => 'db-name' ],
-        [ database_username => 'db-username' ],
-        [ database_password => 'db-password' ],
-        [ database_host     => 'db-host' ],
-        [ database_port     => 'db-port' ],
-        [ share_dir         => 'share-dir' ],
-        ) {
+    my %map = (
+        database => {
+            name     => 'db-name',
+            username => 'db-username',
+            password => 'db-password',
+            host     => 'db-host',
+            port     => 'db-port',
+        },
+        dirs => { share => 'share-dir' },
+    );
 
-        my ( $config_key, $mb_key ) = @{$pair};
-        my $value = $config->$config_key
-            or next;
+    for my $section (keys %map ) {
+        for my $key ( keys %{$map{$section}} ) {
+            my $value = $config->{$section}{$key};
 
-        $self->args( $mb_key => $value . q{} );
+            next unless defined $value && $value ne q{};
+
+            my $mb_key = $map{$section}{$key};
+            $self->args( $mb_key => $value );
+        }
     }
-
-    Silki::Config->_clear_instance();
 
     return;
 }
@@ -133,9 +137,6 @@ sub ACTION_config {
 
     my $config = Silki::Config->instance();
 
-    $config->_set_config_file( Path::Class::file($config_file) );
-    $config->_set_is_production(1);
-
     if ( -f $config_file ) {
         $self->log_info("  You already have a config file at $config_file.\n\n");
         return;
@@ -144,30 +145,28 @@ sub ACTION_config {
         $self->log_info("  Generating a new config file at $config_file.\n\n");
     }
 
+    require Digest::SHA;
+    my $secret = Digest::SHA::sha1_hex( time . $$ . rand(1_000_000_000) );
+
+    my %values = (
+        'Silki/is_production' => 1,
+        'Silki/secret'        => $secret,
+    );
+
     my %args = $self->args();
 
-    $config->_set_share_dir( $args{'share-dir'} )
+    $values{'dirs/share'} = $args{'share-dir'}
         if $args{'share-dir'};
 
-    $config->_set_cache_dir( $args{'cache-dir'} )
+    $values{'dirs/cache'} = $args{'cache-dir'}
         if $args{'cache-dir'};
 
-    for my $key ( grep { defined $args{$_} } grep { /^db-/ } keys %args ) {
-        ( my $config_key = $key ) =~ s/^db-/database_/;
-
-        my $set = '_set_' . $config_key;
-        $config->$set( $args{$key} );
+    for my $key ( grep { defined $args{$_} } grep {/^db-/} keys %args ) {
+        ( my $conf_key = $key ) =~ s/^db-//;
+        $values{"database/$conf_key"} = $args{$key};
     }
 
-    require Digest::SHA;
-    my $secret = Digest::SHA::sha1_hex( time . $$ . rand( 1_000_000_000 ) );
-    $config->_set_secret($secret);
-
-    my @skip;
-    push @skip, 'cache' unless $args{'cache-dir'};
-    push @skip, 'share' unless $args{'share-dir'};
-
-    $config->write_config_file( file => $config_file, skip => \@skip );
+    $config->write_config_file( file => $config_file, values => \%values );
 }
 
 1;
