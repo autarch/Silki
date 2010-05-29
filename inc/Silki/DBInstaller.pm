@@ -39,6 +39,7 @@ has _existing_config => (
 );
 
 has db_exists => (
+    traits  => ['NoGetopt'],
     is      => 'ro',
     isa     => 'Bool',
     lazy    => 1,
@@ -55,6 +56,12 @@ has seed => (
     is      => 'ro',
     isa     => 'Bool',
     default => 1,
+);
+
+has production => (
+    is      => 'ro',
+    isa     => 'Bool',
+    default => 0,
 );
 
 has quiet => (
@@ -300,7 +307,10 @@ sub _seed_data {
     my $name = $self->name();
     $self->_msg("Seeding the $name database");
 
-    Silki::SeedData::seed_data( ! $self->quiet() );
+    Silki::SeedData::seed_data(
+        production => $self->production(),
+        verbose    => !$self->quiet()
+    );
 }
 
 sub _msg {

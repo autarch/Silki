@@ -6,7 +6,9 @@ use warnings;
 our $VERBOSE;
 
 sub seed_data {
-    local $VERBOSE = shift;
+    my %p = @_;
+
+    local $VERBOSE = $p{verbose};
 
     require Silki::Schema::Locale;
 
@@ -37,11 +39,17 @@ sub seed_data {
     print "\n" if $VERBOSE;
 
     my $admin   = _make_admin_user();
-    my $regular = _make_regular_user();
-    _make_first_wiki( $admin, $regular );
-    _make_second_wiki( $admin, $regular );
-    _make_third_wiki( $admin, $regular );
+    my $regular = _make_regular_user()
+        unless $p{production};
 
+    if ( $p{production} ) {
+        _make_production_wiki($admin);
+    }
+    else {
+        _make_first_wiki( $admin, $regular );
+        _make_second_wiki( $admin, $regular );
+        _make_third_wiki( $admin, $regular );
+    }
 }
 
 sub _make_admin_user {
@@ -106,6 +114,16 @@ sub _make_first_wiki {
         user => $regular,
         role => Silki::Schema::Role->Member()
     );
+}
+
+sub _make_production_wiki {
+    my $admin   = shift;
+
+    my $wiki = _make_wiki( 'My Wiki', 'my-wiki' );
+
+    $wiki->set_permissions('private');
+
+    $wiki->add_user( user => $admin, role => Silki::Schema::Role->Admin() );
 }
 
 sub _make_second_wiki {
