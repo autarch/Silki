@@ -163,7 +163,11 @@ sub ACTION_config {
     my $secret = Digest::SHA::sha1_hex( time . $$ . rand( 1_000_000_000 ) );
     $config->_set_secret($secret);
 
-    $config->write_config_file( file => $config_file );
+    my @skip;
+    push @skip, 'cache' unless $args{'cache-dir'};
+    push @skip, 'share' unless $args{'share-dir'};
+
+    $config->write_config_file( file => $config_file, skip => \@skip );
 }
 
 1;

@@ -5,12 +5,12 @@ use warnings;
 use namespace::autoclean;
 use autodie qw( :all );
 
-use Config::INI::Reader;
 use File::HomeDir;
-use File::Slurp qw( read_file write_file );
+use File::Slurp qw( write_file );
 use File::Temp qw( tempdir );
 use Net::Interface;
 use Path::Class;
+use Silki::ConfigFile;
 use Silki::Types qw( Bool Str Int ArrayRef HashRef Dir File Maybe );
 use Silki::Util qw( string_is_empty );
 use Socket qw( AF_INET );
@@ -22,12 +22,21 @@ use MooseX::Params::Validate qw( validated_list );
 use MooseX::Singleton;
 
 has config_file => (
-    is      => 'rw',
-    isa     => Maybe [File],
-    lazy    => 1,
-    builder => '_build_config_file',
-    writer  => '_set_config_file',
+    is   => 'rw',
+    isa  => 'Silki::ConfigFile',
+    lazy => 1,
+    default =>
+        sub { Silki::ConfigFile->new( home_dir => $_[0]->_home_dir() ) },
     clearer => '_clear_config_file',
+);
+
+has _config_hash => (
+    is      => 'rw',
+    isa     => HashRef,
+    lazy    => 1,
+    builder => '_build_config_hash',
+    writer  => '_set_config_hash',
+    clearer => '_clear_config_hash',
 );
 
 has is_production => (
@@ -40,7 +49,6 @@ has is_production => (
         config_path => [ 'Silki', 'is_production' ],
         description =>
             'A flag indicating whether or not this is a production install. This should probably be true unless you are actively developing Silki.',
-        ignore_value => 0,
         key_order    => 1,
     },
     writer => '_set_is_production',
@@ -58,7 +66,6 @@ has max_upload_size => (
         config_path => [ 'Silki', 'max_upload-size' ],
         description =>
             'The maximum size of an upload in bytes. Defaults to 10 megabytes.',
-        ignore_value => ( 10 * 1000 * 1000 ),
         key_order    => 2,
     },
 );
@@ -88,7 +95,6 @@ has serve_static_files => (
         description =>
             'If this is true, the Silki application will serve static files itself. Defaults to false when is_production is true.',
         key_order         => 4,
-        skip_when_writing => 1,
     },
 );
 
@@ -103,7 +109,6 @@ has secret => (
         description =>
             'A secret used as salt for digests in some URIs and for user authentication cookies. Changing this will invalidate all existing cookies.',
         key_order    => 5,
-        ignore_value => 'a big secret',
     },
     writer => '_set_secret',
 );
@@ -114,15 +119,6 @@ has is_profiling => (
     lazy    => 1,
     builder => '_build_is_profiling',
     writer  => '_set_is_profiling',
-);
-
-has _config_hash => (
-    is      => 'rw',
-    isa     => HashRef,
-    lazy    => 1,
-    builder => '_build_config_hash',
-    writer  => '_set_config_hash',
-    clearer => '_clear_config_hash',
 );
 
 has catalyst_imports => (
@@ -163,7 +159,6 @@ has database_name => (
         config_path => [ 'database', 'name' ],
         description =>
             'The name of the database. Defaults to Silki.',
-        ignore_value => 'Silki',
         key_order    => 1,
     },
     writer => '_set_database_name',
@@ -286,7 +281,9 @@ has _etc_dir => (
     isa     => Dir,
     lazy    => 1,
     default => sub {
-        $_[0]->config_file() ? $_[0]->config_file()->dir() : '/etc/silki';
+        $_[0]->config_file()->file()
+            ? $_[0]->config_file()->file()->dir()
+            : '/etc/silki';
     },
     writer => '_set_etc_dir',
     coerce => 1,
@@ -355,7 +352,7 @@ has antispam_server => (
         config_path => [ 'antispam', 'server' ],
         description =>
             'The antispam server to use. This defaults to api.antispam.typepad.com.',
-        key_order    => 1,
+        key_order => 1,
     },
     writer => '_set_antispam_server',
 );
@@ -378,43 +375,16 @@ has antispam_key => (
 sub _build_config_hash {
     my $self = shift;
 
-    my $file = $self->config_file()
-        or return {};
-
-    my $hash = Config::INI::Reader->read_file($file);
+    my $hash = $self->config_file()->raw_data();
 
     # Can't call $self->is_production() or else we get a loop
-    if ( $hash->{Silki}{is_production} ) {
+    if ( $hash->{Silki} && $hash->{Silki}{is_production} ) {
         die
             'You must supply a value for [Silki] - secret when running Silki in production'
             if string_is_empty( $hash->{Silki}{secret} );
     }
 
     return $hash;
-}
-
-sub _build_config_file {
-    my $self = shift;
-
-    if ( !string_is_empty( $ENV{SILKI_CONFIG} ) ) {
-        die
-            "Nonexistent config file in SILKI_CONFIG env var: $ENV{SILKI_CONFIG}"
-            unless -f $ENV{SILKI_CONFIG};
-
-        return file( $ENV{SILKI_CONFIG} );
-    }
-
-    my @dirs = dir('/etc/silki');
-    push @dirs, $self->_home_dir()->subdir( '.silki', 'etc' )
-        if $>;
-
-    for my $dir (@dirs) {
-        my $file = $dir->file('silki.conf');
-
-        return $file if -f $file;
-    }
-
-    return;
 }
 
 sub _from_config_path {
@@ -820,7 +790,7 @@ sub _build_static_path_prefix {
 
     my $prefix = $self->path_prefix();
     $prefix .= q{/};
-    $prefix .=  $Silki::Config::VERSION || 'wc';
+    $prefix .= $Silki::Config::VERSION || 'wc';
 
     return $prefix;
 }
@@ -847,9 +817,10 @@ sub _build_secret {
 
 sub write_config_file {
     my $self = shift;
-    my ($file) = validated_list(
+    my ( $file, $values ) = validated_list(
         \@_,
-        file => { isa => File, coerce => 1 },
+        file   => { isa => File,    coerce  => 1 },
+        values => { isa => HashRef, default => {} },
     );
 
     my %sections;
@@ -886,10 +857,6 @@ EOF
 
             my $attr = $sections{$section}{$key};
 
-            my $value;
-            $value = $attr->get_value($self)
-                if $attr->has_value($self);
-
             my $meta_desc = $attr->description();
 
             my $wrapped = autoformat( $meta_desc->{description} );
@@ -898,14 +865,15 @@ EOF
 
             $content .= $wrapped;
 
-            my $ignore = $meta_desc->{ignore_value};
+            my $path = join '/', @{ $meta_desc->{config_path} };
 
-            if (   string_is_empty($value)
-                || ( defined $ignore && $ignore eq $value )
-                || $meta_desc->{skip_when_writing} ) {
+            my $value
+                = exists $values->{$path}
+                ? $values->{$path}
+                : $self->_from_config_path( $attr->name() );
 
+            if ( string_is_empty($value) ) {
                 $content .= "; $key =";
-                $content .= " $ignore" if defined $ignore;
             }
             else {
                 $content .= "$key = $value";
