@@ -57,6 +57,12 @@ has seed => (
     default => 1,
 );
 
+has quiet => (
+    is      => 'ro',
+    isa     => 'Bool',
+    default => 0,
+);
+
 sub BUILD {
     my $self = shift;
     my $p    = shift;
@@ -105,10 +111,10 @@ sub update_or_install_db {
 
     print "\n";
     my $name = $self->name();
-    _msg("Installing/updating your Silki database (database name = $name).");
+    $self->_msg("Installing/updating your Silki database (database name = $name).");
 
     if ( !defined $version ) {
-        _msg("Installing a fresh database.");
+        $self->_msg("Installing a fresh database.");
         $self->_drop_and_create_db();
         $self->_build_db();
         $self->_seed_data();
@@ -117,11 +123,11 @@ sub update_or_install_db {
         my $next_version = $self->_get_next_version();
 
         if ( $version == $next_version ) {
-            _msg("Your Silki database is up-to-date.");
+            $self->_msg("Your Silki database is up-to-date.");
             return;
         }
 
-        _msg(
+        $self->_msg(
             "Migrating your Silki database from version $version to $next_version."
         );
 
@@ -222,7 +228,7 @@ EOF
     print {$fh} $command;
     close $fh;
 
-    _msg(
+    $self->_msg(
         "Dropping (if necessary) and creating the Silki database (database name = $name)"
     );
 
@@ -237,7 +243,7 @@ sub _build_db {
 
     my $schema_file = file( 'schema', 'Silki.sql' );
 
-    _msg("Creating schema from $schema_file");
+    $self->_msg("Creating schema from $schema_file");
 
     system(
         'psql', $self->name(), $self->_psql_args(), '-q', '-f',
@@ -286,12 +292,16 @@ sub _seed_data {
     require Silki::SeedData;
 
     my $name = $self->name();
-    _msg("Seeding the $name database");
+    $self->_msg("Seeding the $name database");
 
-    Silki::SeedData::seed_data('verbose');
+    Silki::SeedData::seed_data( ! $self->quiet() );
 }
 
 sub _msg {
+    my $self = shift;
+
+    return if $self->quiet();
+
     my $msg = shift;
 
     print "  $msg\n\n";

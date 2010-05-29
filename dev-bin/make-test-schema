@@ -4,18 +4,19 @@ use strict;
 use warnings;
 use autodie qw( :all );
 
-use lib './lib';
+use lib 'lib', 'inc';
 
 use FindBin;
 use MIME::Base64 qw( encode_base64 );
-use Silki::Config;
+use Silki::DBInstaller;
 use Storable qw( nfreeze );
 
-Silki::Config->dbi_config()->{name} = 'SilkiTest';
-
-unless ( grep { $_ eq '--existing' } @ARGV ) {
-    system( "$FindBin::Bin/initialize-db", qw( --db SilkiTest --no-seed ) );
-}
+Silki::DBInstaller->new(
+    name  => 'SilkiTest',
+    drop  => 1,
+    seed  => 0,
+    quiet => 1,
+)->update_or_install_db();
 
 require Silki::Schema;
 
