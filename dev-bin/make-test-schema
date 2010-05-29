@@ -18,6 +18,10 @@ Silki::DBInstaller->new(
     quiet => 1,
 )->update_or_install_db();
 
+require Silki::Config;
+
+Silki::Config->instance()->_set_database_name('SilkiTest');
+
 require Silki::Schema;
 
 open my $fh, '>', 't/lib/Silki/Test/FakeSchema.pm';
