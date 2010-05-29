@@ -63,7 +63,7 @@ has max_upload_size => (
         $_[0]->_from_config_path('max_upload_size') || ( 10 * 1000 * 1000 );
     },
     description => {
-        config_path => [ 'Silki', 'max_upload-size' ],
+        config_path => [ 'Silki', 'max_upload_size' ],
         description =>
             'The maximum size of an upload in bytes. Defaults to 10 megabytes.',
         key_order    => 2,
