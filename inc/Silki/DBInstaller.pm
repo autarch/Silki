@@ -7,6 +7,7 @@ use autodie qw( :all );
 use lib 'lib';
 
 use DBI;
+use Fey::DBIManager::Source;
 use File::Slurp qw( read_file);
 use File::Temp qw( tempdir);
 use Path::Class qw( file );
