@@ -15,7 +15,8 @@ use Silki::JSON;
 # plugins (a mess!).
 {
 
-    package Catalyst;
+    package
+        Catalyst;
 
     no warnings 'redefine';
 

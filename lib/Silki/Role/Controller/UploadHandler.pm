@@ -72,7 +72,8 @@ sub _handle_upload {
 
 {
     use HTTP::Body::MultiPart;
-    package HTTP::Body::MultiPart;
+    package
+        HTTP::Body::MultiPart;
 
     no warnings 'redefine';
 sub handler {

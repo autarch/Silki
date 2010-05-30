@@ -44,7 +44,8 @@ Silki::Schema->EnableObjectCaches();
 __PACKAGE__->setup();
 
 {
-    package Catalyst::Plugin::Session;
+    package
+        Catalyst::Plugin::Session;
     no warnings 'redefine';
 
     # XXX - monkey patch so that we don't try to read the value of sessionid
