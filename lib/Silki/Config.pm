@@ -44,12 +44,12 @@ has is_production => (
     is          => 'rw',
     isa         => Bool,
     lazy        => 1,
-    default     => sub { $_[0]->_from_config_path('is_production') || 0 },
+    builder     => '_build_is_production',
     description => {
         config_path => [ 'Silki', 'is_production' ],
         description =>
             'A flag indicating whether or not this is a production install. This should probably be true unless you are actively developing Silki.',
-        key_order    => 1,
+        key_order => 1,
     },
     writer => '_set_is_production',
 );
@@ -414,6 +414,14 @@ sub _from_config_path {
     }
 
     return $hash;
+}
+
+sub _build_is_production {
+    my $self = shift;
+
+    return 0 if $ENV{HARNESS_ACTIVE};
+
+    return $self->_from_config_path('is_production') || 0;
 }
 
 {
