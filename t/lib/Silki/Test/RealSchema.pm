@@ -36,7 +36,11 @@ sub import {
 
     require Silki::Config;
 
-    Silki::Config->new()->dbi_config()->{dsn} = 'dbi:Pg:dbname=SilkiTest';
+    # Need to explicitly override anything that might be found in an existing
+    # config file
+    Silki::Config->instance()->_set_database_name('SilkiTest');
+    Silki::Config->instance()->_set_database_username(q{});
+    Silki::Config->instance()->_set_database_password(q{});
 
     _seed_data();
 }
