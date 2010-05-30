@@ -6,7 +6,7 @@ use autodie qw( :all );
 
 use lib 'lib';
 
-use Fey::DBIManager::Source;
+use DBI;
 use File::Slurp qw( read_file);
 use File::Temp qw( tempdir);
 use Path::Class qw( file );
@@ -114,6 +114,24 @@ sub run {
 sub update_or_install_db {
     my $self = shift;
 
+    unless ( $self->_can_connect() ) {
+	my $msg = "\n  Cannot connect to Postgres with the connection info provided:\n\n";
+	$msg .= sprintf( "    %13s = %s\n", 'database name', $self->name() );
+
+	for my $key ( qw( username password host port ) ) {
+	    my $val = $self->$key();
+	    next unless defined $val;
+
+	    $msg .= sprintf( "  %13s = %s\n", $key, $val );
+	}
+
+	$msg .= "\n  You can change connection info settings by passing arguments to 'perl Build.PL'\n";
+	$msg .= "  See the INSTALL documentation for details.\n\n";
+
+	warn $msg;
+	return;
+    }
+
     my $version = $self->_get_installed_version();
 
     print "\n" unless $self->quiet();
@@ -143,16 +161,28 @@ sub update_or_install_db {
     }
 }
 
+sub _can_connect {
+    my $self = shift;
+
+    my $dsn = $self->_make_dsn('template1');
+
+    DBI->connect($dsn, $self->username(), $self->password(), { PrintError => 0, PrintWarn => 0 } );
+}
+
 sub _build_db_exists {
     my $self = shift;
 
-    return $self->_make_dbh() ? 1 : 0;
+    eval { $self->_make_dbh() } && return 1;
+
+    die $@ if $@ and $@ !~ /database "\w+" does not exist/;
+
+    return 0;
 }
 
 sub _get_installed_version {
     my $self = shift;
 
-    my $dbh = $self->_make_dbh()
+    my $dbh = eval { $self->_make_dbh() }
         or return;
 
     my $row = $dbh->selectrow_arrayref(q{SELECT version FROM "Version"});
@@ -163,15 +193,7 @@ sub _get_installed_version {
 sub _make_dbh {
     my $self   = shift;
 
-    my $dsn = 'dbi:Pg:dbname=' . $self->name();
-
-    $dsn .= ';host=' . $self->host()
-        if defined $self->host();
-
-    $dsn .= ';port=' . $self->port()
-        if defined $self->port();
-
-    my %source = ( dsn => $dsn );
+    my %source = ( dsn => $self->_make_dsn() );
 
     $source{username} = $self->username()
         if defined $self->username();
@@ -179,11 +201,22 @@ sub _make_dbh {
     $source{password} = $self->password()
         if defined $self->password();
 
-    my $dbh = eval { Fey::DBIManager::Source->new(%source)->dbh() };
+    return Fey::DBIManager::Source->new(%source)->dbh();
+}
 
-    die $@ if $@ and $@ !~ /database "\w+" does not exist/;
+sub _make_dsn {
+    my $self = shift;
+    my $name = shift || $self->name();
 
-    return $dbh;
+    my $dsn = 'dbi:Pg:dbname=' . $name;
+
+    $dsn .= ';host=' . $self->host()
+        if defined $self->host();
+
+    $dsn .= ';port=' . $self->port()
+        if defined $self->port();
+
+    return $dsn;
 }
 
 sub _build_existing_config {
