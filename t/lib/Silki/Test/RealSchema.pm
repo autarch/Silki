@@ -9,6 +9,23 @@ use File::Slurp qw( read_file );
 use Path::Class qw( file );
 
 sub import {
+    eval {
+        DBI->connect(
+            'dbi:Pg:dbname=template1',
+            q{}, q{}, {
+                RaiseError => 1,
+                PrintError => 0,
+                PrintWarn  => 0,
+            }
+        );
+    };
+
+    if ($@) {
+        Test::More::plan skip_all =>
+            'Cannot connect to the template1 database with no username or password';
+        exit 0;
+    }
+
     if ( _database_exists() ) {
         _clean_tables();
     }
