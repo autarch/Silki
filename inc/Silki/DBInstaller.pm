@@ -143,7 +143,7 @@ sub update_or_install_db {
         $self->_msg("Installing a fresh database.");
         $self->_drop_and_create_db();
         $self->_build_db();
-        $self->_seed_data();
+        $self->_seed_data() if $self->seed();
     }
     else {
         my $next_version = $self->_get_next_version();
