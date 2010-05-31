@@ -54,6 +54,7 @@ hostname
 hostnames
 javascript
 login
+minifies
 minifying
 msgid
 namespace
