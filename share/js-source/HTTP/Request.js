@@ -1,7 +1,3 @@
-/*
-
-*/
-
 if ( typeof( Method ) == "undefined" ) {
     Method = {};
 }
@@ -13,10 +9,6 @@ if ( typeof( Method["bind"] ) == "undefined" ) {
         }
     };
 }
-
-/*
-
-*/
 
 if ( typeof( HTTP ) == "undefined" ) {
     HTTP = {};
@@ -59,20 +51,12 @@ if ( typeof( HTTP.Request ) == "undefined" ) {
        ,"complete"
     ];
 
-/*
-
-*/
-
     HTTP.Request.prototype.getOption = function( name ) {
         if ( typeof( name ) != "string" ) {
             return;
         }
         return this.options[name.toLowerCase()];
     };
-
-/*
-
-*/
 
     HTTP.Request.prototype.setOption = function( name, value ) {
         if ( typeof( name ) != "string" ) {
@@ -89,10 +73,6 @@ if ( typeof( HTTP.Request ) == "undefined" ) {
             }
         }
     };
-
-/*
-
-*/
 
     HTTP.Request.prototype.request = function ( uri ) {
         if ( ! uri ) uri = this.getOption( "uri" );
@@ -137,10 +117,6 @@ if ( typeof( HTTP.Request ) == "undefined" ) {
         }
     };
 
-/*
-
-*/
-
     HTTP.Request.prototype.setRequestHeaders = function() {
         this.transport.setRequestHeader( "X-Requested-With", "HTTP.Request" );
         this.transport.setRequestHeader( "X-HTTP-Request-Version", HTTP.Request.VERSION );
@@ -162,10 +138,6 @@ if ( typeof( HTTP.Request ) == "undefined" ) {
             requestHeaders.push.apply(requestHeaders, this.options.requestHeaders);
 */
     };
-
-/*
-
-*/
 
     // XXX This confuses me a little ... how are undefined and 0 considered a success?
     HTTP.Request.prototype.isSuccess = function () {
@@ -212,10 +184,6 @@ if ( typeof( HTTP.Request ) == "undefined" ) {
     HTTP.Request.VERSION = 0.03;
 }
 
-/*
-
-*/
-
 if ( typeof( HTTP.Request.Transport ) == "undefined" ) {
     if ( window.XMLHttpRequest ) {
         HTTP.Request.Transport = window.XMLHttpRequest;
@@ -250,7 +218,3 @@ if ( typeof( HTTP.Request.Transport ) == "undefined" ) {
         throw new Error("Unable to locate XMLHttpRequest or other HTTP transport mechanism");
     }
 }
-
-/*
-
-*/

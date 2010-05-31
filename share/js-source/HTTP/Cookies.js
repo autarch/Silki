@@ -172,7 +172,3 @@ HTTP.Cookies.Date.prototype.is_num = function (x) {
    }
    return ok;
 }
-
-/*
-
-*/

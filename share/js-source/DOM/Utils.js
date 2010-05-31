@@ -1,14 +1,6 @@
-/*
-
-*/
-
 if ( typeof( DOM ) == 'undefined' ) {
     DOM = {};
 }
-
-/*
-
-*/
 
 DOM.Utils = {
     EXPORT: [ '$' ]
@@ -25,7 +17,7 @@ DOM.Utils = {
                     || undefined
                 ;
 
-            if (arguments.length == 1) 
+            if (arguments.length == 1)
                 return element;
 
             elements.push( element );
@@ -39,14 +31,10 @@ DOM.Utils = {
 window["$"] = DOM.Utils["$"];
 $ = window["$"];
 
-/*
-
-*/
-
 document.getElementsByClass = function(className) {
     var children = document.getElementsByTagName('*') || document.all;
     var elements = new Array();
-  
+
     for (var i = 0; i < children.length; i++) {
         var child = children[i];
         var classNames = child.className.split(' ');
@@ -57,11 +45,7 @@ document.getElementsByClass = function(className) {
             }
         }
     }
-  
+
     return elements;
 };
 document.getElementsByClassName = document.getElementsByClass;
-
-/*
-
-*/
