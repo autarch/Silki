@@ -82,7 +82,7 @@ and users are members of zero or more wikis. Silki supports various degrees of
 openness in each wiki, from "guests can edit" to "members only".
 
 Silki is built with Modern Perl, including L<Catalyst>, L<Moose>, and
-L<Fey::ORM>. One of my goals for Silki is to explore best practices in
+L<Fey::ORM>. One of my goals for Silki is to explore modern best practices in
 creating web applications.
 
 =head2 Alpha Warning
