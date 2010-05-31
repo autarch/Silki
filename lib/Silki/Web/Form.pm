@@ -220,7 +220,8 @@ sub _form_html_from_dom {
 # This bizarro bit seems to fix some tests. Sigh ...
 {
 
-    package HTML::DOM::Node;
+    package
+        HTML::DOM::Node;
 
     no warnings 'redefine';
 
