@@ -1,3 +1,8 @@
+0.03   2010-05-31
+
+- Doc and packaging fixes so this looks a little nicer on search.cpan.org.
+
+
 0.02   2010-05-31
 
 - Fixes a PAUSE indexing issue. I left a monkey patch in a state that was
