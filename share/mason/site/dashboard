@@ -27,7 +27,7 @@
 <p>
   <% loc( 'This site has no public wikis available.
            Please <a href="%html(%1)">login</a>
-           if you have an account.', $c->domain()->application_uri( view => '/user/login_form' ) ) | n %>
+           if you have an account.', $c->domain()->application_uri( path => '/user/login_form' ) ) | n %>
 </p>
 %   }
 % }
