@@ -12,6 +12,15 @@
 * Per-wiki user lists, sortable by something interesting (# of pages
   edited/created, recency of edit, etc).
 
+* Move/copy pages between wikis
+
+* Gardening features - mass tag/untag, mass delete, mass move, mass rename via
+  regex, ...
+
+* Proper WYSIWYG editor
+
+* Live preview for non-WYSIWYG editor?
+
 = Reporting
 
 * Logins?
