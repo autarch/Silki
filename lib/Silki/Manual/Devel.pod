@@ -1,4 +1,4 @@
-package Silki::Manual::Admin;
+package Silki::Manual::Devel;
 
 # ABSTRACT: Hack on Silki
 
