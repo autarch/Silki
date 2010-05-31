@@ -17,6 +17,4 @@ __PACKAGE__->meta()->make_immutable();
 
 1;
 
-__END__
-
-
+# ABSTRACT: Represents the permission granted to a role in a specific wiki

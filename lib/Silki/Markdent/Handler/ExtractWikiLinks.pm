@@ -50,3 +50,5 @@ sub handle_event {
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: Extracts all links from a Silki Markdown document

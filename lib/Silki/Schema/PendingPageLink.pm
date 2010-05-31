@@ -16,6 +16,4 @@ __PACKAGE__->meta()->make_immutable();
 
 1;
 
-__END__
-
-
+# ABSTRACT: Represents a link to a page which does not yet exist

@@ -49,3 +49,4 @@ subtype ValidPermissionType,
 
 1;
 
+# ABSTRACT: Silki-specific types

@@ -15,3 +15,5 @@ sub _session_dbic_connect {
 }
 
 1;
+
+# ABSTRACT: Provides a database handle to the session using Silki::Schema

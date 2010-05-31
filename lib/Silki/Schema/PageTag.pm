@@ -19,3 +19,5 @@ my $Schema = Silki::Schema->Schema();
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: Represents a tag for a page

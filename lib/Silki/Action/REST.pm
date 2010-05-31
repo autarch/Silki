@@ -31,3 +31,5 @@ override dispatch => sub {
 # think.
 
 1;
+
+# ABSTRACT: Extends dispatch to add get_FOO_html

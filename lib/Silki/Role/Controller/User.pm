@@ -248,3 +248,4 @@ sub preferences_form : Chained('_set_user') : PathPart('preferences_form') : Arg
 
 1;
 
+# ABSTRACT: Provides user-related methods and actions

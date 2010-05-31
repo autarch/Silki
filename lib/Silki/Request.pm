@@ -84,3 +84,6 @@ sub _params_for_classes {
 }
 
 1;
+
+# ABSTRACT: A Catalyst::Request subclass which knows how to get user-provided data for specific classes
+

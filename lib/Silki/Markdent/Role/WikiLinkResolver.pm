@@ -135,3 +135,5 @@ require Silki::Schema::Page;
 require Silki::Schema::Wiki;
 
 1;
+
+# ABSTRACT: A role which resolves page/file/image links from wikitext

@@ -190,3 +190,5 @@ sub _require_site_admin {
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: Controller base class

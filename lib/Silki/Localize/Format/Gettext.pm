@@ -201,3 +201,5 @@ sub loc { $_[0] }
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: Provides functions for localization, like %date and %quant

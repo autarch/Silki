@@ -54,3 +54,5 @@ has_many_namer {
 };
 
 1;
+
+# ABSTRACT: A Fey::Policy for Silki

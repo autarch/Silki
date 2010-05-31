@@ -61,3 +61,5 @@ sub _build_formatter {
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: A subclass of Data::Localize::Gettext

@@ -82,3 +82,5 @@ sub _check_for_link_spam {
 }
 
 1;
+
+# ABSTRACT: Handles wikitext provided by the user, including spam checking

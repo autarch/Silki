@@ -370,3 +370,5 @@ sub delete_confirmation : Chained('_set_page') : PathPart('delete_confirmation')
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: Controller class for pages

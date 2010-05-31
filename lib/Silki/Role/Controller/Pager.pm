@@ -30,3 +30,4 @@ sub _make_pager {
 
 1;
 
+# ABSTRACT: Provides a pager to controllers

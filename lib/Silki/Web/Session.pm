@@ -72,3 +72,5 @@ sub _error_text {
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: An object for session data

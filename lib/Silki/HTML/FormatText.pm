@@ -30,3 +30,6 @@ sub a_end {
 }
 
 1;
+
+# ABSTRACT: A subclass of HTML::FormatText that also handles links
+

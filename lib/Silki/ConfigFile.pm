@@ -75,3 +75,5 @@ sub _build_raw_data {
 __PACKAGE__->meta()->make_immutable;
 
 1;
+
+# ABSTRACT: Low-level interface to the config file

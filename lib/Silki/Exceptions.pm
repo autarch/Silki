@@ -47,3 +47,5 @@ use Exporter qw( import );
 our @EXPORT_OK = map { $_->{alias} || () } values %E;
 
 1;
+
+# ABSTRACT: Exception classes used by Silki

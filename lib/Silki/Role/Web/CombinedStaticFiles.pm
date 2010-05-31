@@ -1,4 +1,4 @@
-package Silki::Web::CombinedStaticFiles;
+package Silki::Role::Web::CombinedStaticFiles;
 
 use strict;
 use warnings;
@@ -92,3 +92,5 @@ sub _process {
 }
 
 1;
+
+# ABSTRACT: Provides common behavior for combining and minifying JS or CSS

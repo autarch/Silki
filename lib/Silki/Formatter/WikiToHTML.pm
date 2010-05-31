@@ -55,3 +55,6 @@ sub wiki_to_html {
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: Turns wikitext into HTML
+

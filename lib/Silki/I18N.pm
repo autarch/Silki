@@ -35,3 +35,5 @@ use Silki::Config;
 }
 
 1;
+
+# ABSTRACT: The primary interface to i18n

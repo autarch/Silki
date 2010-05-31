@@ -125,3 +125,5 @@ sub handler {
 }
 
 1;
+
+# ABSTRACT: Handles file uploads

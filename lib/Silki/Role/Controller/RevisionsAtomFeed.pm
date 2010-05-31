@@ -73,3 +73,5 @@ sub _output_atom_feed_for_revisions {
 }
 
 1;
+
+# ABSTRACT: Generates an atom feed from a set of revisions

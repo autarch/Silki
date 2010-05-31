@@ -23,3 +23,5 @@ sub english_list {
 }
 
 1;
+
+# ABSTRACT: A utility module

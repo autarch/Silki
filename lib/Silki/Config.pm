@@ -901,3 +901,5 @@ EOF
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: Configuration information for Silki

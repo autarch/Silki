@@ -47,4 +47,5 @@ __PACKAGE__->meta()->make_immutable();
 
 1;
 
-__END__
+# ABSTRACT: Represents data for filling in forms
+

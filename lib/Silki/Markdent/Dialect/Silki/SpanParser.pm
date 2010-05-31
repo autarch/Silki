@@ -168,3 +168,5 @@ sub _match_plain_text {
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: Parses span-level markup for the Silki Markdown dialect

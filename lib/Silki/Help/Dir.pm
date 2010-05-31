@@ -90,3 +90,5 @@ sub _build_content {
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: A directory of help files

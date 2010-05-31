@@ -61,4 +61,6 @@ __PACKAGE__->meta()->make_immutable();
 
 1;
 
+# ABSTRACT: Controller class for the site
+
 __END__

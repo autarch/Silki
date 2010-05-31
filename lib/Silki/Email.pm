@@ -85,3 +85,5 @@ sub _execute_template {
 }
 
 1;
+
+# ABSTRACT: Sends email from a template

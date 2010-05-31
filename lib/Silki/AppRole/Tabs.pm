@@ -34,3 +34,5 @@ sub add_tab {
 }
 
 1;
+
+# ABSTRACT: Adds tab-related methods to the Catalyst object

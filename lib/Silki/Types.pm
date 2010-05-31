@@ -9,3 +9,5 @@ __PACKAGE__->provide_types_from(
     qw( Silki::Types::Internal MooseX::Types::Moose MooseX::Types::Path::Class ));
 
 1;
+
+# ABSTRACT: Exports Silki types as well as Moose and Path::Class types

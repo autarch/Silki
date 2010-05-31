@@ -70,3 +70,5 @@ sub _host_params_for_uri {
 }
 
 1;
+
+# ABSTRACT: Adds an $object->uri() method

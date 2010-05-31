@@ -41,3 +41,5 @@ sub _prefixed_path {
 }
 
 1;
+
+# ABSTRACT: A utility module for generating URIs

@@ -55,3 +55,5 @@ sub _build_content {
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: A single help file

@@ -42,3 +42,5 @@ has is_selected => (
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: A tab in the web UI

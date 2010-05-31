@@ -591,3 +591,5 @@ sub wiki_collection_POST {
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: Controller class for wikis

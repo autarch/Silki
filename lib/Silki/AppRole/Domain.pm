@@ -27,3 +27,5 @@ sub _build_domain {
 }
 
 1;
+
+# ABSTRACT: Adds $c->domain() to the Catalyst object

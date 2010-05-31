@@ -54,3 +54,5 @@ sub redirect_with_error {
 }
 
 1;
+
+# ABSTRACT: Adds $c->redirect_with_error() to the Catalyst object

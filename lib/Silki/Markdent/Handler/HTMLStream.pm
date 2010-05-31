@@ -174,3 +174,5 @@ sub _link_to_file {
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: A subclass of Markdent::Handler::HTMLStream which handles Silki-specific markup

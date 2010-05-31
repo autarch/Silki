@@ -63,27 +63,4 @@ sub has_template_for_path {
 
 1;
 
-__END__
-
-=head1 NAME
-
-Silki::View::Mason - Catalyst View
-
-=head1 SYNOPSIS
-
-See L<Silki>
-
-=head1 DESCRIPTION
-
-Catalyst View.
-
-=head1 AUTHOR
-
-Dave Rolsky,,,
-
-=head1 LICENSE
-
-This library is free software, you can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
+# ABSTRACT: A Mason-based view

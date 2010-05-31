@@ -13,3 +13,5 @@ extends 'Markdent::Dialect::Theory::BlockParser';
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: Parses span-level markup for the Silki Markdown dialect (currently empty)

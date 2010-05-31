@@ -60,3 +60,5 @@ sub body_for_display {
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: Represents a text search result

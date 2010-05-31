@@ -28,3 +28,5 @@ sub _build_user {
 }
 
 1;
+
+# ABSTRACT: Adds $c->user() to the Catalyst object

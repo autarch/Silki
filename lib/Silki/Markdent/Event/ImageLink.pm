@@ -21,3 +21,4 @@ __PACKAGE__->meta()->make_immutable();
 
 1;
 
+# ABSTRACT: Represents a link to an image (to be embedded in the page)

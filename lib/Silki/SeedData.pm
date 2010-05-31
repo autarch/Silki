@@ -184,3 +184,5 @@ EOF
 }
 
 1;
+
+# ABSTRACT: Seeds a fresh database with data

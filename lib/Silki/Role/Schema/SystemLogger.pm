@@ -66,3 +66,5 @@ role {
 };
 
 1;
+
+# ABSTRACT: Logs specified actions in the SystemLog table

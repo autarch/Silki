@@ -73,3 +73,5 @@ sub _BuildAllLogSelect {
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: Represents a system log entry

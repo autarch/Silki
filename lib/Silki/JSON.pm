@@ -16,3 +16,5 @@ use JSON::XS;
 }
 
 1;
+
+# ABSTRACT: A thin wrapper around a JSON::XS object

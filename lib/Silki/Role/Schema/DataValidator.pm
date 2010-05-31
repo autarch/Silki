@@ -152,3 +152,5 @@ role {
 };
 
 1;
+
+# ABSTRACT: Does data validation on inserts and updates

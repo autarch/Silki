@@ -11,7 +11,7 @@ use Silki::Config;
 
 use Moose;
 
-with 'Silki::Web::CombinedStaticFiles';
+with 'Silki::Role::Web::CombinedStaticFiles';
 
 sub _build_header {
     return q[var JSAN = { "use": function () {} };] . "\n";
@@ -65,3 +65,5 @@ sub _build_target_file {
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: Combines and minifies Javascript source files

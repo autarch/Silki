@@ -15,7 +15,7 @@ use Silki::Types qw( Str );
 
 use Moose;
 
-with 'Silki::Web::CombinedStaticFiles';
+with 'Silki::Role::Web::CombinedStaticFiles';
 
 has lessc_path => (
     is      => 'ro',
@@ -85,3 +85,5 @@ sub _build_lessc_path {
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: Combines and minifies CSS source files
