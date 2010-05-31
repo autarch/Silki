@@ -113,7 +113,7 @@ sub domain_collection_POST {
         );
     }
 
-    $c->redirect_and_detach( $domain->uri() );
+    $c->redirect_and_detach( $domain->uri( with_host => 1 ) );
 }
 
 __PACKAGE__->meta()->make_immutable();
