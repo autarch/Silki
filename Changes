@@ -1,3 +1,9 @@
+0.02   2010-05-31
+
+- Fixes a PAUSE indexing issue. I left a monkey patch in a state that was
+  visible to PAUSE.
+
+
 0.01   2010-05-31
 
 - First release, still very much an alpha.
