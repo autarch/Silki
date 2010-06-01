@@ -149,16 +149,12 @@ See the [[second-wiki/Front Page]]{Second Wiki}.
 1.  list 
     1.  2nd level
 
-
-
 *  Unordered list
 *  Item 2
 
 * UL
 * more 
     * 2nd level
-
-
 
 blah
 
@@ -315,6 +311,39 @@ EOF
     my $html = '<p>foo <!-- a comment --></p>';
 
     my $expected = "foo <!-- a comment -->\n\n";
+
+    my $wikitext = $formatter->html_to_wikitext($html);
+
+    eq_or_diff(
+        $wikitext, $expected,
+        'formatter outputs comment in html verbatim'
+    );
+}
+
+{
+    my $html = <<'EOF';
+<ul>
+  <li>A</li>
+  <li>
+    <ul>
+      <li>A1</li>
+      <li>A2</li>
+    </ul>
+  </li>
+  <li>B</li>
+  <li>C</li>
+</ul>
+EOF
+
+    my $expected = <<'EOF';
+* A
+* 
+    * A1
+    * A2
+* B
+* C
+
+EOF
 
     my $wikitext = $formatter->html_to_wikitext($html);
 

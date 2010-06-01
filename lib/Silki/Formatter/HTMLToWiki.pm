@@ -8,7 +8,7 @@ use HTML::TreeBuilder;
 use IO::Handle;
 use Markdent::Types qw( OutputStream );
 use Silki::Formatter::HTMLToWiki::Table;
-use Silki::Types qw( Maybe Str ArrayRef PosOrZeroInt );
+use Silki::Types qw( Maybe Str ArrayRef PosOrZeroInt Bool );
 use Silki::Util qw( string_is_empty );
 use URI;
 
@@ -29,6 +29,12 @@ has _stream => (
     init_arg => undef,
 );
 
+has _last_output_was_newline => (
+    is      => 'rw',
+    isa     => Bool,
+    default => 0,
+);
+
 has _indent_level => (
     traits  => ['Counter'],
     is      => 'rw',
@@ -41,9 +47,16 @@ has _indent_level => (
     init_arg => undef,
 );
 
-has _bullet => (
-    is  => 'rw',
-    isa => Maybe[Str],
+has _bullet_stack => (
+    traits  => ['Array'],
+    is      => 'bare',
+    isa     => ArrayRef [Str],
+    default => sub { [] },
+    handles => {
+        _push_bullet => 'push',
+        _pop_bullet  => 'pop',
+        _bullet      => [ get => -1 ],
+    },
 );
 
 has _current_href => (
@@ -85,7 +98,7 @@ sub _replace_stream {
     my $self   = shift;
     my $buffer = shift;
 
-    open my $fh, '>:encoding(UTF-8)', $buffer;
+    open my $fh, '>:utf8', $buffer;
 
     my $old_stream = $self->_stream();
 
@@ -294,16 +307,17 @@ sub _start_ul {
 
     $self->_print_to_stream("\n")
         if defined $self->_bullet();
-    $self->_set_bullet('*');
+    $self->_push_bullet('*');
     $self->_inc_indent_level();
 }
 
 sub _end_ul {
     my $self = shift;
 
-    $self->_set_bullet(undef);
+    $self->_pop_bullet();
     $self->_dec_indent_level();
-    $self->_print_to_stream("\n");
+    $self->_print_to_stream("\n")
+        unless $self->_indent_level();
 }
 
 sub _start_ol {
@@ -311,16 +325,17 @@ sub _start_ol {
 
     $self->_print_to_stream("\n")
         if defined $self->_bullet();
-    $self->_set_bullet('1.');
+    $self->_push_bullet('1.');
     $self->_inc_indent_level();
 }
 
 sub _end_ol {
     my $self = shift;
 
-    $self->_set_bullet(undef);
+    $self->_pop_bullet();
     $self->_dec_indent_level();
-    $self->_print_to_stream("\n");
+    $self->_print_to_stream("\n")
+        unless $self->_indent_level();
 }
 
 sub _start_li {
@@ -335,7 +350,8 @@ sub _start_li {
 
 sub _end_li {
     my $self = shift;
-    $self->_print_to_stream("\n");
+    $self->_print_to_stream("\n")
+        unless $self->_last_output_was_newline();
 }
 
 sub _start_blockquote {
@@ -365,6 +381,8 @@ sub _handle_table {
 
 sub _print_to_stream {
     my $self = shift;
+
+    $self->_set_last_output_was_newline( $_[0] eq "\n" ? 1 : 0 );
 
     $self->_stream()->print( $_[0] );
 }
