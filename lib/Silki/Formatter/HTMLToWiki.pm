@@ -377,6 +377,7 @@ sub _handle_table {
     $table->finalize();
 
     $self->_print_to_stream( $table->as_markdown() );
+    $self->_print_to_stream("\n");
 }
 
 sub _print_to_stream {
