@@ -31,6 +31,7 @@ with 'Silki::Role::Schema::DataValidator' => {
     steps => [
         '_title_is_valid',
         '_title_is_unique',
+        '_build_uri_path',
     ],
 };
 
@@ -228,8 +229,6 @@ sub insert_with_content {
             map  { $_->name() } $class->Table()->columns()
     );
 
-    $page_p{uri_path} = $class->TitleToURIPath( $page_p{title} );
-
     my $page;
     $class->SchemaClass()->RunInTransaction(
         sub {
@@ -318,6 +317,17 @@ sub _title_is_unique {
             $p->{title}
         ),
     };
+}
+
+sub _build_uri_path {
+    my $self = shift;
+    my $p    = shift;
+
+    return unless exists $p->{title};
+
+    $p->{uri_path} = $self->TitleToURIPath( $p->{title} );
+
+    return;
 }
 
 sub add_revision {
