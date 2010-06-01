@@ -115,6 +115,17 @@ sub edit_form : Chained('_set_page') : PathPart('edit_form') : Args(0) {
     $c->stash()->{template} = '/page/edit-form';
 }
 
+sub rename_form : Chained('_set_page') : PathPart('rename_form') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_permission_for_wiki( $c, $c->stash()->{wiki}, 'Edit' );
+
+    my $page = $c->stash()->{page};
+
+    $c->stash()->{template} = '/page/rename-form';
+}
+
 sub page_PUT {
     my $self = shift;
     my $c    = shift;
@@ -137,6 +148,30 @@ sub page_PUT {
         content => $wikitext,
         user_id => $c->user()->user_id(),
     );
+
+    $c->redirect_and_detach( $page->uri() );
+}
+
+sub page_title : Chained('_set_page') : PathPart('title') : Args(0) : ActionClass('+Silki::Action::REST') {
+}
+
+sub page_title_PUT {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_permission_for_wiki( $c, $c->stash()->{wiki} );
+
+    my $page = $c->stash()->{page};
+
+    eval { $page->rename( $c->request()->params()->{title} ) };
+
+    if ( my $e = $@ ) {
+        $c->redirect_with_error(
+            error     => $e,
+            uri       => $page->uri( view => 'rename_form' ),
+            form_data => $c->request()->params(),
+        );
+    }
 
     $c->redirect_and_detach( $page->uri() );
 }

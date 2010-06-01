@@ -1,5 +1,7 @@
 0.04
 
+- Implemented page renaming, at both the API and UI levels.
+
 - The revision created when adding a file to a page now has a comment, and is
   created by the system user, not the user which uploaded the file.
 

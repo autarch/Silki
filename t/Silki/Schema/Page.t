@@ -75,6 +75,9 @@ my $user = Silki::Schema::User->GuestUser();
         $page->is_front_page(),
         'is_front_page is true for page where title is Front Page'
     );
+
+    throws_ok { $page->rename('foo') } qr/\QCannot rename this page - Front Page/,
+        'rename throws an exception for pages where can_be_renamed is false';
 }
 
 {
@@ -213,6 +216,29 @@ my $user = Silki::Schema::User->GuestUser();
     is( $page->incoming_link_count(), 1, 'page has one incoming link' );
     my @links = $page->incoming_links()->all();
     is( $links[0]->title(), 'Some Page', 'Some Page links to Pending Page' );
+
+    $page->rename('Formerly Pending Page');
+    is(
+        $page->title(), 'Formerly Pending Page',
+        'calling rename() updates the page title'
+    );
+
+    is( $page->incoming_link_count(), 1, 'page still has one incoming link' );
+    @links = $page->incoming_links()->all();
+    is( $links[0]->title(), 'Some Page', 'Some Page still links to the renamed Page' );
+
+    my $link_rev = $links[0]->most_recent_revision();
+    is(
+        $link_rev->comment(),
+        'Updating links because a page is being renamed from Pending Page to Formerly Pending Page',
+        'linking page has a new revision because of rename'
+    );
+
+    is(
+        $link_rev->user_id(),
+        Silki::Schema::User->SystemUser()->user_id(),
+        'new revision was created by the system user'
+    );
 }
 
 {

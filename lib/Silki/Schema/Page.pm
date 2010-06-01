@@ -30,6 +30,7 @@ with 'Silki::Role::Schema::SystemLogger' => { methods => ['delete'] };
 with 'Silki::Role::Schema::DataValidator' => {
     steps => [
         '_title_is_valid',
+        '_title_is_unique',
     ],
 };
 
@@ -88,11 +89,7 @@ has_one first_revision => (
     },
 );
 
-has incoming_link_count => (
-    metaclass   => 'FromSelect',
-    is          => 'ro',
-    isa         => Int,
-    lazy        => 1,
+query incoming_link_count => (
     select      => __PACKAGE__->_IncomingLinkCountSelect(),
     bind_params => sub { $_[0]->page_id() },
 );
@@ -103,11 +100,7 @@ has_many incoming_links => (
     bind_params => sub { $_[0]->page_id() },
 );
 
-has file_count => (
-    metaclass   => 'FromSelect',
-    is          => 'ro',
-    isa         => Int,
-    lazy        => 1,
+query file_count => (
     select      => __PACKAGE__->_FileCountSelect(),
     bind_params => sub { $_[0]->page_id() },
 );
@@ -302,6 +295,31 @@ sub _title_is_valid {
     return;
 }
 
+sub _title_is_unique {
+    my $self      = shift;
+    my $p         = shift;
+    my $is_insert = shift;
+
+    return unless exists $p->{title};
+
+    my $wiki_id = $p->{wiki_id} || $self->wiki_id();
+
+    return unless $wiki_id;
+
+    my $page = __PACKAGE__->new( title => $p->{title}, wiki_id => $wiki_id );
+
+    return unless $page;
+
+    return if ref $self && $page->page_id() == $self->page_id();
+
+    return {
+        message => loc(
+            q{The page title you have chosen (%1) is already in use in this wiki.},
+            $p->{title}
+        ),
+    };
+}
+
 sub add_revision {
     my $self = shift;
     my %p    = @_;
@@ -338,6 +356,64 @@ sub add_file {
     );
 
     return;
+}
+
+sub rename {
+    my $self = shift;
+    my ($title) = pos_validated_list( \@_, { isa => Str } );
+
+    return if $title eq $self->title();
+
+    die 'Cannot rename this page - ', $self->title(), "\n"
+        unless $self->can_be_renamed();
+
+    my $links = $self->incoming_links();
+
+    # XXX - there's a small race condition here, because there's a window
+    # between reading the content of the linking pages and updating it. This
+    # could be fixed by moving the read into the transaction and doing a
+    # SELECT ... FOR UPDATE, I think
+    my @pages;
+    while ( my $page = $links->next() ) {
+        push @pages,
+            [
+            $page,
+            $page->rewritten_content_for_rename( $self->title(), $title )
+            ];
+    }
+
+    my $update_title = sub {
+        my $old_title = $self->title();
+
+        $self->update( title => $title );
+
+        for my $pair (@pages) {
+            my ( $page, $content ) = @{$pair};
+
+            $page->add_revision(
+                content => $content,
+                user_id => Silki::Schema::User->SystemUser()->user_id(),
+                comment => loc(
+                    'Updating links because a page is being renamed from %1 to %2',
+                    $old_title, $title
+                ),
+            );
+        }
+    };
+
+    Silki::Schema->RunInTransaction($update_title);
+}
+
+sub rewritten_content_for_rename {
+    my $self = shift;
+    my $old_name = shift;
+    my $new_name = shift;
+
+    my $content = $self->content();
+
+    $content =~ s/\Q(($old_name))/(($new_name))/g;
+
+    return $content;
 }
 
 sub record_view {
