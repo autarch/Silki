@@ -114,6 +114,11 @@ msgstr ""
 msgid "Add Tags"
 msgstr ""
 
+#. ($file->filename()
+#: lib/Silki/Schema/Page.pm:365
+msgid "Adding a link to a new file: %1"
+msgstr ""
+
 #: lib/Silki/Schema/Role.pm:20
 msgid "Admin"
 msgstr ""
@@ -242,7 +247,7 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: share/mason/page/autohandler:28
+#: share/mason/page/autohandler:34
 msgid "Delete"
 msgstr ""
 
@@ -250,7 +255,7 @@ msgstr ""
 msgid "Delete this file?"
 msgstr ""
 
-#: share/mason/page/autohandler:28
+#: share/mason/page/autohandler:34
 msgid "Delete this page"
 msgstr ""
 
@@ -390,7 +395,7 @@ msgid "History"
 msgstr ""
 
 #. ($page->title()
-#: lib/Silki/Controller/Page.pm:207 share/mason/autohandler:23
+#: lib/Silki/Controller/Page.pm:242 share/mason/autohandler:23
 msgid "History for %1"
 msgstr ""
 
@@ -553,6 +558,10 @@ msgstr ""
 msgid "New Members"
 msgstr ""
 
+#: share/mason/page/rename-form:7
+msgid "New page title:"
+msgstr ""
+
 #: share/mason/domain/domains:18
 msgid "No"
 msgstr ""
@@ -606,11 +615,11 @@ msgstr ""
 msgid "Page created by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
-#: lib/Silki/Schema/Page.pm:297
+#: lib/Silki/Schema/Page.pm:289
 msgid "Page titles cannot contain a slash (/), since this conflicts with the syntax to link to another wiki."
 msgstr ""
 
-#: lib/Silki/Schema/Page.pm:289
+#: lib/Silki/Schema/Page.pm:281
 msgid "Page titles cannot contain the characters \"))\", since this conflicts with the wiki link syntax."
 msgstr ""
 
@@ -730,6 +739,19 @@ msgstr ""
 msgid "Remove this tag"
 msgstr ""
 
+#: share/mason/page/autohandler:28
+msgid "Rename"
+msgstr ""
+
+#. ($page->title()
+#: share/mason/page/rename-form:21
+msgid "Rename %1"
+msgstr ""
+
+#: share/mason/page/autohandler:28
+msgid "Rename this page"
+msgstr ""
+
 #: share/mason/domain/domains:6 share/mason/lib/forms/domain.mas:31
 msgid "Requires SSL?"
 msgstr ""
@@ -786,7 +808,7 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#: share/mason/lib/forms/page.mas:50 share/mason/lib/forms/user.mas:63 share/mason/user/login-form:17
+#: share/mason/lib/forms/page.mas:50 share/mason/lib/forms/user.mas:63 share/mason/page/rename-form:11 share/mason/user/login-form:17
 msgid "Submit"
 msgstr ""
 
@@ -840,7 +862,7 @@ msgstr ""
 msgid "The email hostname you provided is already in use by another domain."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:278
+#: lib/Silki/Controller/Page.pm:313
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
@@ -866,6 +888,11 @@ msgstr ""
 
 #: share/mason/lib/forms/domain.mas:25
 msgid "The hostname to be used when sending and receiving email. Defaults to the same value as the web hostname."
+msgstr ""
+
+#. ($p->{title})
+#: lib/Silki/Schema/Page.pm:318
+msgid "The page title you have chosen (%1) is already in use in this wiki."
 msgstr ""
 
 #: lib/Silki/Schema/Wiki.pm:358
@@ -994,6 +1021,11 @@ msgstr ""
 
 #: share/mason/lib/table/attachments-table.mas:5
 msgid "Type"
+msgstr ""
+
+#. ($old_title, $title)
+#: lib/Silki/Schema/Page.pm:409
+msgid "Updating links because a page is being renamed from %1 to %2"
 msgstr ""
 
 #: share/mason/page/attachments:9
