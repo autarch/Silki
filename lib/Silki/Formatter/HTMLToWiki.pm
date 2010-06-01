@@ -85,7 +85,7 @@ sub _replace_stream {
     my $self   = shift;
     my $buffer = shift;
 
-    open my $fh, '>', $buffer;
+    open my $fh, '>:encoding(UTF-8)', $buffer;
 
     my $old_stream = $self->_stream();
 
@@ -325,6 +325,9 @@ sub _end_ol {
 
 sub _start_li {
     my $self = shift;
+
+    die "Attempt to start a list item but we are not in a list"
+        unless defined $self->_bullet();
 
     $self->_print_to_stream( q{ } x ( 4 * ( $self->_indent_level() - 1 ) ) );
     $self->_print_to_stream( $self->_bullet() . q{ } );
