@@ -99,7 +99,7 @@ sub page_DELETE {
     $c->redirect_and_detach( $wiki->uri( with_host => 1 ) );
 }
 
-sub page_edit_form : Chained('_set_page') : PathPart('edit_form') : Args(0) {
+sub edit_form : Chained('_set_page') : PathPart('edit_form') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
