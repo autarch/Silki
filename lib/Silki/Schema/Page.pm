@@ -332,7 +332,9 @@ sub add_file {
 
     $self->add_revision(
         content => $new_content,
-        user_id => $file->user_id(),
+        user_id => Silki::Schema::User->SystemUser()->user_id(),
+        comment =>
+            loc( 'Adding a link to a new file: %1', $file->filename() ),
     );
 
     return;

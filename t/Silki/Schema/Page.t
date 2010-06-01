@@ -157,6 +157,18 @@ my $user = Silki::Schema::User->GuestUser();
         'adding a file to a page creates a new revision'
     );
 
+    is(
+        $revision->user_id(),
+        Silki::Schema::User->SystemUser()->user_id(),
+        'adding a file creates a revision from the system user',
+    );
+
+    is(
+        $revision->comment(),
+        'Adding a link to a new file: ' . $file1->filename(),
+        'adding a file leaves a comment on the revision it creates'
+    );
+
     my $link = '{{file:' . $file1->filename() . '}}';
     like(
         $revision->content(), qr/\Q$link/,
