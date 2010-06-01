@@ -18,7 +18,7 @@
   </thead>
 % while ( my $revision = $revisions->next() ) {
   <tbody>
-    <tr class="<% $revisions->index() % 2 ? 'odd' : 'even' %>">
+    <tr class="<% $revisions->index() % 2 ? 'odd' : 'even' %> <% $revision->has_comment() ? 'has-child-row' : q{} %>">
       <td>
 %   if ( $revision->revision_number() == $current_rev ) {
         <a href="<% $page->uri( ) %>"><% loc( 'Revision %1', $revision->revision_number() ) %></a>
@@ -38,6 +38,13 @@
 %   }
       </td>
     </tr>
+%   if ( my $comment = $revision->comment() ) {
+    <tr class="<% $revisions->index() % 2 ? 'odd' : 'even' %>">
+      <td colspan="4">
+        <% $comment %>
+      </td>
+    </tr>
+%   }
   </tbody>
 % }
 <& /lib/table/pager.mas,

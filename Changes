@@ -3,6 +3,8 @@
 - The revision created when adding a file to a page now has a comment, and is
   created by the system user, not the user which uploaded the file.
 
+- Page history now shows a revision's comment, if it has one.
+
 
 0.03   2010-05-31
 
