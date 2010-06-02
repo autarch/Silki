@@ -1,5 +1,9 @@
 0.04
 
+- Files are now attached to a page, not the wiki. This makes more sense, since
+  you may want to associate a set of files with a page, yet not link to all of
+  them directly from the page.
+
 - Implemented page renaming, at both the API and UI levels.
 
 - The revision created when adding a file to a page now has a comment, and is
