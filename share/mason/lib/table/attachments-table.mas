@@ -2,6 +2,9 @@
   <thead>
     <tr>
       <th><% loc('Name') %></th>
+% if ($show_page) {
+      <th><% loc('Page') %></th>
+% }
       <th><% loc('Type') %></th>
       <th><% loc('Size') %></th>
       <th><% loc('Uploaded on') %></th>
@@ -19,6 +22,11 @@
         <a href="<% $file->uri() %>" title="<% loc('Download this file') %>"><img src="<% $file->uri( view => 'thumbnail' ) %>" /></a>
 %   }
       </td>
+% if ($show_page) {
+      <td>
+        <a href="<% $file->page()->uri() %>"><% $file->page()->title() %></a>
+      </td>
+% }
       <td>
         <% $file->mime_type_description_for_lang( Silki::I18N->Language() ) %>
       </td>
@@ -44,4 +52,5 @@
 
 <%args>
 $files
+$show_page => 0
 </%args>

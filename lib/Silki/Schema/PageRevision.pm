@@ -20,7 +20,6 @@ use Silki::Markdent::Handler::HTMLStream;
 use Silki::Schema;
 use Silki::Schema::Page;
 use Silki::Schema::PageLink;
-use Silki::Schema::PageFileLink;
 use Silki::Schema::PendingPageLink;
 use Silki::Types qw( Bool );
 use Storable qw( nfreeze thaw );
@@ -91,13 +90,6 @@ sub _post_change {
             '=', $self->page_id()
         );
 
-    my $delete_files = Silki::Schema->SQLFactoryClass()->new_delete();
-    $delete_files->delete()->from( $Schema->table('PageFileLink') )
-        ->where(
-            $Schema->table('PageFileLink')->column('page_id'),
-            '=', $self->page_id()
-        );
-
     my $update_cached_content
         = Silki::Schema->SQLFactoryClass()->new_update();
     $update_cached_content->update( $Schema->table('Page') )
@@ -122,11 +114,6 @@ sub _post_change {
             {},
             $delete_pending->bind_params()
         );
-        $dbh->do(
-            $delete_files->sql($dbh),
-            {},
-            $delete_files->bind_params()
-        );
 
         my $sth = $dbh->prepare( $update_cached_content->sql($dbh) );
         my @bind = $update_cached_content->bind_params();
@@ -138,18 +125,17 @@ sub _post_change {
             if @{$existing};
         Silki::Schema::PendingPageLink->insert_many( @{$pending} )
             if @{$pending};
-        Silki::Schema::PageFileLink->insert_many( @{$files} )
-            if @{$files};
     };
 
     Silki::Schema->RunInTransaction($updates);
 }
 
 sub _process_extracted_links {
-    my $self   = shift;
+    my $self = shift;
 
     my $capture = Markdent::Handler::CaptureEvents->new();
     my $linkex  = Silki::Markdent::Handler::ExtractWikiLinks->new(
+        page => $self->page(),
         wiki => $self->page()->wiki(),
     );
     my $multi = Markdent::Handler::Multiplexer->new(
@@ -267,6 +253,7 @@ sub content_as_html {
 
     my $html = Silki::Markdent::Handler::HTMLStream->new(
         output => $fh,
+        page   => $page,
         wiki   => $page->wiki(),
         %p,
     );

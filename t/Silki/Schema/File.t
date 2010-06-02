@@ -14,6 +14,10 @@ use Silki::Schema::User;
 use Silki::Schema::Wiki;
 
 my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
+my $page = Silki::Schema::Page->new(
+    title   => 'Front Page',
+    wiki_id => $wiki->wiki_id(),
+);
 my $user = Silki::Schema::User->GuestUser();
 
 {
@@ -24,7 +28,7 @@ my $user = Silki::Schema::User->GuestUser();
         file_size => length $text,
         contents  => $text,
         user_id   => $user->user_id(),
-        wiki_id   => $wiki->wiki_id(),
+        page_id   => $page->page_id(),
     );
 
     is(
@@ -102,12 +106,16 @@ my $user = Silki::Schema::User->GuestUser();
             file_size => length $text,
             contents  => $text,
             user_id   => $user->user_id(),
-            wiki_id   => $wiki->wiki_id(),
+            page_id   => $page->page_id(),
         );
     }
-    qr/already in use/, 'cannot insert two files of the same name in a wiki';
+    qr/already in use/, 'cannot insert two files of the same name on a page';
 
-    my $wiki2 = Silki::Schema::Wiki->new( short_name => 'second-wiki' );
+    my $page2 = Silki::Schema::Page->new(
+        title   => 'Scratch Pad',
+        wiki_id => $wiki->wiki_id(),
+    );
+
     lives_ok {
         Silki::Schema::File->insert(
             filename  => 'test.txt',
@@ -115,10 +123,10 @@ my $user = Silki::Schema::User->GuestUser();
             file_size => length $text,
             contents  => $text,
             user_id   => $user->user_id(),
-            wiki_id   => $wiki2->wiki_id(),
+            page_id   => $page2->page_id(),
         );
     }
-    'can insert two files of the same name in different wikis';
+    'can insert two files of the same name on different pages';
 }
 
 {
@@ -129,7 +137,7 @@ my $user = Silki::Schema::User->GuestUser();
         file_size => length $tiff,
         contents  => $tiff,
         user_id   => $user->user_id(),
-        wiki_id   => $wiki->wiki_id(),
+        page_id   => $page->page_id(),
     );
 
     ok(
@@ -157,7 +165,7 @@ my $user = Silki::Schema::User->GuestUser();
         file_size => length $jpg,
         contents  => $jpg,
         user_id   => $user->user_id(),
-        wiki_id   => $wiki->wiki_id(),
+        page_id   => $page->page_id(),
     );
 
     ok(

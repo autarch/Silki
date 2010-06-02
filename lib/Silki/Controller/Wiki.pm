@@ -24,7 +24,6 @@ BEGIN { extends 'Silki::Controller::Base' }
 with qw(
     Silki::Role::Controller::Pager
     Silki::Role::Controller::RevisionsAtomFeed
-    Silki::Role::Controller::UploadHandler
     Silki::Role::Controller::User
     Silki::Role::Controller::WikitextHandler
 );

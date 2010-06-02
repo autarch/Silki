@@ -559,13 +559,15 @@ sub _IncomingLinkSelect {
 sub _FileCountSelect {
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    my $page_file_link_t = $Schema->table('PageFileLink');
-    my $count = Fey::Literal::Function->new( 'COUNT',
-        $page_file_link_t->column('file_id') );
+    my $file_t = $Schema->table('File');
+    my $count  = Fey::Literal::Function->new(
+        'COUNT',
+        $file_t->column('file_id')
+    );
 
     $select->select($count)
-           ->from($page_file_link_t)
-           ->where( $page_file_link_t->column('page_id'), '=',
+           ->from($file_t)
+           ->where( $file_t->column('page_id'), '=',
                     Fey::Placeholder->new() );
 
     return $select;
@@ -574,11 +576,11 @@ sub _FileCountSelect {
 sub _FileSelect {
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    my ( $page_file_link_t, $file_t ) = $Schema->tables( 'PageFileLink', 'File' );
+    my $file_t = $Schema->table( 'File' );
 
     $select->select($file_t)
-           ->from( $page_file_link_t, $file_t )
-           ->where( $page_file_link_t->column('page_id'), '=',
+           ->from( $file_t )
+           ->where( $file_t->column('page_id'), '=',
                     Fey::Placeholder->new() )
            ->order_by( $file_t->column('filename') );
 

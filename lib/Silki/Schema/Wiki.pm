@@ -900,7 +900,7 @@ sub _MemberCountSelect {
 sub _FileCountSelect {
     my $class = shift;
 
-    my $file_t = $Schema->table('File');
+    my ( $file_t, $page_t ) = $Schema->tables( 'File', 'Page' );
 
     my $count
         = Fey::Literal::Function->new( 'COUNT', $file_t->column('file_id') );
@@ -908,8 +908,8 @@ sub _FileCountSelect {
     my $file_count_select = Silki::Schema->SQLFactoryClass()->new_select();
     $file_count_select
         ->select($count)
-        ->from($file_t)
-        ->where( $file_t->column('wiki_id'), '=', Fey::Placeholder->new() );
+        ->from( $file_t, $page_t )
+        ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() );
 
     return $file_count_select;
 }
@@ -936,13 +936,13 @@ sub files {
 sub _BuildFilesSelect {
     my $class = shift;
 
-    my $file_t = $Schema->table('File');
+    my ( $file_t, $page_t ) = $Schema->tables( 'File', 'Page' );
 
     my $files_select = Silki::Schema->SQLFactoryClass()->new_select();
     $files_select
         ->select($file_t)
-        ->from($file_t)
-        ->where( $file_t->column('wiki_id'), '=', Fey::Placeholder->new() )
+        ->from( $file_t, $page_t )
+        ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
         ->order_by( $file_t->column('filename'), 'ASC' );
 
     return $files_select;

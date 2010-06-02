@@ -149,7 +149,7 @@ my $user = Silki::Schema::User->GuestUser();
         file_size => length $text,
         contents  => $text,
         user_id   => $user->user_id(),
-        wiki_id   => $wiki->wiki_id(),
+        page_id   => $page->page_id(),
     );
 
     $page->add_file($file1);
@@ -187,13 +187,18 @@ my $user = Silki::Schema::User->GuestUser();
         file_size => length $text,
         contents  => $text,
         user_id   => $user->user_id(),
-        wiki_id   => $wiki->wiki_id(),
+        page_id   => $page->page_id(),
     );
 
     $page->add_file($file2);
 
     # Creating this so that we know $page->files() doesn't just return all the
     # files in the wiki or some other wrong result.
+    my $other_page = Silki::Schema::Page->new(
+        title   => 'Front Page',
+        wiki_id => $wiki->wiki_id(),
+    );
+
     $text = "This is even more plain text.\n";
     my $file3 = Silki::Schema::File->insert(
         filename  => 'test3.txt',
@@ -201,7 +206,7 @@ my $user = Silki::Schema::User->GuestUser();
         file_size => length $text,
         contents  => $text,
         user_id   => $user->user_id(),
-        wiki_id   => $wiki->wiki_id(),
+        page_id   => $other_page->page_id(),
     );
 
     is( $page->file_count(), 2, 'file_count is 2' );

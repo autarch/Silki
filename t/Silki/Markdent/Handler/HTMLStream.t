@@ -7,6 +7,7 @@ use lib 't/lib';
 use Silki::Test::RealSchema;
 
 use Silki::Markdent::Handler::HTMLStream;
+use Silki::Schema::Page;
 use Silki::Schema::User;
 use Silki::Schema::Wiki;
 
@@ -28,6 +29,11 @@ my $wiki = Silki::Schema::Wiki->insert(
     user       => Silki::Schema::User->SystemUser(),
 );
 
+my $page = Silki::Schema::Page->new(
+    title   => 'Front Page',
+    wiki_id => $wiki->wiki_id(),
+);
+
 $wiki->set_permissions('public');
 
 my $buffer = q{};
@@ -37,6 +43,7 @@ open my $fh, '>', \$buffer;
     my $stream = Silki::Markdent::Handler::HTMLStream->new(
         output => $fh,
         user   => $user,
+        page   => $page,
         wiki   => $wiki,
     );
 
@@ -107,7 +114,7 @@ open my $fh, '>', \$buffer;
         file_size => length $text,
         contents  => $text,
         user_id   => $user->user_id(),
-        wiki_id   => $wiki->wiki_id(),
+        page_id   => $page->page_id(),
     );
 
     my $file_link = $file->filename();
@@ -116,6 +123,7 @@ open my $fh, '>', \$buffer;
     my $stream = Silki::Markdent::Handler::HTMLStream->new(
         output => $fh,
         user   => $user,
+        page   => $page,
         wiki   => $wiki,
     );
 
@@ -162,6 +170,7 @@ open my $fh, '>', \$buffer;
     my $stream = Silki::Markdent::Handler::HTMLStream->new(
         output     => $fh,
         user       => $user,
+        page       => $page,
         wiki       => $wiki,
         for_editor => 1,
     );
@@ -194,6 +203,7 @@ open my $fh, '>', \$buffer;
     my $stream = Silki::Markdent::Handler::HTMLStream->new(
         output => $fh,
         user   => $user,
+        page   => $page,
         wiki   => $wiki,
     );
 
@@ -258,17 +268,22 @@ open my $fh, '>', \$buffer;
         'link to another wiki non-existent page, with alternate link text'
     );
 
+    my $page2 = Silki::Schema::Page->new(
+        title   => 'Front Page',
+        wiki_id => $wiki2->wiki_id(),
+    );
+
     my $text = "This is some plain text.\n";
     my $file = Silki::Schema::File->insert(
-        filename => 'test2.txt',
+        filename  => 'test2.txt',
         mime_type => 'text/plain',
         file_size => length $text,
         contents  => $text,
         user_id   => $user->user_id(),
-        wiki_id   => $wiki2->wiki_id(),
+        page_id   => $page2->page_id(),
     );
 
-    my $file_link = 'other/' . $file->filename();
+    my $file_link = 'other/Front Page/' . $file->filename();
     my $uri       = $file->uri();
 
     $buffer = q{};
@@ -312,6 +327,7 @@ open my $fh, '>', \$buffer;
     my $stream = Silki::Markdent::Handler::HTMLStream->new(
         output => $fh,
         user   => $user,
+        page   => $page,
         wiki   => $wiki,
     );
 
@@ -321,7 +337,7 @@ open my $fh, '>', \$buffer;
         file_size => 3,
         contents  => q{foo},
         user_id   => $user->user_id(),
-        wiki_id   => $wiki->wiki_id(),
+        page_id   => $page->page_id(),
     );
 
     my $file_link = $file->filename();
@@ -354,6 +370,7 @@ open my $fh, '>', \$buffer;
     my $stream = Silki::Markdent::Handler::HTMLStream->new(
         output => $fh,
         user   => $user,
+        page   => $page,
         wiki   => $wiki,
     );
 
@@ -363,7 +380,7 @@ open my $fh, '>', \$buffer;
         file_size => 3,
         contents  => q{foo},
         user_id   => $user->user_id(),
-        wiki_id   => $wiki->wiki_id(),
+        page_id   => $page->page_id(),
     );
 
     my $file_link = $file->filename();

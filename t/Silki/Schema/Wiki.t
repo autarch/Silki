@@ -261,6 +261,11 @@ my $user = Silki::Schema::User->SystemUser();
         'wiki has no files'
     );
 
+    my $page = Silki::Schema::Page->new(
+        title   => 'Front Page',
+        wiki_id => $wiki->wiki_id(),
+    );
+
     my $text  = "This is some plain text.\n";
     my $file1 = Silki::Schema::File->insert(
         filename  => 'test1.txt',
@@ -268,7 +273,7 @@ my $user = Silki::Schema::User->SystemUser();
         file_size => length $text,
         contents  => $text,
         user_id   => $user->user_id(),
-        wiki_id   => $wiki->wiki_id(),
+        page_id   => $page->page_id(),
     );
 
     is(
@@ -283,7 +288,7 @@ my $user = Silki::Schema::User->SystemUser();
         file_size => length $text,
         contents  => $text,
         user_id   => $user->user_id(),
-        wiki_id   => $wiki->wiki_id(),
+        page_id   => $page->page_id(),
     );
 
     is(

@@ -20,7 +20,7 @@ sub _set_file : Chained('/wiki/_set_wiki') : PathPart('file') : CaptureArgs(1) {
 
     my $wiki = $c->stash()->{wiki};
     $c->redirect_and_detach( $wiki->uri( with_host => 1 ) )
-        unless $file && $file->wiki_id() == $wiki->wiki_id();
+        unless $file && $file->wiki()->wiki_id() == $wiki->wiki_id();
 
     $c->stash()->{file} = $file;
 }
