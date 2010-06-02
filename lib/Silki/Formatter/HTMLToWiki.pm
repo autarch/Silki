@@ -8,6 +8,9 @@ use HTML::TreeBuilder;
 use IO::Handle;
 use Markdent::Types qw( OutputStream );
 use Silki::Formatter::HTMLToWiki::Table;
+use Silki::I18N qw( loc );
+use Silki::Schema::File;
+use Silki::Schema::Page;
 use Silki::Types qw( Maybe Str ArrayRef PosOrZeroInt Bool );
 use Silki::Util qw( string_is_empty );
 use URI;
@@ -61,7 +64,7 @@ has _bullet_stack => (
 
 has _current_href => (
     is  => 'rw',
-    isa => Maybe[Str],
+    isa => Maybe [Str],
 );
 
 has _table => (
@@ -125,7 +128,8 @@ sub _handle_events_from_tree {
 
         # This will generate impossible names for pseudo-tags like ~text, but
         # the ->can check will just return false, so it's ok.
-        my ( $start, $end ) = map { '_start_' . $_, '_end_' . $_ } $node->tag();
+        my ( $start, $end )
+            = map { '_start_' . $_, '_end_' . $_ } $node->tag();
 
         $self->$start($node)
             if $self->can($start);
@@ -156,11 +160,11 @@ sub _handle_node {
     return;
 }
 
-for my $level ( 1..6 ) {
+for my $level ( 1 .. 6 ) {
     my $start = sub {
         my $self = shift;
         $self->_print_to_stream( '#' x $level );
-        $self->_print_to_stream( q{ } );
+        $self->_print_to_stream(q{ });
     };
 
     my $end = sub {
@@ -169,7 +173,7 @@ for my $level ( 1..6 ) {
     };
 
     __PACKAGE__->meta()->add_method( '_start_h' . $level => $start );
-    __PACKAGE__->meta()->add_method( '_end_h' . $level => $end );
+    __PACKAGE__->meta()->add_method( '_end_h' . $level   => $end );
 }
 
 sub _start_strong {
@@ -232,33 +236,84 @@ sub _handle_a_as_wiki_link {
     my $node = shift;
     my $href = shift;
 
-    my $wiki;
-    my $thing;
-    my $default_text;
-
     if ( $href =~ m{^/wiki/([^/]+)/page/([^/]+)} ) {
-        $wiki         = $1;
-        $thing        = Silki::Schema::Page->URIPathToTitle($2);
-        $default_text = $thing;
+        my $title = Silki::Schema::Page->URIPathToTitle($2);
+
+        return $self->_page_link( $node, $1, $title );
     }
     elsif ( $href =~ m{^/wiki/([^/]+)/file/([^/]+)} ) {
-        $wiki  = $1;
-        $thing = 'file:' . $2;
-
         my $file = Silki::Schema::File->new( file_id => $2 );
 
-        $default_text = $file ? $file->filename() : q{};
+        unless ($file) {
+            $self->_print_to_stream( loc('(Link to non-existent file)') );
+            return;
+        }
+
+        return $self->_file_link( $node, $1, $file );
     }
     else {
         return $self->_handle_a_as_external_link( $node, $href );
     }
+}
+
+sub _page_link {
+    my $self      = shift;
+    my $node      = shift;
+    my $wiki_name = shift;
+    my $title     = shift;
 
     my $link = q{};
-    if ( $wiki ne $self->_wiki()->short_name() ) {
-        $link = $wiki . q{/};
+    if ( $wiki_name ne $self->_wiki()->short_name() ) {
+        my $wiki = Silki::Schema::Wiki->new( short_name => $wiki_name );
+
+        unless ($wiki) {
+            $self->_print_to_stream(
+                loc( '(Link to non-existent wiki: %1)', $wiki_name ) );
+            return;
+        }
+
+        $link = $wiki->title() . q{/};
     }
 
-    $link .= $thing;
+    $link .= $title;
+
+    my $child_text = $self->_text_from_node($node);
+
+    $self->_print_to_stream( '[' . $child_text . ']' )
+        unless $child_text eq $title;
+    $self->_print_to_stream( '((' . $link . '))' );
+}
+
+sub _file_link {
+    my $self      = shift;
+    my $node      = shift;
+    my $wiki_name = shift;
+    my $file      = shift;
+
+    my $link = q{};
+    if ( $wiki_name ne $self->_wiki()->short_name() ) {
+
+        # XXX - check that wiki name actually matches file's wiki?
+
+        $link
+            = $file->wiki()->title() . q{/}
+            . $file->page()->title() . q{/}
+            . $file->filename();
+    }
+    else {
+        $link = $file->filename();
+    }
+
+    my $child_text = $self->_text_from_node($node);
+
+    $self->_print_to_stream( '[' . $child_text . ']' )
+        unless $child_text eq $file->filename();
+    $self->_print_to_stream( '{{file:' . $link . '}}' );
+}
+
+sub _text_from_node {
+    my $self = shift;
+    my $node = shift;
 
     my $buffer     = q{};
     my $old_stream = $self->_replace_stream( \$buffer );
@@ -269,9 +324,7 @@ sub _handle_a_as_wiki_link {
 
     $self->_set_stream($old_stream);
 
-    $self->_print_to_stream( '[[' . $link . ']]' );
-    $self->_print_to_stream( '{' . $buffer . '}' )
-        unless $buffer eq $default_text;
+    return $buffer;
 }
 
 sub _handle_a_as_external_link {
@@ -308,7 +361,7 @@ sub _start_ul {
     my $self = shift;
 
     $self->_print_to_stream("\n")
-        if defined $self->_bullet() && ! $self->_last_output_was_newline();
+        if defined $self->_bullet() && !$self->_last_output_was_newline();
     $self->_push_bullet('*');
     $self->_inc_indent_level();
 }
@@ -326,7 +379,7 @@ sub _start_ol {
     my $self = shift;
 
     $self->_print_to_stream("\n")
-        if defined $self->_bullet() && ! $self->_last_output_was_newline();
+        if defined $self->_bullet() && !$self->_last_output_was_newline();
     $self->_push_bullet('1.');
     $self->_inc_indent_level();
 }
@@ -359,14 +412,14 @@ sub _end_li {
 sub _start_blockquote {
     my $self = shift;
 
-    $self->_print_to_stream('> ')
+    $self->_print_to_stream('> ');
 }
 
 sub _handle_table {
     my $self = shift;
     my $node = shift;
 
-    my $table = Silki::Formatter::HTMLToWiki::Table->new();
+    my $table      = Silki::Formatter::HTMLToWiki::Table->new();
     my $old_stream = $self->_stream();
     $self->_set_stream($table);
     $self->_set_table($table);

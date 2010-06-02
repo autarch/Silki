@@ -5,17 +5,42 @@ use Test::Differences;
 use Test::More;
 
 use lib 't/lib';
-use Silki::Test::FakeSchema;
+use Silki::Test::RealSchema;
 
 use Silki::Formatter::HTMLToWiki;
 use Silki::Schema::File;
 use Silki::Schema::Wiki;
 
-my $wiki = Silki::Schema::Wiki->new(
-    wiki_id     => 1,
-    short_name  => 'first-wiki',
-    title       => 'First Wiki',
-    _from_query => 1,
+my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
+my $page = Silki::Schema::Page->new(
+    title   => 'Front Page',
+    wiki_id => $wiki->wiki_id(),
+);
+
+Silki::Schema::File->insert(
+    file_id   => 1,
+    filename  => 'foo.txt',
+    mime_type => 'text/plain',
+    file_size => 3,
+    contents  => 'foo',
+    user_id   => Silki::Schema::User->SystemUser()->user_id(),
+    page_id   => $page->page_id(),
+);
+
+my $wiki2 = Silki::Schema::Wiki->new( short_name => 'second-wiki' );
+my $page2 = Silki::Schema::Page->new(
+    title   => 'Front Page',
+    wiki_id => $wiki2->wiki_id(),
+);
+
+Silki::Schema::File->insert(
+    file_id   => 2,
+    filename  => 'foo.txt',
+    mime_type => 'text/plain',
+    file_size => 3,
+    contents  => 'foo',
+    user_id   => Silki::Schema::User->SystemUser()->user_id(),
+    page_id   => $page2->page_id(),
 );
 
 my $formatter = Silki::Formatter::HTMLToWiki->new( wiki => $wiki );
@@ -35,9 +60,9 @@ my $formatter = Silki::Formatter::HTMLToWiki->new( wiki => $wiki );
 <p>See the <a class="existing-page" href="/wiki/second-wiki/page/Front_Page">Second Wiki</a>.</p>
 <p><a href="/wiki/first-wiki/file/1">foo.txt</a></p>
 <p><a href="/wiki/first-wiki/file/1">File link</a></p>
-<p><a href="/wiki/second-wiki/file/1">foo.txt</a></p>
-<p><a href="/wiki/second-wiki/file/1">File link</a></p>
-<p><a href="/wiki/first-wiki/file/2">bad file</a></p>
+<p><a href="/wiki/second-wiki/file/2">foo.txt</a></p>
+<p><a href="/wiki/second-wiki/file/2">File link</a></p>
+<p><a href="/wiki/first-wiki/file/3">bad file</a></p>
 <p><a href="/wiki/second-wiki/recent">recent changes</a></p>
 
 <ol>
@@ -92,24 +117,6 @@ my $formatter = Silki::Formatter::HTMLToWiki->new( wiki => $wiki );
 </blockquote>
 EOF
 
-    no warnings 'redefine';
-    local *Silki::Schema::File::new = sub {
-        shift;
-
-        my %p = @_;
-
-        if ( $p{file_id} == 1 ) {
-            return bless {
-                file_id   => 1,
-                filename => 'foo.txt',
-                },
-                'Silki::Schema::File';
-        }
-        else {
-            return;
-        }
-    };
-
     my $wikitext = $formatter->html_to_wikitext($html);
 
     my $expected = <<'EOF';
@@ -125,23 +132,23 @@ You use simple syntax to add things like _italics_ and **bold**
 
 to the text. Wikis are designed to make linking to other pages easy.
 
-See the [[Help]] page.
+See the ((Help)) page.
 
-See the [[Help]]{instructions} page.
+See the [instructions]((Help)) page.
 
-See the [[second-wiki/Front Page]].
+See the ((Second Wiki/Front Page)).
 
-See the [[second-wiki/Front Page]]{Second Wiki}.
+See the [Second Wiki]((Second Wiki/Front Page)).
 
-[[file:1]]
+{{file:foo.txt}}
 
-[[file:1]]{File link}
+[File link]{{file:foo.txt}}
 
-[[second-wiki/file:1]]
+{{file:Second Wiki/Front Page/foo.txt}}
 
-[[second-wiki/file:1]]{File link}
+[File link]{{file:Second Wiki/Front Page/foo.txt}}
 
-[[file:2]]{bad file}
+(Link to non-existent file)
 
 [recent changes](/wiki/second-wiki/recent)
 
