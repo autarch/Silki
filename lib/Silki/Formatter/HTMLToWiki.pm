@@ -306,7 +306,7 @@ sub _start_ul {
     my $self = shift;
 
     $self->_print_to_stream("\n")
-        if defined $self->_bullet();
+        if defined $self->_bullet() && ! $self->_last_output_was_newline();
     $self->_push_bullet('*');
     $self->_inc_indent_level();
 }
@@ -324,7 +324,7 @@ sub _start_ol {
     my $self = shift;
 
     $self->_print_to_stream("\n")
-        if defined $self->_bullet();
+        if defined $self->_bullet() && ! $self->_last_output_was_newline();
     $self->_push_bullet('1.');
     $self->_inc_indent_level();
 }
