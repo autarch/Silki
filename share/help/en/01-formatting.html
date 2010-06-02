@@ -93,7 +93,7 @@ If you just want to put a URL in the text, wrap it in angle brackets:
 
 <p>
 You can link to files in the current wiki, or any other wiki you have access
-to.
+to. By default, Silki looks for files attached to the current page.
 </p>
 
 <pre class="markdown-example">Take a look at the PDF: {{file: file.pdf}}</pre>
@@ -114,12 +114,18 @@ before the link:
 </div>
 
 <p>
-You can also link to files in other wikis. Of course, if a user viewing the
-page does not have access to the other wiki, they won't be able to see the
-file.
+You can also link to files attached to other pages, even in other wikis. Of
+course, if a user viewing the page does not have access to the other wiki,
+they won't be able to see the file.
 </p>
 
-<pre class="markdown-example">Take a look at the PDF: {{file: Other Wiki/file.pdf}}</pre>
+<pre class="markdown-example">Take a look at the PDF: {{file: Other Page In This Wiki/file.pdf}}</pre>
+
+<div class="markdown-output">
+  <p>Take a look at the PDF: <a href="#" title="Download this file">file.pdf</a></p>
+</div>
+
+<pre class="markdown-example">Take a look at the PDF: {{file: Other Wiki/Other Page/file.pdf}}</pre>
 
 <div class="markdown-output">
   <p>Take a look at the PDF: <a href="#" title="Download this file">file.pdf</a></p>
@@ -128,8 +134,8 @@ file.
 <h3>Linking to Images</h3>
 
 <p>
-Image links look like file links, but they embed the image in the wiki
-page:</p>
+Image links are very similar to file links, but they embed the image in the
+wiki page:</p>
 </p>
 
 <pre class="markdown-example">The attached logo: {{image: logo.png}}</pre>
