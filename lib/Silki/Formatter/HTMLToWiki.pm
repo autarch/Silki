@@ -88,6 +88,8 @@ sub html_to_wikitext {
 
     $self->_handle_events_from_tree($tree);
 
+    $tree->delete();
+
     $buffer .= "\n"
         unless $buffer =~ /\n$/s;
 
