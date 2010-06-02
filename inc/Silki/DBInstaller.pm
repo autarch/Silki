@@ -9,6 +9,7 @@ use lib 'lib';
 use DBI;
 use Fey::DBIManager::Source;
 use File::Slurp qw( read_file);
+use File::Spec;
 use File::Temp qw( tempdir);
 use Path::Class qw( dir file );
 
@@ -358,6 +359,15 @@ sub _migrate_db {
     my $self         = shift;
     my $from_version = shift;
     my $to_version   = shift;
+
+    my $tmp_file = dir( File::Spec->tmpdir(), "silki-db-dump-$$.sql" );
+
+    $self->_msg("Dumping Silki database to $tmp_file before running migrations");
+
+    system(
+        'pg_dump', $self->_psql_args(), '-C', $self->name(),
+        '-f',      $tmp_file
+    );
 
     for my $version ( ( $from_version + 1 ) .. $to_version ) {
         $self->_msg("Running database migration scripts to version $version");
