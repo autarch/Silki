@@ -273,12 +273,6 @@ CREATE TABLE "Tag" (
 
 CREATE INDEX "Tag_wiki_id" ON "Tag" (wiki_id);
 
-CREATE TABLE "PageFileLink" (
-       page_id                  INT8            NOT NULL,
-       file_id                  INT8            NOT NULL,
-       PRIMARY KEY ( page_id, file_id )
-);
-
 CREATE TABLE "Comment" (
        comment_id               SERIAL8         PRIMARY KEY,
        page_id                  INT8            NOT NULL,
@@ -337,8 +331,8 @@ CREATE TABLE "File" (
        contents                 BYTEA           NOT NULL,
        creation_datetime        TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
        user_id                  INT8            NOT NULL,
-       wiki_id                  INT8            NOT NULL,
-       UNIQUE (filename, wiki_id),
+       page_id                  INT8            NOT NULL,
+       UNIQUE (filename, page_id),
        CONSTRAINT valid_filename CHECK ( filename != '' ),
        CONSTRAINT valid_file_size CHECK ( file_size > 0 )
 );
@@ -451,14 +445,6 @@ ALTER TABLE "Tag" ADD CONSTRAINT "Tag_wiki_id"
   FOREIGN KEY ("wiki_id") REFERENCES "Wiki" ("wiki_id")
   ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "PageFileLink" ADD CONSTRAINT "PageFileLink_page_id"
-  FOREIGN KEY ("page_id") REFERENCES "Page" ("page_id")
-  ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE "PageFileLink" ADD CONSTRAINT "PageFileLink_file_id"
-  FOREIGN KEY ("file_id") REFERENCES "File" ("file_id")
-  ON DELETE CASCADE ON UPDATE CASCADE;
-
 ALTER TABLE "Comment" ADD CONSTRAINT "Page_page_id"
   FOREIGN KEY ("page_id") REFERENCES "Page" ("page_id")
   ON DELETE CASCADE ON UPDATE CASCADE;
@@ -493,11 +479,11 @@ ALTER TABLE "PageView" ADD CONSTRAINT "PageView_user_id"
 
 ALTER TABLE "File" ADD CONSTRAINT "File_user_id"
   FOREIGN KEY ("user_id") REFERENCES "User" ("user_id")
-  ON DELETE RESTRICT ON UPDATE CASCADE;
+  ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "File" ADD CONSTRAINT "File_wiki_id"
-  FOREIGN KEY ("wiki_id") REFERENCES "Wiki" ("wiki_id")
-  ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "File" ADD CONSTRAINT "File_page_id"
+  FOREIGN KEY ("page_id") REFERENCES "Page" ("page_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE "SystemLog" ADD CONSTRAINT "SystemLog_user_id"
   FOREIGN KEY ("user_id") REFERENCES "User" ("user_id")
@@ -509,6 +495,6 @@ ALTER TABLE "SystemLog" ADD CONSTRAINT "SystemLog_wiki_id"
 
 ALTER TABLE "SystemLog" ADD CONSTRAINT "SystemLog_page_id"
   FOREIGN KEY ("page_id") REFERENCES "Page" ("page_id")
-  ON DELETE RESTRICT ON UPDATE CASCADE;
+  ON DELETE SET NULL ON UPDATE CASCADE;
 
-INSERT INTO "Version" (version) VALUES (1);
+INSERT INTO "Version" (version) VALUES (2);
