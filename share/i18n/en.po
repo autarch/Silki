@@ -25,37 +25,37 @@ msgid "%1 Dashboard "
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:59
+#: lib/Silki/Controller/Wiki.pm:58
 msgid "%1 Front Page"
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:54
+#: lib/Silki/Controller/Wiki.pm:53
 msgid "%1 dashboard"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:350
+#: lib/Silki/Controller/Wiki.pm:349
 msgid "%1 is already a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:322
+#: lib/Silki/Controller/Wiki.pm:321
 msgid "%1 is no longer an admin for this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:368
+#: lib/Silki/Controller/Wiki.pm:367
 msgid "%1 is now a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:314
+#: lib/Silki/Controller/Wiki.pm:313
 msgid "%1 is now an admin for this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:301
+#: lib/Silki/Controller/Wiki.pm:300
 msgid "%1 was removed as a wiki member."
 msgstr ""
 
@@ -64,7 +64,7 @@ msgid "%date(%1) %at_time(%1)"
 msgstr ""
 
 #. ($c->user()
-#: share/mason/domain/domains:20 share/mason/lib/table/attachments-table.mas:29 share/mason/log/logs:16 share/mason/page/history:30 share/mason/user/users:24 share/mason/wiki/dashboard:12 share/mason/wiki/recent:14 share/mason/wiki/search-results:13 share/mason/wiki/tag:19 share/mason/wiki/wikis:24
+#: share/mason/domain/domains:20 share/mason/lib/table/attachments-table.mas:37 share/mason/log/logs:16 share/mason/page/history:30 share/mason/user/users:24 share/mason/wiki/dashboard:12 share/mason/wiki/recent:14 share/mason/wiki/search-results:13 share/mason/wiki/tag:19 share/mason/wiki/wikis:24
 msgid "%datetime(%1)"
 msgstr ""
 
@@ -79,17 +79,22 @@ msgid "%quant( %1, view, views )"
 msgstr ""
 
 #. ($filename)
-#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:121
+#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:161
 msgid "(Link to non-existent file - %1)"
 msgstr ""
 
-#. ($link)
-#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:31
+#. ($link_text)
+#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:127
+msgid "(Link to non-existent page - %1)"
+msgstr ""
+
+#. ($link_text)
+#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:113 lib/Silki/Markdent/Role/WikiLinkResolver.pm:38
 msgid "(Link to non-existent wiki - %1)"
 msgstr ""
 
 #. ($address->address()
-#: lib/Silki/Controller/Wiki.pm:401
+#: lib/Silki/Controller/Wiki.pm:400
 msgid "A user account for %1 has been created, and this person has been invited to join this wiki."
 msgstr ""
 
@@ -129,7 +134,7 @@ msgid "All Attachments (%1)"
 msgstr ""
 
 #. ($wiki->title()
-#: share/mason/wiki/attachments:28
+#: share/mason/wiki/attachments:16
 msgid "All Attachments in the %1 wiki"
 msgstr ""
 
@@ -154,7 +159,7 @@ msgid "All wikis"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:360
+#: lib/Silki/Controller/Wiki.pm:359
 msgid "An unactived account for %1 already exists. Once the account is activated, this user will be able to access this wiki."
 msgstr ""
 
@@ -278,7 +283,7 @@ msgid "Deleted the page %1"
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:101
+#: lib/Silki/Controller/Wiki.pm:100
 msgid "Deleted the wiki %1"
 msgstr ""
 
@@ -306,7 +311,7 @@ msgstr ""
 msgid "Domain:"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:149 share/mason/file/view-in-frame:11 share/mason/lib/table/attachments-table.mas:16 share/mason/lib/table/attachments-table.mas:19
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:149 share/mason/file/view-in-frame:11 share/mason/lib/table/attachments-table.mas:19 share/mason/lib/table/attachments-table.mas:22
 msgid "Download this file"
 msgstr ""
 
@@ -374,7 +379,7 @@ msgstr ""
 msgid "Files cannot be larger than %1."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:58
+#: lib/Silki/Controller/Wiki.pm:57
 msgid "Front Page"
 msgstr ""
 
@@ -597,7 +602,7 @@ msgstr ""
 msgid "Other pages tagged %1"
 msgstr ""
 
-#: share/mason/log/logs:7
+#: share/mason/lib/table/attachments-table.mas:6 share/mason/log/logs:7
 msgid "Page"
 msgstr ""
 
@@ -664,7 +669,7 @@ msgid "Permissions"
 msgstr ""
 
 #. ($perm_loc)
-#: lib/Silki/Controller/Wiki.pm:252
+#: lib/Silki/Controller/Wiki.pm:251
 msgid "Permissions for this wiki have been set to %1"
 msgstr ""
 
@@ -706,16 +711,16 @@ msgstr ""
 msgid "Quick Search"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:63
+#: lib/Silki/Controller/Wiki.pm:62
 msgid "Recent Changes"
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:161 share/mason/autohandler:18 share/mason/wiki/recent:37
+#: lib/Silki/Controller/Wiki.pm:160 share/mason/autohandler:18 share/mason/wiki/recent:37
 msgid "Recent Changes in %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:64
+#: lib/Silki/Controller/Wiki.pm:63
 msgid "Recent activity in this wiki"
 msgstr ""
 
@@ -804,7 +809,7 @@ msgstr ""
 msgid "Site Admin Tools"
 msgstr ""
 
-#: share/mason/lib/table/attachments-table.mas:6
+#: share/mason/lib/table/attachments-table.mas:9
 msgid "Size"
 msgstr ""
 
@@ -866,20 +871,20 @@ msgstr ""
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:194
+#: lib/Silki/Controller/Wiki.pm:193
 msgid "The file has been uploaded."
 msgstr ""
 
-#: lib/Silki/Role/Controller/UploadHandler.pm:34
+#: lib/Silki/Controller/Page.pm:339
 msgid "The file you uploaded was empty."
 msgstr ""
 
-#: lib/Silki/Role/Controller/UploadHandler.pm:27
+#: lib/Silki/Controller/Page.pm:332
 msgid "The file you uploaded was too large."
 msgstr ""
 
-#: lib/Silki/Schema/File.pm:130
-msgid "The filename you provided is already in use for another file in this wiki."
+#: lib/Silki/Schema/File.pm:135
+msgid "The filename you provided is already in use for another file on this page."
 msgstr ""
 
 #: share/mason/lib/forms/domain.mas:15
@@ -966,7 +971,7 @@ msgstr ""
 msgid "This user account has been disabled by a site admin."
 msgstr ""
 
-#: share/mason/wiki/attachments:17
+#: share/mason/wiki/attachments:5
 msgid "This wiki does not have any attachments."
 msgstr ""
 
@@ -1019,7 +1024,7 @@ msgstr ""
 msgid "Two days ago %at_time(%1)"
 msgstr ""
 
-#: share/mason/lib/table/attachments-table.mas:5
+#: share/mason/lib/table/attachments-table.mas:8
 msgid "Type"
 msgstr ""
 
@@ -1032,15 +1037,11 @@ msgstr ""
 msgid "Upload a file for this page"
 msgstr ""
 
-#: share/mason/wiki/attachments:9
-msgid "Upload a file to this wiki"
-msgstr ""
-
-#: share/mason/lib/table/attachments-table.mas:8
+#: share/mason/lib/table/attachments-table.mas:11
 msgid "Uploaded by"
 msgstr ""
 
-#: share/mason/lib/table/attachments-table.mas:7
+#: share/mason/lib/table/attachments-table.mas:10
 msgid "Uploaded on"
 msgstr ""
 
@@ -1177,7 +1178,7 @@ msgstr ""
 msgid "You cannot remove yourself as an admin."
 msgstr ""
 
-#: lib/Silki/Role/Controller/UploadHandler.pm:20
+#: lib/Silki/Controller/Page.pm:325
 msgid "You did not select a file to upload."
 msgstr ""
 
