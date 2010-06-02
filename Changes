@@ -1,3 +1,8 @@
+0.05
+
+- The attachments list for a wiki is now paged, with 50 files shown per page.
+
+
 0.04  2010-06-01
 
 - *WARNING* - this release contains the first database migration for Silki. If
