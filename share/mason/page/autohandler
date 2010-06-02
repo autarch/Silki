@@ -16,7 +16,7 @@ return $m->call_next();
 % }
     <li>
       <a href="<% $page->uri( view => 'attachments' ) %>"
-         title="<% loc('Attachments for this page') %>"><% loc('Attachments') %></a>
+         title="<% loc('Attachments for this page') %>"><% loc('Attachments (%1)', $page->file_count() ) %></a>
     </li>
     <li>
       <a href="<% $page->uri( view => 'history' ) %>"
