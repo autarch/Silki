@@ -1,4 +1,4 @@
-0.04
+0.04  2010-06-01
 
 - *WARNING* - this release contains the first database migration for Silki. If
   by some chance you actually have real data in Silki (did you not see the
