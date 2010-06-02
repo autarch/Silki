@@ -888,13 +888,13 @@ sub _MemberCountSelect {
     my $count
         = Fey::Literal::Function->new( 'COUNT', $uwr_t->column('user_id') );
 
-    my $file_count_select = Silki::Schema->SQLFactoryClass()->new_select();
-    $file_count_select
+    my $member_count_select = Silki::Schema->SQLFactoryClass()->new_select();
+    $member_count_select
         ->select($count)
         ->from($uwr_t)
         ->where( $uwr_t->column('wiki_id'), '=', Fey::Placeholder->new() );
 
-    return $file_count_select;
+    return $member_count_select;
 }
 
 sub _FileCountSelect {
