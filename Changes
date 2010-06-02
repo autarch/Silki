@@ -2,6 +2,8 @@
 
 - The attachments list for a wiki is now paged, with 50 files shown per page.
 
+- Added paging to the orphan and wanted pages lists.
+
 
 0.04  2010-06-01
 

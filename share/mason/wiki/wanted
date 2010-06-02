@@ -20,6 +20,12 @@
     </tr>
   </tbody>
 %   }
+
+<& /lib/table/pager.mas,
+   index     => $wanted->index(),
+   pager     => $pager,
+   uri_maker => sub { $wiki->uri( view => 'wanted', @_ ) } &>
+
 </table>
 % } else {
 <p>
@@ -30,6 +36,7 @@
 <%args>
 $wanted_count
 $wanted
+$pager
 $wiki
 </%args>
 

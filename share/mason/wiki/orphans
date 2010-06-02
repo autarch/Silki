@@ -28,6 +28,12 @@
     </tr>
   </tbody>
 %   }
+
+<& /lib/table/pager.mas,
+   index     => $orphans->index(),
+   pager     => $pager,
+   uri_maker => sub { $wiki->uri( view => 'orphans', @_ ) } &>
+
 </table>
 % } else {
 <p>
@@ -39,6 +45,7 @@
 $orphan_count
 $orphans
 $wiki
+$pager
 </%args>
 
 <%method title>
