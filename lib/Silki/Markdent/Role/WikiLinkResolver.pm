@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
+use List::AllUtils qw( all );
 use Silki::I18N qw( loc );
 
 use Moose::Role;
@@ -91,8 +92,22 @@ sub _resolve_file_link {
 
     return unless $link_text =~ m{^(?:([^/]+)/)?(?:([^/]+)/)?([^/]+)$};
 
-    if ($1) {
-        $wiki = Silki::Schema::Wiki->new( short_name => $1 );
+    my $filename = $3;
+
+    my $wiki_name;
+    my $page_name;
+
+    if ( all {defined} $1, $2, $3 ) {
+        $wiki_name = $1;
+        $page_name = $2;
+    }
+    elsif ( all { defined } $1, $3 ) {
+        $page_name = $1;
+    }
+
+    if ( defined $wiki_name ) {
+        $wiki = Silki::Schema::Wiki->new( title => $1 )
+            || Silki::Schema::Wiki->new( short_name => $1 );
 
         return {
             text => loc( '(Link to non-existent wiki - %1)', $link_text ),
@@ -102,9 +117,9 @@ sub _resolve_file_link {
 
     my $page = $self->_page();
 
-    if ($2) {
+    if ( defined $page_name ) {
         $page = Silki::Schema::Page->new(
-            title   => $2,
+            title   => $page_name,
             wiki_id => $wiki->wiki_id(),
         );
 
@@ -116,8 +131,6 @@ sub _resolve_file_link {
 
     die "Cannot resolve file links without a page"
         unless $page;
-
-    my $filename = $3;
 
     my $file = Silki::Schema::File->new(
         page_id  => $page->page_id(),
