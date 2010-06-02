@@ -7,6 +7,7 @@ use DBD::Pg;
 use DBI;
 use File::Slurp qw( read_file );
 use Path::Class qw( file );
+use Test::More;
 
 sub import {
     eval {
@@ -80,6 +81,8 @@ sub _recreate_database {
         },
     );
 
+    diag('Recreating SilkiTest database');
+
     eval { $dbh->do(q{DROP DATABASE "SilkiTest"}) };
     $dbh->do(q{CREATE DATABASE "SilkiTest" ENCODING 'UTF8'});
 
@@ -98,6 +101,8 @@ sub _clean_tables {
             ShowErrorStatement => 1,
         },
     );
+
+    diag('Cleaning tables in existing SilkiTest database');
 
     my @tables;
     for my $stmt ( _ddl_statements() ) {
