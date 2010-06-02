@@ -6,6 +6,8 @@
 
 - Show the attachment count next to the Attachments link when viewing a page.
 
+- Paging for application-wide user, wiki, and domain lists was broken.
+
 
 0.04  2010-06-01
 
