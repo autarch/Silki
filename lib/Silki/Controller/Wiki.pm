@@ -167,8 +167,15 @@ sub attachments : Chained('_set_wiki') : PathPart('attachments') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
-    $c->stash()->{file_count} = $c->stash()->{wiki}->file_count();
-    $c->stash()->{files} = $c->stash()->{wiki}->files();
+    my $count = $c->stash()->{wiki}->file_count();
+
+    my ( $limit, $offset ) = $self->_make_pager( $c, $count );
+
+    $c->stash()->{file_count} = $count;
+    $c->stash()->{files}      = $c->stash()->{wiki}->files(
+        limit  => $limit,
+        offset => $offset,
+    );
 
     $c->stash()->{template} = '/wiki/attachments';
 }

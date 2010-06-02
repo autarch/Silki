@@ -48,9 +48,19 @@
     </tr>
   </tbody>
 % }
+
+% if ($pager) {
+<& /lib/table/pager.mas,
+   index     => $files->index(),
+   pager     => $pager,
+   uri_maker => sub { $wiki->uri( view => 'attachments', @_ ) } &>
+% }
+
 </table>
 
 <%args>
 $files
 $show_page => 0
+$pager => undef
+$wiki => undef
 </%args>

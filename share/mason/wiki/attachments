@@ -1,5 +1,5 @@
 % if ($file_count) {
-<& /lib/table/attachments-table.mas, files => $files, show_page => 1 &>
+<& /lib/table/attachments-table.mas, files => $files, show_page => 1, wiki => $wiki, pager => $pager &>
 % } else {
 <p>
   <% loc('This wiki does not have any attachments.' ) %>
@@ -10,6 +10,7 @@
 $wiki
 $files
 $file_count
+$pager
 </%args>
 
 <%method title>
