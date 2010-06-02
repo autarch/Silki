@@ -66,8 +66,12 @@ after update => sub {
     $self->_post_change();
 };
 
+our $SkipPostChangeHack;
+
 sub _post_change {
     my $self = shift;
+
+    return if $SkipPostChangeHack;
 
     my ( $existing, $pending, $files, $capture )
         = $self->_process_extracted_links();
