@@ -292,7 +292,6 @@ sub _file_link {
 
     my $link = q{};
     if ( $wiki_name ne $self->_wiki()->short_name() ) {
-
         # XXX - check that wiki name actually matches file's wiki?
 
         $link
