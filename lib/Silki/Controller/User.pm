@@ -215,9 +215,17 @@ sub users_collection_GET_html {
 
     $self->_require_site_admin($c);
 
-    my ( $limit, $offset ) = $self->_make_pager( $c, Silki::Schema::User->Count() );
+    my $include_disabled = $c->request()->params()->{include_disabled};
 
-    $c->stash()->{users} = Silki::Schema::User->All(
+    my $count_meth = $include_disabled ? 'Count' : 'ActiveUserCount';
+
+    my ( $limit, $offset ) = $self->_make_pager( $c, Silki::Schema::User->$count_meth() );
+
+    my $meth = $include_disabled ? 'All' : 'ActiveUsers';
+
+    $c->stash()->{include_disabled} = $include_disabled;
+
+    $c->stash()->{users} = Silki::Schema::User->$meth(
         limit  => $limit,
         offset => $offset,
     );

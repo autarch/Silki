@@ -1,3 +1,13 @@
+% if ($include_disabled) {
+<p>
+<% loc( q{Showing all users, including user accounts which have been explicitly disabled. <a href="%html(%1)">Only show active users</a>}, $c->domain()->application_uri( path => '/users' ) ) | n %>
+</p>
+% } else {
+<p>
+<% loc( q{Only showing active users. <a href="%html(%1)">Include user accounts which have been disabled</a>}, $c->domain()->application_uri( path => '/users', query => { include_disabled => 1 } ) ) | n %>
+</p>
+% }
+
 <table class="standard-table">
   <thead>
     <tr>
@@ -56,17 +66,30 @@
 <& /lib/table/pager.mas,
    index     => $users->index(),
    pager     => $pager,
-   uri_maker => sub { $c->domain()->application_uri( path => '/users', @_ ) } &>
+   uri_maker => $uri_maker &>
 
 </table>     
 
 <%args>
 $users
 $pager
+$include_disabled
 </%args>
 
+<%init>
+my %query = $include_disabled ? ( include_disabled => 1 ) : ();
+my $uri_maker = sub {
+    my %p = @_;
+    $p{query} = { %query, %{ $p{query} || {} } };
+    return $c->domain()->application_uri( path => '/users', %p );
+};
+</%init>
+
 <%method title>
-All Users
+<% $include_disabled ? loc('All Users') : loc('Active Users') %>
+<%args>
+$include_disabled
+</%args>
 </%method>
 
 <%attr>

@@ -140,11 +140,25 @@ class_has 'GuestUser' => (
     default => sub { __PACKAGE__->_FindOrCreateGuestUser() },
 );
 
-class_has _AllUserSelect => (
+class_has _ActiveUserCountSelect => (
     is      => 'ro',
     isa     => 'Fey::SQL::Select',
     lazy    => 1,
-    builder => '_BuildAllUserSelect',
+    builder => '_BuildActiveUserCountSelect',
+);
+
+class_has _ActiveUsersSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildActiveUsersSelect',
+);
+
+class_has _AllUsersSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildAllUsersSelect',
 );
 
 {
@@ -985,7 +999,7 @@ sub _send_email {
     return;
 }
 
-sub All {
+sub ActiveUsers {
     my $class = shift;
     my ( $limit, $offset ) = validated_list(
         \@_,
@@ -993,7 +1007,7 @@ sub All {
         offset => { isa => Int, default  => 0 },
     );
 
-    my $select = $class->_AllUserSelect()->clone();
+    my $select = $class->_ActiveUsersSelect()->clone();
     $select->limit( $limit, $offset );
 
     my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
@@ -1006,7 +1020,72 @@ sub All {
     );
 }
 
-sub _BuildAllUserSelect {
+sub _BuildActiveUsersSelect {
+    my $class = shift;
+
+    my $select = $class->_AllUsersSelect()->clone();
+
+    my $user_t = $Schema->table('User');
+
+    $select->where( $user_t->column('is_disabled'), '=', 0 );
+
+    return $select;
+}
+
+sub ActiveUserCount {
+    my $class = shift;
+
+    my $select = $class->_ActiveUserCountSelect();
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
+
+    my $vals = $dbh->selectrow_arrayref(
+        $select->sql($dbh), {},
+        $select->bind_params()
+    );
+
+    return $vals ? $vals->[0] : 0;
+}
+
+sub _BuildActiveUserCountSelect {
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $user_t = $Schema->table('User');
+
+    my $count
+        = Fey::Literal::Function->new( 'COUNT', $user_t->column('user_id') );
+
+    $select->select($count)
+           ->from($user_t)
+           ->where( $user_t->column('is_disabled'), '=', 0 );
+
+    return $select;
+}
+
+sub All {
+    my $class = shift;
+    my ( $limit, $offset ) = validated_list(
+        \@_,
+        limit  => { isa => Int, optional => 1 },
+        offset => { isa => Int, default  => 0 },
+    );
+
+    my $select = $class->_AllUsersSelect()->clone();
+    $select->limit( $limit, $offset );
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
+
+    return Fey::Object::Iterator::FromSelect->new(
+        classes     => 'Silki::Schema::User',
+        select      => $select,
+        dbh         => $dbh,
+        bind_params => [ $select->bind_params() ],
+    );
+}
+
+sub _BuildAllUsersSelect {
     my $class = shift;
 
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
