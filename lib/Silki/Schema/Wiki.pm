@@ -1003,7 +1003,7 @@ sub active_users {
         classes => [ 'Silki::Schema::User' ],
         select  => $select,
         dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
-        bind_params => [ $self->wiki_id() ],
+        bind_params => [ $self->wiki_id(), $select->bind_params() ],
     );
 }
 
@@ -1017,15 +1017,22 @@ sub _BuildActiveUsersSelect {
     my $order_by = Fey::Literal::Term->new(
         q{CASE WHEN display_name = '' THEN username ELSE display_name END});
 
-    my $users_select = Silki::Schema->SQLFactoryClass()
-        ->new_select( auto_placeholders => 0 );
+    my $users_select = Silki::Schema->SQLFactoryClass()->new_select();
+
     $users_select
         ->select( $user_t, $order_by )
         ->distinct()
         ->from( $user_t, $page_revision_t )
         ->from( $page_revision_t, $page_t )
         ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
-        ->where( $user_t->column('is_system_user'), '=', 'f' )
+        ->where( $user_t->column('is_system_user'), '=', 0 )
+        ->where(
+            $page_revision_t->column('creation_datetime'),
+            '>=',
+            DateTime::Format::Pg->format_datetime(
+                DateTime->today()->subtract( months => 1 )
+            )
+        )
         ->order_by( $order_by );
 
     return $users_select;

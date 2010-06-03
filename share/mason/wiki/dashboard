@@ -61,13 +61,14 @@
           <li><a href="<% $user->uri() %>"><% $user->best_name() %></a></li>
 % }
 % unless ( $users->index() ) {
-          <li><% loc( q{Looks like there hasn't been any user activity in this wiki yet.} ) %></li>
+          <li><% loc( q{Looks like there hasn't been any user activity for the past month in this wiki.} ) %></li>
 % }
         </ul>
       </div>
     </div>
   </div>
 </div>
+
 
 <%args>
 $wiki
