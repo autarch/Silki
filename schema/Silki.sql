@@ -2,7 +2,7 @@ SET CLIENT_MIN_MESSAGES = ERROR;
 
 CREATE LANGUAGE plpgsql;
 
-CREATE DOMAIN email_address AS VARCHAR(255)
+CREATE DOMAIN email_address AS citext
        CONSTRAINT valid_email_address CHECK ( VALUE ~ E'^.+@.+(?:\\..+)+' );
 
 -- Is there a way to ensure that this table only ever has one row?
@@ -16,11 +16,11 @@ CREATE TABLE "User" (
        -- username is here primarily so we can uniquely identify
        -- system-created users even when the system's hostname
        -- changes, for normal users it can just be their email address
-       username                 VARCHAR(255)    UNIQUE  NOT NULL,
-       display_name             VARCHAR(255)    NOT NULL DEFAULT '',
+       username                 TEXT            UNIQUE  NOT NULL,
+       display_name             citext          NOT NULL DEFAULT '',
        -- RFC2307 Blowfish crypt
        password                 VARCHAR(67)     NULL,
-       openid_uri               VARCHAR(255)    UNIQUE  NULL,
+       openid_uri               TEXT            UNIQUE  NULL,
        -- SHA1 in hex form
        activation_key           VARCHAR(40)     UNIQUE  NULL,
        is_admin                 BOOLEAN         NOT NULL DEFAULT FALSE,
@@ -28,8 +28,8 @@ CREATE TABLE "User" (
        is_disabled              BOOLEAN         NOT NULL DEFAULT FALSE,
        creation_datetime        TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
        last_modified_datetime   TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-       time_zone                VARCHAR(50)     NOT NULL DEFAULT 'UTC',
-       locale_code              VARCHAR(20)     NOT NULL DEFAULT 'en_US',
+       time_zone                TEXT            NOT NULL DEFAULT 'UTC',
+       locale_code              TEXT            NOT NULL DEFAULT 'en_US',
        created_by_user_id       INT8            NULL,
        CONSTRAINT valid_user_record
            CHECK ( ( password != ''
@@ -39,7 +39,7 @@ CREATE TABLE "User" (
 
 CREATE TABLE "Account" (
        account_id               SERIAL8         PRIMARY KEY,
-       name                     VARCHAR(255)    UNIQUE  NOT NULL,
+       name                     citext          UNIQUE  NOT NULL,
        CONSTRAINT valid_name CHECK ( name != '' )
 );
 
@@ -56,7 +56,7 @@ CREATE DOMAIN uri_path_piece AS VARCHAR(255)
 
 CREATE TABLE "Wiki" (
        wiki_id                  SERIAL8         PRIMARY KEY,
-       title                    VARCHAR(255)    UNIQUE  NOT NULL,
+       title                    citext          UNIQUE  NOT NULL,
        -- This will be used in a URI path (/short-name/page/SomePage)
        -- or as a hostname prefix (short-name.wiki.example.com)
        short_name               uri_path_piece  UNIQUE  NOT NULL,
@@ -71,13 +71,13 @@ CREATE INDEX "Wiki_domain_id" ON "Wiki" (domain_id);
 CREATE INDEX "Wiki_account_id" ON "Wiki" (account_id);
 CREATE INDEX "Wiki_user_id" ON "Wiki" (user_id);
 
-CREATE DOMAIN hostname AS VARCHAR(255)
+CREATE DOMAIN hostname AS citext
        CONSTRAINT valid_hostname CHECK ( VALUE ~ E'^[^\\.]+(?:\\.[^\\.]+)+$' );
 
 CREATE TABLE "Domain" (
        domain_id          SERIAL             PRIMARY KEY,
-       web_hostname       VARCHAR(255)       UNIQUE  NOT NULL,
-       email_hostname     VARCHAR(255)       NOT NULL,
+       web_hostname       hostname           UNIQUE  NOT NULL,
+       email_hostname     hostname           NOT NULL,
        requires_ssl       BOOLEAN            DEFAULT FALSE,
        creation_datetime  TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
        CONSTRAINT valid_web_hostname CHECK ( web_hostname != '' ),
@@ -85,21 +85,21 @@ CREATE TABLE "Domain" (
 );
 
 CREATE TABLE "Locale" (
-       locale_code        VARCHAR(20)        PRIMARY KEY
+       locale_code        TEXT               PRIMARY KEY
 );
 
 CREATE TABLE "Country" (
        iso_code           CHAR(2)            PRIMARY KEY,
-       name               VARCHAR(255)       UNIQUE  NOT NULL,
-       locale_code        VARCHAR(20)        NOT NULL,
+       name               citext             UNIQUE  NOT NULL,
+       locale_code        TEXT               NOT NULL,
        CONSTRAINT valid_iso_code CHECK ( iso_code != '' ),
        CONSTRAINT valid_name CHECK ( name != '' )
 );
 
 CREATE TABLE "TimeZone" (
-       olson_name         VARCHAR(255)       PRIMARY KEY,
+       olson_name         TEXT               PRIMARY KEY,
        iso_code           CHAR(2)            NOT NULL,
-       description        VARCHAR(100)       NOT NULL,
+       description        TEXT               NOT NULL,
        display_order      INTEGER            NOT NULL,
        CONSTRAINT valid_olson_name CHECK ( olson_name != '' ),
        CONSTRAINT valid_iso_code CHECK ( iso_code != '' ),
@@ -113,12 +113,12 @@ CREATE TABLE "TimeZone" (
 
 CREATE TABLE "Role" (
        role_id                  SERIAL8         PRIMARY KEY,
-       name                     VARCHAR(50)     UNIQUE  NOT NULL
+       name                     citext          UNIQUE  NOT NULL
 );
 
 CREATE TABLE "Permission" (
        permission_id            SERIAL8         PRIMARY KEY,
-       name                     VARCHAR(50)     UNIQUE  NOT NULL
+       name                     citext          UNIQUE  NOT NULL
 );
 
 CREATE TABLE "UserWikiRole" (
@@ -140,8 +140,8 @@ CREATE DOMAIN revision AS INT
 
 CREATE TABLE "Page" (
        page_id                  SERIAL8         PRIMARY KEY,
-       title                    VARCHAR(255)    NOT NULL,
-       uri_path                 VARCHAR(255)    NOT NULL,
+       title                    citext          NOT NULL,
+       uri_path                 citext          NOT NULL,
        is_archived              BOOLEAN         NOT NULL DEFAULT FALSE,
        wiki_id                  INT8            NOT NULL,
        user_id                  INT8            NOT NULL,
@@ -181,7 +181,7 @@ CREATE TABLE "PageRevision" (
 
 CREATE INDEX "PageRevision_user_id" ON "PageRevision" (user_id);
 
-CREATE FUNCTION update_or_insert_page_searchable_text(id INT8, title VARCHAR(255), content TEXT) RETURNS VOID AS $$
+CREATE FUNCTION update_or_insert_page_searchable_text(id INT8, title citext, content TEXT) RETURNS VOID AS $$
 DECLARE
     ts_text_val tsvector;
 BEGIN
@@ -237,7 +237,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE FUNCTION page_revision_tsvector_trigger() RETURNS trigger AS $$
 DECLARE
-    existing_title VARCHAR(255);
+    existing_title citext;
 BEGIN
     SELECT title INTO existing_title
       FROM "Page"
@@ -265,7 +265,7 @@ CREATE INDEX "PageTag_tag_id" ON "PageTag" (tag_id);
 
 CREATE TABLE "Tag" (
        tag_id                   SERIAL8         PRIMARY KEY,
-       tag                      VARCHAR(200)    NOT NULL,
+       tag                      citext          NOT NULL,
        wiki_id                  INT8            NOT NULL,
        CONSTRAINT valid_tag CHECK ( tag != '' ),
        UNIQUE ( tag, wiki_id )
@@ -278,7 +278,7 @@ CREATE TABLE "Comment" (
        page_id                  INT8            NOT NULL,
        user_id                  INT8            NOT NULL,
        revision_number          revision        NOT NULL,
-       title                    VARCHAR(255)    NOT NULL,
+       title                    text            NOT NULL,
        body                     TEXT            NOT NULL,
        creation_datetime        TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
        last_modified_datetime   TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -305,7 +305,7 @@ CREATE INDEX "PageLink_to_page_id" ON "PageLink" (to_page_id);
 CREATE TABLE "PendingPageLink" (
        from_page_id             INT8            NOT NULL,
        to_wiki_id               INT8            NOT NULL,
-       to_page_title            VARCHAR(255)    NOT NULL,
+       to_page_title            citext          NOT NULL,
        PRIMARY KEY ( from_page_id, to_wiki_id, to_page_title )
 );
 
@@ -320,13 +320,13 @@ CREATE TABLE "PageView" (
 
 CREATE INDEX "PageView_user_id" ON "PageView" (user_id);
 
-CREATE DOMAIN filename AS VARCHAR(255)
+CREATE DOMAIN filename AS citext
        CONSTRAINT no_slashes CHECK ( VALUE ~ E'^[^\\\\/]+$' );
 
 CREATE TABLE "File" (
        file_id                  SERIAL8         PRIMARY KEY,
-       filename                 filename       NOT NULL,
-       mime_type                VARCHAR(255)    NOT NULL,
+       filename                 filename        NOT NULL,
+       mime_type                citext          NOT NULL,
        file_size                INTEGER         NOT NULL,
        contents                 BYTEA           NOT NULL,
        creation_datetime        TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -343,7 +343,7 @@ CREATE TABLE "SystemLog" (
        wiki_id            INT8               NULL,
        page_id            INT8               NULL,
        log_datetime       TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-       message            VARCHAR(255)       NOT NULL,
+       message            TEXT               NOT NULL,
        data_blob          BYTEA              NULL
 );
 
@@ -497,4 +497,4 @@ ALTER TABLE "SystemLog" ADD CONSTRAINT "SystemLog_page_id"
   FOREIGN KEY ("page_id") REFERENCES "Page" ("page_id")
   ON DELETE SET NULL ON UPDATE CASCADE;
 
-INSERT INTO "Version" (version) VALUES (2);
+INSERT INTO "Version" (version) VALUES (3);
