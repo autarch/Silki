@@ -1,5 +1,6 @@
 use strict;
 use warnings;
+use utf8;
 
 use Test::Differences;
 use Test::More;
@@ -115,6 +116,8 @@ my $formatter = Silki::Formatter::HTMLToWiki->new( wiki => $wiki );
     </blockquote>
   </blockquote>
 </blockquote>
+
+
 EOF
 
     my $wikitext = $formatter->html_to_wikitext($html);
@@ -359,7 +362,25 @@ EOF
 
     eq_or_diff(
         $wikitext, $expected,
-        'formatter outputs comment in html verbatim'
+        'nested lists come out cleanly'
+    );
+}
+
+{
+    my $html = <<'EOF';
+<p>en dash: &#8211;</p>
+EOF
+
+    my $expected = <<'EOF';
+en dash: –
+
+EOF
+
+    my $wikitext = $formatter->html_to_wikitext($html);
+
+    eq_or_diff(
+        $wikitext, $expected,
+        'formatter handles unicode entities sanely'
     );
 }
 

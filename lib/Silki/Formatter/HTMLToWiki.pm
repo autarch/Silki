@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
+use Encode qw( decode );
 use HTML::TreeBuilder;
 use IO::Handle;
 use Markdent::Types qw( OutputStream );
@@ -96,7 +97,10 @@ sub html_to_wikitext {
     $buffer .= "\n"
         unless $buffer =~ /\n$/s;
 
-    return $buffer;
+    # I tried finding a way to avoid this, but if I don't open the in-memory
+    # filehandle with the utf8 layer, I get "wide character" warnings. This
+    # works, though it's kind of fugly.
+    return decode( 'utf-8', $buffer );
 }
 
 sub _replace_stream {
