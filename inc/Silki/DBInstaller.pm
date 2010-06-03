@@ -10,6 +10,7 @@ use DBI;
 use Fey::DBIManager::Source;
 use File::Slurp qw( read_file);
 use File::Spec;
+use File::Which qw( which );
 use File::Temp qw( tempdir);
 use Path::Class qw( dir file );
 
@@ -276,8 +277,6 @@ EOF
         if defined $self->username();
     $commands .= q{;};
 
-    local $ENV{PGPASSWORD} = $self->password();
-
     # When trying to issue a DROP with -c (command), you cannot also set
     # client_min_messages, so we make a temp file and feed it in with -f.
     my $dir = tempdir( CLEANUP => 1 );
@@ -287,9 +286,9 @@ EOF
     print {$fh} $commands;
     close $fh;
 
-    system(
-        'psql', 'template1', $self->_psql_args(), '-q', '-w', '-f',
-        $file
+    $self->_run_pg_bin(
+        name  => 'template1',
+        flags => [ '-f', $file ],
     );
 }
 
@@ -300,15 +299,52 @@ sub _build_db {
 
     $self->_msg("Creating schema from $schema_file");
 
-    local $ENV{PGPASSWORD} = $self->password();
+    $self->_import_citext();
 
-    system(
-        'psql', $self->name(), $self->_psql_args(), '-q', '-w', '-f',
-        $schema_file
-    ) and die 'Cannot create Silki database with psql';
+    $self->_run_pg_bin( flags => [ '-f', $schema_file ] );
 }
 
-sub _psql_args {
+sub _import_citext {
+    my $self = shift;
+
+    my $config = which('pg_config')
+        or die "Cannot find pg_config in your path";
+
+    my $share = `pg_config --sharedir`;
+    chomp $share;
+
+    my $citext = file( $share, 'contrib', 'citext.sql' );
+
+    unless ( -f $citext ) {
+        die "Cannot find citext.sql in your share dir - looked for $citext";
+    }
+
+    $self->_run_pg_bin( flags => [ '-f', $citext ] );
+}
+
+sub _run_pg_bin {
+    my $self = shift;
+    my %p    = @_;
+
+    local $ENV{PGPASSWORD} = $self->password();
+
+    my @command = $p{command} || 'psql';
+    push @command, $p{name} || $self->name()
+        if $command[0] eq 'psql';
+
+    my @default_flags = $command[0] eq 'psql' ? ( '-q', '-w' ) : '-w';
+
+    push @command,
+        (
+        $self->_pg_bin_args(),
+        @default_flags,
+        @{ $p{flags} }
+        );
+
+    system(@command);
+}
+
+sub _pg_bin_args {
     my $self = shift;
 
     my @args;
@@ -364,9 +400,12 @@ sub _migrate_db {
 
     $self->_msg("Dumping Silki database to $tmp_file before running migrations");
 
-    system(
-        'pg_dump', $self->_psql_args(), '-C', $self->name(),
-        '-f',      $tmp_file
+    $self->_run_pg_bin(
+        command => 'pg_dump',
+        flags   => [
+            '-C', $self->name(),
+            '-f', $tmp_file
+        ],
     );
 
     for my $version ( ( $from_version + 1 ) .. $to_version ) {
@@ -388,10 +427,15 @@ sub _migrate_db {
             $self->_msg( "  running $file" );
 
             if ( $file =~ /\.sql/ ) {
-                system( 'psql', $self->name(), $self->_psql_args(), '-q', '-w', '-f', $file );
+                $self->_run_pg_bin( flags => [ '-f', $file ] );
             }
             else {
-                system($file);
+                my $perl = read_file( $file->stringify() );
+
+                my $sub = eval $perl;
+                die $@ if $@;
+
+                $self->$sub();
             }
         }
     }

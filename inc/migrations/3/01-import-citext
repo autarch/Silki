@@ -1,0 +1,13 @@
+{
+    use strict;
+    use warnings;
+    use autodie qw( :all );
+
+    use File::Which qw( which );
+    use Path::Class qw( file );
+
+    return sub {
+        my $installer = shift;
+        $installer->_import_citext();
+    };
+}
