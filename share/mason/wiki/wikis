@@ -30,7 +30,7 @@
 <& /lib/table/pager.mas,
    index     => $wikis->index(),
    pager     => $pager,
-   uri_maker => sub { $c->domain()->application_uri( path => '/wikis, @_ ) } &>
+   uri_maker => sub { $c->domain()->application_uri( path => '/wikis', @_ ) } &>
 
 </table>     
 
