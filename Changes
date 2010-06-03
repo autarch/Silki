@@ -8,6 +8,10 @@
 
 - Paging for application-wide user, wiki, and domain lists was broken.
 
+- The wiki dashboard's active users box now just looks for activity in the
+  past month. Otherwise, it has to look at all revision of all pages, which
+  can be very slow.
+
 
 0.04  2010-06-01
 
