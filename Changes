@@ -1,6 +1,6 @@
 0.06
 
-- *WARNINGS* - Lots of database changes. Many varchar columns are now text or
+- *WARNING* - Lots of database changes. Many varchar columns are now text or
   citext. What's citext? It's contrib data type for case-insensitive text,
   which means that sorts and equality are case-insensitive. Postgres 8.4 ships
   citext, but 8.3 does not. If you are running 8.3 and install citext manually
