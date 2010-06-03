@@ -12,6 +12,9 @@
   past month. Otherwise, it has to look at all revision of all pages, which
   can be very slow.
 
+- The site's "all users" list now defaults to showing only active users, but
+  offers an option to show disabled users as well.
+
 
 0.04  2010-06-01
 
