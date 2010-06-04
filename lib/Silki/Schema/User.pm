@@ -650,12 +650,11 @@ sub role_in_wiki {
     my $self = shift;
     my ($wiki) = pos_validated_list( \@_, { isa => 'Silki::Schema::Wiki' } );
 
+    return 'Guest' if $self->is_guest();
+
     my $role_name = $self->_role_name_in_wiki($wiki);
 
-    $role_name ||=
-        $self->is_guest()
-        ? 'Guest'
-        : 'Authenticated';
+    $role_name ||= 'Authenticated';
 
     return Silki::Schema::Role->$role_name();
 }
