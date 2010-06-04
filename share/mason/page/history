@@ -28,7 +28,7 @@
 %   }
       </td>
       <td><% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $revision->creation_datetime() ) ) %></td>
-      <td><a href="<% $revision->user()->uri() %>"><% $revision->user()->best_name() %></a></td>
+      <td><a href="<% $page->wiki()->uri_for_member( $revision->user() ) %>"><% $revision->user()->best_name() %></a></td>
       <td>
 %   if ( $current_rev > 1 ) {
         <input type="radio" name="revision1" value="<% $revision->revision_number() %>"

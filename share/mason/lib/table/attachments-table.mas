@@ -36,7 +36,7 @@
       <td>
         <% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $file->creation_datetime() ) ) %>
       <td>
-        <a href="<% $file->user()->uri() %>"><% $file->user()->best_name() %></a>
+        <a href="<% $wiki->uri_for_member( $file->user() ) %>"><% $file->user()->best_name() %></a>
       </td>
       <td>
 %   if ( $c->user()->has_permission_in_wiki( wiki => $file->wiki(), permission => Silki::Schema::Permission->Delete() ) ) {
@@ -62,5 +62,5 @@
 $files
 $show_page => 0
 $pager => undef
-$wiki => undef
+$wiki
 </%args>

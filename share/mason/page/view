@@ -20,19 +20,19 @@
 % if ( $revision->revision_number() > 1 ) {
 %   if ($is_current_revision) {
 <% loc( 'Last edited by <a href="%html(%1)">%html(%2)</a> %on_datetime(%3).',
-        $wiki->uri( view => 'user/' . $revision->user_id() ),
+        $wiki->uri_for_member( $revision->user() ),
         $revision->user()->best_name(),
         $c->user->set_time_zone_for_dt( $revision->creation_datetime() ) ) | n %>
 %   } else {
 <% loc( 'This revision was created by <a href="%html(%1)">%html(%2)</a> %on_datetime(%3).',
-        $revision->user()->uri(),
+        $wiki->uri_for_member( $revision->user() ),
         $revision->user()->best_name(),
         $c->user->set_time_zone_for_dt( $revision->creation_datetime() ) ) | n %>
 %   }
 <br />
 % }
 <% loc( 'Page created by <a href="%html(%1)">%html(%2)</a> %on_datetime(%3).',
-        $wiki->uri( view => 'user/' . $page->user_id() ),
+        $wiki->uri_for_member( $page->user() ),
         $page->user()->best_name(),
         $c->user->set_time_zone_for_dt( $page->creation_datetime() ) ) | n %>
 </div>

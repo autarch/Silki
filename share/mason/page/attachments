@@ -11,7 +11,7 @@
 % }
 
 % if ($file_count) {
-<& /lib/table/attachments-table.mas, files => $files &>
+<& /lib/table/attachments-table.mas, files => $files, wiki => $page->wiki() &>
 % } else {
 <p>
   <% loc('This page does not have any attachments.' ) %>

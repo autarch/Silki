@@ -58,7 +58,7 @@
 
         <ul>
 % while ( my $user = $users->next() ) {
-          <li><a href="<% $user->uri() %>"><% $user->best_name() %></a></li>
+          <li><a href="<% $wiki->uri_for_member($user) %>"><% $user->best_name() %></a></li>
 % }
 % unless ( $users->index() ) {
           <li><% loc( q{Looks like there hasn't been any user activity for the past month in this wiki.} ) %></li>

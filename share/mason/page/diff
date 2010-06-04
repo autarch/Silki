@@ -19,14 +19,14 @@
     <tr class="attribution">
       <td>
         <% loc( 'Created by <a href="%html(%1)">%html(%2)</a> %on_datetime(%3).',
-                $rev1->user()->uri(),
+                $page->wiki()->uri_for_member( $rev1->user() ),
                 $rev1->user()->best_name(),
                 $c->user()->set_time_zone_for_dt( $rev1->creation_datetime() ) ) | n %>
       </td>
       <td></td>
       <td>
         <% loc( 'Created by <a href="%html(%1)">%html(%2)</a> %on_datetime(%3).',
-                $rev2->user()->uri(),
+                $page->wiki()->uri_for_member( $rev2->user() ),
                 $rev2->user()->best_name(),
                 $c->user()->set_time_zone_for_dt( $rev2->creation_datetime() ) ) | n %>
       </td>
