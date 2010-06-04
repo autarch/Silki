@@ -404,8 +404,12 @@ sub _base_uri_path {
 sub uri_for_member {
     my $self = shift;
     my $user = shift;
+    my $view = shift;
 
-    return $self->uri( view => 'user/' . $user->user_id() );
+    my $view_base = 'user/' . $user->user_id();
+    $view_base .= q{/} . $view if defined $view;
+
+    return $self->uri( view => $view_base );
 }
 
 sub add_user {

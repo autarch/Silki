@@ -48,29 +48,6 @@ after '_set_user' => sub {
         }
     );
 
-    if ( $c->user()->can_edit_user($user) ) {
-        my %prefs
-            = $c->user()->user_id() == $user->user_id()
-            ? (
-            label   => loc('Your preferences'),
-            tooltip => loc('Set your preferences'),
-            )
-            : (
-            label   => loc( 'Preferences for %1', $user->best_name() ),
-            tooltip => loc(
-                'View and change preferences for %1', $user->best_name()
-            ),
-            );
-
-        $c->add_tab(
-            {
-                uri => $self->_make_user_uri( $c, $user, 'preferences_form' ),
-                id  => 'preferences',
-                %prefs,
-            }
-        );
-    }
-
     $c->stash()->{user} = $user;
 };
 
@@ -240,8 +217,6 @@ sub preferences_form : Chained('_set_user') : PathPart('preferences_form') : Arg
 
     $c->redirect_and_detach( $self->_make_user_uri( $c, $user ) )
         unless $c->user()->can_edit_user($user);
-
-    $c->tab_by_id('preferences')->set_is_selected(1);
 
     $c->stash()->{template} = '/user/preferences-form';
 }
