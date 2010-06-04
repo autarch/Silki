@@ -10,6 +10,10 @@
 </p>
 % }
 
+% if ( $wiki && ! $user->is_system_user() ) {
+<& profile-in-wiki.mas, user => $user, wiki => $wiki &>
+% }
+
 % if ($user_wikis) {
 <h2><% loc('Your Wikis' ) %></h2>
 

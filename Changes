@@ -12,6 +12,12 @@
 * The search code blew up on multi-word searches. Now a multi-word search is
   interpreted as requiring all the words.
 
+* Fixed links to user profiles inside a wiki so they point to the per-wiki
+  profile.
+
+* Per-wiki user profiles now show some information about the user that is
+  specific to the wiki (just role, for now).
+
 
 0.05  2010-06-03
 

@@ -1,0 +1,18 @@
+<p>
+<% loc( '%1 %2 <strong>%3</strong> in this wiki', $pronoun_and_be, $article, lc $role ) | n %>
+</p>
+
+<%args>
+$user
+$wiki
+</%args>
+
+<%init>
+return if $user->is_system_user();
+
+my $role = $user->role_in_wiki($wiki)->name();
+$role = 'Guest' if $role eq 'Authenticated';
+
+my $pronoun_and_be = $user->user_id() == $c->user()->user_id() ? 'You are' : 'This user is';
+my $article = (split / /, A($role))[0];
+</%init>

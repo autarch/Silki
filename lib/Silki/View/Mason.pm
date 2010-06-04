@@ -10,7 +10,7 @@ use base 'Catalyst::View::Mason';
 
     use Data::Dumper;
     use HTML::Entities qw( encode_entities );
-    use Lingua::EN::Inflect qw( PL_N );
+    use Lingua::EN::Inflect qw( A PL_N );
     use Number::Format qw( format_bytes );
     use Silki::I18N qw( loc );
     use Silki::Util qw( string_is_empty english_list );
