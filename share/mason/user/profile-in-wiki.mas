@@ -1,6 +1,8 @@
+% unless ( $user->is_disabled() ) {
 <p>
-<% loc( '%1 %2 <strong>%3</strong> in this wiki', $pronoun_and_be, $article, lc $role ) | n %>
+<% loc( '%1 %2 <strong>%3</strong> of this wiki', $pronoun_and_be, $article, lc $role ) | n %>
 </p>
+% }
 
 % if ($edited_count) {
 <h2>Recently Edited Pages</h2>

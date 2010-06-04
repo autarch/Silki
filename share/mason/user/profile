@@ -4,6 +4,16 @@
 </p>
 % }
 
+% if ( $user->is_disabled() ) {
+<p>
+<% loc( q{This user's account has been disabled by a site admin.} ) %>
+</p>
+% } elsif ( $user->requires_activation() ) {
+<p>
+<% loc( q{This user has not yet activated their account.} ) %>
+</p>
+% }
+
 % if ( $user->is_system_user() ) {
 <p>
   <% loc('This is a system user, created for use by the wiki software.') %>
