@@ -20,6 +20,12 @@ has _user => (
     init_arg => 'user',
 );
 
+has _page => (
+    is       => 'ro',
+    isa      => 'Silki::Schema::Page',
+    init_arg => 'page',
+);
+
 has _wiki => (
     is       => 'ro',
     isa      => 'Silki::Schema::Wiki',
@@ -36,8 +42,9 @@ sub wiki_to_html {
 
     my $html = Silki::Markdent::Handler::HTMLStream->new(
         output => $fh,
-        wiki   => $self->_wiki(),
-        user   => $self->_user()
+        ( $self->_page() ? ( page => $self->_page() ) : () ),
+        wiki => $self->_wiki(),
+        user => $self->_user()
     );
 
     my $filter = Markdent::Handler::HTMLFilter->new( handler => $html );
