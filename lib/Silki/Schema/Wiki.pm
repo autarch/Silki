@@ -159,6 +159,34 @@ class_has _PopularTagsSelect => (
     builder => '_BuildPopularTagsSelect',
 );
 
+class_has _PagesEditedByUserSelect => (
+    is      => 'ro',
+    does    => 'Fey::Role::SQL::ReturnsData',
+    lazy    => 1,
+    builder => '_BuildPagesEditedByUserSelect',
+);
+
+class_has _PagesEditedByUserCountSelect => (
+    is      => 'ro',
+    does    => 'Fey::Role::SQL::ReturnsData',
+    lazy    => 1,
+    builder => '_BuildPagesEditedByUserCountSelect',
+);
+
+class_has _PagesCreatedByUserSelect => (
+    is      => 'ro',
+    does    => 'Fey::Role::SQL::ReturnsData',
+    lazy    => 1,
+    builder => '_BuildPagesCreatedByUserSelect',
+);
+
+class_has _PagesCreatedByUserCountSelect => (
+    is      => 'ro',
+    does    => 'Fey::Role::SQL::ReturnsData',
+    lazy    => 1,
+    builder => '_BuildPagesCreatedByUserCountSelect',
+);
+
 class_has _PublicWikiCountSelect => (
     is      => 'ro',
     isa     => 'Fey::SQL::Select',
@@ -185,6 +213,13 @@ class_has _MaxRevisionSelect => (
     isa     => 'Fey::SQL::Select',
     lazy    => 1,
     builder => '_BuildMaxRevisionSelect',
+);
+
+class_has _MinRevisionSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildMinRevisionSelect',
 );
 
 query revision_count => (
@@ -1349,6 +1384,171 @@ sub _TagCountSelect {
     return $select;
 }
 
+sub pages_edited_by_user {
+    my $self = shift;
+    my ( $user, $limit, $offset ) = validated_list(
+        \@_,
+        user   => { isa => 'Silki::Schema::User' },
+        limit  => { isa => Int, optional => 1 },
+        offset => { isa => Int, default => 0 },
+    );
+
+    my $select = $self->_PagesEditedByUserSelect()->clone();
+    $select->limit( $limit, $offset );
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
+
+    return Fey::Object::Iterator::FromSelect->new(
+        classes     => [ 'Silki::Schema::Page', 'Silki::Schema::PageRevision' ],
+        select      => $select,
+        dbh         => $dbh,
+        bind_params => [ $self->wiki_id(), $user->user_id() ],
+    );
+}
+
+sub _BuildPagesEditedByUserSelect {
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $max_revision = $class->_MaxRevisionSelect();
+
+    my ( $page_t, $page_revision_t )
+        = $Schema->tables( 'Page', 'PageRevision' );
+
+    $select
+        ->select( $page_t, $page_revision_t )
+        ->from( $page_t, $page_revision_t )
+        ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
+        ->and  ( $page_revision_t->column('user_id'), '=', Fey::Placeholder->new() )
+        ->and  ( $page_revision_t->column('revision_number'),
+                 '=', $max_revision )
+        ->order_by( $page_revision_t->column('creation_datetime'), 'DESC',
+                    $page_t->column('title'), 'ASC' );
+
+    return $select;
+}
+
+sub pages_edited_by_user_count {
+    my $self = shift;
+    my ($user) = pos_validated_list( \@_, { isa => 'Silki::Schema::User' } );
+
+    my $select = $self->_PagesEditedByUserCountSelect();
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
+
+    my $vals = $dbh->selectrow_arrayref(
+        $select->sql($dbh),
+        {},
+        $self->wiki_id(), $user->user_id(),
+    );
+
+    return $vals ? $vals->[0] : 0;
+}
+
+sub _BuildPagesEditedByUserCountSelect {
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my ( $page_t, $page_revision_t )
+        = $Schema->tables( 'Page', 'PageRevision' );
+
+    my $distinct = Fey::Literal::Term->new(
+        'DISTINCT ',
+        Fey::Literal::Function->new( 'COUNT', $page_revision_t->column('page_id') )
+    );
+
+    $select
+        ->select($distinct)
+        ->from( $page_t, $page_revision_t )
+        ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
+        ->and  ( $page_revision_t->column('user_id'), '=', Fey::Placeholder->new() );
+
+    return $select;
+}
+
+sub pages_created_by_user {
+    my $self = shift;
+    my ( $user, $limit, $offset ) = validated_list(
+        \@_,
+        user   => { isa => 'Silki::Schema::User' },
+        limit  => { isa => Int, optional => 1 },
+        offset => { isa => Int, default => 0 },
+    );
+
+    my $select = $self->_PagesCreatedByUserSelect()->clone();
+    $select->limit( $limit, $offset );
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
+
+    return Fey::Object::Iterator::FromSelect->new(
+        classes     => [ 'Silki::Schema::Page', 'Silki::Schema::PageRevision' ],
+        select      => $select,
+        dbh         => $dbh,
+        bind_params => [ $self->wiki_id(), $user->user_id() ],
+    );
+}
+
+sub _BuildPagesCreatedByUserSelect {
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $min_revision = $class->_MinRevisionSelect();
+
+    my ( $page_t, $page_revision_t )
+        = $Schema->tables( 'Page', 'PageRevision' );
+
+    $select
+        ->select( $page_t, $page_revision_t )
+        ->from( $page_t, $page_revision_t )
+        ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
+        ->and  ( $page_t->column('user_id'), '=', Fey::Placeholder->new() )
+        ->and  ( $page_revision_t->column('revision_number'),
+                 '=', $min_revision )
+        ->order_by( $page_revision_t->column('creation_datetime'), 'DESC',
+                    $page_t->column('title'), 'ASC' );
+
+    return $select;
+}
+
+sub pages_created_by_user_count {
+    my $self = shift;
+    my ($user) = pos_validated_list( \@_, { isa => 'Silki::Schema::User' } );
+
+    my $select = $self->_PagesCreatedByUserCountSelect();
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
+
+    my $vals = $dbh->selectrow_arrayref(
+        $select->sql($dbh),
+        {},
+        $self->wiki_id(), $user->user_id(),
+    );
+
+    return $vals ? $vals->[0] : 0;
+}
+
+sub _BuildPagesCreatedByUserCountSelect {
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $page_t = $Schema->table('Page');
+
+    my $count
+        = Fey::Literal::Function->new( 'COUNT', $page_t->column('page_id') );
+
+    $select
+        ->select($count)
+        ->from($page_t)
+        ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
+        ->and  ( $page_t->column('user_id'), '=', Fey::Placeholder->new() );
+
+    return $select;
+}
+
 sub PublicWikiCount {
     my $class = shift;
 
@@ -1479,6 +1679,28 @@ sub _BuildMaxRevisionSelect {
                );
 
     return $max_revision;
+}
+
+sub _BuildMinRevisionSelect {
+    my $class = shift;
+
+    my ( $page_t, $page_revision_t )
+        = $Schema->tables( 'Page', 'PageRevision' );
+
+    my $min_func = Fey::Literal::Function->new(
+        'MIN',
+        $page_revision_t->column('revision_number'),
+    );
+
+    my $min_revision = Silki::Schema->SQLFactoryClass()->new_select();
+    $min_revision
+        ->select($min_func)
+        ->from( $Schema->table('PageRevision') )
+        ->where( $Schema->table('PageRevision')->column('page_id'),
+                 '=', $page_t->column('page_id')
+               );
+
+    return $min_revision;
 }
 
 __PACKAGE__->meta()->make_immutable();
