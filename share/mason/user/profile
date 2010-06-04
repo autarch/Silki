@@ -24,6 +24,12 @@
 <h2><% loc('Wikis You and %1 Both Use', $user->best_name() ) %></h2>
 
 <& /lib/wiki-list.mas, wikis => $shared_wikis &>
+
+%   if ( ! $shared_wikis->index() ) {
+<p>
+<% loc( 'You and %1 do not share any wikis in common.', $user->best_name() ) %>
+</p>
+%   }
 % }
 
 <%args>
