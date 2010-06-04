@@ -48,8 +48,6 @@ $wiki
 </%args>
 
 <%init>
-return if $user->is_system_user();
-
 my $role = $user->role_in_wiki($wiki)->name();
 $role = 'Guest' if $role eq 'Authenticated';
 

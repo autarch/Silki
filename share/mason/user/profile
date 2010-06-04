@@ -8,9 +8,11 @@
 <p>
   <% loc('This is a system user, created for use by the wiki software.') %>
 </p>
+
+%   return;
 % }
 
-% if ( $wiki && ! $user->is_system_user() ) {
+% if ($wiki) {
 <& profile-in-wiki.mas, user => $user, wiki => $wiki &>
 % }
 
