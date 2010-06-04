@@ -9,6 +9,9 @@
 
   Did I mention that Silki is still alpha?
 
+* The search code blew up on multi-word searches. Now a multi-word search is
+  interpreted as requiring all the words.
+
 
 0.05  2010-06-03
 
