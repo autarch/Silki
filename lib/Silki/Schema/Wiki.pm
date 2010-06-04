@@ -1096,9 +1096,6 @@ sub text_search {
     my $page_revision_t = $Schema->table('PageRevision');
     my $pst_t = $Schema->table('PageSearchableText');
 
-    my $max_func = Fey::Literal::Function->new( 'MAX',
-        $Schema->table('PageRevision')->column('revision_number') );
-
     my $max_revision = $self->_MaxRevisionSelect();
 
     my $rank = Fey::Literal::Function->new(
