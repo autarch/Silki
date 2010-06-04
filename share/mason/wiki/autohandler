@@ -20,6 +20,10 @@ return $m->call_next();
       <a href="<% $wiki->uri( view => 'wanted' ) %>"
          title="<% loc( 'Links to pages which do not yet exist' ) %>"><% loc( 'Wanted Pages (%1)', $wiki->wanted_page_count() ) %></a>
     </li>
+    <li>
+      <a href="<% $wiki->uri( view => 'users' ) %>"
+         title="<% loc( 'Wiki members' ) %>"><% loc('People') %></a>
+    </li>
 % if ( $c->user()->has_permission_in_wiki( wiki => $wiki, permission => Silki::Schema::Permission->Manage() ) ) {
     <li>
       <a href="<% $wiki->uri( view => 'settings' ) %>"

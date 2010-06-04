@@ -366,6 +366,13 @@ sub _base_uri_path {
     return '/wiki/' . $self->short_name();
 }
 
+sub uri_for_member {
+    my $self = shift;
+    my $user = shift;
+
+    return $self->uri( view => 'user/' . $user->user_id() );
+}
+
 sub add_user {
     my $self = shift;
     my ( $user, $role ) = validated_list(

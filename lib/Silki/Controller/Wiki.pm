@@ -239,6 +239,24 @@ sub wanted : Chained('_set_wiki') : PathPart('wanted') : Args(0) {
     $c->stash()->{template} = '/wiki/wanted';
 }
 
+sub users : Chained('_set_wiki') : PathPart('users') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    my $wiki = $c->stash()->{wiki};
+
+    my $count = $wiki->member_count();
+
+    my ( $limit, $offset ) = $self->_make_pager( $c, $count );
+
+    $c->stash()->{users} = $wiki->members(
+        limit  => $limit,
+        offset => $offset,
+    );
+
+    $c->stash()->{template} = '/wiki/users';
+}
+
 sub settings : Chained('_set_wiki') : PathPart('settings') : Args(0) {
     my $self = shift;
     my $c    = shift;
