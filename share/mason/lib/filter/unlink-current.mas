@@ -3,7 +3,7 @@ my $html = $m->content();
 
 my $path = $c->request()->uri()->path();
 
-$html =~ s{<a[^>]+href="\Q$path\E"[^>]+>([^<]+)</a>}{<span class="current">$1</a>};
+$html =~ s{<a[^>]+href="\Q$path\E"[^>]*>([^<]+)</a>}{<span class="current">$1</a>};
 
 $m->print($html);
 
