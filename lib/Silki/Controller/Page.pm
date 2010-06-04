@@ -277,6 +277,7 @@ sub diff : Chained('_set_page') : PathPart('diff') : Args(0) {
 
     $c->stash()->{formatter} = Silki::Formatter::WikiToHTML->new(
         user => $c->user(),
+        page => $c->stash()->{page},
         wiki => $c->stash()->{wiki},
     );
 
