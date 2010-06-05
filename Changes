@@ -4,6 +4,9 @@
 
 - Add a "restore this revision" button when viewing an older revision.
 
+- Added various revision-related links at the bottom of each page
+  (compare/view previous/next).
+
 
 0.06  2010-06-04
 
