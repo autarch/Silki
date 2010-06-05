@@ -10,6 +10,7 @@ return $m->call_next();
   </ul>
 
 <%init>
+return unless $user;
 return unless $c->user()->can_edit_user($user);
 
 my $link
@@ -24,7 +25,7 @@ my $uri
 </%init>
 
 <%args>
-$user
+$user => undef
 $wiki => undef
 </%args>
 </%method>
