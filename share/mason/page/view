@@ -51,9 +51,23 @@
 </pre>
 % }
 
-% if ( $revision->revision_number() > 1 ) {
-<div id="compare-to-previous">
-  <a href="<% $page->uri( view => 'diff', query => { revision1 => $revision->revision_number() - 1, revision2 => $revision->revision_number() } ) %>"><% loc('Compare to previous revision') %></a>
+% if ( $page->revision_count() > 1 ) {
+<div id="revision-controls">
+  <% loc( 'This page has %1 revisions.', $page->revision_count() ) %>
+%   if ( $revision->revision_number() > 1 ) {
+  <br />
+  <a href="<% $page->uri( view => 'diff', query => { revision1 => $revision->revision_number() - 1, revision2 => $revision->revision_number() } ) %>"><% loc( 'Compare to previous revision') %></a>
+%     if ( $revision->revision_number() != $page->revision_count() ) {
+  |
+  <a href="<% $page->uri( view => 'diff', query => { revision1 => $revision->revision_number(), revision2 => $revision->revision_number() + 1 } ) %>"><% loc( 'Compare to next revision') %></a>
+%     }
+  <br />
+  <a href="<% $page->uri( view => 'revision/' . ( $revision->revision_number() - 1 ) ) %>"><% loc( 'View previous revision') %></a>
+%     if ( $revision->revision_number() != $page->revision_count() ) {
+  |
+  <a href="<% $page->uri( view => 'revision/' . ( $revision->revision_number() + 1 ) ) %>"><% loc( 'View next revision') %></a>
+%     }
+%   }
 </div>
 % }
 
