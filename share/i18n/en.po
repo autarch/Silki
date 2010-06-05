@@ -371,7 +371,7 @@ msgstr ""
 msgid "Domain:"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:149 share/mason/file/view-in-frame:11 share/mason/lib/table/attachments-table.mas:19 share/mason/lib/table/attachments-table.mas:22
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:162 share/mason/file/view-in-frame:11 share/mason/lib/table/attachments-table.mas:19 share/mason/lib/table/attachments-table.mas:22
 msgid "Download this file"
 msgstr ""
 
@@ -481,8 +481,12 @@ msgstr ""
 msgid "In a public wiki, anyone can read and edit pages without logging in. However, only wiki members can delete pages or upload files."
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:140
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:153
 msgid "Inaccessible file"
+msgstr ""
+
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:69
+msgid "Inaccessible page"
 msgstr ""
 
 #: share/mason/page/incoming-links.mas:2
@@ -1144,7 +1148,7 @@ msgstr ""
 msgid "View details about your profile"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:148
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:161
 msgid "View this file"
 msgstr ""
 
