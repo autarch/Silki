@@ -57,6 +57,19 @@ sub _link_to_page {
 
     my $page = $p->{page};
 
+    my $wiki = $p->{wiki} || $page->wiki();
+
+    unless (
+        $self->_user()->has_permission_in_wiki(
+            wiki       => $wiki,
+            permission => Silki::Schema::Permission->Read(),
+        )
+        ) {
+
+        $self->_stream()->text( loc('Inaccessible page') );
+        return;
+    }
+
     if ( $self->for_editor() ) {
         $page ||= Silki::Schema::Page->new(
             page_id     => 0,

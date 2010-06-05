@@ -157,6 +157,28 @@ open my $fh, '>', \$buffer;
     $buffer = q{};
     seek $fh, 0, 0;
 
+    $stream->wiki_link( link_text => 'Front Page' );
+
+    is(
+        $buffer,
+        qq{Inaccessible page},
+        'link to inaccessible page'
+    );
+
+    $buffer = q{};
+    seek $fh, 0, 0;
+
+    $stream->wiki_link( link_text => 'Pages Does Not Exist' );
+
+    is(
+        $buffer,
+        qq{Inaccessible page},
+        'link to inaccessible page (page does not exist)'
+    );
+
+    $buffer = q{};
+    seek $fh, 0, 0;
+
     $stream->file_link( link_text => $file_link );
 
     is(
@@ -167,6 +189,8 @@ open my $fh, '>', \$buffer;
 }
 
 {
+    $wiki->set_permissions('public');
+
     my $stream = Silki::Markdent::Handler::HTMLStream->new(
         output     => $fh,
         user       => $user,
@@ -188,8 +212,6 @@ open my $fh, '>', \$buffer;
 }
 
 {
-    $wiki->set_permissions('public');
-
     my $wiki2 = Silki::Schema::Wiki->insert(
         title      => 'Other',
         short_name => 'other',
