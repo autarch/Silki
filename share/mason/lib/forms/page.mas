@@ -40,7 +40,6 @@
     <form class="flush-left" action="<% $action %>" method="post">
 % if ($page) {
       <input type="hidden" name="x-tunneled-method" value="PUT" />
-      <input type="hidden" name="page_id" value="<% $page->page_id() %>" />
 % } else {
       <input type="hidden" name="title" value="<% $title %>" />
 % }
