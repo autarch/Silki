@@ -1,3 +1,10 @@
+0.07
+
+- Fixed a stupid bug that prevented logging in.
+
+- Add a "restore this revision" button when viewing an older revision.
+
+
 0.06  2010-06-04
 
 - *WARNING* - Lots of database changes. Many varchar columns are now text or
