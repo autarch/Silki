@@ -18,6 +18,10 @@
 * Per-wiki user profiles now show some information about the user that is
   specific to the wiki.
 
+* When formatting a page link to another wiki's page, the links were leaking
+  information by showing whether or not the page existed. Now such links
+  simply show up as "Inacessible page" in the HTML output.
+
 
 0.05  2010-06-03
 
