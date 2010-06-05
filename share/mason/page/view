@@ -14,6 +14,14 @@
 <p>
   <a href="<% $page->uri() %>"><% loc('Back to current revision') %></a>
 </p>
+
+<form action="<% $page->uri() %>" method="post" class="flush-left">
+  <input type="hidden" name="x-tunneled-method" value="PUT" />
+  <input type="hidden" name="content" value="<% $revision->content() %>" />
+  <input type="hidden" name="is_restoration_of_revision_number" value="<% $revision->revision_number() %>" />
+  <input type="hidden" name="comment" value="<% loc( 'Restoring revisoin %1', $revision->revision_number() ) %>" />
+  <input class="submit" type="submit" value="<% loc('Restore this revision') %>" />
+</form>
 % }
 
 <div id="attribution">
