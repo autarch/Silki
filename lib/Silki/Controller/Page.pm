@@ -316,9 +316,9 @@ sub file_collection_POST {
 }
 
 sub _handle_upload {
-    my $self   = shift;
-    my $c      = shift;
-    my $upload = shift;
+    my $self     = shift;
+    my $c        = shift;
+    my $upload   = shift;
     my $on_error = shift;
 
     unless ($upload) {
