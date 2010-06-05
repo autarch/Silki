@@ -15,13 +15,21 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: share/mason/wiki/users:6
+msgid "# of Pages Created"
+msgstr ""
+
+#: share/mason/wiki/users:7
+msgid "# of Pages Edited"
+msgstr ""
+
 #: share/mason/wiki/orphans:11
 msgid "# of Revisions"
 msgstr ""
 
 #. ($pronoun_and_be, $article, lc $role)
-#: share/mason/user/profile-in-wiki.mas:2
-msgid "%1 %2 <strong>%3</strong> in this wiki"
+#: share/mason/user/profile-in-wiki.mas:3
+msgid "%1 %2 <strong>%3</strong> of this wiki"
 msgstr ""
 
 #. ($wiki->title()
@@ -35,12 +43,12 @@ msgid "%1 Front Page"
 msgstr ""
 
 #. ($wiki->title()
-#: share/mason/wiki/users:31
+#: share/mason/wiki/users:35
 msgid "%1 Members"
 msgstr ""
 
 #. ($pronoun_and_has, $created_count)
-#: share/mason/user/profile-in-wiki.mas:29
+#: share/mason/user/profile-in-wiki.mas:31
 msgid "%1 created %quant(%2, page, pages) in this wiki."
 msgstr ""
 
@@ -50,17 +58,17 @@ msgid "%1 dashboard"
 msgstr ""
 
 #. ($pronoun_and_has, $edited_count)
-#: share/mason/user/profile-in-wiki.mas:9
+#: share/mason/user/profile-in-wiki.mas:11
 msgid "%1 edited %quant(%2, page, pages) in this wiki."
 msgstr ""
 
 #. ($pronoun_and_has)
-#: share/mason/user/profile-in-wiki.mas:41
+#: share/mason/user/profile-in-wiki.mas:43
 msgid "%1 has not created any pages in this wiki."
 msgstr ""
 
 #. ($pronoun_and_has)
-#: share/mason/user/profile-in-wiki.mas:21
+#: share/mason/user/profile-in-wiki.mas:23
 msgid "%1 has not edited any pages in this wiki."
 msgstr ""
 
@@ -283,7 +291,7 @@ msgid "Created"
 msgstr ""
 
 #. ($revision->creation_datetime()
-#: share/mason/user/profile-in-wiki.mas:35
+#: share/mason/user/profile-in-wiki.mas:37
 msgid "Created %on_datetime(%1)"
 msgstr ""
 
@@ -382,7 +390,7 @@ msgid "Edit this page"
 msgstr ""
 
 #. ($revision->creation_datetime()
-#: share/mason/user/profile-in-wiki.mas:15
+#: share/mason/user/profile-in-wiki.mas:17
 msgid "Edited %on_datetime(%1)"
 msgstr ""
 
@@ -756,12 +764,12 @@ msgid "Preferences"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Role/Controller/User.pm:179
+#: lib/Silki/Role/Controller/User.pm:156
 msgid "Preferences for "
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Role/Controller/User.pm:59 share/mason/user/preferences-form:18
+#: share/mason/user/autohandler:18 share/mason/user/preferences-form:18
 msgid "Preferences for %1"
 msgstr ""
 
@@ -857,10 +865,6 @@ msgstr ""
 msgid "Search Results for \"%1\""
 msgstr ""
 
-#: lib/Silki/Role/Controller/User.pm:56
-msgid "Set your preferences"
-msgstr ""
-
 #: share/mason/wiki/autohandler:30
 msgid "Settings"
 msgstr ""
@@ -920,12 +924,12 @@ msgid "The OpenID you provided is not a valid URI."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Role/Controller/User.pm:139
+#: lib/Silki/Role/Controller/User.pm:116
 msgid "The account for %1 has been disabled."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Role/Controller/User.pm:143
+#: lib/Silki/Role/Controller/User.pm:120
 msgid "The account for %1 has been enabled."
 msgstr ""
 
@@ -983,7 +987,7 @@ msgstr ""
 msgid "The title you provided is already in use by another wiki."
 msgstr ""
 
-#: lib/Silki/Role/Controller/User.pm:207
+#: lib/Silki/Role/Controller/User.pm:184
 msgid "The two passwords you provided did not match"
 msgstr ""
 
@@ -1008,7 +1012,7 @@ msgstr ""
 msgid "This cannot be changed after the wiki is created."
 msgstr ""
 
-#: share/mason/user/profile:9
+#: share/mason/user/profile:19
 msgid "This is a system user, created for use by the wiki software."
 msgstr ""
 
@@ -1044,6 +1048,14 @@ msgstr ""
 
 #: lib/Silki/Controller/User.pm:133
 msgid "This user account has been disabled by a site admin."
+msgstr ""
+
+#: share/mason/user/profile:13
+msgid "This user has not yet activated their account."
+msgstr ""
+
+#: share/mason/user/profile:9
+msgid "This user's account has been disabled by a site admin."
 msgstr ""
 
 #: share/mason/wiki/attachments:5
@@ -1128,11 +1140,6 @@ msgstr ""
 msgid "View"
 msgstr ""
 
-#. ($user->best_name()
-#: lib/Silki/Role/Controller/User.pm:61
-msgid "View and change preferences for %1"
-msgstr ""
-
 #: lib/Silki/Role/Controller/User.pm:36
 msgid "View details about your profile"
 msgstr ""
@@ -1212,7 +1219,7 @@ msgid "Wikis You Are a Member of"
 msgstr ""
 
 #. ($user->best_name()
-#: share/mason/user/profile:24
+#: share/mason/user/profile:36
 msgid "Wikis You and %1 Both Use"
 msgstr ""
 
@@ -1238,7 +1245,7 @@ msgid "Yesterday %at_time(%1)"
 msgstr ""
 
 #. ($user->best_name()
-#: share/mason/user/profile:30
+#: share/mason/user/profile:42
 msgid "You and %1 do not share any wikis in common."
 msgstr ""
 
@@ -1308,12 +1315,12 @@ msgstr ""
 msgid "Your Account Requires Confirmation"
 msgstr ""
 
-#: share/mason/user/profile:18
+#: share/mason/user/profile:30
 msgid "Your Wikis"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Role/Controller/User.pm:174
+#: lib/Silki/Role/Controller/User.pm:151
 msgid "Your account has been activated. Welcome to the site, %1"
 msgstr ""
 
@@ -1326,11 +1333,11 @@ msgstr ""
 msgid "Your name:"
 msgstr ""
 
-#: lib/Silki/Role/Controller/User.pm:55
+#: share/mason/user/autohandler:17
 msgid "Your preferences"
 msgstr ""
 
-#: lib/Silki/Role/Controller/User.pm:177
+#: lib/Silki/Role/Controller/User.pm:154
 msgid "Your preferences have been updated."
 msgstr ""
 
