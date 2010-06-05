@@ -9,8 +9,7 @@
 
 * FT search for attachment content
 
-* Per-wiki user lists, sortable by something interesting (# of pages
-  edited/created, recency of edit, etc).
+* Make per-wiki user lists sortable on something besides name.
 
 * Move/copy pages between wikis
 
