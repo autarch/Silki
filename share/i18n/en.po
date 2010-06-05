@@ -264,7 +264,11 @@ msgstr ""
 msgid "Compare"
 msgstr ""
 
-#: share/mason/page/view:48
+#: share/mason/page/view:66
+msgid "Compare to next revision"
+msgstr ""
+
+#: share/mason/page/view:63
 msgid "Compare to previous revision"
 msgstr ""
 
@@ -338,7 +342,7 @@ msgid "Deleted the file %1"
 msgstr ""
 
 #. ($page->title()
-#: lib/Silki/Controller/Page.pm:93
+#: lib/Silki/Controller/Page.pm:94
 msgid "Deleted the page %1"
 msgstr ""
 
@@ -465,7 +469,7 @@ msgid "History"
 msgstr ""
 
 #. ($page->title()
-#: lib/Silki/Controller/Page.pm:242 share/mason/autohandler:23
+#: lib/Silki/Controller/Page.pm:253 share/mason/autohandler:23
 msgid "History for %1"
 msgstr ""
 
@@ -547,7 +551,7 @@ msgid "Last Revised By"
 msgstr ""
 
 #. ($wiki->uri_for_member( $revision->user()
-#: share/mason/page/view:23
+#: share/mason/page/view:31
 msgid "Last edited by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
@@ -690,7 +694,7 @@ msgid "Page count"
 msgstr ""
 
 #. ($wiki->uri_for_member( $page->user()
-#: share/mason/page/view:35
+#: share/mason/page/view:43
 msgid "Page created by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
@@ -773,7 +777,7 @@ msgid "Preferences for "
 msgstr ""
 
 #. ($user->best_name()
-#: share/mason/user/autohandler:18 share/mason/user/preferences-form:18
+#: share/mason/user/autohandler:19 share/mason/user/preferences-form:18
 msgid "Preferences for %1"
 msgstr ""
 
@@ -839,6 +843,15 @@ msgstr ""
 msgid "Requires SSL?"
 msgstr ""
 
+#: share/mason/page/view:23
+msgid "Restore this revision"
+msgstr ""
+
+#. ($revision->revision_number()
+#: share/mason/page/view:22
+msgid "Restoring revisoin %1"
+msgstr ""
+
 #: share/mason/page/history:9
 msgid "Revision #"
 msgstr ""
@@ -851,13 +864,17 @@ msgid "Revision %1"
 msgstr ""
 
 #. ($revision->revision_number()
-#: share/mason/page/view:73
+#: share/mason/page/view:101
 msgid "Revision %1 of %2"
 msgstr ""
 
 #. ($rev1->revision_number()
 #: share/mason/page/diff:65
 msgid "Revision %1 versus %2"
+msgstr ""
+
+#: share/mason/page/view:56
+msgid "Revisions"
 msgstr ""
 
 #: share/mason/wiki/users:5
@@ -896,7 +913,7 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#: share/mason/lib/forms/page.mas:50 share/mason/lib/forms/user.mas:63 share/mason/page/rename-form:11 share/mason/user/login-form:17
+#: share/mason/lib/forms/page.mas:49 share/mason/lib/forms/user.mas:63 share/mason/page/rename-form:11 share/mason/user/login-form:17
 msgid "Submit"
 msgstr ""
 
@@ -950,7 +967,7 @@ msgstr ""
 msgid "The email hostname you provided is already in use by another domain."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:314
+#: lib/Silki/Controller/Page.pm:325
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
@@ -958,11 +975,11 @@ msgstr ""
 msgid "The file has been uploaded."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:340
+#: lib/Silki/Controller/Page.pm:351
 msgid "The file you uploaded was empty."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:333
+#: lib/Silki/Controller/Page.pm:344
 msgid "The file you uploaded was too large."
 msgstr ""
 
@@ -1028,6 +1045,11 @@ msgstr ""
 msgid "This page does not have any attachments."
 msgstr ""
 
+#. ($page->revision_count()
+#: share/mason/page/view:59
+msgid "This page has %1 revisions."
+msgstr ""
+
 #. ($current_rev)
 #: share/mason/page/history:2
 msgid "This page has %quant(%1,revision,revisions)"
@@ -1038,7 +1060,7 @@ msgid "This page's history of revisions"
 msgstr ""
 
 #. ($wiki->uri_for_member( $revision->user()
-#: share/mason/page/view:28
+#: share/mason/page/view:36
 msgid "This revision was created by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
@@ -1148,11 +1170,19 @@ msgstr ""
 msgid "View details about your profile"
 msgstr ""
 
+#: share/mason/page/view:73
+msgid "View next revision"
+msgstr ""
+
+#: share/mason/page/view:70
+msgid "View previous revision"
+msgstr ""
+
 #: lib/Silki/Markdent/Handler/HTMLStream.pm:161
 msgid "View this file"
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:52 share/mason/page/autohandler:9
+#: lib/Silki/Controller/Page.pm:53 share/mason/page/autohandler:9
 msgid "View this page"
 msgstr ""
 
@@ -1273,7 +1303,7 @@ msgstr ""
 msgid "You cannot remove yourself as an admin."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:326
+#: lib/Silki/Controller/Page.pm:337
 msgid "You did not select a file to upload."
 msgstr ""
 
@@ -1337,7 +1367,7 @@ msgstr ""
 msgid "Your name:"
 msgstr ""
 
-#: share/mason/user/autohandler:17
+#: share/mason/user/autohandler:18
 msgid "Your preferences"
 msgstr ""
 
