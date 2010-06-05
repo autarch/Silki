@@ -20,10 +20,7 @@ sub new {
         'db-port'     => { type => '=s' },
     };
 
-    my $self = $class->SUPER::new(
-        %args,
-        recursive_test_files => 1,
-    );
+    my $self = $class->SUPER::new(%args);
 
     $self->_update_from_existing_config();
 
