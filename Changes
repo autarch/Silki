@@ -1,4 +1,4 @@
-0.06
+0.06  2010-06-04
 
 - *WARNING* - Lots of database changes. Many varchar columns are now text or
   citext. What's citext? It's contrib data type for case-insensitive text,
