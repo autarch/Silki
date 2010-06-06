@@ -1,5 +1,7 @@
 * Print-friendly stylesheet
 
+* Table layout can overlap tags box and other parts of page
+
 * Export
     * set of HTML pages
     * pdf
