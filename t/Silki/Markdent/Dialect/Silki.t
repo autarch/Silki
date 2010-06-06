@@ -115,6 +115,34 @@ EOF
 
 {
     my $wikitext = <<'EOF';
+Some file - \{{file: foo.pdf}}
+EOF
+
+    my $expect = [
+        {
+            type => 'paragraph',
+        },
+        [
+            {
+                type => 'text',
+                text => "Some file - {{file: foo.pdf}}\n",
+            },
+        ],
+    ];
+
+    parse_ok(
+        {
+            dialect       => 'Silki::Markdent::Dialect::Silki',
+            handler_class => 'Silki::Markdent::Handler::MinimalTree',
+        },
+        $wikitext,
+        $expect,
+        'escaped file link is treated as plain text'
+    );
+}
+
+{
+    my $wikitext = <<'EOF';
 a [special pdf]{{file: foo.pdf}}
 EOF
 
