@@ -3,6 +3,9 @@
 - Any page with more than two headers will now have an table of contents at
   the top of the page view.
 
+- Added style for tables in page content (but they still overflow their parent
+  container and mess up the page layout).
+
 
 0.07  2010-06-05
 
