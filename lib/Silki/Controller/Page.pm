@@ -106,13 +106,6 @@ sub edit_form : Chained('_set_page') : PathPart('edit_form') : Args(0) {
 
     $self->_require_permission_for_wiki( $c, $c->stash()->{wiki}, 'Edit' );
 
-    my $page = $c->stash()->{page};
-
-    $c->stash()->{html} = $page->most_recent_revision()->content_as_html(
-        user       => $c->user(),
-        for_editor => 1,
-    );
-
     $c->stash()->{template} = '/page/edit-form';
 }
 
