@@ -236,6 +236,33 @@ a {
     font-size: 90%;
 }
 
+#page-content table {
+    border-top: 1px solid @dark-purple;
+    border-right: 1px solid @dark-purple;
+    border-bottom: 1px solid @dark-purple;
+    border-left: 5px solid @dark-purple;
+    width: 100%;
+
+    th, td {
+        border: none;
+        border-right: 1px dotted #999;
+        vertical-align: top;
+    }
+
+    td {
+        padding: 0.3em 0.5em;
+    }
+
+    thead tr {
+        background-color: @dark-purple;
+        color: white;
+    }
+
+    tbody tr {
+        border-bottom: 1px solid @dark-purple;
+    }
+}
+
 #tags, #incoming-links {
     .rounded-box(6px, @dark-green);
     margin-left: 1em;
