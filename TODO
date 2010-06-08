@@ -6,8 +6,6 @@
     * set of HTML pages
     * pdf
 
-* Auto-TOC for pages with more than X headings
-
 * Inline feed - {{feed: http://.../foo.rss}}
 
 * Inline internal and external (Google) search
