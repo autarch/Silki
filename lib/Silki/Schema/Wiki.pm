@@ -1102,7 +1102,7 @@ sub _BuildActiveUsersSelect {
 #     FROM
 #      "Page" JOIN "PageRevision" ON ("PageRevision"."page_id" = "Page"."page_id")
 #     WHERE
-#      "Page"."ts_text" @@ ?
+#      "Page"."ts_text" @@ to_tsquery(?)
 #       AND
 #      "Page"."wiki_id" = ?
 #       AND
@@ -1144,10 +1144,12 @@ sub text_search {
 
     my $max_revision = $self->_MaxRevisionSelect();
 
+    my $ts_query = Fey::Literal::Function->new( 'TO_TSQUERY', $query );
+
     my $rank = Fey::Literal::Function->new(
         'TS_RANK',
         $pst_t->column('ts_text'),
-        $query,
+        $ts_query,
     );
 
     $rank->set_alias_name('rank');
@@ -1157,7 +1159,7 @@ sub text_search {
     $search_select->select( $page_t, $page_revision_t, $rank )
            ->from( $page_t, $page_revision_t )
            ->from( $page_t, $pst_t )
-           ->where( $pst_t->column('ts_text'), '@@', Fey::Placeholder->new() )
+           ->where( $pst_t->column('ts_text'), '@@', $ts_query )
            ->and( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
            ->and( $page_revision_t->column('revision_number'),
                   '=', $max_revision )
@@ -1171,7 +1173,7 @@ sub text_search {
     my $result = Fey::Literal::Function->new(
         'TS_HEADLINE',
         Fey::Literal::Term->new( q{title || E'\n' || content}, ),
-        $query,
+        $ts_query,
         "StartSel = $marker, StopSel = $marker",
     );
     $result->set_alias_name('result');
@@ -1215,7 +1217,7 @@ sub text_search {
         ],
         select => $select,
         dbh    => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
-        bind_params   => [ $query, $self->wiki_id() ],
+        bind_params   => [ $self->wiki_id() ],
         attribute_map => \%attribute_map,
     );
 }
