@@ -289,7 +289,8 @@ sub content_as_html {
     }
 
     if ( $counter && $counter->count() > 2 ) {
-        my $toc = Text::TOC::HTML->new();
+        my $toc = Text::TOC::HTML->new(
+            filter => sub { $_[0]->tagName() =~ /^h[1-4]$/i } );
 
         $toc->add_file( file => $page->title(), content => $buffer );
 
