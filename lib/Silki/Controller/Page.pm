@@ -74,8 +74,10 @@ sub page_GET_html {
     $c->stash()->{page}                = $page;
     $c->stash()->{revision}            = $revision;
     $c->stash()->{is_current_revision} = 1;
-    $c->stash()->{html}                = $revision->content_as_html(
-        user => $c->user(),
+
+    $c->stash()->{html} = $revision->content_as_html(
+        user        => $c->user(),
+        include_toc => 1,
     );
 
     $c->stash()->{template} = '/page/view';
@@ -206,8 +208,10 @@ sub revision : Chained('_set_page') : PathPart('revision') : Args(1) {
     $c->stash()->{page}                = $page;
     $c->stash()->{revision}            = $revision;
     $c->stash()->{is_current_revision} = 0;
-    $c->stash()->{html}                = $revision->content_as_html(
-        user => $c->user(),
+
+    $c->stash()->{html} = $revision->content_as_html(
+        user        => $c->user(),
+        include_toc => 1,
     );
 
     $c->stash()->{template} = '/page/view';

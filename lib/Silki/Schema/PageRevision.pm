@@ -16,6 +16,7 @@ use Silki::Config;
 use Silki::Markdent::Dialect::Silki::BlockParser;
 use Silki::Markdent::Dialect::Silki::SpanParser;
 use Silki::Markdent::Handler::ExtractWikiLinks;
+use Silki::Markdent::Handler::HeaderCount;
 use Silki::Markdent::Handler::HTMLStream;
 use Silki::Schema;
 use Silki::Schema::Page;
@@ -23,6 +24,7 @@ use Silki::Schema::PageLink;
 use Silki::Schema::PendingPageLink;
 use Silki::Types qw( Bool );
 use Storable qw( nfreeze thaw );
+use Text::TOC::HTML;
 
 use Fey::ORM::Table;
 use MooseX::Params::Validate qw( validated_list validated_hash );
@@ -242,9 +244,12 @@ sub content_as_html {
     my $self = shift;
     my (%p) = validated_hash(
         \@_,
-        user       => { isa => 'Silki::Schema::User' },
-        for_editor => { isa => Bool, default => 0 },
+        user        => { isa => 'Silki::Schema::User' },
+        include_toc => { isa => Bool, default => 0 },
+        for_editor  => { isa => Bool, default => 0 },
     );
+
+    my $include_toc = delete $p{include_toc};
 
     my $page = $self->page();
 
@@ -258,14 +263,22 @@ sub content_as_html {
         %p,
     );
 
+    my $final_handler = $html;
+    my $counter;
+
+    if ( $include_toc ) {
+        $counter = Silki::Markdent::Handler::HeaderCount->new();
+        $final_handler = Markdent::Handler::Multiplexer->new( handlers => [ $html, $counter ] );
+    }
+
     if ( $self->revision_number()
         == $page->most_recent_revision()->revision_number() ) {
-        my $captured = thaw( $page->cached_content() );
 
-        $captured->replay_events($html);
+        my $captured = thaw( $page->cached_content() );
+        $captured->replay_events($final_handler);
     }
     else {
-        my $filter = Markdent::Handler::HTMLFilter->new( handler => $html );
+        my $filter = Markdent::Handler::HTMLFilter->new( handler => $final_handler );
 
         my $parser = Markdent::Parser->new(
             dialect => 'Silki::Markdent::Dialect::Silki',
@@ -273,6 +286,18 @@ sub content_as_html {
         );
 
         $parser->parse( markdown => $self->content() );
+    }
+
+    if ( $counter && $counter->count() > 2 ) {
+        my $toc = Text::TOC::HTML->new();
+
+        $toc->add_file( file => $page->title(), content => $buffer );
+
+        $buffer
+            = q{<div id="table-of-contents">} . "\n"
+            . $toc->html_for_toc() . "\n"
+            . '</div>' . "\n"
+            . $toc->html_for_document( $page->title() );
     }
 
     return $buffer;
