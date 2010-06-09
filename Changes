@@ -6,7 +6,7 @@
 - Added style for tables in page content (but they still overflow their parent
   container and mess up the page layout).
 
-- We need to call TO_TSQUERY on full text query text in order to get stemming
+- We need to call TO_TSQUERY on full text queries in order to get stemming
   (and probably other tweaks) on the search terms.
 
 - In-memory file handles were not handling unicode data correctly, which could
