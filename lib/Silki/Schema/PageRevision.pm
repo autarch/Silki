@@ -5,6 +5,7 @@ use warnings;
 use namespace::autoclean;
 
 use Algorithm::Diff qw( sdiff );
+use Encode qw( decode );
 use List::AllUtils qw( all any );
 use Markdent::CapturedEvents;
 use Markdent::Handler::CaptureEvents;
@@ -254,7 +255,7 @@ sub content_as_html {
     my $page = $self->page();
 
     my $buffer = q{};
-    open my $fh, '>', \$buffer;
+    open my $fh, '>:utf8', \$buffer;
 
     my $html = Silki::Markdent::Handler::HTMLStream->new(
         output => $fh,
@@ -287,6 +288,8 @@ sub content_as_html {
 
         $parser->parse( markdown => $self->content() );
     }
+
+    $buffer = decode( 'utf8', $buffer );
 
     if ( $counter && $counter->count() > 2 ) {
         my $toc = Text::TOC::HTML->new(
