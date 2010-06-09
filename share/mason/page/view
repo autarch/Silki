@@ -2,7 +2,9 @@
   <div class="yui-u first">
     <h1><& SELF:title, %ARGS &></h1>
 
-    <% $html | n %>
+    <div id="page-content">
+      <% $html | n %>
+    </div>
   </div>
   <div class="yui-u">
     <& tags.mas, page => $page, can_edit => $can_edit &>
