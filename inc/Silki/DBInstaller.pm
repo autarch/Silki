@@ -295,11 +295,21 @@ EOF
 sub _build_db {
     my $self = shift;
 
-    my $schema_file = file( 'schema', 'Silki.sql' );
+    my $schema_file;
+    my $import_citext;
+
+    if (@_) {
+        $schema_file   = shift;
+        $import_citext = shift;
+    }
+    else {
+        $schema_file = file( 'schema', 'Silki.sql' );
+        $import_citext = 1;
+    }
 
     $self->_msg("Creating schema from $schema_file");
 
-    $self->_import_citext();
+    $self->_import_citext() if $import_citext;
 
     $self->_run_pg_bin( flags => [ '-f', $schema_file ] );
 }
@@ -338,7 +348,7 @@ sub _run_pg_bin {
         (
         $self->_pg_bin_args(),
         @default_flags,
-        @{ $p{flags} }
+        @{ $p{flags} || [] }
         );
 
     system(@command);
@@ -395,18 +405,22 @@ sub _migrate_db {
     my $self         = shift;
     my $from_version = shift;
     my $to_version   = shift;
+    my $skip_dump    = shift;
 
-    my $tmp_file = dir( File::Spec->tmpdir(), "silki-db-dump-$$.sql" );
+    unless ($skip_dump) {
+        my $tmp_file = dir( File::Spec->tmpdir(), "silki-db-dump-$$.sql" );
 
-    $self->_msg("Dumping Silki database to $tmp_file before running migrations");
+        $self->_msg(
+            "Dumping Silki database to $tmp_file before running migrations");
 
-    $self->_run_pg_bin(
-        command => 'pg_dump',
-        flags   => [
-            '-C', $self->name(),
-            '-f', $tmp_file
-        ],
-    );
+        $self->_run_pg_bin(
+            command => 'pg_dump',
+            flags   => [
+                '-C', $self->name(),
+                '-f', $tmp_file
+            ],
+        );
+    }
 
     for my $version ( ( $from_version + 1 ) .. $to_version ) {
         $self->_msg("Running database migration scripts to version $version");

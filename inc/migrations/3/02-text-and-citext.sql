@@ -38,8 +38,20 @@ ALTER TABLE "User"
 ALTER TABLE "Account"
       ALTER COLUMN name TYPE citext;
 
+ALTER TABLE "Account"
+      DROP CONSTRAINT valid_name;
+
+ALTER TABLE "Account"
+      ADD CONSTRAINT valid_name CHECK ( name != '' );
+
 ALTER TABLE "Wiki"
       ALTER COLUMN title TYPE citext;
+
+ALTER TABLE "Wiki"
+      DROP CONSTRAINT valid_title;
+
+ALTER TABLE "Wiki"
+      ADD CONSTRAINT valid_title CHECK ( title != '' );
 
 DROP DOMAIN hostname;
 
@@ -52,6 +64,18 @@ ALTER TABLE "Domain"
 ALTER TABLE "Domain"
       ALTER COLUMN email_hostname TYPE hostname;
 
+ALTER TABLE "Domain"
+      DROP CONSTRAINT valid_web_hostname;
+
+ALTER TABLE "Domain"
+      ADD CONSTRAINT valid_web_hostname CHECK ( web_hostname != '' );
+
+ALTER TABLE "Domain"
+      DROP CONSTRAINT valid_email_hostname;
+
+ALTER TABLE "Domain"
+      ADD CONSTRAINT valid_email_hostname CHECK ( email_hostname != '' );
+
 ALTER TABLE "Locale"
       ALTER COLUMN locale_code TYPE TEXT;
 
@@ -60,6 +84,12 @@ ALTER TABLE "Country"
 
 ALTER TABLE "Country"
       ALTER COLUMN locale_code TYPE TEXT;
+
+ALTER TABLE "Country"
+      DROP CONSTRAINT valid_name;
+
+ALTER TABLE "Country"
+      ADD CONSTRAINT valid_name CHECK ( name != '' );
 
 ALTER TABLE "TimeZone"
       ALTER COLUMN olson_name TYPE TEXT;
@@ -75,6 +105,15 @@ ALTER TABLE "Permission"
 
 ALTER TABLE "Page"
       ALTER COLUMN title TYPE citext;
+
+ALTER TABLE "Page"
+      ALTER COLUMN uri_path TYPE citext;
+
+ALTER TABLE "Page"
+      DROP CONSTRAINT valid_title;
+
+ALTER TABLE "Page"
+      ADD CONSTRAINT valid_title CHECK ( title != '' );
 
 DROP FUNCTION update_or_insert_page_searchable_text(id INT8, title VARCHAR(255), content TEXT);
 
@@ -120,11 +159,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+ALTER TABLE "Comment"
+      ALTER COLUMN title TYPE text;
+
 ALTER TABLE "Tag"
       ALTER COLUMN tag TYPE citext;
 
-ALTER TABLE "Comment"
-      ALTER COLUMN title TYPE citext;
+ALTER TABLE "Tag"
+      DROP CONSTRAINT valid_tag;
+
+ALTER TABLE "Tag"
+      ADD CONSTRAINT valid_tag CHECK ( tag != '' );
 
 ALTER TABLE "PendingPageLink"
       ALTER COLUMN to_page_title TYPE citext;
@@ -142,6 +187,12 @@ ALTER TABLE "File"
 
 ALTER TABLE "File"
       ALTER COLUMN mime_type TYPE citext;
+
+ALTER TABLE "File"
+      DROP CONSTRAINT valid_filename;
+
+ALTER TABLE "File"
+      ADD CONSTRAINT valid_filename CHECK ( filename != '' );
 
 ALTER TABLE "SystemLog"
       ALTER COLUMN message TYPE TEXT;
