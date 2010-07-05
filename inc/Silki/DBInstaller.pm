@@ -118,21 +118,23 @@ sub update_or_install_db {
     my $self = shift;
 
     unless ( $self->_can_connect() ) {
-    my $msg = "\n  Cannot connect to Postgres with the connection info provided:\n\n";
-    $msg .= sprintf( "    %13s = %s\n", 'database name', $self->name() );
+        my $msg
+            = "\n  Cannot connect to Postgres with the connection info provided:\n\n";
+        $msg .= sprintf( "    %13s = %s\n", 'database name', $self->name() );
 
-    for my $key ( qw( username password host port ) ) {
-        my $val = $self->$key();
-        next unless defined $val;
+        for my $key (qw( username password host port )) {
+            my $val = $self->$key();
+            next unless defined $val;
 
-        $msg .= sprintf( "  %13s = %s\n", $key, $val );
-    }
+            $msg .= sprintf( "  %13s = %s\n", $key, $val );
+        }
 
-    $msg .= "\n  You can change connection info settings by passing arguments to 'perl Build.PL'\n";
-    $msg .= "  See the INSTALL documentation for details.\n\n";
+        $msg
+            .= "\n  You can change connection info settings by passing arguments to 'perl Build.PL'\n";
+        $msg .= "  See the INSTALL documentation for details.\n\n";
 
-    warn $msg;
-    return;
+        warn $msg;
+        return;
     }
 
     my $version = $self->_get_installed_version();
