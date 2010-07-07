@@ -10,7 +10,9 @@
 % while ( my ( $user, $role ) = $users->next() ) {
   <tbody>
     <tr class="<% $users->index() % 2 ? 'odd' : 'even' %>">
-      <td><a href="<% $wiki->uri_for_member($user) %>"><% $user->best_name() %></a></td>
+      <td>
+        <& /lib/user-link.mas, user => $user, wiki => $wiki &>
+      </td>
       <td><% loc( $role->name() ) %></td>
       <td><% $wiki->pages_created_by_user_count($user) %></td>
       <td><% $wiki->pages_edited_by_user_count($user) %></td>

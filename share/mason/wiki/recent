@@ -12,7 +12,9 @@
     <tr class="<% $pages->index() % 2 ? 'odd' : 'even' %>">
       <td><a href="<% $revision->uri() %>"><% $page->title() %></a> (<% loc( 'revision %1', $revision->revision_number() ) %>)</td>
       <td><% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $revision->creation_datetime() ) ) %></td>
-      <td><a href="<% $wiki->uri( view => 'user/' . $revision->user()->user_id() ) %>"><% $revision->user()->best_name() %></a></td>
+      <td>
+        <& /lib/user-link.mas, user => $revision->user(), wiki => $wiki &>
+      </td>
       <td>
 %   if ( $revision->revision_number() > 1 ) {
         <a href="<% $page->uri( view => 'diff', query => { revision1 => $revision->revision_number() - 1, revision2 => $revision->revision_number() } ) %>"><% loc('see changes') %></a>
