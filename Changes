@@ -6,6 +6,10 @@
   you need to save, it might be easier to simply drop the existing schema and
   re-install.
 
+- Added the ability for each user to upload an image for their profile. This
+  is used in their profile, and in various places that refer to users (recent
+  changes, page history, etc.)
+
 
 0.08  2010-06-08
 
