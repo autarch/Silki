@@ -29,17 +29,22 @@
 <div id="attribution">
 % if ( $revision->revision_number() > 1 ) {
 %   if ($is_current_revision) {
+<& /lib/user-image.mas, user => $revision->user() &>
 <% loc( 'Last edited by <a href="%html(%1)">%html(%2)</a> %on_datetime(%3).',
         $wiki->uri_for_member( $revision->user() ),
         $revision->user()->best_name(),
         $c->user->set_time_zone_for_dt( $revision->creation_datetime() ) ) | n %>
 %   } else {
+<& /lib/user-image.mas, user => $revision->user() &>
 <% loc( 'This revision was created by <a href="%html(%1)">%html(%2)</a> %on_datetime(%3).',
         $wiki->uri_for_member( $revision->user() ),
         $revision->user()->best_name(),
         $c->user->set_time_zone_for_dt( $revision->creation_datetime() ) ) | n %>
 %   }
 <br />
+% }
+% if ( $revision->revision_number() == 1 || $revision->user_id() != $page->user_id() ) {
+<& /lib/user-image.mas, user => $page->user() &>
 % }
 <% loc( 'Page created by <a href="%html(%1)">%html(%2)</a> %on_datetime(%3).',
         $wiki->uri_for_member( $page->user() ),

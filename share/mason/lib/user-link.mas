@@ -1,8 +1,4 @@
-<a href="<% $uri %>">\
-% if ( my $image = $user->image() ) {
-<img src="<% $image->uri( view => 'mini' ) %>" />\
-% }
- <% $user->best_name() %></a>
+<a href="<% $uri %>"><& /lib/user-image.mas, user => $user &> <% $user->best_name() %></a>
 
 <%args>
 $user

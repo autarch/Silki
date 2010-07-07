@@ -1,0 +1,10 @@
+<img src="<% $image->uri( view => 'mini' ) %>" />
+
+<%args>
+$user
+</%args>
+
+<%init>
+my $image = $user->image()
+    or return;
+</%init>
