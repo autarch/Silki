@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
+use File::MimeInfo qw( mimetype );
 use Silki::I18N qw( loc );
 
 use Moose::Role -traits => 'MooseX::MethodAttributes::Role::Meta::Role';
@@ -131,7 +132,25 @@ sub user_PUT {
         my @errors = $self->_check_passwords_match( \%update );
 
         unless (@errors) {
-            eval { $user->update( %update, user => $c->user(), ); };
+            my $upload = $c->request()->upload('image');
+
+            eval {
+                $user->update( %update, user => $c->user(), );
+
+                if ($upload) {
+                    if ( my $image = $user->image() ) {
+                        $image->delete();
+                    }
+
+                    Silki::Schema::UserImage->insert(
+                        user_id   => $user->user_id(),
+                        mime_type => mimetype( $upload->tempname() ),
+                        file_size => $upload->size(),
+                        contents =>
+                            do { my $fh = $upload->fh(); local $/; <$fh> },
+                    );
+                }
+            };
 
             my $e = $@;
             die $e if $e && !ref $e;

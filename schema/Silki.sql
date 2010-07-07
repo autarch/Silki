@@ -37,6 +37,16 @@ CREATE TABLE "User" (
                      OR is_system_user )
 );
 
+CREATE TABLE "UserImage" (
+       user_id                  INT8            PRIMARY KEY,
+       mime_type                citext          NOT NULL,
+       file_size                INTEGER         NOT NULL,
+       contents                 BYTEA           NOT NULL,
+       creation_datetime        TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       CONSTRAINT valid_mime_type
+           CHECK ( mime_type = 'image/gif' OR mime_type = 'image/png' OR mime_type = 'image/jpeg' )
+);       
+
 CREATE TABLE "Account" (
        account_id               SERIAL8         PRIMARY KEY,
        name                     citext          UNIQUE  NOT NULL,
@@ -361,6 +371,10 @@ ALTER TABLE "User" ADD CONSTRAINT "User_locale_code"
   FOREIGN KEY ("locale_code") REFERENCES "Locale" ("locale_code")
   ON DELETE RESTRICT ON UPDATE CASCADE;
 
+ALTER TABLE "UserImage" ADD CONSTRAINT "UserImage_user_id"
+  FOREIGN KEY ("user_id") REFERENCES "User" ("user_id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
 ALTER TABLE "AccountAdmin" ADD CONSTRAINT "AccountAdmin_account_id"
   FOREIGN KEY ("account_id") REFERENCES "Account" ("account_id")
   ON DELETE CASCADE ON UPDATE CASCADE;
@@ -497,4 +511,4 @@ ALTER TABLE "SystemLog" ADD CONSTRAINT "SystemLog_page_id"
   FOREIGN KEY ("page_id") REFERENCES "Page" ("page_id")
   ON DELETE SET NULL ON UPDATE CASCADE;
 
-INSERT INTO "Version" (version) VALUES (3);
+INSERT INTO "Version" (version) VALUES (4);

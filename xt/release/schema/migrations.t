@@ -12,7 +12,8 @@ use Silki::DBInstaller;
 use Test::Differences;
 use Test::More;
 
-my $max_version = 3;
+my $min_version = 1;
+my $max_version = 4;
 
 my $inst
     = Silki::DBInstaller->new( name => 'SilkiMigrationTest', quiet => 1, );
@@ -22,7 +23,7 @@ my $tempdir = dir( tempdir( CLEANUP => 1 ) );
 
 my %fresh;
 
-for my $version ( 1 .. $max_version ) {
+for my $version ( $min_version .. $max_version ) {
     $inst->_drop_and_create_db();
 
     my $import_citext = $version >= 3 ? 1 : 0;
@@ -38,10 +39,14 @@ for my $version ( 1 .. $max_version ) {
     $fresh{$version} = $dump;
 }
 
-for my $version ( 1 .. $max_version - 1 ) {
+for my $version ( $min_version .. $max_version - 1 ) {
     $inst->_drop_and_create_db();
 
-    $inst->_build_db( $testdir->file( 'Silki.sql.v' . $version ) );
+    my $import_citext = $version >= 3 ? 1 : 0;
+    $inst->_build_db(
+        $testdir->file( 'Silki.sql.v' . $version ),
+        $import_citext,
+    );
 
     for my $next_version ( $version + 1 .. $max_version ) {
         my $from_version = $next_version - 1;

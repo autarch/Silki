@@ -2,6 +2,19 @@
 return $m->call_next();
 </%init>
 
+<%method page_title>
+<h1>\
+% if ( my $image = $user->image() ) {
+<img id="profile-image" src="<% $image->uri( view => 'thumbnail' ) %>" />\
+% }
+<& SELF:title, %ARGS &></h1>
+
+<%args>
+$user
+</%args>
+
+</%method>
+
 <%method local_nav>
   <ul>
     <li>

@@ -1,5 +1,5 @@
 <&| /lib/filter/form.mas, objects => [ $user ? $user : () ], exclude => [ qw( password password2 ) ] &>
-<form action="<% $action %>" method="post">
+<form action="<% $action %>" method="post" enctype="multipart/form-data">
 % if ($user) {
   <input type="hidden" name="x-tunneled-method" value="PUT" />
 %   if ( $user->activation_key() ) {
@@ -58,6 +58,12 @@
         </optgroup>
 % }
       </select>
+    </div>
+
+    <div class="form-item">
+      <label for="image" class="for-field"><% loc('Profile Image:') %></label>
+
+      <input id="image" type="file" name="image" />
     </div>
 
     <input type="submit" class="submit" value="<% loc('Submit') %>" />

@@ -51,6 +51,11 @@ has_table( $Schema->table('User') );
 
 has_one 'creator' => ( table => $Schema->table('User') );
 
+has_one 'image' => (
+    table => $Schema->table('UserImage'),
+    undef => 1,
+);
+
 has_many 'pages' => ( table => $Schema->table('Page') );
 
 has best_name => (

@@ -43,7 +43,7 @@
 <& .messages &>
 
 % if ( $m->request_comp()->attr('show_title') ) {
-          <h1><& SELF:title, %ARGS &></h1>
+          <& SELF:page_title, %ARGS &>
 % }
 
 % $m->call_next();
@@ -91,3 +91,7 @@ my @messages = $c->session_object()->messages();
 return unless @messages;
 </%init>
 </%def>
+
+<%method page_title>
+<h1><& SELF:title, %ARGS &></h1>
+</%method>

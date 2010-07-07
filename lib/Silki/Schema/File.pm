@@ -4,17 +4,12 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
-use autodie;
-use Digest::SHA qw( sha256_hex );
 use File::MimeInfo qw( describe );
-use File::stat;
-use Image::Magick;
-use Image::Thumbnail;
 use List::AllUtils qw( any );
 use Silki::Config;
 use Silki::I18N qw( loc );
 use Silki::Schema;
-use Silki::Types qw( Str Bool File Maybe );
+use Silki::Types qw( Bool );
 
 use Fey::ORM::Table;
 
@@ -57,38 +52,7 @@ has is_browser_displayable_image => (
     builder  => '_build_is_browser_displayable_image',
 );
 
-has file_on_disk => (
-    is       => 'ro',
-    isa      => File,
-    init_arg => undef,
-    lazy     => 1,
-    builder  => '_build_file_on_disk',
-    clearer  => '_clear_file_on_disk',    # for testing
-);
-
-has small_image_file => (
-    is       => 'ro',
-    isa      => Maybe[File],
-    init_arg => undef,
-    lazy     => 1,
-    builder  => '_build_small_image_file',
-);
-
-has thumbnail_file => (
-    is       => 'ro',
-    isa      => Maybe[File],
-    init_arg => undef,
-    lazy     => 1,
-    builder  => '_build_thumbnail_file',
-);
-
-has _filename_with_hash => (
-    is       => 'ro',
-    isa      => Str,
-    init_arg => undef,
-    lazy     => 1,
-    builder  => '_build_filename_with_hash',
-);
+with 'Silki::Role::Schema::File';
 
 sub _system_log_values_for_delete {
     my $self = shift;
@@ -185,82 +149,23 @@ sub mime_type_description_for_lang {
     }
 }
 
-sub _build_file_on_disk {
-    my $self = shift;
-
-    my $dir = Silki::Config->new()->files_dir();
-
-    my $file = $dir->file( $self->_filename_with_hash() );
-
-    return $file
-        if -f $file
-            && ( File::stat::populate( CORE::stat(_) ) )->mtime()
-            >= $self->creation_datetime()->epoch();
-
-    open my $fh, '>', $file;
-    print {$fh} $self->contents();
-    close $fh;
-
-    return $file;
-}
-
-sub _build_small_image_file {
+around _build_small_image_file => sub {
+    my $orig = shift;
     my $self = shift;
 
     return unless $self->is_browser_displayable_image();
 
-    my $dir = Silki::Config->new()->small_image_dir();
+    return $self->$orig(@_);
+};
 
-    my $file = $dir->file( $self->_filename_with_hash() );
-
-    return $file
-        if -f $file
-            && ( File::stat::populate( CORE::stat(_) ) )->mtime()
-            >= $self->creation_datetime()->epoch();
-
-    Image::Thumbnail->new(
-        module     => 'Image::Magick',
-        size       => '150x400',
-        create     => 1,
-        inputpath  => $self->file_on_disk()->stringify(),
-        outputpath => $file->stringify(),
-    );
-
-    return $file;
-}
-
-sub _build_thumbnail_file {
+around _build_thumbnail_file => sub {
+    my $orig = shift;
     my $self = shift;
 
     return unless $self->is_browser_displayable_image();
 
-    my $dir = Silki::Config->new()->thumbnails_dir();
-
-    my $file = $dir->file( $self->_filename_with_hash() );
-
-    return $file
-        if -f $file
-            && ( File::stat::populate( CORE::stat(_) ) )->mtime()
-            >= $self->creation_datetime()->epoch();
-
-    Image::Thumbnail->new(
-        module     => 'Image::Magick',
-        size       => '75x200',
-        create     => 1,
-        inputpath  => $self->file_on_disk()->stringify(),
-        outputpath => $file->stringify(),
-    );
-
-    return $file;
-}
-
-sub _build_filename_with_hash {
-    my $self = shift;
-
-    return join q{-},
-        sha256_hex( $self->file_id(), Silki::Config->new()->secret() ),
-        $self->filename();
-}
+    return $self->$orig(@_);
+};
 
 __PACKAGE__->meta()->make_immutable();
 

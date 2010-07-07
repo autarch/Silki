@@ -4,6 +4,8 @@
 </p>
 % }
 
+<div style="clear: both"></div>
+
 % if ( $user->is_disabled() ) {
 <p>
 <% loc( q{This user's account has been disabled by a site admin.} ) %>

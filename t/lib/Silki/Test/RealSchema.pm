@@ -3,6 +3,8 @@ package Silki::Test::RealSchema;
 use strict;
 use warnings;
 
+use lib 'inc';
+
 use DBD::Pg;
 use DBI;
 use File::Slurp qw( read_file );
@@ -32,7 +34,6 @@ sub import {
     }
     else {
         _recreate_database();
-        _run_ddl();
     }
 
     require Silki::Config;
@@ -71,24 +72,18 @@ sub _database_exists {
 }
 
 sub _recreate_database {
-    my $dbh = DBI->connect(
-        'dbi:Pg:dbname=template1',
-        q{}, q{}, {
-            RaiseError         => 1,
-            PrintError         => 0,
-            PrintWarn          => 1,
-            ShowErrorStatement => 1,
-        },
+    diag('Creating SilkiTest database');
+
+    require Silki::DBInstaller;
+
+    my $inst = Silki::DBInstaller->new(
+        name  => 'SilkiTest',
+        drop  => 1,
+        quiet => 1,
     );
 
-    diag('Recreating SilkiTest database');
-
-    eval { $dbh->do(q{DROP DATABASE "SilkiTest"}) };
-    $dbh->do(q{CREATE DATABASE "SilkiTest" ENCODING 'UTF8'});
-
-    $dbh->disconnect();
-
-    return 1;
+    $inst->_drop_and_create_db();
+    $inst->_build_db();
 }
 
 sub _clean_tables {
@@ -129,28 +124,6 @@ sub _clean_tables {
             push @tables, $table;
         }
     }
-}
-
-sub _run_ddl {
-    my $dbh = DBI->connect(
-        'dbi:Pg:dbname=SilkiTest',
-        q{}, q{}, {
-            RaiseError         => 1,
-            PrintError         => 0,
-            PrintWarn          => 1,
-            ShowErrorStatement => 1,
-        },
-    );
-
-    $dbh->do('SET CLIENT_MIN_MESSAGES = ERROR');
-
-    # We cannot simply split on two newlines or we end up splitting in the
-    # middle of plpgsql functions.
-    for my $stmt ( _ddl_statements() ) {
-        $dbh->do($stmt);
-    }
-
-    $dbh->disconnect();
 }
 
 {

@@ -4,9 +4,11 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
+use File::MimeInfo qw( mimetype );
 use Silki::I18N qw( loc );
 use Silki::Schema::TimeZone;
 use Silki::Schema::User;
+use Silki::Schema::UserImage;
 use Silki::Util qw( string_is_empty );
 
 use Moose;
@@ -239,16 +241,32 @@ sub users_collection_POST {
 
     my %insert = $c->request()->user_params();
 
+    my $upload = $c->request()->upload('image');
+
     my @errors = $self->_check_passwords_match(\%insert);
 
     $insert{requires_activation} = 1;
 
     my $user;
     unless (@errors) {
-        $user = eval {
-            Silki::Schema::User->insert(
-                %insert,
-                user => $c->user(),
+        eval {
+            Silki::Schema->RunInTransaction(
+                sub {
+                    $user = Silki::Schema::User->insert(
+                        %insert,
+                        user => $c->user(),
+                    );
+
+                    if ($upload) {
+                        Silki::Schema::UserImage->insert(
+                            user_id   => $user->user_id(),
+                            mime_type => mimetype( $upload->tempname() ),
+                            file_size => $upload->size(),
+                            contents =>
+                                do { my $fh = $upload->fh(); local $/; <$fh> },
+                        );
+                    }
+                }
             );
         };
 
