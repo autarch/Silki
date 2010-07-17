@@ -12,6 +12,13 @@ use Silki::DBInstaller;
 use Test::Differences;
 use Test::More;
 
+BEGIN {
+    unless ( $ENV{RELEASE_TESTING} ) {
+        require Test::More;
+        Test::More::plan( skip_all => 'these tests are for $msg' );
+    }
+}
+
 my $min_version = 1;
 my $max_version = 4;
 
