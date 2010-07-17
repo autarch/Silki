@@ -1,4 +1,4 @@
-0.09
+0.09  2010-07-16
 
 - The migrations in previous releases were buggy. If you've migrated a schema,
   the inc/migations/fixup.sql file contains the SQL statements necessary to
