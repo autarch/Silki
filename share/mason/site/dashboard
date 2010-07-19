@@ -19,14 +19,14 @@
 %   if ($public_wiki_count) {
 <p>
   <% loc( 'You are not logged in, and can only see public wikis.
-           Please <a href="%html(%1)">login</a> to see wikis
+           Please <a href="%html(%1)">log in</a> to see wikis
            of which you are a member.',
            $c->domain()->application_uri( path => '/user/login_form' ) ) | n %>
 </p>
 %   } else {
 <p>
   <% loc( 'This site has no public wikis available.
-           Please <a href="%html(%1)">login</a>
+           Please <a href="%html(%1)">log in</a>
            if you have an account.', $c->domain()->application_uri( path => '/user/login_form' ) ) | n %>
 </p>
 %   }
