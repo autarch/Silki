@@ -350,7 +350,7 @@ F</usr/local/share/silki>, this would look like:
 
 All other URIs should simply be passed to the Silki fastcgi script:
 
-  <LocationMatch "^(?!/images|/[^/]+/(css|js)).+">
+  <LocationMatch "^(?!/images|/[^/]+/(css|js))">
       XSendFile on
       XSendFileAllowAbove on
 
