@@ -42,7 +42,7 @@ the database, etc.
 =item * --share-dir
 
 By default, the share files are installed in the Perl module tree. If you
-something else, you can specify an alternate location.
+prefer a different location, you can specify an alternate location.
 
 =item * --cache-dir
 
