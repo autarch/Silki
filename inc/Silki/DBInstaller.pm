@@ -190,7 +190,7 @@ sub _get_installed_version {
     my $dbh = eval { $self->_make_dbh() }
         or return;
 
-    my $row = $dbh->selectrow_arrayref(q{SELECT version FROM "Version"});
+    my $row = eval { $dbh->selectrow_arrayref(q{SELECT version FROM "Version"}) };
 
     return $row->[0] if $row;
 }
