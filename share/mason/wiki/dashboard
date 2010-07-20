@@ -56,7 +56,7 @@
       <div class="dashboard-item">
         <h2>Active Users</h2>
 
-        <ul>
+        <ul id="active-users">
 % while ( my $user = $users->next() ) {
           <li>
             <& /lib/user-link.mas, user => $user, wiki => $wiki &>
