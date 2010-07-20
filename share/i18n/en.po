@@ -264,11 +264,11 @@ msgstr ""
 msgid "Compare"
 msgstr ""
 
-#: share/mason/page/view:73
+#: share/mason/page/view:78
 msgid "Compare to next revision"
 msgstr ""
 
-#: share/mason/page/view:70
+#: share/mason/page/view:75
 msgid "Compare to previous revision"
 msgstr ""
 
@@ -551,7 +551,7 @@ msgid "Last Revised By"
 msgstr ""
 
 #. ($wiki->uri_for_member( $revision->user()
-#: share/mason/page/view:34
+#: share/mason/page/view:35
 msgid "Last edited by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
@@ -694,7 +694,7 @@ msgid "Page count"
 msgstr ""
 
 #. ($wiki->uri_for_member( $page->user()
-#: share/mason/page/view:50
+#: share/mason/page/view:54
 msgid "Page created by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
@@ -868,7 +868,7 @@ msgid "Revision %1"
 msgstr ""
 
 #. ($revision->revision_number()
-#: share/mason/page/view:108
+#: share/mason/page/view:113
 msgid "Revision %1 of %2"
 msgstr ""
 
@@ -877,7 +877,7 @@ msgstr ""
 msgid "Revision %1 versus %2"
 msgstr ""
 
-#: share/mason/page/view:63
+#: share/mason/page/view:68
 msgid "Revisions"
 msgstr ""
 
@@ -1016,7 +1016,7 @@ msgstr ""
 msgid "The two passwords you provided did not match"
 msgstr ""
 
-#: lib/Silki/Controller/User.pm:150
+#: lib/Silki/Controller/User.pm:153
 msgid "The username or password you provided was not valid."
 msgstr ""
 
@@ -1050,7 +1050,7 @@ msgid "This page does not have any attachments."
 msgstr ""
 
 #. ($page->revision_count()
-#: share/mason/page/view:66
+#: share/mason/page/view:71
 msgid "This page has %1 revisions."
 msgstr ""
 
@@ -1064,7 +1064,7 @@ msgid "This page's history of revisions"
 msgstr ""
 
 #. ($wiki->uri_for_member( $revision->user()
-#: share/mason/page/view:40
+#: share/mason/page/view:43
 msgid "This revision was created by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
@@ -1072,11 +1072,11 @@ msgstr ""
 #: share/mason/site/dashboard:28
 msgid ""
 "This site has no public wikis available.\n"
-"           Please <a href=\"%html(%1)\">login</a>\n"
+"           Please <a href=\"%html(%1)\">log in</a>\n"
 "           if you have an account."
 msgstr ""
 
-#: lib/Silki/Controller/User.pm:135
+#: lib/Silki/Controller/User.pm:137
 msgid "This user account has been disabled by a site admin."
 msgstr ""
 
@@ -1174,11 +1174,11 @@ msgstr ""
 msgid "View details about your profile"
 msgstr ""
 
-#: share/mason/page/view:80
+#: share/mason/page/view:85
 msgid "View next revision"
 msgstr ""
 
-#: share/mason/page/view:77
+#: share/mason/page/view:82
 msgid "View previous revision"
 msgstr ""
 
@@ -1295,7 +1295,7 @@ msgstr ""
 #: share/mason/site/dashboard:22
 msgid ""
 "You are not logged in, and can only see public wikis.\n"
-"           Please <a href=\"%html(%1)\">login</a> to see wikis\n"
+"           Please <a href=\"%html(%1)\">log in</a> to see wikis\n"
 "           of which you are a member."
 msgstr ""
 
