@@ -24,9 +24,10 @@ sub new {
         PSGI => {
             description => 'PSGI app (silki.psgi)',
             requires    => {
-                'Catalyst::Engine::PSGI' => '0',
-                'Plack'                  => '0',
-                'Plack::Builder'         => '0',
+                'Catalyst::Engine::PSGI'          => '0',
+                'Plack'                           => '0',
+                'Plack::Builder'                  => '0',
+                'Plack::Middleware::ReverseProxy' => '0',
             },
         },
     };
