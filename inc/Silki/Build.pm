@@ -22,7 +22,7 @@ sub new {
 
     $args{auto_features} = {
         PSGI => {
-            description => 'PSGI app',
+            description => 'PSGI app (silki.psgi)',
             requires    => {
                 'Catalyst::Engine::PSGI' => '0',
                 'Plack'                  => '0',
