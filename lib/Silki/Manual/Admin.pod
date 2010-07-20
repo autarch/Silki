@@ -327,16 +327,13 @@ as it will be quite slow.
 Silki uses the X-Sendfile header when users download attachments. This means
 you will need to configure your web server to support this.
 
-=head2 Apache 2 and FastCGI
+=head2 Apache 2 and Starman
 
 Since there are so many options, we'll cover just one in depth, running Silki
-undef FastCGI with Apache 2.
+with Apache 2 serving static content, and L<Starman> as the app server.
 
 In order to support the X-Sendfile header, you will need the
 L<mod_xsendfile|http://tn123.ath.cx/mod_xsendfile/> Apache module installed.
-
-The examples below assume you are using
-L<mod_fcgid|http://httpd.apache.org/mod_fcgid/mod/mod_fcgid.html>.
 
 You should configure Apache to serve the css, images, and javascript files
 statically. In production, Silki prepends the css and javascript URIs with the
@@ -348,40 +345,56 @@ F</usr/local/share/silki>, this would look like:
   AliasMatch ^/[^/]+/js(.+)  /usr/local/share/silki/js$1
   AliasMatch ^/images(.+)    /usr/local/share/silki/images$1
 
-All other URIs should simply be passed to the Silki fastcgi script:
+All other URIs should simply be passed to the Starman server. For testing, you
+can start the server from the command line:
 
-  <LocationMatch "^(?!/images|/[^/]+/(css|js))">
-      XSendFile on
-      XSendFileAllowAbove on
+  sudo -u www-data \
+      starman --listen 127.0.0.1:13000 \
+              --workers 5 \
+              --preload-app \
+              /usr/local/bin/silki.psgi
 
-      SetHandler fcgid-script
-      Options +ExecCGI
+You can adjust the value of C<--listen>, but it is recommended that you only
+listen on the localhost interface. There's no reason to expose the app server
+to the world at large. You can also adjust C<--workers> as needed.
 
-      FcgidWrapper /usr/local/bin/silki_fastcgi.pl virtual
-  </LocationMatch>
+You also need to enable support for the X-Sendfile header in your Apache
+config file:
 
-Note that we also turned on C<XSendFile> and
-C<XSendFileAllowAbove>. Attachments are written to the cache directory and
-served via the C<X-Sendfile> header.
+  XSendFile on
+  XSendFileAllowAbove on
+
+Finally, you can use mod_rewrite to pass all non-static URIs to the Starman
+server:
+
+  RewriteEngine On
+  RewriteRule !^/images    - [C]
+  RewriteRule !^/[^/]+/css - [C]
+  RewriteRule !^/[^/]+/js  - [C]
+  RewriteRule (.*)         http://localhost:13000$1 [P,L]
 
 The whole thing, wrapped in a virtual host, looks like this:
 
   <VirtualHost *:80>
       ServerName  silki.test
 
+      DocumentRoot /usr/local/share/silki
+
+      ErrorLog /var/log/apache2/error.log
+      CustomLog /var/log/apache2/access.log combined
+
       AliasMatch ^/[^/]+/css(.+) /usr/local/share/silki/css$1
       AliasMatch ^/[^/]+/js(.+)  /usr/local/share/silki/js$1
       AliasMatch ^/images(.+)    /usr/local/share/silki/images$1
 
-      <LocationMatch "^(?!/images|/[^/]+/(css|js)).+">
-          XSendFile on
-          XSendFileAllowAbove on
+      XSendFile on
+      XSendFileAllowAbove on
 
-          SetHandler fcgid-script
-          Options +ExecCGI
-
-          FcgidWrapper /usr/local/bin/silki_fastcgi.pl virtual
-      </LocationMatch>
+      RewriteEngine On
+      RewriteRule !^/images    - [C]
+      RewriteRule !^/[^/]+/css - [C]
+      RewriteRule !^/[^/]+/js  - [C]
+      RewriteRule (.*)         http://localhost:13000$1 [P,L]
   </VirtualHost>
 
 =cut
