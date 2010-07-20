@@ -1,3 +1,20 @@
+0.10
+
+- Silki::Manual::Admin now describes deploying Silki with Apache 2 & Starman,
+  a setup I've actually been able to make work, unlike using mod_fastcgid.
+
+- Added bin/silki.psgi
+
+- When Silki was installed in prior versions, the user it created was not
+  marked as a system admin. If you have an old install, you can fix this
+  manually via psql:
+
+    UPDATE "User" SET is_system_admin = 't' where email_address = ...
+
+- Attempting to log in with a non-existent username caused a server error. Now
+  it simply returns a sane error to the user.
+
+
 0.09  2010-07-16
 
 - The migrations in previous releases were buggy. If you've migrated a schema,
