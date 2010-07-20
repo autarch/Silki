@@ -1,4 +1,4 @@
-<a href="<% $uri %>"><& /lib/user-image.mas, user => $user &> <% $user->best_name() %></a>
+<a href="<% $uri %>"><& /lib/user-image.mas, user => $user &></a><a href="<% $uri %>"><% $user->best_name() %></a>
 
 <%args>
 $user
