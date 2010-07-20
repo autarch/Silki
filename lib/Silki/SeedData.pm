@@ -78,12 +78,12 @@ sub _make_user {
     my $pw = 'changeme';
 
     my $user = Silki::Schema::User->insert(
-        display_name  => $name,
-        email_address => $email,
-        password      => $pw,
-        time_zone     => 'America/Chicago',
-        is_admin      => ( $is_admin ? 1 : 0 ),
-        user          => Silki::Schema::User->SystemUser(),
+        display_name    => $name,
+        email_address   => $email,
+        password        => $pw,
+        time_zone       => 'America/Chicago',
+        is_system_admin => ( $is_admin ? 1 : 0 ),
+        user            => Silki::Schema::User->SystemUser(),
     );
 
     if ($VERBOSE) {
