@@ -20,6 +20,17 @@ sub new {
         'db-port'     => { type => '=s' },
     };
 
+    $args{auto_features} = {
+        PSGI => {
+            description => 'PSGI app',
+            requires    => {
+                'Catalyst::Engine::PSGI' => '0',
+                'Plack'                  => '0',
+                'Plack::Builder'         => '0',
+            },
+        },
+    };
+
     my $self = $class->SUPER::new(%args);
 
     $self->_update_from_existing_config();
