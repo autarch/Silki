@@ -55,7 +55,7 @@ case $1 in
     ;;
 
     status)
-        status_of_proc -p $PIDFILE  "system-wide PulseAudio" && exit 0 || exit $?
+        status_of_proc -p $PIDFILE "starman $APP" "Silki Starman server" && exit 0 || exit $?
     ;;
 
     *)
