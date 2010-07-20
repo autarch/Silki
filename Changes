@@ -5,11 +5,8 @@
 
 - Added bin/silki.psgi
 
-- When Silki was installed in prior versions, the user it created was not
-  marked as a system admin. If you have an old install, you can fix this
-  manually via psql:
-
-    UPDATE "User" SET is_system_admin = 't' where email_address = ...
+- Added a sample init script (which works on Ubuntu 10.04) at
+  eg/ubuntu-init.d/silki.
 
 - Attempting to log in with a non-existent username caused a server error. Now
   it simply returns a sane error to the user.
