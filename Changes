@@ -12,6 +12,8 @@
 - Attempting to log in with a non-existent username caused a server error. Now
   it simply returns a sane error to the user.
 
+- Improved the layout wherever user image thumbnails are used, and added a
+  default user icon to make the UI more consistent.
 
 0.09  2010-07-16
 
