@@ -1,4 +1,4 @@
-0.10
+0.10  2010-07-20
 
 - Silki::Manual::Admin now describes deploying Silki with Apache 2 & Starman,
   a setup I've actually been able to make work. I thought I had mod_fastcgid
