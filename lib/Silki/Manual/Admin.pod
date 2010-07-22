@@ -211,13 +211,13 @@ C<SILKI_CONFIG> environment variable.
 =head1 GETTING STARTED
 
 When you first install Silki, it will create a single admin user and a wiki
-for you. It assumes that the wiki will be run using the hostname of the system
-on which it is installed. Don't worry, you can change this.
+for you.
 
-The user account is "admin@E<lt>domainE<gt>". The default password is "changeme".
+The user account is "admin@E<lt>domainE<gt>". The default password is
+"changeme".
 
 Once you log in, you can change the account's email, name, and password. You
-can also switch to usign an OpenID login if you prefer.
+can also switch to using an OpenID login if you prefer.
 
 Wikis cannot be renamed, but you can delete the wiki Silki created for you,
 called "My Wiki".
