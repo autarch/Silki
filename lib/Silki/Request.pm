@@ -19,6 +19,11 @@ sub user_params {
     $p{password2} = $params->{password2}
         unless string_is_empty( $params->{password2} );
 
+    for my $field (qw( is_admin is_system_user is_disabled )) {
+        delete $p{$field}
+            unless exists $params->{$field};
+    }
+
     return %p;
 }
 
