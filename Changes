@@ -9,6 +9,9 @@
 - When a user without edit permission viewed a page with no tags, the tags box
   was just empty, which looks weird.
 
+- You can now pass --hostname to the Build.PL to pick the default web hostname
+  for your Silki installation.
+
 
 0.10  2010-07-20
 
