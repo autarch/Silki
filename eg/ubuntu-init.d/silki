@@ -30,7 +30,7 @@ fi
 
 silki_start () {
     log_daemon_msg "Starting Silki Starman server"
-    start-stop-daemon -p $PIDFILE --startas $STARMAN --start -- --listen $LISTEN --workers $WORKERS --preload-app --daemonize --pid $PIDFILE $APP
+    start-stop-daemon -p $PIDFILE --chuid $USER --startas $STARMAN --start -- --listen $LISTEN --workers $WORKERS --preload-app --daemonize --pid $PIDFILE $APP
     log_end_msg $?
 }
 
