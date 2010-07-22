@@ -10,6 +10,9 @@
 %   }
       </li>
 % }
+% unless ( $can_edit || $tags->index() ) {
+      <li><% loc('This page does not have any tags yet.') %></li>
+% }
     </ul>
 
 <%args>
