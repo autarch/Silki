@@ -99,6 +99,8 @@ sub ACTION_install {
     $self->dispatch('database');
 
     $self->dispatch('config');
+
+    $self->dispatch('clean_mason_cache');
 }
 
 sub ACTION_share {
@@ -185,6 +187,27 @@ sub ACTION_config {
     }
 
     $config->write_config_file( file => $config_file, values => \%values );
+}
+
+sub ACTION_clean_mason_cache {
+    my $self = shift;
+
+    require Silki::Config;
+
+    my $config = Silki::Config->instance();
+
+    my $cache_dir = $config->cache_dir();
+
+    if ( -w $cache_dir ) {
+        require File::Path;
+
+        $self->log_info("  Deleting your mason cache dir at $cache_dir\n\n");
+
+        File::Path::rmtree( $cache_dir->subdir('mason'), 0, 0 );
+    }
+    else {
+        $self->log_warning("  Cannot delete your mason cache dir at $cache_dir\n  You may want to do this manually\n\n");
+    }
 }
 
 1;
