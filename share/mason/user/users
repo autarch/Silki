@@ -95,3 +95,7 @@ $include_disabled
 <%attr>
 sidebar => [ 'admin' ]
 </%attr>
+
+<%flags>
+inherit => '/autohandler'
+</%flags>
