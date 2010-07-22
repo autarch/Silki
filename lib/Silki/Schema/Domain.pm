@@ -124,7 +124,8 @@ sub EnsureRequiredDomainsExist {
 sub _FindOrCreateDefaultDomain {
     my $class = shift;
 
-    my $hostname = Silki::Config->new()->system_hostname();
+    my $hostname = $ENV{SILKI_HOSTNAME}
+        || Silki::Config->new()->system_hostname();
 
     my $domain = $class->new( web_hostname => $hostname );
     return $domain if $domain;
