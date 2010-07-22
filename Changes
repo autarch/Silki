@@ -12,6 +12,9 @@
 - You can now pass --hostname to the Build.PL to pick the default web hostname
   for your Silki installation.
 
+- Editing a user's preferences set their is_admin flag to false if the user
+  doing the editing was also an admin.
+
 
 0.10  2010-07-20
 
