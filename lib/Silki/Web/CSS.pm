@@ -74,7 +74,7 @@ sub _build_lessc_path {
     my $self = shift;
 
     my $bin = which('lessc');
-    returm $bin if $bin;
+    return $bin if $bin;
 
     my $default = '/var/lib/gems/1.8/bin/lessc';
     return $default if -f $default;
