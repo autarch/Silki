@@ -2,6 +2,13 @@
 
 - The PSGI feature did not list Plack::Middleware::ReverseProxy as a prereq.
 
+- Improved the example ubuntu init script. It no longer runs as root, and the
+  pid is stored in a directory under /var/run owned by the $USER in the init
+  script (www-data).
+
+- When a user without edit permission viewed a page with no tags, the tags box
+  was just empty, which looks weird.
+
 
 0.10  2010-07-20
 
