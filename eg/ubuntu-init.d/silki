@@ -17,7 +17,8 @@
 . /lib/lsb/init-functions
 
 LISTEN="127.0.0.1:13000"
-PIDFILE="/var/run/silki-starman.pid"
+RUNDIR="/var/run/silki"
+PIDFILE="$RUNDIR/starman.pid"
 STARMAN="/usr/local/bin/starman"
 APP="/usr/local/bin/silki.psgi"
 USER="www-data"
@@ -30,6 +31,12 @@ fi
 
 silki_start () {
     log_daemon_msg "Starting Silki Starman server"
+
+    if [ ! -d $RUNDIR ] ; then
+        mkdir $RUNDIR;
+        chown $USER $RUNDIR;
+    fi
+
     start-stop-daemon -p $PIDFILE --chuid $USER --startas $STARMAN --start -- --listen $LISTEN --workers $WORKERS --preload-app --daemonize --pid $PIDFILE $APP
     log_end_msg $?
 }
