@@ -66,7 +66,7 @@ has max_upload_size => (
         config_path => [ 'Silki', 'max_upload_size' ],
         description =>
             'The maximum size of an upload in bytes. Defaults to 10 megabytes.',
-        key_order    => 2,
+        key_order => 2,
     },
 );
 
@@ -94,7 +94,7 @@ has serve_static_files => (
         config_path => [ 'Silki', 'static' ],
         description =>
             'If this is true, the Silki application will serve static files itself. Defaults to false when is_production is true.',
-        key_order         => 4,
+        key_order => 4,
     },
 );
 
@@ -108,7 +108,7 @@ has secret => (
         config_path => [ 'Silki', 'secret' ],
         description =>
             'A secret used as salt for digests in some URIs and for user authentication cookies. Changing this will invalidate all existing cookies.',
-        key_order    => 5,
+        key_order => 5,
     },
     writer => '_set_secret',
 );
@@ -159,7 +159,7 @@ has database_name => (
         config_path => [ 'database', 'name' ],
         description =>
             'The name of the database. Defaults to Silki.',
-        key_order    => 1,
+        key_order => 1,
     },
     writer => '_set_database_name',
 );
