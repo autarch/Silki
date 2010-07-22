@@ -1049,6 +1049,10 @@ msgstr ""
 msgid "This page does not have any attachments."
 msgstr ""
 
+#: share/mason/page/tag-list.mas:14
+msgid "This page does not have any tags yet."
+msgstr ""
+
 #. ($page->revision_count()
 #: share/mason/page/view:71
 msgid "This page has %1 revisions."
