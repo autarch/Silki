@@ -15,6 +15,8 @@
 - Editing a user's preferences set their is_admin flag to false if the user
   doing the editing was also an admin.
 
+- The list of all users (/users) was broken.
+
 
 0.10  2010-07-20
 
