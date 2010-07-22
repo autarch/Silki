@@ -1,3 +1,9 @@
+0.12
+
+- The mason cache directory will be deleted when Silki is installed, to ensure
+  that templates are re-read.
+
+
 0.11  2010-07-22
 
 - The PSGI feature did not list Plack::Middleware::ReverseProxy as a prereq.
