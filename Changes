@@ -3,7 +3,10 @@
 - The mason cache directory will be deleted when Silki is installed, to ensure
   that templates are re-read.
 
-- A few spots that linked to users did not show the user's image.
+- Several pages that linked to users did not show the user's image. Now all
+  links to a user should include the user's image.
+
+- Small improvement to diff display.
 
 - When a search didn't find any results, the search page did not make this
   clear.
