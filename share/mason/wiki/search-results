@@ -1,3 +1,4 @@
+<&| /lib/filter/skip-empty-table.mas &>
 <table class="standard-table">
   <thead>
     <tr>
@@ -19,6 +20,12 @@
       <td colspan="3"><% $result->body_for_display() | n %></td>
     </tr>
   </tbody>
+% }
+</&>
+% unless ( $search_results->index() ) {
+<p>
+  <% loc('There were no matches for your search.') %>
+</p>
 % }
 
 <%doc>
