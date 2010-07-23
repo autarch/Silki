@@ -457,14 +457,12 @@ table.revision-diff > tbody > tr > td {
     vertical-align: top;
 }
 
-table.revision-diff > tbody > tr.diff-changed del {
-    color: #900;
-    font-style: normal;
+table.revision-diff > tbody > tr.diff-changed > td {
+    background-color: #ddf;
 }
 
-table.revision-diff > tbody > tr.diff-changed ins {
-    color: #090;
-    font-style: normal;
+table.revision-diff > tbody > tr.diff-changed > td {
+    background-color: #eee;
 }
 
 table.revision-diff > tbody > tr > td.diff-removed {
@@ -476,6 +474,7 @@ table.revision-diff > tbody > tr > td.diff-added {
 }
 
 table.revision-diff > tbody > tr > td.marker {
+    background-color: white;
     font-weight: bold;
     text-align: center;
 }
