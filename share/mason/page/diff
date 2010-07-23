@@ -18,6 +18,7 @@
   <tbody>
     <tr class="attribution">
       <td>
+        <& /lib/user-image.mas, user => $rev1->user() &>
         <% loc( 'Created by <a href="%html(%1)">%html(%2)</a> %on_datetime(%3).',
                 $page->wiki()->uri_for_member( $rev1->user() ),
                 $rev1->user()->best_name(),
@@ -25,6 +26,7 @@
       </td>
       <td></td>
       <td>
+        <& /lib/user-image.mas, user => $rev2->user() &>
         <% loc( 'Created by <a href="%html(%1)">%html(%2)</a> %on_datetime(%3).',
                 $page->wiki()->uri_for_member( $rev2->user() ),
                 $rev2->user()->best_name(),
