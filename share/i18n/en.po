@@ -308,7 +308,7 @@ msgid "Created On"
 msgstr ""
 
 #. ($page->wiki()
-#: share/mason/page/diff:22 share/mason/page/diff:29
+#: share/mason/page/diff:23 share/mason/page/diff:31
 msgid "Created by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
@@ -873,7 +873,7 @@ msgid "Revision %1 of %2"
 msgstr ""
 
 #. ($rev1->revision_number()
-#: share/mason/page/diff:65
+#: share/mason/page/diff:67
 msgid "Revision %1 versus %2"
 msgstr ""
 
@@ -1457,14 +1457,14 @@ msgstr ""
 msgid "site admin"
 msgstr ""
 
-#: share/mason/page/diff:44
+#: share/mason/page/diff:46
 msgid "text was added"
 msgstr ""
 
-#: share/mason/page/diff:44
+#: share/mason/page/diff:46
 msgid "text was changed"
 msgstr ""
 
-#: share/mason/page/diff:44
+#: share/mason/page/diff:46
 msgid "text was removed"
 msgstr ""
