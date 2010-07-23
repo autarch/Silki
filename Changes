@@ -5,6 +5,9 @@
 
 - A few spots that linked to users did not show the user's image.
 
+- When a search didn't find any results, the search page did not make this
+  clear.
+
 
 0.11  2010-07-22
 
