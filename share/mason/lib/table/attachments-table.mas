@@ -36,7 +36,7 @@
       <td>
         <% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $file->creation_datetime() ) ) %>
       <td>
-        <a href="<% $wiki->uri_for_member( $file->user() ) %>"><% $file->user()->best_name() %></a>
+        <& /lib/user-link.mas, user => $file->user(), wiki => $wiki &>
       </td>
       <td>
 %   if ( $c->user()->has_permission_in_wiki( wiki => $file->wiki(), permission => Silki::Schema::Permission->Delete() ) ) {
