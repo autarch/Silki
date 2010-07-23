@@ -23,7 +23,7 @@
         <% $page->revision_count() %>
       </td>
       <td>
-        <a href="<% $wiki->uri( view => 'user/' . $page->most_recent_revision()->user_id() ) %>"><% $page->most_recent_revision()->user()->best_name() %></a>
+        <& /lib/user-link.mas, user => $page->most_recent_revision()->user(), wiki => $wiki &>
       </td>
     </tr>
   </tbody>
