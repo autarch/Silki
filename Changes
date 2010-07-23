@@ -1,4 +1,4 @@
-0.12
+0.12  2010-07-22
 
 - The mason cache directory will be deleted when Silki is installed, to ensure
   that templates are re-read.
