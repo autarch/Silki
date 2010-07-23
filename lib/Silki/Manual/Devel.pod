@@ -51,9 +51,13 @@ English.
 
 =item * F<dev-bin/initialize-db>
 
-This rebuild the Silki schema and populates it with some initial users and
-wikis. Run it with the C<--help> flag to see options. If you want to drop the
-existing schema you'll have to pass the C<--drop> flag.
+This rebuilds the Silki schema and optionally populates it with some initial
+users and wikis. Run it with the C<--help> flag to see options. If you want to
+drop the existing schema you'll have to pass the C<--drop> flag.
+
+Typically, you'll run it like this:
+
+  > dev-bin/initialize-db --name Silki --drop --populate
 
 Be careful not to run this on a system where you have a production install of
 Silki! You could easily destroy a real database.
@@ -62,8 +66,8 @@ Silki! You could easily destroy a real database.
 
 Some of the tests create a L<Fey::Schema> object without talking to
 Postgres. This is faster than using L<Fey::Loader>. This is done by using
-Storable to store a copy of the schema in a file. You can regenerate this copy
-by running this command.
+Storable to store a copy of the schema in a file. You can regenerate the
+serialized schema by running this command.
 
 =item * F<dev-bin/populate-db>
 
