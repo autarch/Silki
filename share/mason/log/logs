@@ -12,7 +12,7 @@
 
 % while ( my $log = $logs->next() ) {
   <tbody>
-    <tr class="has-child-row <% $logs->index() % 2 ? 'odd' : 'even' %>">
+    <tr class="<% defined $log->data_blob() ? 'has-child-row' : q{} %> <% $logs->index() % 2 ? 'odd' : 'even' %>">
       <td><% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $log->log_datetime() ) ) %></td>
       <td><a href="<% $log->user()->uri() %>"><% $log->user()->best_name() %></a></td>
       <td>
@@ -27,9 +27,12 @@
       </td>
       <td><% $log->message() %></td>
       <td>
+%   if ( defined $log->data_blob() ) {
         <a href="#" class="toggle-more" id="toggle-more-<% $log->log_id() %>"><% loc('more') %></a>
+%   }
       </td>
     </tr>
+%   if ( defined $log->data_blob() ) {
     <tr class="<% $logs->index() % 2 ? 'odd' : 'even' %>">
       <td colspan="6">
         <pre id="more-<% $log->log_id() %>"
@@ -45,6 +48,7 @@
                              ->Dump() %></pre>
       </td>
     </tr>
+%   }
   </tbody>
 % }
 
