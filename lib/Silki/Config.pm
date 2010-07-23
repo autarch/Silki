@@ -60,7 +60,7 @@ has max_upload_size => (
     isa     => Int,
     lazy    => 1,
     default => sub {
-        $_[0]->_from_config_path('max_upload_size') || ( 10 * 1000 * 1000 );
+        $_[0]->_from_config_path('max_upload_size') || ( 10 * 1024 * 1024 );
     },
     description => {
         config_path => [ 'Silki', 'max_upload_size' ],
