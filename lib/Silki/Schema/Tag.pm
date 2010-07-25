@@ -30,14 +30,14 @@ sub _base_uri_path {
     return $self->wiki()->_base_uri_path() . '/tag/' . uri_escape( $self->tag() );
 }
 
-sub as_hash {
+sub serialize {
     my $self = shift;
 
-    return (
+    return {
         tag_id => $self->tag_id(),
         tag    => $self->tag(),
         uri    => $self->uri(),
-    );
+    };
 }
 
 __PACKAGE__->meta()->make_immutable();
