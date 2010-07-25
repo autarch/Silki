@@ -441,7 +441,7 @@ sub _tags_as_entity_response {
 
     my $page = $c->stash()->{page};
 
-    my @tags = map { $_->serialize() } $page->tags()->all();
+    my @tags = map { { $_->as_hash() } } $page->tags()->all();
     $_->{'delete_uri'} = $page->uri( view => 'tag/' . $_->{tag} )
         for @tags;
 
