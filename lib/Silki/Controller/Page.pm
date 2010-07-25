@@ -130,7 +130,6 @@ sub page_PUT {
 
     my $page = $c->stash()->{page};
 
-
     my $params = $c->request()->params();
     my %p
         = map { $_ => $params->{$_} }
