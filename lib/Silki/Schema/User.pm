@@ -1106,6 +1106,28 @@ sub _BuildAllUsersSelect {
     return $select;
 }
 
+{
+    my @attr = qw(
+        user_id
+        email_address
+        username
+        display_name
+        openid_uri
+        is_system_user
+        is_disabled
+        creation_datetime_raw
+        last_modified_datetime_raw
+        time_zone
+        locale_code
+    );
+
+    sub serialize {
+        my $self = shift;
+
+        return { map { $_ => $self->$_() } @attr };
+    }
+}
+
 __PACKAGE__->meta()->make_immutable();
 
 1;

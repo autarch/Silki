@@ -694,6 +694,22 @@ sub delete_tag {
     return;
 }
 
+{
+    my @attr = qw(
+        page_id
+        title
+        user_id
+        is_archived
+        can_be_renamed
+    );
+
+    sub serialize {
+        my $self = shift;
+
+        return { map { $_ => $self->$_() } @attr };
+    }
+}
+
 __PACKAGE__->meta()->make_immutable();
 
 1;

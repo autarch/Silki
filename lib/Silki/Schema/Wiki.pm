@@ -3,15 +3,20 @@ package Silki::Schema::Wiki;
 use strict;
 use warnings;
 use namespace::autoclean;
+use autodie;
 
+use Archive::Tar::Wrapper;
 use Data::Dumper qw( Dumper );
 use DateTime::Format::Pg;
 use Fey::Literal;
 use Fey::Object::Iterator::FromSelect;
 use Fey::SQL;
+use File::Spec;
 use List::AllUtils qw( uniq );
+use Path::Class qw( dir file );
 use Silki::Config;
 use Silki::I18N qw( loc );
+use Silki::JSON;
 use Silki::Schema;
 use Silki::Schema::Domain;
 use Silki::Schema::File;
@@ -22,7 +27,7 @@ use Silki::Schema::TextSearchResult;
 use Silki::Schema::UserWikiRole;
 use Silki::Schema::WantedPage;
 use Silki::Schema::WikiRolePermission;
-use Silki::Types qw( Bool HashRef Int Str ValidPermissionType );
+use Silki::Types qw( Bool CodeRef HashRef Int Str ValidPermissionType );
 
 use Fey::ORM::Table;
 use MooseX::ClassAttribute;
@@ -1707,6 +1712,120 @@ sub _BuildMinRevisionSelect {
                );
 
     return $min_revision;
+}
+
+sub export {
+    my $self = shift;
+    my ($log) = validated_list(
+        \@_,
+        log => { isa => CodeRef, optional => 1 },
+    );
+
+    return $self->_make_archive($log);
+}
+
+sub _make_archive {
+    my $self    = shift;
+    my $log     = shift;
+
+    my $tar = Archive::Tar::Wrapper->new();
+
+    my $dir = dir( 'export-of-' . $self->short_name() );
+
+    my $revision_count = 0;
+
+    my $pages = $self->pages();
+
+    my %users;
+
+    while ( my $page = $pages->next() ) {
+
+        my $page_dir = $dir->subdir( 'pages', $page->uri_path() );
+
+        my $page_file = $page_dir->file('page.json');
+
+        my $page_json = Silki::JSON->Encode( $page->serialize() );
+        $tar->add(
+            $page_file,
+            \$page_json,
+            { binmode => ':utf8' }
+        );
+
+        my $revisions = $page->revisions();
+        while ( my $revision = $revisions->next() ) {
+
+            my $revision_file = $page_dir->file(
+                'revision-' . $revision->revision_number() . '.json' );
+
+            my $revision_json = Silki::JSON->Encode( $revision->serialize() );
+
+            $tar->add(
+                $revision_file,
+                \$revision_json,
+                { binmode => ':utf8' }
+            );
+
+            $revision_count++;
+
+            if ( $log && $revision_count % 50 == 0 ) {
+                $log->(
+                    loc(
+                        'Processed %1 revisions (of %quant( %2, page, pages ))',
+                        $revision_count,
+                        $pages->index(),
+                    )
+                );
+            }
+
+            $users{ $revision->user_id() } = 1;;
+        }
+    }
+
+    my $members = $self->members();
+    while ( my ( $user, $role ) = $members->next() ) {
+
+        delete $users{ $user->user_id() };
+
+        my $user_file
+            = $dir->file( 'users', 'user-' . $user->user_id() . '.json' );
+
+        my $ser = $user->serialize();
+        $ser->{role_in_wiki} = $role->name();
+
+        my $user_json = Silki::JSON->Encode($ser);
+
+        $tar->add(
+            $user_file,
+            \$user_json,
+            { binmode => ':utf8' }
+        );
+    }
+
+    for my $user (
+        map { Silki::Schema::User->new( user_id => $_ ) }
+        keys %users
+        ) {
+
+        my $user_file
+            = $dir->file( 'users', 'user-' . $user->user_id() . '.json' );
+
+        my $user_json = Silki::JSON->Encode( $user->serialize() );
+
+        $tar->add(
+            $user_file,
+            \$user_json,
+            { binmode => ':utf8' }
+        );
+    }
+
+    my $archive = file(
+        File::Spec->tmpdir(),
+        'export-of-' . $self->short_name() . '.tar.gz'
+    );
+
+    $tar->write( $archive, 'compress' );
+
+    return $archive;
 }
 
 __PACKAGE__->meta()->make_immutable();

@@ -56,6 +56,19 @@ EOF
         $html,
         'content as html - older revision'
     );
+
+    is_deeply(
+        $rev1->serialize(), {
+            page_id         => $rev1->page_id(),
+            revision_number => 1,
+            content => 'This is a page with a link to a ((Pending Page))',
+            user_id => $user->user_id(),
+            creation_datetime_raw => $rev1->creation_datetime_raw(),
+            comment               => undef,
+            is_restoration_of_revision_number => undef,
+        },
+        'serialize method'
+    );
 }
 
 {
