@@ -27,7 +27,7 @@ use Silki::Schema::TextSearchResult;
 use Silki::Schema::UserWikiRole;
 use Silki::Schema::WantedPage;
 use Silki::Schema::WikiRolePermission;
-use Silki::Types qw( Bool CodeRef HashRef Int Str ValidPermissionType );
+use Silki::Types qw( Bool CodeRef File HashRef Int Str ValidPermissionType );
 
 use Fey::ORM::Table;
 use MooseX::ClassAttribute;
@@ -1714,6 +1714,21 @@ sub _BuildMinRevisionSelect {
     return $min_revision;
 }
 
+{
+    my @attr = qw(
+        wiki_id
+        title
+        short_name
+        creation_datetime_raw
+    );
+
+    sub serialize {
+        my $self = shift;
+
+        return { map { $_ => $self->$_() } @attr };
+    }
+}
+
 sub export {
     my $self = shift;
     my ($log) = validated_list(
@@ -1731,6 +1746,16 @@ sub _make_archive {
     my $tar = Archive::Tar::Wrapper->new();
 
     my $dir = dir( 'export-of-' . $self->short_name() );
+
+    my $wiki_json = Silki::JSON->Encode( $self->serialize() );
+
+    my $wiki_file = $dir->file('wiki.json');
+
+    $tar->add(
+        $wiki_file,
+        \$wiki_json,
+        { binmode => ':utf8' }
+    );
 
     my $revision_count = 0;
 

@@ -26,6 +26,7 @@ my $wiki = Silki::Schema::Wiki->new( title => 'First Wiki' );
         Silki::Schema::User->All()->all();
 
     my %expect = (
+        wiki  => $wiki->serialize(),
         pages => \@pages,
         users => \@users,
     );
@@ -79,6 +80,7 @@ sub _test_archive {
 
     $tar->list_reset();
 
+    my $wiki;
     my %pages;
     my %revisions;
     my @users;
@@ -87,19 +89,27 @@ sub _test_archive {
 
         my $data = Silki::JSON->Decode( scalar read_file($path) );
 
-        if ( $path =~ m{/([^/]+)/page.json} ) {
+        if ( $path =~ m{/([^/]+)/page\.json} ) {
             $pages{$1} = $data;
         }
-        elsif ( $path =~ m{/([^/]+)/revision-\d+.json} ) {
+        elsif ( $path =~ m{/([^/]+)/revision-\d+\.json} ) {
             push @{ $revisions{$1} }, $data;
         }
-        elsif ( $path =~ m{/([^/]+)/user-\d+.json} ) {
+        elsif ( $path =~ m{/users/user-\d+\.json} ) {
             push @users, $data;
+        }
+        elsif ( $path =~ m{/wiki\.json} ) {
+            $wiki = $data;
         }
         else {
             fail("Found bizarre path in tarball: $path");
         }
     }
+
+    is_deeply(
+        $wiki, $expect->{wiki},
+        'wiki data in exported tarball'
+    );
 
     my @combined;
     for my $uri_path ( sort keys %pages ) {
