@@ -109,17 +109,7 @@ sub _clean_tables {
         push @tables, $table;
     }
 
-    for my $table (@tables) {
-        $dbh->do("ALTER TABLE $table DISABLE TRIGGER ALL");
-    }
-
-    for my $table (@tables) {
-        $dbh->do("DELETE FROM $table");
-    }
-
-    for my $table (@tables) {
-        $dbh->do("ALTER TABLE $table ENABLE TRIGGER ALL");
-    }
+    $dbh->do( 'TRUNCATE ' . ( join ', ', @tables ) . ' CASCADE' );
 }
 
 {
