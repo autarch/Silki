@@ -1797,7 +1797,7 @@ sub _make_archive {
             if ( $log && $revision_count % 50 == 0 ) {
                 $log->(
                     loc(
-                        'Processed %1 revisions (of %quant( %2, page, pages ))',
+                        'Exported %1 revisions (of %quant( %2, page, pages ))',
                         $revision_count,
                         $pages->index(),
                     )
@@ -1811,7 +1811,7 @@ sub _make_archive {
     if ( $log && $revision_count % 50 != 0 ) {
         $log->(
             loc(
-                'Processed %1 revisions (of %quant( %2, page, pages ))',
+                'Exported %1 revisions (of %quant( %2, page, pages ))',
                 $revision_count,
                 $pages->index(),
             )
@@ -1838,7 +1838,7 @@ sub _make_archive {
         if ( $log && $user_count % 20 == 0 ) {
             $log->(
                 loc(
-                    'Processed %quant( %1, user, users )',
+                    'Exported %quant( %1, user, users )',
                     $users->index(),
                 )
             );
@@ -1866,7 +1866,7 @@ sub _make_archive {
         if ( $log && $user_count % 20 == 0 ) {
             $log->(
                 loc(
-                    'Processed %quant( %1, user, users )',
+                    'Exported %quant( %1, user, users )',
                     $users->index(),
                 )
             );
@@ -1882,7 +1882,7 @@ sub _make_archive {
     if ( $log && $user_count % 20 != 0 ) {
         $log->(
             loc(
-                'Processed %quant( %1, user, users )',
+                'Exported %quant( %1, user, users )',
                 $users->index(),
             )
         );
