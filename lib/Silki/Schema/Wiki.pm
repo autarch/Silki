@@ -297,21 +297,23 @@ around insert => sub {
         sub {
             $wiki = $class->$orig(%p);
 
-            Silki::Schema::Page->insert_with_content(
-                title          => 'Front Page',
-                content        => $FrontPage,
-                wiki_id        => $wiki->wiki_id(),
-                user_id        => $wiki->user_id(),
-                can_be_renamed => 0,
-            );
+            unless ( $p{skip_default_pages} ) {
+                Silki::Schema::Page->insert_with_content(
+                    title          => 'Front Page',
+                    content        => $FrontPage,
+                    wiki_id        => $wiki->wiki_id(),
+                    user_id        => $wiki->user_id(),
+                    can_be_renamed => 0,
+                );
 
-            Silki::Schema::Page->insert_with_content(
-                title          => 'Scratch Pad',
-                content        => $Scratch,
-                wiki_id        => $wiki->wiki_id(),
-                user_id        => $wiki->user_id(),
-                can_be_renamed => 0,
-            );
+                Silki::Schema::Page->insert_with_content(
+                    title          => 'Scratch Pad',
+                    content        => $Scratch,
+                    wiki_id        => $wiki->wiki_id(),
+                    user_id        => $wiki->user_id(),
+                    can_be_renamed => 0,
+                );
+            }
         }
     );
 
@@ -1806,6 +1808,8 @@ sub _make_archive {
         }
     }
 
+    my $user_count = 0;
+
     my $members = $self->members();
     while ( my ( $user, $role ) = $members->next() ) {
 
@@ -1818,6 +1822,17 @@ sub _make_archive {
         $ser->{role_in_wiki} = $role->name();
 
         my $user_json = Silki::JSON->Encode($ser);
+
+        $user_count++;
+
+        if ( $log && $user_count % 20 == 0 ) {
+            $log->(
+                loc(
+                    'Processed %quant( %1, user, users )',
+                    $users->index(),
+                )
+            );
+        }
 
         $tar->add(
             $user_file,
@@ -1835,6 +1850,17 @@ sub _make_archive {
             = $dir->file( 'users', 'user-' . $user->user_id() . '.json' );
 
         my $user_json = Silki::JSON->Encode( $user->serialize() );
+
+        $user_count++;
+
+        if ( $log && $user_count % 20 == 0 ) {
+            $log->(
+                loc(
+                    'Processed %quant( %1, user, users )',
+                    $users->index(),
+                )
+            );
+        }
 
         $tar->add(
             $user_file,
