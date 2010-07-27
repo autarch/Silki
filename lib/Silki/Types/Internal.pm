@@ -11,9 +11,11 @@ use MooseX::Types -declare => [
         ErrorForSession
         URIStr
         ValidPermissionType
+        Tarball
         )
 ];
 use MooseX::Types::Moose qw( Int Str Defined );
+use MooseX::Types::Path::Class qw( File );
 
 subtype PosInt,
     as Int,
@@ -46,6 +48,10 @@ coerce URIStr, from class_type('URI'), via { $_->canonical() };
 subtype ValidPermissionType,
     as NonEmptyStr,
     where {qr/^(?:public|public-read|private)$/};
+
+subtype Tarball,
+    as File,
+    where { $_[0]->basename() =~ /\.(tar|tar\.gz|tgz)/ };
 
 1;
 
