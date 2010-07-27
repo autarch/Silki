@@ -1808,6 +1808,16 @@ sub _make_archive {
         }
     }
 
+    if ( $log && $revision_count % 50 != 0 ) {
+        $log->(
+            loc(
+                'Processed %1 revisions (of %quant( %2, page, pages ))',
+                $revision_count,
+                $pages->index(),
+            )
+        );
+    }
+
     my $user_count = 0;
 
     my $members = $self->members();
@@ -1866,6 +1876,15 @@ sub _make_archive {
             $user_file,
             \$user_json,
             { binmode => ':utf8' }
+        );
+    }
+
+    if ( $log && $user_count % 20 != 0 ) {
+        $log->(
+            loc(
+                'Processed %quant( %1, user, users )',
+                $users->index(),
+            )
         );
     }
 
