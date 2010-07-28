@@ -7,28 +7,66 @@ use lib 't/lib';
 use Silki::Test::RealSchema;
 
 use Archive::Tar::Wrapper;
+use File::Next;
 use File::Slurp qw( read_file );
+use Path::Class qw( dir file );
+use Silki;
 use Silki::JSON;
 use Silki::Schema::Page;
 use Silki::Schema::User;
 use Silki::Schema::Wiki;
+use Silki::Wiki::Exporter;
 
+my $user = Silki::Schema::User->GuestUser();
 my $wiki = Silki::Schema::Wiki->new( title => 'First Wiki' );
 
+my $fp = Silki::Schema::Page->new(
+    title   => 'Front Page',
+    wiki_id => $wiki->wiki_id(),
+);
+
+$fp->add_revision(
+    content => 'Spanking new content!',
+    user_id => $user->user_id(),
+);
+
+my $text  = "Some random text\nin this file.\n";
+my $file1 = Silki::Schema::File->insert(
+    filename  => 'test.txt',
+    mime_type => 'text/plain',
+    file_size => length $text,
+    contents  => $text,
+    user_id   => $user->user_id(),
+    page_id   => $fp->page_id(),
+);
+
+my $jpg   = read_file('t/share/data/test.jpg');
+my $file2 = Silki::Schema::File->insert(
+    filename  => 'test.jpg',
+    mime_type => 'image/jpeg',
+    file_size => length $jpg,
+    contents  => $jpg,
+    user_id   => $user->user_id(),
+    page_id   => $fp->page_id(),
+);
+
+$fp->add_file($_) for $file1, $file2;
+
 {
-    my @pages = map { _data_for_page( $wiki, $_ ) }
-        'Front Page',
-        'Scratch Pad';
+    my @pages = map { _data_for_page( $_ ) } $wiki->pages()->all();
 
     my @users = sort { $a->{display_name} cmp $b->{display_name} }
-        map { _data_for_user( $wiki, $_ ) }
-        grep { $_->display_name() ne 'Guest User' }
-        Silki::Schema::User->All()->all();
+        map { _data_for_user( $wiki, $_ ) } Silki::Schema::User->All()->all();
+
+    my @files = sort { $a->{filename} cmp $b->{filename} }
+        map { _data_for_file($_) } $wiki->files()->all();
 
     my %expect = (
-        wiki  => $wiki->serialize(),
-        pages => \@pages,
-        users => \@users,
+        wiki        => $wiki->serialize(),
+        permissions => $wiki->permissions(),
+        pages       => \@pages,
+        users       => \@users,
+        files       => \@files,
     );
 
     _test_archive( $wiki->export(), \%expect );
@@ -37,15 +75,7 @@ my $wiki = Silki::Schema::Wiki->new( title => 'First Wiki' );
 done_testing();
 
 sub _data_for_page {
-    my $wiki = shift;
-    my $title = shift;
-
-    my $page = Silki::Schema::Page->new(
-        title   => $title,
-        wiki_id => $wiki->wiki_id(),
-    );
-
-    return {} unless $page;
+    my $page = shift;
 
     my $ser = $page->serialize();
 
@@ -71,6 +101,15 @@ sub _data_for_user {
     return $ser;
 }
 
+sub _data_for_file {
+    my $file = shift;
+
+    my $ser = $file->serialize();
+    $ser->{contents} = $file->contents();
+
+    return $ser;
+}
+
 sub _test_archive {
     my $tarball = shift;
     my $expect  = shift;
@@ -78,38 +117,81 @@ sub _test_archive {
     my $tar = Archive::Tar::Wrapper->new();
     $tar->read($tarball);
 
-    $tar->list_reset();
+    my $dir = dir( $tar->tardir() )->subdir('export-of-first-wiki');
 
-    my $wiki;
-    my %pages;
-    my %revisions;
-    my @users;
-
-    while ( my ( undef, $path ) = @{ $tar->list_next() || [] } ) {
-
-        my $data = Silki::JSON->Decode( scalar read_file($path) );
-
-        if ( $path =~ m{/([^/]+)/page\.json} ) {
-            $pages{$1} = $data;
-        }
-        elsif ( $path =~ m{/([^/]+)/revision-\d+\.json} ) {
-            push @{ $revisions{$1} }, $data;
-        }
-        elsif ( $path =~ m{/users/user-\d+\.json} ) {
-            push @users, $data;
-        }
-        elsif ( $path =~ m{/wiki\.json} ) {
-            $wiki = $data;
-        }
-        else {
-            fail("Found bizarre path in tarball: $path");
-        }
-    }
+    my $metadata = _get_one_json_file( $dir, 'export-metadata.json' );
 
     is_deeply(
-        $wiki, $expect->{wiki},
+        $metadata, {
+            silki_version => Silki->VERSION,
+            export_format_version =>
+                Silki::Wiki::Exporter::EXPORT_FORMAT_VERSION(),
+        },
+        'export metadata in exported tarball'
+    );
+
+    my $wiki = _get_one_json_file( $dir, 'wiki.json' );
+
+    is_deeply(
+        $wiki,
+        $expect->{wiki},
         'wiki data in exported tarball'
     );
+
+    my $permissions = _get_one_json_file( $dir, 'permissions.json' );
+
+    is_deeply(
+        $permissions,
+        $expect->{permissions},
+        'permissions data in exported tarball'
+    );
+
+    is_deeply(
+        _get_pages($dir),
+        $expect->{pages},
+        'pages in exported tarball'
+    );
+
+    is_deeply(
+        _get_users($dir),
+        $expect->{users},
+        'users in exported tarball'
+    );
+
+    is_deeply(
+        _get_files($dir),
+        $expect->{files},
+        'files in exported tarball'
+    );
+}
+
+sub _get_one_json_file {
+    my $dir      = shift;
+    my $filename = shift;
+
+    return Silki::JSON->Decode(
+        scalar read_file( $dir->file($filename)->stringify() ) );
+}
+
+sub _get_pages {
+    my $dir = shift;
+
+    my $iter = File::Next::files( $dir->subdir('pages') );
+
+    my %pages;
+    my %revisions;
+
+    while ( defined( my $file = $iter->() ) ) {
+
+        my $data = Silki::JSON->Decode( scalar read_file($file) );
+
+        if ( $file =~ m{/([^/]+)/page\.json} ) {
+            $pages{$1} = $data;
+        }
+        elsif ( $file =~ m{/([^/]+)/revision-\d+\.json} ) {
+            push @{ $revisions{$1} }, $data;
+        }
+    }
 
     my @combined;
     for my $uri_path ( sort keys %pages ) {
@@ -119,19 +201,64 @@ sub _test_archive {
         }
 
         my $page = $pages{$uri_path};
-        $page->{revisions} = $revisions{$uri_path};
+        $page->{revisions}
+            = [ sort { $b->{revision_number} <=> $a->{revision_number} }
+                @{ $revisions{$uri_path} } ];
 
         push @combined, $page;
     }
 
-    is_deeply(
-        \@combined, $expect->{pages},
-        'pages in exported tarball'
-    );
+    return [ sort { $a->{title} cmp $b->{title} } @combined ];
+}
 
-    is_deeply(
-        [ sort { $a->{display_name} cmp $b->{display_name} } @users ],
-        $expect->{users},
-        'users in exported tarball'
-    );
+sub _get_users {
+    my $dir = shift;
+
+    my $iter = File::Next::files( $dir->subdir('users') );
+
+    my @users;
+    while ( defined( my $file = $iter->() ) ) {
+        push @users, Silki::JSON->Decode( scalar read_file($file) );
+    }
+
+    return [ sort { $a->{display_name} cmp $b->{display_name} } @users ];
+}
+
+sub _get_files {
+    my $dir = shift;
+
+    my $iter = File::Next::files( $dir->subdir('files') );
+
+    my @files;
+    my %contents;
+
+    while ( defined( my $file = $iter->() ) ) {
+        if ( $file =~ /\.json$/ ) {
+            push @files, Silki::JSON->Decode( scalar read_file($file) );
+        }
+        else {
+            $contents{ file($file)->basename() } = read_file($file);
+        }
+    }
+
+    for my $file (@files) {
+        if ( !exists $contents{ $file->{filename} } ) {
+            fail("No contents for $file->{filename} in tarball");
+        }
+        else {
+            $file->{contents} = delete $contents{ $file->{filename} };
+        }
+    }
+
+    if ( keys %contents ) {
+        fail(
+            "Found contents for files without metadata: "
+                . (
+                join ', ',
+                keys %contents
+                )
+        );
+    }
+
+    return [ sort { $a->{filename} cmp $b->{filename} } @files ];
 }

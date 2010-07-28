@@ -167,6 +167,23 @@ around _build_thumbnail_file => sub {
     return $self->$orig(@_);
 };
 
+{
+    my @attr = qw(
+        file_id
+        filename
+        mime_type
+        creation_datetime_raw
+        user_id
+        page_id
+    );
+
+    sub serialize {
+        my $self = shift;
+
+        return { map { $_ => $self->$_() } @attr };
+    }
+}
+
 __PACKAGE__->meta()->make_immutable();
 
 1;

@@ -27,6 +27,7 @@ use Silki::Schema::TextSearchResult;
 use Silki::Schema::UserWikiRole;
 use Silki::Schema::WantedPage;
 use Silki::Schema::WikiRolePermission;
+use Silki::Wiki::Exporter;
 use Silki::Types qw( Bool CodeRef File HashRef Int Str ValidPermissionType );
 
 use Fey::ORM::Table;
@@ -1733,169 +1734,11 @@ sub _BuildMinRevisionSelect {
 
 sub export {
     my $self = shift;
-    my ($log) = validated_list(
-        \@_,
-        log => { isa => CodeRef, optional => 1 },
-    );
 
-    return $self->_make_archive($log);
-}
-
-sub _make_archive {
-    my $self    = shift;
-    my $log     = shift;
-
-    my $tar = Archive::Tar::Wrapper->new();
-
-    my $dir = dir( 'export-of-' . $self->short_name() );
-
-    my $wiki_json = Silki::JSON->Encode( $self->serialize() );
-
-    my $wiki_file = $dir->file('wiki.json');
-
-    $tar->add(
-        $wiki_file,
-        \$wiki_json,
-        { binmode => ':utf8' }
-    );
-
-    my $revision_count = 0;
-
-    my $pages = $self->pages();
-
-    my %users;
-
-    while ( my $page = $pages->next() ) {
-
-        my $page_dir = $dir->subdir( 'pages', $page->uri_path() );
-
-        my $page_file = $page_dir->file('page.json');
-
-        my $page_json = Silki::JSON->Encode( $page->serialize() );
-        $tar->add(
-            $page_file,
-            \$page_json,
-            { binmode => ':utf8' }
-        );
-
-        my $revisions = $page->revisions();
-        while ( my $revision = $revisions->next() ) {
-
-            my $revision_file = $page_dir->file(
-                'revision-' . $revision->revision_number() . '.json' );
-
-            my $revision_json = Silki::JSON->Encode( $revision->serialize() );
-
-            $tar->add(
-                $revision_file,
-                \$revision_json,
-                { binmode => ':utf8' }
-            );
-
-            $revision_count++;
-
-            if ( $log && $revision_count % 50 == 0 ) {
-                $log->(
-                    loc(
-                        'Exported %1 revisions (of %quant( %2, page, pages ))',
-                        $revision_count,
-                        $pages->index(),
-                    )
-                );
-            }
-
-            $users{ $revision->user_id() } = 1;;
-        }
-    }
-
-    if ( $log && $revision_count % 50 != 0 ) {
-        $log->(
-            loc(
-                'Exported %1 revisions (of %quant( %2, page, pages ))',
-                $revision_count,
-                $pages->index(),
-            )
-        );
-    }
-
-    my $user_count = 0;
-
-    my $members = $self->members();
-    while ( my ( $user, $role ) = $members->next() ) {
-
-        delete $users{ $user->user_id() };
-
-        my $user_file
-            = $dir->file( 'users', 'user-' . $user->user_id() . '.json' );
-
-        my $ser = $user->serialize();
-        $ser->{role_in_wiki} = $role->name();
-
-        my $user_json = Silki::JSON->Encode($ser);
-
-        $user_count++;
-
-        if ( $log && $user_count % 20 == 0 ) {
-            $log->(
-                loc(
-                    'Exported %quant( %1, user, users )',
-                    $users->index(),
-                )
-            );
-        }
-
-        $tar->add(
-            $user_file,
-            \$user_json,
-            { binmode => ':utf8' }
-        );
-    }
-
-    for my $user (
-        map { Silki::Schema::User->new( user_id => $_ ) }
-        keys %users
-        ) {
-
-        my $user_file
-            = $dir->file( 'users', 'user-' . $user->user_id() . '.json' );
-
-        my $user_json = Silki::JSON->Encode( $user->serialize() );
-
-        $user_count++;
-
-        if ( $log && $user_count % 20 == 0 ) {
-            $log->(
-                loc(
-                    'Exported %quant( %1, user, users )',
-                    $users->index(),
-                )
-            );
-        }
-
-        $tar->add(
-            $user_file,
-            \$user_json,
-            { binmode => ':utf8' }
-        );
-    }
-
-    if ( $log && $user_count % 20 != 0 ) {
-        $log->(
-            loc(
-                'Exported %quant( %1, user, users )',
-                $users->index(),
-            )
-        );
-    }
-
-    my $archive = file(
-        File::Spec->tmpdir(),
-        'export-of-' . $self->short_name() . '.tar.gz'
-    );
-
-    $tar->write( $archive, 'compress' );
-
-    return $archive;
+    return Silki::Wiki::Exporter->new(
+        @_,
+        wiki => $self,
+    )->tarball();
 }
 
 __PACKAGE__->meta()->make_immutable();
