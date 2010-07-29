@@ -7,6 +7,7 @@ use namespace::autoclean;
 use Archive::Tar::Wrapper;
 use File::Slurp qw( write_file );
 use File::Spec;
+use File::Temp qw( tempdir );
 use Path::Class qw( file );
 use Silki::I18N qw( loc );
 use Silki::JSON;
@@ -92,7 +93,7 @@ sub _build_tarball {
     $self->_add_files_to_archive();
 
     my $tarball = file(
-        File::Spec->tmpdir(),
+        tempdir( CLEANUP => 1 ),
         'export-of-' . $self->_wiki()->short_name() . '.tar.gz'
     );
 
