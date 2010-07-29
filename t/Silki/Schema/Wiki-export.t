@@ -69,7 +69,14 @@ $fp->add_file($_) for $file1, $file2;
         files       => \@files,
     );
 
-    _test_archive( $wiki->export(), \%expect );
+    my $tarball = $wiki->export();
+
+    END {
+        unlink $tarball
+            or warn "Cannot unlink $tarball: $!";
+    }
+
+    _test_archive( $tarball, \%expect );
 }
 
 done_testing();
