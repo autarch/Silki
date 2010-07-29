@@ -16,7 +16,6 @@ use Silki::Types qw( Dir HashRef Tarball );
 
 use Moose;
 use MooseX::SemiAffordanceAccessor;
-use MooseX::Params::Validate qw( validated_list );
 
 with 'Silki::Role::OptionalLog';
 
