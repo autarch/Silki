@@ -301,7 +301,9 @@ sub _title_is_unique {
 
     return unless exists $p->{title};
 
-    my $wiki_id = $p->{wiki_id} || $self->wiki_id();
+    my $wiki_id = $p->{wiki_id};
+    $wiki_id = $self->wiki_id()
+        unless $wiki_id || $is_insert;
 
     return unless $wiki_id;
 
@@ -309,7 +311,7 @@ sub _title_is_unique {
 
     return unless $page;
 
-    return if ref $self && $page->page_id() == $self->page_id();
+    return if !$is_insert && $page->page_id() == $self->page_id();
 
     return {
         message => loc(
