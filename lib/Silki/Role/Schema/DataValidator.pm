@@ -92,7 +92,6 @@ sub validate_for_update {
 
 role {
     my $params = shift;
-    my %extra  = @_;
 
     if ( $params->validate_on_insert() ) {
         around 'insert' => sub {
