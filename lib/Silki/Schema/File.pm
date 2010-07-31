@@ -54,6 +54,10 @@ has is_browser_displayable_image => (
 
 with 'Silki::Role::Schema::File';
 
+with 'Silki::Role::Schema::Serializes' => {
+    skip => ['contents'],
+};
+
 sub _system_log_values_for_delete {
     my $self = shift;
 
@@ -166,23 +170,6 @@ around _build_thumbnail_file => sub {
 
     return $self->$orig(@_);
 };
-
-{
-    my @attr = qw(
-        file_id
-        filename
-        mime_type
-        creation_datetime_raw
-        user_id
-        page_id
-    );
-
-    sub serialize {
-        my $self = shift;
-
-        return { map { $_ => $self->$_() } @attr };
-    }
-}
 
 __PACKAGE__->meta()->make_immutable();
 

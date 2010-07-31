@@ -234,9 +234,11 @@ sub _import_user {
     }
     else {
         delete @{$data}{
-            qw( is_system_user
-                creation_datetime_raw
-                last_modified_datetime_raw )
+            qw(
+                is_system_user
+                creation_datetime
+                last_modified_datetime
+                )
             };
 
         $user = Silki::Schema::User->insert(
@@ -302,8 +304,6 @@ sub _import_pages {
                 scalar read_file( $revision_file->stringify() ) );
 
             delete @{$rev_data}{qw( page_id revision_number )};
-            $rev_data->{creation_datetime}
-                = delete $rev_data->{creation_datetime_raw};
 
             local $Silki::Schema::Page::SkipPostChangeHack
                 = $revision_file eq $revision_files[-1] ? 0 : 1;
@@ -352,9 +352,6 @@ sub _import_files {
         delete $data->{file_id};
 
         my $data_file = $file_dir->file( $data->{filename} );
-
-        $data->{creation_datetime}
-            = delete $data->{creation_datetime_raw};
 
         my $file = Silki::Schema::File->insert(
             %{$data},

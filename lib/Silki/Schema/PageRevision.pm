@@ -51,6 +51,8 @@ transform content => deflate {
     return $_[1];
 };
 
+with 'Silki::Role::Schema::Serializes';
+
 around insert => sub {
     my $orig  = shift;
     my $class = shift;
@@ -305,24 +307,6 @@ sub content_as_html {
     }
 
     return $buffer;
-}
-
-{
-    my @attr = qw(
-        page_id
-        revision_number
-        content
-        user_id
-        creation_datetime_raw
-        comment
-        is_restoration_of_revision_number
-    );
-
-    sub serialize {
-        my $self = shift;
-
-        return { map { $_ => $self->$_() } @attr };
-    }
 }
 
 __PACKAGE__->meta()->make_immutable();

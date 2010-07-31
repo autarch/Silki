@@ -264,6 +264,8 @@ query file_count => (
     bind_params => sub { $_[0]->wiki_id() },
 );
 
+with 'Silki::Role::Schema::Serializes';
+
 my $FrontPage = <<'EOF';
 Welcome to your new wiki.
 
@@ -1723,21 +1725,6 @@ sub _BuildMinRevisionSelect {
                );
 
     return $min_revision;
-}
-
-{
-    my @attr = qw(
-        wiki_id
-        title
-        short_name
-        creation_datetime_raw
-    );
-
-    sub serialize {
-        my $self = shift;
-
-        return { map { $_ => $self->$_() } @attr };
-    }
 }
 
 sub export {
