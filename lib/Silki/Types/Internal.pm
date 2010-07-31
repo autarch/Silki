@@ -16,6 +16,7 @@ use MooseX::Types -declare => [
 ];
 use MooseX::Types::Moose qw( Int Str Defined );
 use MooseX::Types::Path::Class qw( File );
+use Path::Class ();
 
 subtype PosInt,
     as Int,
@@ -52,6 +53,10 @@ subtype ValidPermissionType,
 subtype Tarball,
     as File,
     where { $_[0]->basename() =~ /\.(tar|tar\.gz|tgz)/ };
+
+coerce Tarball,
+    from Str,
+    via { Path::Class::file($_) };
 
 1;
 

@@ -28,6 +28,7 @@ use Silki::Schema::UserWikiRole;
 use Silki::Schema::WantedPage;
 use Silki::Schema::WikiRolePermission;
 use Silki::Wiki::Exporter;
+use Silki::Wiki::Importer;
 use Silki::Types qw( Bool CodeRef File HashRef Int Str ValidPermissionType );
 
 use Fey::ORM::Table;
@@ -294,11 +295,13 @@ around insert => sub {
 
     my $wiki;
 
+    my $skip_default = delete $p{skip_default_pages};
+
     $class->SchemaClass()->RunInTransaction(
         sub {
             $wiki = $class->$orig(%p);
 
-            unless ( $p{skip_default_pages} ) {
+            unless ($skip_default) {
                 Silki::Schema::Page->insert_with_content(
                     title          => 'Front Page',
                     content        => $FrontPage,
@@ -534,49 +537,12 @@ sub _build_permissions {
         },
     );
 
-    my $Delete = Silki::Schema->SQLFactoryClass()->new_delete();
-    $Delete->from( $Schema->table('WikiRolePermission') )
-           ->where(
-            $Schema->table('WikiRolePermission')->column('wiki_id'),
-            '=',
-            Fey::Placeholder->new()
-        );
-
     sub set_permissions {
         my $self = shift;
         my ($type)
             = pos_validated_list( \@_, { isa => ValidPermissionType } );
 
-        my $set = $Sets{$type};
-
-        my @inserts;
-        for my $role_name ( keys %{$set} ) {
-            my $role = Silki::Schema::Role->$role_name();
-
-            for my $perm_name ( @{ $set->{$role_name} } ) {
-                my $perm = Silki::Schema::Permission->$perm_name();
-
-                push @inserts,
-                    {
-                    wiki_id       => $self->wiki_id(),
-                    role_id       => $role->role_id(),
-                    permission_id => $perm->permission_id(),
-                    };
-            }
-        }
-
-        my $dbh = Silki::Schema->DBIManager()->source_for_sql($Delete)->dbh();
-        my $trans = sub {
-            $dbh->do( $Delete->sql($dbh), {}, $self->wiki_id() );
-            Silki::Schema::WikiRolePermission->insert_many(@inserts);
-        };
-
-        Silki::Schema->RunInTransaction($trans);
-
-        $self->_clear_permissions();
-        $self->_clear_permissions_name();
-
-        return;
+        $self->_set_permissions_from_set( $Sets{$type} );
     }
 
     my %SetsAsHashes;
@@ -599,6 +565,48 @@ sub _build_permissions {
         }
 
         return 'custom';
+    }
+}
+
+{
+    my $Delete = Silki::Schema->SQLFactoryClass()->new_delete();
+    $Delete->from( $Schema->table('WikiRolePermission') )->where(
+        $Schema->table('WikiRolePermission')->column('wiki_id'),
+        '=',
+        Fey::Placeholder->new()
+    );
+
+    sub _set_permissions_from_set {
+        my $self = shift;
+        my $set  = shift;
+
+        my @inserts;
+        for my $role_name ( keys %{$set} ) {
+            my $role = Silki::Schema::Role->$role_name();
+
+            for my $perm_name ( @{ $set->{$role_name} } ) {
+                my $perm = Silki::Schema::Permission->$perm_name();
+
+                push @inserts, {
+                    wiki_id       => $self->wiki_id(),
+                    role_id       => $role->role_id(),
+                    permission_id => $perm->permission_id(),
+                    };
+            }
+        }
+
+        my $dbh = Silki::Schema->DBIManager()->source_for_sql($Delete)->dbh();
+        my $trans = sub {
+            $dbh->do( $Delete->sql($dbh), {}, $self->wiki_id() );
+            Silki::Schema::WikiRolePermission->insert_many(@inserts);
+        };
+
+        Silki::Schema->RunInTransaction($trans);
+
+        $self->_clear_permissions();
+        $self->_clear_permissions_name();
+
+        return;
     }
 }
 
@@ -1739,6 +1747,14 @@ sub export {
         @_,
         wiki => $self,
     )->tarball();
+}
+
+sub import_tarball {
+    my $self = shift;
+
+    return Silki::Wiki::Importer->new(
+        @_,
+    )->imported_wiki();
 }
 
 __PACKAGE__->meta()->make_immutable();
