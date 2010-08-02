@@ -141,7 +141,9 @@ class_has _PendingPageLinkDeleteSQL => (
     builder => '_BuildPendingPageLinkDeleteSQL',
 );
 
-with 'Silki::Role::Schema::Serializes';
+with 'Silki::Role::Schema::Serializes' => {
+    skip => ['cached_content'],
+};
 
 sub _base_uri_path {
     my $self = shift;
