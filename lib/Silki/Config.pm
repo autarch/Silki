@@ -440,7 +440,7 @@ sub _build_is_production {
         +Silki::Plugin::Session::Store::Silki
         RedirectAndDetach
         SubRequest
-        Unicode
+        Unicode::Encoding
     );
 
     sub _build_catalyst_imports {
@@ -653,6 +653,8 @@ sub _build_catalyst_config {
             path       => '/',
             mac_secret => $self->secret(),
         },
+
+        encoding => 'UTF-8',
 
         'Log::Dispatch' => $self->_log_config(),
     );
