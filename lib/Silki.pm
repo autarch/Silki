@@ -9,6 +9,7 @@ use Catalyst::Runtime 5.8;
 use CatalystX::RoleApplicator;
 use Catalyst::Plugin::Session 0.27;
 use Catalyst::Request::REST::ForBrowsers;
+use HTTP::Body 1.09; # for temp file upload suffix preservation
 use Silki::Config;
 use Silki::I18N ();
 use Silki::Request;
