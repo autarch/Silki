@@ -15,7 +15,7 @@ use Test::More;
 BEGIN {
     unless ( $ENV{RELEASE_TESTING} ) {
         require Test::More;
-        Test::More::plan( skip_all => 'these tests are for $msg' );
+        Test::More::plan( skip_all => "These tests are for release testing" );
     }
 }
 
