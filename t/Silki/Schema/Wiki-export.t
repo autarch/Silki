@@ -125,7 +125,7 @@ sub _test_archive {
         $metadata, {
             silki_version => Silki->VERSION,
             export_format_version =>
-                Silki::Wiki::Exporter::EXPORT_FORMAT_VERSION(),
+                Silki::Wiki::Exporter->_export_format_version(),
         },
         'export metadata in exported tarball'
     );

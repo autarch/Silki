@@ -66,6 +66,11 @@ has _user_ids_from_pages => (
 
 use constant EXPORT_FORMAT_VERSION => 1;
 
+# Exists for the benefit of the test code
+sub _export_format_version {
+    return EXPORT_FORMAT_VERSION;
+}
+
 sub _build_tarball {
     my $self = shift;
 
