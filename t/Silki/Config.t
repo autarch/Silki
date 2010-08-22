@@ -132,7 +132,7 @@ Silki::Config->_clear_instance();
         +Silki::Plugin::Session::Store::Silki
         RedirectAndDetach
         SubRequest
-        Unicode
+        Unicode::Encoding
     );
 
     ok( $config->serve_static_files(), 'by default we serve static files' );
