@@ -2,6 +2,9 @@
 
 - Renamed a number of files in bin, and moved some of them to dev-bin.
 
+- Added export and import features, along with silki-export and silki-import
+  scripts.
+
 
 0.12  2010-07-22
 
