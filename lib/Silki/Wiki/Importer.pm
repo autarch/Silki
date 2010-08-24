@@ -343,6 +343,8 @@ sub _import_files {
 
     my $file_count = 0;
 
+    return unless -d $self->_export_root_dir()->subdir('files');
+
     for my $file_dir ( grep { $_->is_dir() }
         $self->_export_root_dir()->subdir('files')->children() ) {
 
