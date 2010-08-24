@@ -18,6 +18,7 @@ use Silki::Config;
 use Silki::I18N qw( loc );
 use Silki::JSON;
 use Silki::Schema;
+use Silki::Schema::Account;
 use Silki::Schema::Domain;
 use Silki::Schema::File;
 use Silki::Schema::Page;
