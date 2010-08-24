@@ -32,6 +32,7 @@ sub quant {
     $num += 0;
 
     my @forms = @{$args};
+    s/^\s+|\s+//g for @forms;
 
     die "quant can only be called with 2 or 3 forms"
         unless @forms == 2 || @forms == 3;
