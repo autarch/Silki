@@ -12,9 +12,10 @@ use Silki::Config;
 use Silki::Formatter::HTMLToWiki;
 use Silki::I18N qw( loc );
 use Silki::Schema::Page;
+use Silki::Schema::Process;
 use Silki::Schema::Role;
 use Silki::Schema::Wiki;
-use Silki::Util qw( string_is_empty );
+use Silki::Util qw( detach_and_run string_is_empty );
 use XML::Atom::SimpleFeed;
 
 use Moose;
@@ -87,6 +88,27 @@ sub delete_confirmation : Chained('_set_wiki') : PathPart('delete_confirmation')
     $self->_require_site_admin($c);
 
     $c->stash()->{template} = '/wiki/delete-confirmation';
+}
+
+sub export : Chained('_set_wiki') : PathPart('export') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    my $wiki = $c->stash()->{wiki};
+
+    $self->_require_permission_for_wiki( $c, $wiki, 'Manage' );
+
+    my $process = Silki::Schema::Process->insert( wiki_id => $wiki->wiki_id() );
+
+    my $log = sub { $process->update_status(@_) };
+
+    my $work = sub { $wiki->export( log => $log ) };
+
+    detach_and_run( $work, $process );
+
+    $c->stash()->{process} = $process;
+
+    $c->stash()->{template} = '/wiki/export';
 }
 
 sub wiki_DELETE {

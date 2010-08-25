@@ -73,27 +73,27 @@ msgid "%1 has not edited any pages in this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:392
+#: lib/Silki/Controller/Wiki.pm:413
 msgid "%1 is already a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:364
+#: lib/Silki/Controller/Wiki.pm:385
 msgid "%1 is no longer an admin for this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:410
+#: lib/Silki/Controller/Wiki.pm:431
 msgid "%1 is now a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:356
+#: lib/Silki/Controller/Wiki.pm:377
 msgid "%1 is now an admin for this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:343
+#: lib/Silki/Controller/Wiki.pm:364
 msgid "%1 was removed as a wiki member."
 msgstr ""
 
@@ -102,7 +102,7 @@ msgid "%date(%1) %at_time(%1)"
 msgstr ""
 
 #. ($c->user()
-#: share/mason/domain/domains:20 share/mason/lib/table/attachments-table.mas:37 share/mason/log/logs:16 share/mason/page/history:30 share/mason/user/users:34 share/mason/wiki/dashboard:12 share/mason/wiki/recent:14 share/mason/wiki/search-results:14 share/mason/wiki/tag:19 share/mason/wiki/wikis:24
+#: share/mason/domain/domains:20 share/mason/lib/table/attachments-table.mas:37 share/mason/log/logs:16 share/mason/page/history:30 share/mason/user/users:34 share/mason/wiki/dashboard:12 share/mason/wiki/recent:14 share/mason/wiki/search-results:14 share/mason/wiki/tag:19 share/mason/wiki/wikis:25
 msgid "%datetime(%1)"
 msgstr ""
 
@@ -141,7 +141,7 @@ msgid "(Link to non-existent wiki: %1)"
 msgstr ""
 
 #. ($address->address()
-#: lib/Silki/Controller/Wiki.pm:443
+#: lib/Silki/Controller/Wiki.pm:464
 msgid "A user account for %1 has been created, and this person has been invited to join this wiki."
 msgstr ""
 
@@ -214,7 +214,7 @@ msgid "All wikis"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:402
+#: lib/Silki/Controller/Wiki.pm:423
 msgid "An unactived account for %1 already exists. Once the account is activated, this user will be able to access this wiki."
 msgstr ""
 
@@ -347,7 +347,7 @@ msgid "Deleted the page %1"
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:100
+#: lib/Silki/Controller/Wiki.pm:121
 msgid "Deleted the wiki %1"
 msgstr ""
 
@@ -751,7 +751,7 @@ msgid "Permissions"
 msgstr ""
 
 #. ($perm_loc)
-#: lib/Silki/Controller/Wiki.pm:294
+#: lib/Silki/Controller/Wiki.pm:315
 msgid "Permissions for this wiki have been set to %1"
 msgstr ""
 
@@ -785,6 +785,11 @@ msgstr ""
 msgid "Privacy"
 msgstr ""
 
+#. ($revision_count,                        $pages->index()
+#: lib/Silki/Schema/Wiki.pm:1764
+msgid "Processed %1 revisions (of %quant(%2,page,pages))"
+msgstr ""
+
 #: share/mason/lib/forms/user.mas:64
 msgid "Profile Image:"
 msgstr ""
@@ -802,7 +807,7 @@ msgid "Recent Changes"
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:160 share/mason/autohandler:18 share/mason/wiki/recent:39
+#: lib/Silki/Controller/Wiki.pm:181 share/mason/autohandler:18 share/mason/wiki/recent:39
 msgid "Recent Changes in %1"
 msgstr ""
 
@@ -975,7 +980,7 @@ msgstr ""
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:200
+#: lib/Silki/Controller/Wiki.pm:221
 msgid "The file has been uploaded."
 msgstr ""
 
@@ -1004,11 +1009,11 @@ msgstr ""
 msgid "The page title you have chosen (%1) is already in use in this wiki."
 msgstr ""
 
-#: lib/Silki/Schema/Wiki.pm:393
+#: lib/Silki/Schema/Wiki.pm:398
 msgid "The title you provided generates the same URI as an existing wiki."
 msgstr ""
 
-#: lib/Silki/Schema/Wiki.pm:351
+#: lib/Silki/Schema/Wiki.pm:356
 msgid "The title you provided is already in use by another wiki."
 msgstr ""
 
@@ -1247,11 +1252,11 @@ msgstr ""
 msgid "Wiki members"
 msgstr ""
 
-#: lib/Silki/Schema/Wiki.pm:373
+#: lib/Silki/Schema/Wiki.pm:378
 msgid "Wiki titles cannot contain a slash (/), since this conflicts with the syntax to link to another wiki."
 msgstr ""
 
-#: lib/Silki/Schema/Wiki.pm:365
+#: lib/Silki/Schema/Wiki.pm:370
 msgid "Wiki titles cannot contain the characters \"))\", since this conflicts with the wiki link syntax."
 msgstr ""
 
@@ -1416,7 +1421,7 @@ msgstr ""
 msgid "edit"
 msgstr ""
 
-#: share/mason/log/logs:30
+#: share/mason/log/logs:31
 msgid "more"
 msgstr ""
 

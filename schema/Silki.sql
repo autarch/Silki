@@ -357,6 +357,16 @@ CREATE TABLE "SystemLog" (
        data_blob          BYTEA              NULL
 );
 
+CREATE TABLE "Process" (
+       process_id         SERIAL8            PRIMARY KEY,
+       wiki_id            INT8               NULL,
+       status             TEXT               NOT NULL DEFAULT '',
+       is_complete        BOOL               DEFAULT FALSE,
+       was_successful     BOOL               DEFAULT FALSE,
+       creation_datetime       TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       last_modified_datetime  TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE "Session" (
        id                 CHAR(72)           PRIMARY KEY,
        session_data       BYTEA              NOT NULL,
@@ -509,6 +519,10 @@ ALTER TABLE "SystemLog" ADD CONSTRAINT "SystemLog_wiki_id"
 
 ALTER TABLE "SystemLog" ADD CONSTRAINT "SystemLog_page_id"
   FOREIGN KEY ("page_id") REFERENCES "Page" ("page_id")
+  ON DELETE SET NULL ON UPDATE CASCADE;
+
+ALTER TABLE "Process" ADD CONSTRAINT "Process_wiki_id"
+  FOREIGN KEY ("wiki_id") REFERENCES "Wiki" ("wiki_id")
   ON DELETE SET NULL ON UPDATE CASCADE;
 
 INSERT INTO "Version" (version) VALUES (4);
