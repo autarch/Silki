@@ -26,7 +26,7 @@ role {
         next if $skip{ $attr->name() };
         next if $attr->name() =~ /_raw$/;
 
-        # We only want to serialize data from class's the associated table
+        # We only want to serialize data from the class's the associated table
         if ( $attr->isa('Fey::Meta::Attribute::FromInflator') ) {
             $map{ $attr->name() } = $attr->raw_attribute()->name();
         }
