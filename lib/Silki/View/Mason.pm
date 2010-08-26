@@ -14,7 +14,7 @@ use base 'Catalyst::View::Mason';
     use Number::Format qw( format_bytes );
     use Silki::I18N qw( loc );
     use Silki::Util qw( string_is_empty english_list );
-    use Silki::URI qw( static_uri );
+    use Silki::URI qw( dynamic_uri static_uri );
     use URI::Escape qw( uri_escape );
 }
 

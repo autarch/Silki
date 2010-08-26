@@ -359,6 +359,7 @@ CREATE TABLE "SystemLog" (
 
 CREATE TABLE "Process" (
        process_id         SERIAL8            PRIMARY KEY,
+       system_pid         INT4               NULL,
        wiki_id            INT8               NULL,
        status             TEXT               NOT NULL DEFAULT '',
        is_complete        BOOL               DEFAULT FALSE,

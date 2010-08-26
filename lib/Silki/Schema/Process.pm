@@ -17,19 +17,7 @@ my $Schema = Silki::Schema->Schema();
     has_table( $Schema->table('Process') );
 }
 
-sub update_status {
-    my $self        = shift;
-    my $status      = shift;
-    my $is_complete = shift;
-    my $success     = shift;
-
-    $self->update(
-        last_modified_datetime => Fey::Literal::Function->new('NOW'),
-        status                 => ( $self->status() . $status . "\n" ),
-        is_complete            => ( $is_complete ? 1 : 0 ),
-        ( $success ? ( was_successful => 1 ) : () ),
-    );
-}
+with 'Silki::Role::Schema::Serializes';
 
 __PACKAGE__->meta()->make_immutable();
 

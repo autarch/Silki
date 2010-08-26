@@ -7,6 +7,7 @@ use namespace::autoclean;
 use DateTime::Format::W3CDTF 0.05;
 use Email::Address;
 use File::Basename qw( dirname );
+use File::Temp qw( tempdir );
 use Path::Class ();
 use Silki::Config;
 use Silki::Formatter::HTMLToWiki;
@@ -100,11 +101,14 @@ sub export : Chained('_set_wiki') : PathPart('export') : Args(0) {
 
     my $process = Silki::Schema::Process->insert( wiki_id => $wiki->wiki_id() );
 
-    my $log = sub { $process->update_status(@_) };
+    my $dir = tempdir();
 
-    my $work = sub { $wiki->export( log => $log ) };
-
-    detach_and_run( $work, $process );
+    detach_and_run(
+        'silki-export',
+        '--wiki',    $wiki->short_name(),
+        '--dir',     $dir,
+        '--process', $process->process_id(),
+    );
 
     $c->stash()->{process} = $process;
 

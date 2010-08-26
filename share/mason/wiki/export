@@ -1,4 +1,22 @@
-Foo
+% if ( $process->is_complete() ) {
+%   if ( $process->was_successful() ) {
+<p>
+Export is complete.
+</p>
+%   } else {
+<p>
+Export failed.
+</p>
+%   }
+% } else {
+<pre id="process-status" class="js-process-id-<% $process->process_id() %>">
+Waiting for export to start ...
+</pre>
+% }
+
+<%args>
+$process
+</%args>
 
 <%method title>
 <% loc( 'Exporting %1', $wiki->title() ) %>

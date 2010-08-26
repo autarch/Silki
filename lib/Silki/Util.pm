@@ -5,6 +5,9 @@ use warnings;
 
 use Exporter qw( import );
 
+use File::Which qw( which );
+use Path::Class qw( file );
+
 our @EXPORT_OK = qw( string_is_empty english_list detach_and_run );
 
 sub string_is_empty {
@@ -23,29 +26,36 @@ sub english_list {
 }
 
 sub detach_and_run {
-    my $work    = shift;
-    my $process = shift;
+    my $executable = _find_executable( $_[0] );
 
     return if fork;
 
     require POSIX;
-    unless ( POSIX::setsid() ) {
-        $process->update_status( "Cannot start a new session: $!" );
-        exit 1;
+    exit 1 unless POSIX::setsid();
+
+    if ( Silki::Schema->can('DBIManager') ) {
+        $_->dbh()->{InactiveDestroy} = 1
+            for Silki::Schema->DBIManager()->sources();
     }
 
-    $process->update_status( 'Starting work' );
+    local $ENV{PERL5LIB} = join ':', @INC;
+    exec {$executable} @_;
 
-    eval { $work->() };
+    die "Could not exec - $executable @_: $!";
+}
 
-    if (my $e = $@) {
-        $process->update_status( "Error doing work: $e", 'complete' );
-        exit 1;
-    }
-    else {
-        $process->update_status( 'Completed work', 'complete', 1 );
-        exit 0;
-    }
+sub _find_executable {
+    my $executable = shift;
+
+    my $path = which($executable);
+
+    return $path if $path;
+
+    my $rel = file( 'bin', $executable );
+
+    return $rel if -x $rel;
+
+    die "Cannot find an executable named $executable";
 }
 
 1;
