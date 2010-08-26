@@ -17,8 +17,10 @@ Silki.ProcessStatus = function () {
     }
 
     this._process_id = matches[1];
+    this._process_type = "Export"; // XXX
     this._uri = Silki.URI.dynamicURI( "/process/" + this._process_id );
-    this._status = status;
+    this._status_div = status;
+    this._last_status = "";
 
     this._setupInterval();
 };
@@ -31,6 +33,11 @@ Silki.ProcessStatus.prototype._setupInterval = function () {
 };
 
 Silki.ProcessStatus.prototype._getProcessStatus = function () {
+    if ( ( new Date() ).getTime() - this._last_status_change > 20000 ) {
+        this._status_div.innerHTML = this._process_type + " appears to have stalled on the server. Giving up.";
+        return;
+    }
+
     var self = this;
 
     var on_success = function (trans) {
@@ -56,19 +63,24 @@ Silki.ProcessStatus.prototype._updateStatus = function (trans) {
         clearInterval( this._interval_id );
 
         if ( process.was_successful ) {
-            this._status.innerHTML = "Export is complete.";
+            this._status_div.innerHTML = this._process_type + " is complete.";
         }
         else {
-            this._status.innerHTML = "Export failed.";
+            this._status_div.innerHTML = this._process_type + " failed.";
         }
     }
     else if ( process.status.length ) {
-        this._status.innerHTML = "Export is in progress - " + process.status + ".";
+        if ( this._last_status != process.status ) {
+            this._last_status_change = ( new Date() ).getTime();
+            this._last_status = process.status;
+        }
+
+        this._status_div.innerHTML = this._process_type + " is in progress - " + process.status + ".";
     }
 };
 
 Silki.ProcessStatus.prototype._handleFailure = function (trans) {
     clearInterval( this._interval_id );
 
-    this._status.innerHTML = "Cannot retrieve process status from server.";
+    this._status_div.innerHTML = "Cannot retrieve process status from server.";
 };
