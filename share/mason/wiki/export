@@ -10,7 +10,7 @@ Export failed.
 %   }
 % } else {
 <pre id="process-status" class="js-process-id-<% $process->process_id() %>">
-Waiting for export to start ...
+<img src="<% static_uri('/images/spinner.gif') %>" /> Waiting for export to start ...
 </pre>
 % }
 

@@ -21,6 +21,7 @@ Silki.ProcessStatus = function () {
     this._uri = Silki.URI.dynamicURI( "/process/" + this._process_id );
     this._status_div = status;
     this._last_status = "";
+    this._spinner = '<img src="' + Silki.URI.staticURI( "/images/spinner.gif" ) + '" />';
 
     this._setupInterval();
 };
@@ -75,7 +76,7 @@ Silki.ProcessStatus.prototype._updateStatus = function (trans) {
             this._last_status = process.status;
         }
 
-        this._status_div.innerHTML = this._process_type + " is in progress - " + process.status + ".";
+        this._status_div.innerHTML = this._spinner + " " + this._process_type + " is in progress - " + process.status + ".";
     }
 };
 
