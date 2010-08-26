@@ -15,7 +15,7 @@
 
   <script type="text/javascript">
 Silki.URI._dynamicURIRoot = "<% dynamic_uri( path => '/' ) %>";
-Silki.URI._statucURIRoot = "<% static_uri('/') %>";
+Silki.URI._staticURIRoot = "<% static_uri('/') %>";
   </script>
 
 % if ($wiki) {
