@@ -11,13 +11,18 @@ Silki.ProcessStatus = function () {
         return;
     }
 
-    var matches = status.className.match( /js-process-id-(\d+)/ );
-    if ( ! matches && matches[1] ) {
+    var process_id = ( /js-process-id-(\d+)/.exec( status.className) )[1];
+    if ( ! process_id ) {
         return;
     }
 
-    this._process_id = matches[1];
-    this._process_type = "Export"; // XXX
+    var process_type = ( /js-process-type-(\w+)/.exec( status.className ) )[1];
+    if ( ! process_type ) {
+        return;
+    }
+
+    this._process_id = process_id;
+    this._process_type = process_type;
     this._uri = Silki.URI.dynamicURI( "/process/" + this._process_id );
     this._status_div = status;
     this._last_status = "";
