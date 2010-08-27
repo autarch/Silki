@@ -204,7 +204,9 @@ class_has _AllUsersSelect => (
     );
 }
 
-with 'Silki::Role::Schema::Serializes';
+with 'Silki::Role::Schema::Serializes' => {
+    skip => ['password'],
+};
 
 my $DisabledPW = '*disabled*';
 around insert => sub {
