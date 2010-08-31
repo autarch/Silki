@@ -33,10 +33,10 @@ with 'MooseX::Getopt::Dashes';
     );
 }
 
-has dir => (
-    is      => 'ro',
-    isa     => Str,
-    default => abs_path(),
+has file => (
+    is        => 'ro',
+    isa       => Str,
+    predicate => '_has_file',
 );
 
 {
@@ -127,7 +127,11 @@ sub _export {
 
     my $tarball = Silki::Wiki::Exporter->new(%p)->tarball();
 
-    my $new_name = dir( $self->dir() )->file( $tarball->basename() );
+    my $new_name
+        = $self->_has_file()
+        ? $self->file()
+        : dir( abs_path() )->file( $tarball->basename() );
+
     rename $tarball => $new_name;
 
     return $new_name;
