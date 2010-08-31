@@ -1,3 +1,4 @@
+JSAN.use('DOM.Element');
 JSAN.use('Silki.URI');
 
 if ( typeof Silki == "undefined" ) {
@@ -6,8 +7,9 @@ if ( typeof Silki == "undefined" ) {
 
 Silki.ProcessStatus = function () {
     var status = $("process-status");
+    var complete = $("process-complete");
 
-    if ( ! status ) {
+    if ( ! ( status && complete ) ) {
         return;
     }
 
@@ -25,6 +27,7 @@ Silki.ProcessStatus = function () {
     this._process_type = process_type;
     this._uri = Silki.URI.dynamicURI( "/process/" + this._process_id );
     this._status_div = status;
+    this._complete_div = complete;
     this._last_status = "";
     this._spinner = '<img src="' + Silki.URI.staticURI( "/images/small-spinner.gif" ) + '" />';
 
@@ -70,6 +73,7 @@ Silki.ProcessStatus.prototype._updateStatus = function (trans) {
 
         if ( process.was_successful ) {
             this._status_div.innerHTML = this._process_type + " is complete.";
+            DOM.Element.show( this._complete_div );
         }
         else {
             this._status_div.innerHTML = this._process_type + " failed.";

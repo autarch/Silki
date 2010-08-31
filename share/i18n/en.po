@@ -38,7 +38,7 @@ msgid "%1 Dashboard "
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:58
+#: lib/Silki/Controller/Wiki.pm:60
 msgid "%1 Front Page"
 msgstr ""
 
@@ -53,7 +53,7 @@ msgid "%1 created %quant(%2, page, pages) in this wiki."
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:53
+#: lib/Silki/Controller/Wiki.pm:55
 msgid "%1 dashboard"
 msgstr ""
 
@@ -73,31 +73,31 @@ msgid "%1 has not edited any pages in this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:413
+#: lib/Silki/Controller/Wiki.pm:418
 msgid "%1 is already a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:385
+#: lib/Silki/Controller/Wiki.pm:390
 msgid "%1 is no longer an admin for this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:431
+#: lib/Silki/Controller/Wiki.pm:436
 msgid "%1 is now a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:377
+#: lib/Silki/Controller/Wiki.pm:382
 msgid "%1 is now an admin for this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:364
+#: lib/Silki/Controller/Wiki.pm:369
 msgid "%1 was removed as a wiki member."
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:161
+#: lib/Silki/Localize/Format/Gettext.pm:162
 msgid "%date(%1) %at_time(%1)"
 msgstr ""
 
@@ -141,7 +141,7 @@ msgid "(Link to non-existent wiki: %1)"
 msgstr ""
 
 #. ($address->address()
-#: lib/Silki/Controller/Wiki.pm:464
+#: lib/Silki/Controller/Wiki.pm:469
 msgid "A user account for %1 has been created, and this person has been invited to join this wiki."
 msgstr ""
 
@@ -158,7 +158,7 @@ msgid "Activate Your Account"
 msgstr ""
 
 #. ($self->domain()
-#: lib/Silki/Schema/User.pm:977
+#: lib/Silki/Schema/User.pm:979
 msgid "Activate your user account on the %1 server"
 msgstr ""
 
@@ -171,7 +171,7 @@ msgid "Add Tags"
 msgstr ""
 
 #. ($file->filename()
-#: lib/Silki/Schema/Page.pm:365
+#: lib/Silki/Schema/Page.pm:371
 msgid "Adding a link to a new file: %1"
 msgstr ""
 
@@ -214,7 +214,7 @@ msgid "All wikis"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:423
+#: lib/Silki/Controller/Wiki.pm:428
 msgid "An unactived account for %1 already exists. Once the account is activated, this user will be able to access this wiki."
 msgstr ""
 
@@ -252,7 +252,7 @@ msgstr ""
 msgid "Back to current revision"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:583
+#: lib/Silki/Schema/User.pm:585
 msgid "Cannot make an activation uri for a user which does not need activation.\n"
 msgstr ""
 
@@ -312,6 +312,11 @@ msgstr ""
 msgid "Created by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
+#. ($wiki_data->{title})
+#: lib/Silki/Wiki/Importer.pm:158
+msgid "Creating a new wiki (%1)"
+msgstr ""
+
 #: share/mason/page/history:10
 msgid "Date"
 msgstr ""
@@ -347,7 +352,7 @@ msgid "Deleted the page %1"
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:121
+#: lib/Silki/Controller/Wiki.pm:126
 msgid "Deleted the wiki %1"
 msgstr ""
 
@@ -434,6 +439,35 @@ msgstr ""
 msgid "Existing Members"
 msgstr ""
 
+#: share/mason/wiki/export:8
+msgid "Export failed."
+msgstr ""
+
+#: share/mason/wiki/export:4
+msgid "Export is complete."
+msgstr ""
+
+#. ($revision_count,                        $pages->index()
+#. ($revision_count,                $pages->index()
+#: lib/Silki/Wiki/Exporter.pm:147 lib/Silki/Wiki/Exporter.pm:161
+msgid "Exported %1 revisions (of %quant( %2, page, pages ))"
+msgstr ""
+
+#. ($files->index()
+#: lib/Silki/Wiki/Exporter.pm:251
+msgid "Exported %quant( %1, file, files )"
+msgstr ""
+
+#. ($user_count,)
+#: lib/Silki/Wiki/Exporter.pm:193 lib/Silki/Wiki/Exporter.pm:214 lib/Silki/Wiki/Exporter.pm:224
+msgid "Exported %quant( %1, user, users )"
+msgstr ""
+
+#. ($wiki->title()
+#: share/mason/wiki/export:25
+msgid "Exporting %1"
+msgstr ""
+
 #: share/mason/lib/forms/attachment-upload.mas:11
 msgid "File"
 msgstr ""
@@ -448,7 +482,12 @@ msgstr ""
 msgid "Files cannot be larger than %1."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:57
+#. ($data->{username})
+#: lib/Silki/Wiki/Importer.pm:233
+msgid "Found a system user that does not exist in this system (%1)!"
+msgstr ""
+
+#: lib/Silki/Controller/Wiki.pm:59
 msgid "Front Page"
 msgstr ""
 
@@ -469,7 +508,7 @@ msgid "History"
 msgstr ""
 
 #. ($page->title()
-#: lib/Silki/Controller/Page.pm:250 share/mason/autohandler:23
+#: lib/Silki/Controller/Page.pm:249 share/mason/autohandler:28
 msgid "History for %1"
 msgstr ""
 
@@ -479,6 +518,22 @@ msgstr ""
 
 #: share/mason/lib/forms/user.mas:43
 msgid "If you provide an OpenID you do not need a password."
+msgstr ""
+
+#. ($file_count)
+#: lib/Silki/Wiki/Importer.pm:369 lib/Silki/Wiki/Importer.pm:375
+msgid "Imported %quant( %1, file, files )"
+msgstr ""
+
+#. ($revision_count,                        $page_count)
+#. ($revision_count,                $page_count)
+#: lib/Silki/Wiki/Importer.pm:324 lib/Silki/Wiki/Importer.pm:336
+msgid "Imported %quant( %1, revision, revisions ) (%quant( %2, page, pages ))"
+msgstr ""
+
+#. ($user_count)
+#: lib/Silki/Wiki/Importer.pm:200 lib/Silki/Wiki/Importer.pm:206
+msgid "Imported %quant( %1, user, users )"
 msgstr ""
 
 #: share/mason/wiki/permissions-fieldset.mas:9
@@ -698,11 +753,11 @@ msgstr ""
 msgid "Page created by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
-#: lib/Silki/Schema/Page.pm:289
+#: lib/Silki/Schema/Page.pm:293
 msgid "Page titles cannot contain a slash (/), since this conflicts with the syntax to link to another wiki."
 msgstr ""
 
-#: lib/Silki/Schema/Page.pm:281
+#: lib/Silki/Schema/Page.pm:285
 msgid "Page titles cannot contain the characters \"))\", since this conflicts with the wiki link syntax."
 msgstr ""
 
@@ -751,7 +806,7 @@ msgid "Permissions"
 msgstr ""
 
 #. ($perm_loc)
-#: lib/Silki/Controller/Wiki.pm:315
+#: lib/Silki/Controller/Wiki.pm:320
 msgid "Permissions for this wiki have been set to %1"
 msgstr ""
 
@@ -785,11 +840,6 @@ msgstr ""
 msgid "Privacy"
 msgstr ""
 
-#. ($revision_count,                        $pages->index()
-#: lib/Silki/Schema/Wiki.pm:1764
-msgid "Processed %1 revisions (of %quant(%2,page,pages))"
-msgstr ""
-
 #: share/mason/lib/forms/user.mas:64
 msgid "Profile Image:"
 msgstr ""
@@ -802,16 +852,16 @@ msgstr ""
 msgid "Quick Search"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:62
+#: lib/Silki/Controller/Wiki.pm:64
 msgid "Recent Changes"
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:181 share/mason/autohandler:18 share/mason/wiki/recent:39
+#: lib/Silki/Controller/Wiki.pm:186 share/mason/autohandler:23 share/mason/wiki/recent:39
 msgid "Recent Changes in %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:63
+#: lib/Silki/Controller/Wiki.pm:65
 msgid "Recent activity in this wiki"
 msgstr ""
 
@@ -922,6 +972,11 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
+#. ($user->email_address()
+#: lib/Silki/Wiki/Importer.pm:225
+msgid "Skipping user already in system (%1)"
+msgstr ""
+
 #: share/mason/lib/forms/page.mas:49 share/mason/lib/forms/user.mas:69 share/mason/page/rename-form:11 share/mason/user/login-form:17
 msgid "Submit"
 msgstr ""
@@ -945,11 +1000,11 @@ msgstr ""
 msgid "The %1 domain has been updated."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:439
+#: lib/Silki/Schema/User.pm:441
 msgid "The OpenID URI you provided is already in use by another user."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:413
+#: lib/Silki/Schema/User.pm:415
 msgid "The OpenID you provided is not a valid URI."
 msgstr ""
 
@@ -968,7 +1023,7 @@ msgstr ""
 msgid "The contents of <em>%html(%1)</em>"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:395
+#: lib/Silki/Schema/User.pm:397
 msgid "The email address you provided is already in use by another user."
 msgstr ""
 
@@ -976,23 +1031,23 @@ msgstr ""
 msgid "The email hostname you provided is already in use by another domain."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:322
+#: lib/Silki/Controller/Page.pm:321
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:221
+#: lib/Silki/Controller/Wiki.pm:226
 msgid "The file has been uploaded."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:348
+#: lib/Silki/Controller/Page.pm:347
 msgid "The file you uploaded was empty."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:341
+#: lib/Silki/Controller/Page.pm:340
 msgid "The file you uploaded was too large."
 msgstr ""
 
-#: lib/Silki/Schema/File.pm:99
+#: lib/Silki/Schema/File.pm:103
 msgid "The filename you provided is already in use for another file on this page."
 msgstr ""
 
@@ -1005,15 +1060,15 @@ msgid "The hostname to be used when sending and receiving email. Defaults to the
 msgstr ""
 
 #. ($p->{title})
-#: lib/Silki/Schema/Page.pm:318
+#: lib/Silki/Schema/Page.pm:324
 msgid "The page title you have chosen (%1) is already in use in this wiki."
 msgstr ""
 
-#: lib/Silki/Schema/Wiki.pm:398
+#: lib/Silki/Schema/Wiki.pm:407
 msgid "The title you provided generates the same URI as an existing wiki."
 msgstr ""
 
-#: lib/Silki/Schema/Wiki.pm:356
+#: lib/Silki/Schema/Wiki.pm:365
 msgid "The title you provided is already in use by another wiki."
 msgstr ""
 
@@ -1036,6 +1091,16 @@ msgstr ""
 
 #: share/mason/wiki/wanted:32
 msgid "There are no wanted pages in this wiki."
+msgstr ""
+
+#. ($wiki_data->{short_name})
+#: lib/Silki/Wiki/Importer.pm:154
+msgid "There is already a wiki with this short_name (%1)"
+msgstr ""
+
+#. ($wiki_data->{title})
+#: lib/Silki/Wiki/Importer.pm:146
+msgid "There is already a wiki with this title (%1)"
 msgstr ""
 
 #: share/mason/wiki/search-results:27
@@ -1118,11 +1183,11 @@ msgstr ""
 msgid "This wiki is currently <strong>%1</strong>."
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:66
+#: lib/Silki/Localize/Format/Gettext.pm:67
 msgid "Three days ago"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:160 lib/Silki/Localize/Format/Gettext.pm:89
+#: lib/Silki/Localize/Format/Gettext.pm:161 lib/Silki/Localize/Format/Gettext.pm:90
 msgid "Three days ago %at_time(%1)"
 msgstr ""
 
@@ -1138,19 +1203,19 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:63
+#: lib/Silki/Localize/Format/Gettext.pm:64
 msgid "Today"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:157 lib/Silki/Localize/Format/Gettext.pm:86
+#: lib/Silki/Localize/Format/Gettext.pm:158 lib/Silki/Localize/Format/Gettext.pm:87
 msgid "Today %at_time(%1)"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:65
+#: lib/Silki/Localize/Format/Gettext.pm:66
 msgid "Two days ago"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:159 lib/Silki/Localize/Format/Gettext.pm:88
+#: lib/Silki/Localize/Format/Gettext.pm:160 lib/Silki/Localize/Format/Gettext.pm:89
 msgid "Two days ago %at_time(%1)"
 msgstr ""
 
@@ -1159,7 +1224,7 @@ msgid "Type"
 msgstr ""
 
 #. ($old_title, $title)
-#: lib/Silki/Schema/Page.pm:409
+#: lib/Silki/Schema/Page.pm:415
 msgid "Updating links because a page is being renamed from %1 to %2"
 msgstr ""
 
@@ -1201,6 +1266,10 @@ msgstr ""
 
 #: lib/Silki/Controller/Page.pm:53 share/mason/page/autohandler:9
 msgid "View this page"
+msgstr ""
+
+#: share/mason/wiki/export:13
+msgid "Waiting for export to start ..."
 msgstr ""
 
 #: share/mason/wiki/wanted:44
@@ -1252,11 +1321,11 @@ msgstr ""
 msgid "Wiki members"
 msgstr ""
 
-#: lib/Silki/Schema/Wiki.pm:378
+#: lib/Silki/Schema/Wiki.pm:387
 msgid "Wiki titles cannot contain a slash (/), since this conflicts with the syntax to link to another wiki."
 msgstr ""
 
-#: lib/Silki/Schema/Wiki.pm:370
+#: lib/Silki/Schema/Wiki.pm:379
 msgid "Wiki titles cannot contain the characters \"))\", since this conflicts with the wiki link syntax."
 msgstr ""
 
@@ -1287,11 +1356,11 @@ msgstr ""
 msgid "Yes, delete it"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:64
+#: lib/Silki/Localize/Format/Gettext.pm:65
 msgid "Yesterday"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:158 lib/Silki/Localize/Format/Gettext.pm:87
+#: lib/Silki/Localize/Format/Gettext.pm:159 lib/Silki/Localize/Format/Gettext.pm:88
 msgid "Yesterday %at_time(%1)"
 msgstr ""
 
@@ -1320,7 +1389,7 @@ msgstr ""
 msgid "You cannot remove yourself as an admin."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:334
+#: lib/Silki/Controller/Page.pm:333
 msgid "You did not select a file to upload."
 msgstr ""
 
@@ -1330,7 +1399,7 @@ msgid "You do not have %1 permissions in this wiki."
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Schema/User.pm:972
+#: lib/Silki/Schema/User.pm:974
 msgid "You have been invited to join the %1 wiki at %2"
 msgstr ""
 
@@ -1354,7 +1423,7 @@ msgstr ""
 msgid "You must log in to to perform this action in the %1 wiki."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:331
+#: lib/Silki/Schema/User.pm:333
 msgid "You must provide a password or OpenID."
 msgstr ""
 
@@ -1401,7 +1470,7 @@ msgid "Your submission was flagged as spam by our antispam system. Please check 
 msgstr ""
 
 #. ($dt)
-#: lib/Silki/Localize/Format/Gettext.pm:175
+#: lib/Silki/Localize/Format/Gettext.pm:176
 msgid "at %time(%1)"
 msgstr ""
 
@@ -1425,11 +1494,11 @@ msgstr ""
 msgid "more"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:67
+#: lib/Silki/Localize/Format/Gettext.pm:68
 msgid "on %date(%1)"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:90
+#: lib/Silki/Localize/Format/Gettext.pm:91
 msgid "on %date(%1) %at_time(%1)"
 msgstr ""
 

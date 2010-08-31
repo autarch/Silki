@@ -1,18 +1,21 @@
 % if ( $process->is_complete() ) {
 %   if ( $process->was_successful() ) {
 <p>
-Export is complete.
+<% loc('Export is complete.') %>
 </p>
 %   } else {
 <p>
-Export failed.
+<% loc('Export failed.') %>
 </p>
 %   }
 % } else {
 <pre id="process-status" class="js-process-id-<% $process->process_id() %> js-process-type-Export">
-<img src="<% static_uri('/images/small-spinner.gif') %>" /> Waiting for export to start ...
+<img src="<% static_uri('/images/small-spinner.gif') %>" /> <% loc('Waiting for export to start ...') %>
 </pre>
 % }
+<div id="process-complete" style="display: none">
+done
+</div>
 
 <%args>
 $process
