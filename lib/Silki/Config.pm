@@ -7,7 +7,7 @@ use autodie qw( :all );
 
 use File::HomeDir;
 use File::Slurp qw( write_file );
-use File::Temp qw( tempdir );
+use File::Spec;
 use Net::Interface;
 use Path::Class;
 use Silki::ConfigFile;
@@ -331,6 +331,13 @@ has mini_image_dir => (
     isa     => Dir,
     lazy    => 1,
     builder => '_build_mini_image_dir',
+);
+
+has temp_dir => (
+    is      => 'ro',
+    isa     => Dir,
+    lazy    => 1,
+    default => sub { dir( File::Spec->tmpdir() )->subdir('silki') },
 );
 
 has static_path_prefix => (

@@ -14,10 +14,11 @@
 </pre>
 % }
 <div id="process-complete" style="display: none">
-done
+<% loc('You can <a href="%html(%1)">download the export tarball</a>.', $download_uri) | n %>
 </div>
 
 <%args>
+$download_uri
 $process
 </%args>
 

@@ -7,8 +7,8 @@ use namespace::autoclean;
 use DateTime::Format::W3CDTF 0.05;
 use Email::Address;
 use File::Basename qw( dirname );
-use File::Temp qw( tempdir );
-use Path::Class ();
+use File::MimeInfo qw( mimetype );
+use Path::Class qw( dir );
 use Silki::Config;
 use Silki::Formatter::HTMLToWiki;
 use Silki::I18N qw( loc );
@@ -101,18 +101,51 @@ sub export : Chained('_set_wiki') : PathPart('export') : Args(0) {
 
     my $process = Silki::Schema::Process->insert( wiki_id => $wiki->wiki_id() );
 
-    my $dir = tempdir();
+    my $dir = Silki::Config->temp_dir()->subdir( 'wiki-' . $wiki->wiki_id() );
+    $dir->mkpath( 0, 0700 );
+    my $file = $dir->file( $wiki->short_name() . '.tar.gz' );
 
     detach_and_run(
         'silki-export',
         '--wiki',    $wiki->short_name(),
-        '--dir',     $dir,
+        '--file',    $file,
         '--process', $process->process_id(),
     );
 
+    $c->stash()->{download_uri} = $wiki->uri( view => 'tempfile/' . $file->basename() );
     $c->stash()->{process} = $process;
 
     $c->stash()->{template} = '/wiki/export';
+}
+
+sub tempfile : Chained('_set_wiki') : PathPart('tempfile') : Args(1) {
+    my $self     = shift;
+    my $c        = shift;
+    my $filename = shift;
+
+    my $wiki = $c->stash()->{wiki};
+
+    $self->_require_permission_for_wiki( $c, $wiki, 'Manage' );
+
+    my $file = Silki::Config->temp_dir()->subdir( 'wiki-' . $wiki->wiki_id() )
+        ->file($filename);
+
+    unless ( -f $file ) {
+        $c->response()->status(404);
+        $c->detach();
+    }
+
+    my $basename = $file->basename();
+
+    $c->response()->status(200);
+    $c->response()->content_type( mimetype( $file->stringify() ) );
+    $c->response()
+        ->header(
+        'Content-Disposition' => qq{attachment; filename="$basename"} );
+    $c->response()->content_length( -s $file );
+    $c->response()->header( 'X-Sendfile' => $file );
+
+    $c->detach();
 }
 
 sub wiki_DELETE {
