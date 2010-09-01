@@ -7,7 +7,7 @@ if ( typeof Silki == "undefined" ) {
 
 Silki.User = function (user_id) {
     if ( typeof user_id == "undefined" ) {
-        var cookies = new HTTP.Cookies;
+        var cookies = new HTTP.Cookies ();
         var user_cookie = cookies.read("Silki-user");
         var match = user_cookie.match( /user_id\&(\d+)/ );
 
