@@ -47,7 +47,7 @@ Silki.PageEdit._makeTagTextFunction = function ( open, close, textarea ) {
     var func = function () {
         var text = textarea.selectedText();
 
-        result = text.match( /^(\s+)?(.+?)(\s+)?$/ );
+        var result = text.match( /^(\s+)?(.+?)(\s+)?$/ );
 
         var new_text;
         if ( result && result[0] ) {
