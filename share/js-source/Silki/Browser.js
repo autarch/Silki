@@ -7,7 +7,7 @@ Silki.Browser = function () {
         return Silki.Browser._Singleton;
     }
 
-    ua = navigator.userAgent;
+    var ua = navigator.userAgent;
 
     this.isIE     = !! window.attachEvent && ! window.opera;
     this.isOpera  = !! window.opera;
