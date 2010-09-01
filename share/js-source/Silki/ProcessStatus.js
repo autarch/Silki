@@ -36,7 +36,7 @@ Silki.ProcessStatus = function () {
 
 Silki.ProcessStatus.prototype._setupInterval = function () {
     var self = this;
-    var func = function () { self._getProcessStatus() };
+    var func = function () { self._getProcessStatus(); };
 
     this._interval_id = setInterval( func, 1000 );
 };
@@ -58,10 +58,10 @@ Silki.ProcessStatus.prototype._getProcessStatus = function () {
     };
 
     new HTTP.Request( {
-        "uri":        this._uri,
-        "method": "get",
-        "onSuccess":  on_success,
-        "onFailure":  on_failure,
+        "uri":       this._uri,
+        "method":    "get",
+        "onSuccess": on_success,
+        "onFailure": on_failure
     } );
 };
 
