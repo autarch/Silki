@@ -57,7 +57,7 @@ Silki.PageTags.prototype._submitForm = function () {
 
 Silki.PageTags.prototype._parameters = function () {
     return "tags=" + encodeURIComponent( this.text.value );
-}
+};
 
 Silki.PageTags.prototype._updateTagList = function (trans) {
     var resp = eval( "(" + trans.responseText + ")" );
@@ -83,8 +83,6 @@ Silki.PageTags.prototype._instrumentDeleteURIs = function () {
     if ( ! anchors.length ) {
         return;
     }
-
-    var self = this;
 
     for ( var i = 0; i < anchors.length; i++ ) {
         var func = this._makeDeleteTagFunction();
