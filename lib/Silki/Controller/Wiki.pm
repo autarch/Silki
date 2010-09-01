@@ -623,7 +623,7 @@ sub tag_GET_html {
     $c->stash()->{template} = '/wiki/tag';
 }
 
-sub new_wiki_form : Path('/new_wiki_form') : Args(0) {
+sub new_wiki_form : Path('/wikis/new_wiki_form') : Args(0) {
     my $self = shift;
     my $c    = shift;
 
