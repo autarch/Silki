@@ -364,6 +364,7 @@ CREATE TABLE "Process" (
        status             TEXT               NOT NULL DEFAULT '',
        is_complete        BOOL               DEFAULT FALSE,
        was_successful     BOOL               DEFAULT FALSE,
+       final_result       TEXT               DEFAULT '',
        creation_datetime       TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
        last_modified_datetime  TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

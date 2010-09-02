@@ -44,6 +44,13 @@ sub _run {
     )->imported_wiki();
 }
 
+sub _final_result_string {
+    my $self = shift;
+    my $wiki = shift;
+
+    return $wiki->uri();
+}
+
 sub _print_success_message {
     my $self = shift;
     my $wiki = shift;

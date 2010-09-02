@@ -3,12 +3,13 @@ package Silki::Controller::Wiki;
 use strict;
 use warnings;
 use namespace::autoclean;
+use autodie;
 
 use DateTime::Format::W3CDTF 0.05;
 use Email::Address;
 use File::Basename qw( dirname );
 use File::MimeInfo qw( mimetype );
-use Path::Class qw( dir );
+use Path::Class qw( dir file );
 use Silki::Config;
 use Silki::Formatter::HTMLToWiki;
 use Silki::I18N qw( loc );
@@ -632,6 +633,15 @@ sub new_wiki_form : Path('/wikis/new_wiki_form') : Args(0) {
     $c->stash()->{template} = '/wiki/new-wiki-form';
 }
 
+sub import_wiki_form : Path('/wikis/import_wiki_form') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_site_admin($c);
+
+    $c->stash()->{template} = '/wiki/import-wiki-form';
+}
+
 sub wiki_collection : Path('/wikis') : Args(0) : ActionClass('+Silki::Action::REST') {
 }
 
@@ -656,6 +666,44 @@ sub wiki_collection_POST {
     my $c    = shift;
 
     $self->_require_site_admin($c);
+
+    if ( $c->request()->params()->{tarball} ) {
+        $self->_import_wiki($c);
+    }
+    else {
+        $self->_create_wiki($c);
+    }
+}
+
+sub _import_wiki {
+    my $self = shift;
+    my $c    = shift;
+
+    # We can't insert with _no_ values, so this is a hack to make the insert
+    # work.
+    my $process = Silki::Schema::Process->insert( status => q{} );
+
+    my $file = file( $c->request()->upload('tarball')->tempname() );
+    my $tarball = Silki::Config->new()->temp_dir()->file( $file->basename );
+
+    rename $file => $tarball;
+
+    detach_and_run(
+        'silki-import',
+        '--process', $process->process_id(),
+        '--domain',  $c->domain()->web_hostname(),
+        '--tarball', $tarball,
+    );
+
+
+    $c->stash()->{process} = $process;
+
+    $c->stash()->{template} = '/wiki/import';
+}
+
+sub _create_wiki {
+    my $self = shift;
+    my $c    = shift;
 
     my %form_data = $c->request()->wiki_params();
     my $perms = $c->request()->params()->{permissions};

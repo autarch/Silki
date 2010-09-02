@@ -10,7 +10,7 @@ use Silki::Types qw( Str );
 use Moose::Role;
 use Moose::Util::TypeConstraints;
 
-requires qw( _run _print_success_message );
+requires qw( _run _final_result_string _print_success_message );
 
 {
     subtype 'Process', as 'Silki::Schema::Process';
@@ -71,6 +71,7 @@ sub _handle_success {
             status         => 'Completed work',
             is_complete    => 1,
             was_successful => 1,
+            final_result   => $self->_final_result_string(@_),
         );
     }
     else {

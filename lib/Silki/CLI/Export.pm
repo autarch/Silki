@@ -62,6 +62,13 @@ sub _run {
     return $new_name;
 }
 
+sub _final_result_string {
+    my $self    = shift;
+    my $tarball = shift;
+
+    return $tarball;
+}
+
 sub _print_success_message {
     my $self    = shift;
     my $tarball = shift;
