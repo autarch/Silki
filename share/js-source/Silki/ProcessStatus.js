@@ -29,6 +29,7 @@ Silki.ProcessStatus = function () {
     this._status_div = status;
     this._complete_div = complete;
     this._last_status = "";
+    this._last_status_change = ( new Date() ).getTime();
     this._spinner = '<img src="' + Silki.URI.staticURI( "/images/small-spinner.gif" ) + '" />';
 
     this._setupInterval();
@@ -73,6 +74,7 @@ Silki.ProcessStatus.prototype._updateStatus = function (trans) {
 
         if ( process.was_successful ) {
             this._status_div.innerHTML = this._process_type + " is complete.";
+            this._complete_div.innerHTML.replace( /\!result\!/, process.final_result );
             DOM.Element.show( this._complete_div );
         }
         else {
