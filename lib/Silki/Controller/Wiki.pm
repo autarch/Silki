@@ -582,6 +582,8 @@ sub search_GET_html {
     $c->redirect_and_detach( $wiki->uri() )
         if string_is_empty($search);
 
+    $search =~ s/^\s+|\s+//g;
+
     ( my $pg_query = $search ) =~ s/\s+/ & /g;
 
     $c->stash()->{search_results} = $wiki->text_search( query => $pg_query );
