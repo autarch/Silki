@@ -14,7 +14,7 @@
 </pre>
 % }
 <div id="process-complete" style="display: none">
-<% loc('You can <a href="!result!">visit the imported wiki</a>.') | n %>
+<% loc('You can <a href="@result@">visit the imported wiki</a>.') | n %>
 </div>
 
 <%args>
