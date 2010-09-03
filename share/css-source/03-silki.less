@@ -724,6 +724,7 @@ form select optgroup {
 }
 
 textarea#page-content {
+    font-family: "courier new", courier, monospace;
     font-weight: normal;
     height: 20em;
     margin: 0;
@@ -781,6 +782,32 @@ textarea#page-content {
     background-color: #eff;
     margin-bottom: 0.5em;
     padding: 0.5em;
+}
+
+.markdown-output table {
+    border-top: 1px solid @dark-purple;
+    border-right: 1px solid @dark-purple;
+    border-bottom: 1px solid @dark-purple;
+    border-left: 5px solid @dark-purple;
+
+    th, td {
+        border: none;
+        border-right: 1px dotted #999;
+        vertical-align: top;
+    }
+
+    td {
+        padding: 0.3em 0.5em;
+    }
+
+    thead tr {
+        background-color: @dark-purple;
+        color: white;
+    }
+
+    tbody tr {
+        border-bottom: 1px solid @dark-purple;
+    }
 }
 
 .fixed {
