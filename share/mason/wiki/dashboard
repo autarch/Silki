@@ -69,6 +69,32 @@
       </div>
     </div>
   </div>
+
+  <div class="yui-g">
+    <div class="yui-u first">
+      <div class="dashboard-item">
+        <h2><% loc('More Stuff') %></h2>
+
+        <ul>
+          <li>
+            <a href="<% $wiki->uri( view => 'attachments' ) %>"
+               title="<% loc('All attachments in this wiki') %>"><% loc( 'All Attachments (%1)', $wiki->file_count() ) %></a>
+          </li>
+          <li>
+            <a href="<% $wiki->uri( view => 'orphans' ) %>"
+               title="<% loc('Pages with no incoming links') %>"><% loc( 'Orphans (%1)', $wiki->orphaned_page_count() ) %></a>
+          </li>
+          <li>
+            <a href="<% $wiki->uri( view => 'wanted' ) %>"
+               title="<% loc( 'Links to pages which do not yet exist' ) %>"><% loc( 'Wanted Pages (%1)', $wiki->wanted_page_count() ) %></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="yui-u">
+    </div>
+  </div>
+
 </div>
 
 

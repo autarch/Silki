@@ -9,18 +9,6 @@ return $m->call_next();
          title="<% loc( 'All tags in this wiki' ) %>"><% loc( 'Tags (%1)', $wiki->tag_count() ) %></a>
     </li>
     <li>
-      <a href="<% $wiki->uri( view => 'attachments' ) %>"
-         title="<% loc('All attachments in this wiki') %>"><% loc( 'All Attachments (%1)', $wiki->file_count() ) %></a>
-    </li>
-    <li>
-      <a href="<% $wiki->uri( view => 'orphans' ) %>"
-         title="<% loc('Pages with no incoming links') %>"><% loc( 'Orphans (%1)', $wiki->orphaned_page_count() ) %></a>
-    </li>
-    <li>
-      <a href="<% $wiki->uri( view => 'wanted' ) %>"
-         title="<% loc( 'Links to pages which do not yet exist' ) %>"><% loc( 'Wanted Pages (%1)', $wiki->wanted_page_count() ) %></a>
-    </li>
-    <li>
       <a href="<% $wiki->uri( view => 'users' ) %>"
          title="<% loc( 'Wiki members' ) %>"><% loc('People') %></a>
     </li>

@@ -5,6 +5,11 @@
 - Added export and import features, along with silki-export and silki-import
   scripts.
 
+- Searching for a word with leading or trailing space caused a SQL error.
+
+- Moved some of the wiki subnav items to the dashboard (all attachments,
+  orphans, & wanted pages), since they're not all that important.
+
 
 0.12  2010-07-22
 
