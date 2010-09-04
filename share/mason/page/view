@@ -63,8 +63,8 @@
 </pre>
 % }
 
-% if ( $page->revision_count() > 1 ) {
 <div id="revision-controls">
+% if ( $page->revision_count() > 1 ) {
   <h2><% loc('Revisions') %></h2>
 
   <p>
@@ -86,8 +86,15 @@
 %     }
   </p>
 %   }
-</div>
 % }
+
+% if ( $c->user()->has_permission_in_wiki( wiki => $wiki, permission => Silki::Schema::Permission->Manage() ) ) {
+  <p>
+    <a href="<% $revision->uri( view => 'delete_confirmation' ) %>"><% loc('Purge this revision') %></a>
+  </p>
+% }
+
+</div>
 
 <%args>
 $page

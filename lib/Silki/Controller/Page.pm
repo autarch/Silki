@@ -181,7 +181,7 @@ sub page_title_PUT {
     $c->redirect_and_detach( $page->uri() );
 }
 
-sub revision : Chained('_set_page') : PathPart('revision') : Args(1) {
+sub _set_revision : Chained('_set_page') : PathPart('revision') : CaptureArgs(1) {
     my $self            = shift;
     my $c               = shift;
     my $revision_number = shift;
@@ -200,13 +200,24 @@ sub revision : Chained('_set_page') : PathPart('revision') : Args(1) {
         $c->redirect_and_detach( $page->uri( with_host => 1 ) );
     }
 
-    if ( $revision->revision_number() == $page->most_recent_revision()->revision_number() ) {
-        $c->redirect_and_detach( $page->uri( with_host => 1 ) );
-    }
-
     $c->stash()->{page}                = $page;
     $c->stash()->{revision}            = $revision;
     $c->stash()->{is_current_revision} = 0;
+}
+
+sub revision : Chained('_set_revision') : PathPart('') : Args(0) : ActionClass('+Silki::Action::REST') {
+}
+
+sub revision_GET_html {
+    my $self = shift;
+    my $c    = shift;
+
+    my $revision = $c->stash()->{revision};
+    my $page = $revision->page();
+
+    $c->redirect_and_detach( $page->uri( with_host => 1 ) )
+        if $revision->revision_number()
+            == $page->most_recent_revision()->revision_number();
 
     $c->stash()->{html} = $revision->content_as_html(
         user        => $c->user(),
@@ -214,6 +225,30 @@ sub revision : Chained('_set_page') : PathPart('revision') : Args(1) {
     );
 
     $c->stash()->{template} = '/page/view';
+}
+
+sub revision_DELETE {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_permission_for_wiki( $c, $c->stash()->{wiki}, 'Manage' );
+
+    my $revision = $c->stash()->{revision};
+    my $num = $revision->revision_number();
+
+    $revision->delete( user => $c->user() );
+
+    $c->session_object()->add_message( loc('Revision %1 has been deleted.', $num ) );
+    $c->redirect_and_detach( $c->stash()->{page}->uri() );
+}
+
+sub revision_delete_confirmation : Chained('_set_revision') : PathPart('delete_confirmation') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_permission_for_wiki( $c, $c->stash()->{wiki}, 'Manage' );
+
+    $c->stash()->{template} = '/page/revision-delete-confirmation';
 }
 
 sub history : Chained('_set_page') : PathPart('history') : Args(0) {
