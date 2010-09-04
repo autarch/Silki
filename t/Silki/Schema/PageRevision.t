@@ -152,4 +152,61 @@ EOF
         'revision 3 became revision 2');
 }
 
+{
+    my $page1 = Silki::Schema::Page->insert_with_content(
+        title   => 'Page 1',
+        content => 'This is a random page with no links',
+        user_id => $user->user_id(),
+        wiki_id => $wiki->wiki_id(),
+    );
+
+    my $page2 = Silki::Schema::Page->insert_with_content(
+        title   => 'Page 2',
+        content => 'This is a random page with a link to ((Page 1))',
+        user_id => $user->user_id(),
+        wiki_id => $wiki->wiki_id(),
+    );
+
+    my $page3 = Silki::Schema::Page->insert_with_content(
+        title   => 'Page 3',
+        content => 'This is a random page with no links',
+        user_id => $user->user_id(),
+        wiki_id => $wiki->wiki_id(),
+    );
+
+    my @incoming = $page1->incoming_links()->all();
+
+    is( @incoming, 1,
+        'Page 1 has one incoming link' );
+    is( $incoming[0]->title(), 'Page 2',
+        'incoming link is from Page 2' );
+
+    my $rev2 = $page2->add_revision(
+        content => 'Now linking to ((Page 3))',
+        user_id => $user->user_id(),
+    );
+
+    is( $page1->incoming_link_count(), 0,
+        'Page 1 no longer has any incoming links' );
+
+    @incoming = $page3->incoming_links()->all();
+
+    is( @incoming, 1,
+        'Page 3 has one incoming link' );
+    is( $incoming[0]->title(), 'Page 2',
+        'incoming link is from Page 2' );
+
+    $rev2->delete();
+
+    is( $page3->incoming_link_count(), 0,
+        'Page 3 no longer has any incoming links after deleting rev 2 of Page 2' );
+
+    @incoming = $page1->incoming_links()->all();
+
+    is( @incoming, 1,
+        'Page 1 has one incoming link again' );
+    is( $incoming[0]->title(), 'Page 2',
+        'incoming link is from Page 2' );
+}
+
 done_testing();

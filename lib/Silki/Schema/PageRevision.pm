@@ -102,8 +102,19 @@ around delete => sub {
     Silki::Schema->RunInTransaction(
         sub {
             my $rev = $self->revision_number();
+
+            my $page = $self->page();
+            my $is_most_recent
+                = $rev == $page->most_recent_revision()->revision_number();
+
             $self->$orig(@args);
+
+            $page->_clear_most_recent_revision();
+
             $self->_renumber_higher_revisions($rev);
+
+            $page->most_recent_revision()->_post_change()
+                if $is_most_recent;
         }
     );
 };
