@@ -33,12 +33,12 @@ msgid "%1 %2 <strong>%3</strong> of this wiki"
 msgstr ""
 
 #. ($wiki->title()
-#: share/mason/wiki/dashboard:84
+#: share/mason/wiki/dashboard:110
 msgid "%1 Dashboard "
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:60
+#: lib/Silki/Controller/Wiki.pm:61
 msgid "%1 Front Page"
 msgstr ""
 
@@ -48,12 +48,12 @@ msgid "%1 Members"
 msgstr ""
 
 #. ($pronoun_and_has, $created_count)
-#: share/mason/user/profile-in-wiki.mas:31
+#: share/mason/user/profile-in-wiki.mas:34
 msgid "%1 created %quant(%2, page, pages) in this wiki."
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:55
+#: lib/Silki/Controller/Wiki.pm:56
 msgid "%1 dashboard"
 msgstr ""
 
@@ -63,37 +63,37 @@ msgid "%1 edited %quant(%2, page, pages) in this wiki."
 msgstr ""
 
 #. ($pronoun_and_has)
-#: share/mason/user/profile-in-wiki.mas:43
+#: share/mason/user/profile-in-wiki.mas:46
 msgid "%1 has not created any pages in this wiki."
 msgstr ""
 
 #. ($pronoun_and_has)
-#: share/mason/user/profile-in-wiki.mas:23
+#: share/mason/user/profile-in-wiki.mas:26
 msgid "%1 has not edited any pages in this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:418
+#: lib/Silki/Controller/Wiki.pm:452
 msgid "%1 is already a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:390
+#: lib/Silki/Controller/Wiki.pm:424
 msgid "%1 is no longer an admin for this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:436
+#: lib/Silki/Controller/Wiki.pm:470
 msgid "%1 is now a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:382
+#: lib/Silki/Controller/Wiki.pm:416
 msgid "%1 is now an admin for this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:369
+#: lib/Silki/Controller/Wiki.pm:403
 msgid "%1 was removed as a wiki member."
 msgstr ""
 
@@ -141,7 +141,7 @@ msgid "(Link to non-existent wiki: %1)"
 msgstr ""
 
 #. ($address->address()
-#: lib/Silki/Controller/Wiki.pm:469
+#: lib/Silki/Controller/Wiki.pm:503
 msgid "A user account for %1 has been created, and this person has been invited to join this wiki."
 msgstr ""
 
@@ -158,7 +158,7 @@ msgid "Activate Your Account"
 msgstr ""
 
 #. ($self->domain()
-#: lib/Silki/Schema/User.pm:979
+#: lib/Silki/Schema/User.pm:981
 msgid "Activate your user account on the %1 server"
 msgstr ""
 
@@ -180,7 +180,7 @@ msgid "Admin"
 msgstr ""
 
 #. ($wiki->file_count()
-#: share/mason/wiki/autohandler:13
+#: share/mason/wiki/dashboard:81
 msgid "All Attachments (%1)"
 msgstr ""
 
@@ -189,7 +189,7 @@ msgstr ""
 msgid "All Attachments in the %1 wiki"
 msgstr ""
 
-#: share/mason/admin.mas:7
+#: share/mason/admin.mas:8
 msgid "All Domains"
 msgstr ""
 
@@ -197,7 +197,7 @@ msgstr ""
 msgid "All Users"
 msgstr ""
 
-#: share/mason/wiki/autohandler:13
+#: share/mason/wiki/dashboard:81
 msgid "All attachments in this wiki"
 msgstr ""
 
@@ -214,7 +214,7 @@ msgid "All wikis"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:428
+#: lib/Silki/Controller/Wiki.pm:462
 msgid "An unactived account for %1 already exists. Once the account is activated, this user will be able to access this wiki."
 msgstr ""
 
@@ -228,6 +228,10 @@ msgstr ""
 
 #: share/mason/wiki/delete-confirmation:2
 msgid "Are you sure you want to delete this wiki?"
+msgstr ""
+
+#: share/mason/page/revision-delete-confirmation:2
+msgid "Are you sure you want to purge this revision? Once you do, the revision cannot be recovered."
 msgstr ""
 
 #. ($page->file_count()
@@ -252,11 +256,11 @@ msgstr ""
 msgid "Back to current revision"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:585
+#: lib/Silki/Schema/User.pm:587
 msgid "Cannot make an activation uri for a user which does not need activation.\n"
 msgstr ""
 
-#: share/mason/wiki/autohandler:30
+#: share/mason/wiki/autohandler:18
 msgid "Change settings for this wiki"
 msgstr ""
 
@@ -282,7 +286,7 @@ msgstr ""
 msgid "Create %1"
 msgstr ""
 
-#: share/mason/admin.mas:8 share/mason/domain/new-domain-form:4
+#: share/mason/admin.mas:9 share/mason/domain/new-domain-form:4
 msgid "Create a New Domain"
 msgstr ""
 
@@ -295,7 +299,7 @@ msgid "Created"
 msgstr ""
 
 #. ($revision->creation_datetime()
-#: share/mason/user/profile-in-wiki.mas:37
+#: share/mason/user/profile-in-wiki.mas:40
 msgid "Created %on_datetime(%1)"
 msgstr ""
 
@@ -313,8 +317,12 @@ msgid "Created by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
 #. ($wiki_data->{title})
-#: lib/Silki/Wiki/Importer.pm:158
+#: lib/Silki/Wiki/Importer.pm:179
 msgid "Creating a new wiki (%1)"
+msgstr ""
+
+#: lib/Silki/Wiki/Exporter.pm:104
+msgid "Creating the tarball (this may take a while)."
 msgstr ""
 
 #: share/mason/page/history:10
@@ -333,7 +341,7 @@ msgstr ""
 msgid "Delete this page"
 msgstr ""
 
-#: share/mason/page/delete-confirmation:19
+#: share/mason/page/delete-confirmation:19 share/mason/page/revision-delete-confirmation:23
 msgid "Delete this page?"
 msgstr ""
 
@@ -352,7 +360,7 @@ msgid "Deleted the page %1"
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:126
+#: lib/Silki/Controller/Wiki.pm:160
 msgid "Deleted the wiki %1"
 msgstr ""
 
@@ -399,7 +407,7 @@ msgid "Edit this page"
 msgstr ""
 
 #. ($revision->creation_datetime()
-#: share/mason/user/profile-in-wiki.mas:17
+#: share/mason/user/profile-in-wiki.mas:20
 msgid "Edited %on_datetime(%1)"
 msgstr ""
 
@@ -449,22 +457,22 @@ msgstr ""
 
 #. ($revision_count,                        $pages->index()
 #. ($revision_count,                $pages->index()
-#: lib/Silki/Wiki/Exporter.pm:147 lib/Silki/Wiki/Exporter.pm:161
+#: lib/Silki/Wiki/Exporter.pm:149 lib/Silki/Wiki/Exporter.pm:163
 msgid "Exported %1 revisions (of %quant( %2, page, pages ))"
 msgstr ""
 
 #. ($files->index()
-#: lib/Silki/Wiki/Exporter.pm:251
+#: lib/Silki/Wiki/Exporter.pm:253
 msgid "Exported %quant( %1, file, files )"
 msgstr ""
 
 #. ($user_count,)
-#: lib/Silki/Wiki/Exporter.pm:193 lib/Silki/Wiki/Exporter.pm:214 lib/Silki/Wiki/Exporter.pm:224
+#: lib/Silki/Wiki/Exporter.pm:195 lib/Silki/Wiki/Exporter.pm:216 lib/Silki/Wiki/Exporter.pm:226
 msgid "Exported %quant( %1, user, users )"
 msgstr ""
 
 #. ($wiki->title()
-#: share/mason/wiki/export:25
+#: share/mason/wiki/export:26
 msgid "Exporting %1"
 msgstr ""
 
@@ -483,11 +491,11 @@ msgid "Files cannot be larger than %1."
 msgstr ""
 
 #. ($data->{username})
-#: lib/Silki/Wiki/Importer.pm:233
+#: lib/Silki/Wiki/Importer.pm:254
 msgid "Found a system user that does not exist in this system (%1)!"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:59
+#: lib/Silki/Controller/Wiki.pm:60
 msgid "Front Page"
 msgstr ""
 
@@ -508,7 +516,7 @@ msgid "History"
 msgstr ""
 
 #. ($page->title()
-#: lib/Silki/Controller/Page.pm:249 share/mason/autohandler:28
+#: lib/Silki/Controller/Page.pm:284 share/mason/autohandler:28
 msgid "History for %1"
 msgstr ""
 
@@ -520,20 +528,37 @@ msgstr ""
 msgid "If you provide an OpenID you do not need a password."
 msgstr ""
 
+#: share/mason/admin.mas:7 share/mason/wiki/import-wiki-form:21
+msgid "Import a Wiki"
+msgstr ""
+
+#: share/mason/wiki/import:8
+msgid "Import failed."
+msgstr ""
+
+#. ($process->final_result()
+#: share/mason/wiki/import:4
+msgid "Import is complete. You can <a href=\"%html(%1)\">visit the imported wiki</a>"
+msgstr ""
+
 #. ($file_count)
-#: lib/Silki/Wiki/Importer.pm:369 lib/Silki/Wiki/Importer.pm:375
+#: lib/Silki/Wiki/Importer.pm:390 lib/Silki/Wiki/Importer.pm:396
 msgid "Imported %quant( %1, file, files )"
 msgstr ""
 
 #. ($revision_count,                        $page_count)
 #. ($revision_count,                $page_count)
-#: lib/Silki/Wiki/Importer.pm:324 lib/Silki/Wiki/Importer.pm:336
+#: lib/Silki/Wiki/Importer.pm:345 lib/Silki/Wiki/Importer.pm:357
 msgid "Imported %quant( %1, revision, revisions ) (%quant( %2, page, pages ))"
 msgstr ""
 
 #. ($user_count)
-#: lib/Silki/Wiki/Importer.pm:200 lib/Silki/Wiki/Importer.pm:206
+#: lib/Silki/Wiki/Importer.pm:221 lib/Silki/Wiki/Importer.pm:227
 msgid "Imported %quant( %1, user, users )"
+msgstr ""
+
+#: share/mason/wiki/import:25
+msgid "Importing a Wiki"
 msgstr ""
 
 #: share/mason/wiki/permissions-fieldset.mas:9
@@ -622,7 +647,7 @@ msgstr ""
 msgid "Like a public wiki, but users must log-in to edit. However, users do not have to be explicitly invited to become members."
 msgstr ""
 
-#: share/mason/wiki/autohandler:21
+#: share/mason/wiki/dashboard:89
 msgid "Links to pages which do not yet exist"
 msgstr ""
 
@@ -683,6 +708,10 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
+#: share/mason/user/profile-in-wiki.mas:18
+msgid "Most recent revision"
+msgstr ""
+
 #: share/mason/lib/table/attachments-table.mas:4
 msgid "Name"
 msgstr ""
@@ -726,7 +755,7 @@ msgid "Orphaned pages are pages which no other page in the system links to, maki
 msgstr ""
 
 #. ($wiki->orphaned_page_count()
-#: share/mason/wiki/autohandler:17
+#: share/mason/wiki/dashboard:85
 msgid "Orphans (%1)"
 msgstr ""
 
@@ -780,7 +809,7 @@ msgstr ""
 msgid "Pages tagged %1"
 msgstr ""
 
-#: share/mason/wiki/autohandler:17
+#: share/mason/wiki/dashboard:85
 msgid "Pages with no incoming links"
 msgstr ""
 
@@ -792,7 +821,7 @@ msgstr ""
 msgid "Password:"
 msgstr ""
 
-#: share/mason/wiki/autohandler:25
+#: share/mason/wiki/autohandler:13
 msgid "People"
 msgstr ""
 
@@ -806,7 +835,7 @@ msgid "Permissions"
 msgstr ""
 
 #. ($perm_loc)
-#: lib/Silki/Controller/Wiki.pm:320
+#: lib/Silki/Controller/Wiki.pm:354
 msgid "Permissions for this wiki have been set to %1"
 msgstr ""
 
@@ -848,20 +877,28 @@ msgstr ""
 msgid "Public Wikis"
 msgstr ""
 
+#: share/mason/page/view:93
+msgid "Purge this revision"
+msgstr ""
+
 #: share/mason/quick-search.mas:1
 msgid "Quick Search"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:64
+#: lib/Silki/Wiki/Importer.pm:146
+msgid "Reading the tarball (this may take a while)"
+msgstr ""
+
+#: lib/Silki/Controller/Wiki.pm:65
 msgid "Recent Changes"
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:186 share/mason/autohandler:23 share/mason/wiki/recent:39
+#: lib/Silki/Controller/Wiki.pm:220 share/mason/autohandler:23 share/mason/wiki/recent:39
 msgid "Recent Changes in %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:65
+#: lib/Silki/Controller/Wiki.pm:66
 msgid "Recent activity in this wiki"
 msgstr ""
 
@@ -922,14 +959,24 @@ msgstr ""
 msgid "Revision %1"
 msgstr ""
 
+#. ($num)
+#: lib/Silki/Controller/Page.pm:241
+msgid "Revision %1 has been deleted."
+msgstr ""
+
 #. ($revision->revision_number()
-#: share/mason/page/view:113
+#: share/mason/page/view:120
 msgid "Revision %1 of %2"
 msgstr ""
 
 #. ($rev1->revision_number()
 #: share/mason/page/diff:67
 msgid "Revision %1 versus %2"
+msgstr ""
+
+#. ($revision->revision_number()
+#: share/mason/page/revision-delete-confirmation:7
+msgid "Revision <em>%1</em> of %2 for %3"
 msgstr ""
 
 #: share/mason/page/view:68
@@ -945,7 +992,7 @@ msgstr ""
 msgid "Search Results for \"%1\""
 msgstr ""
 
-#: share/mason/wiki/autohandler:30
+#: share/mason/wiki/autohandler:18
 msgid "Settings"
 msgstr ""
 
@@ -973,7 +1020,7 @@ msgid "Size"
 msgstr ""
 
 #. ($user->email_address()
-#: lib/Silki/Wiki/Importer.pm:225
+#: lib/Silki/Wiki/Importer.pm:246
 msgid "Skipping user already in system (%1)"
 msgstr ""
 
@@ -981,7 +1028,7 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
-#: share/mason/admin.mas:9
+#: share/mason/admin.mas:10
 msgid "System Logs"
 msgstr ""
 
@@ -1000,11 +1047,11 @@ msgstr ""
 msgid "The %1 domain has been updated."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:441
+#: lib/Silki/Schema/User.pm:443
 msgid "The OpenID URI you provided is already in use by another user."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:415
+#: lib/Silki/Schema/User.pm:417
 msgid "The OpenID you provided is not a valid URI."
 msgstr ""
 
@@ -1023,7 +1070,7 @@ msgstr ""
 msgid "The contents of <em>%html(%1)</em>"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:397
+#: lib/Silki/Schema/User.pm:399
 msgid "The email address you provided is already in use by another user."
 msgstr ""
 
@@ -1031,19 +1078,19 @@ msgstr ""
 msgid "The email hostname you provided is already in use by another domain."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:321
+#: lib/Silki/Controller/Page.pm:356
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:226
+#: lib/Silki/Controller/Wiki.pm:260
 msgid "The file has been uploaded."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:347
+#: lib/Silki/Controller/Page.pm:382
 msgid "The file you uploaded was empty."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:340
+#: lib/Silki/Controller/Page.pm:375
 msgid "The file you uploaded was too large."
 msgstr ""
 
@@ -1094,12 +1141,12 @@ msgid "There are no wanted pages in this wiki."
 msgstr ""
 
 #. ($wiki_data->{short_name})
-#: lib/Silki/Wiki/Importer.pm:154
+#: lib/Silki/Wiki/Importer.pm:175
 msgid "There is already a wiki with this short_name (%1)"
 msgstr ""
 
 #. ($wiki_data->{title})
-#: lib/Silki/Wiki/Importer.pm:146
+#: lib/Silki/Wiki/Importer.pm:167
 msgid "There is already a wiki with this title (%1)"
 msgstr ""
 
@@ -1272,12 +1319,16 @@ msgstr ""
 msgid "Waiting for export to start ..."
 msgstr ""
 
+#: share/mason/wiki/import:13
+msgid "Waiting for import to start ..."
+msgstr ""
+
 #: share/mason/wiki/wanted:44
 msgid "Wanted Pages"
 msgstr ""
 
 #. ($wiki->wanted_page_count()
-#: share/mason/wiki/autohandler:21
+#: share/mason/wiki/dashboard:89
 msgid "Wanted Pages (%1)"
 msgstr ""
 
@@ -1313,11 +1364,19 @@ msgstr ""
 msgid "Wiki Settings"
 msgstr ""
 
+#: share/mason/wiki/import-wiki-form:10
+msgid "Wiki Tarball"
+msgstr ""
+
 #: share/mason/wiki/new-wiki-form:8
 msgid "Wiki Title:"
 msgstr ""
 
-#: share/mason/wiki/autohandler:25
+#: share/mason/wiki/dashboard:76
+msgid "Wiki Tools"
+msgstr ""
+
+#: share/mason/wiki/autohandler:13
 msgid "Wiki members"
 msgstr ""
 
@@ -1352,7 +1411,7 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: share/mason/file/delete-confirmation:11 share/mason/page/delete-confirmation:11 share/mason/wiki/delete-confirmation:17
+#: share/mason/file/delete-confirmation:11 share/mason/page/delete-confirmation:11 share/mason/page/revision-delete-confirmation:14 share/mason/wiki/delete-confirmation:17
 msgid "Yes, delete it"
 msgstr ""
 
@@ -1381,6 +1440,15 @@ msgid ""
 "           of which you are a member."
 msgstr ""
 
+#. ($download_uri)
+#: share/mason/wiki/export:17
+msgid "You can <a href=\"%html(%1)\">download the export tarball</a>."
+msgstr ""
+
+#: share/mason/wiki/import:17
+msgid "You can <a href=\"@result@\">visit the imported wiki</a>."
+msgstr ""
+
 #: share/mason/wiki/members-form:58
 msgid "You can include a personal message for the users invited to join the wiki."
 msgstr ""
@@ -1389,7 +1457,7 @@ msgstr ""
 msgid "You cannot remove yourself as an admin."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:333
+#: lib/Silki/Controller/Page.pm:368
 msgid "You did not select a file to upload."
 msgstr ""
 
@@ -1399,7 +1467,7 @@ msgid "You do not have %1 permissions in this wiki."
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Schema/User.pm:974
+#: lib/Silki/Schema/User.pm:976
 msgid "You have been invited to join the %1 wiki at %2"
 msgstr ""
 
@@ -1423,7 +1491,7 @@ msgstr ""
 msgid "You must log in to to perform this action in the %1 wiki."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:333
+#: lib/Silki/Schema/User.pm:335
 msgid "You must provide a password or OpenID."
 msgstr ""
 
@@ -1521,6 +1589,11 @@ msgstr "Public can read, members can edit"
 #. ($revision->revision_number()
 #: lib/Silki/Role/Controller/RevisionsAtomFeed.pm:29 share/mason/wiki/dashboard:11 share/mason/wiki/recent:13 share/mason/wiki/search-results:13
 msgid "revision %1"
+msgstr ""
+
+#. ($revision->revision_number()
+#: share/mason/user/profile-in-wiki.mas:19
+msgid "revision %1 of %2"
 msgstr ""
 
 #: share/mason/wiki/recent:20
