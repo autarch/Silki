@@ -100,7 +100,8 @@ if ( eval "use Getopt::Long::Descriptive; 1;"
     && Getopt::Long::Descriptive->VERSION < 0.086 ) {
 eval <<'EOF';
 {
-package Getopt::Long::Descriptive::Usage;
+package
+    Getopt::Long::Descriptive::Usage;
 no warnings 'redefine';
 
 sub option_text {
