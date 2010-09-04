@@ -139,7 +139,7 @@ EOF
         'diff for two revisions, added a block and removed a block (looks like a change)'
     );
 
-    $rev2->delete();
+    $rev2->delete( user => $user );
 
     is( $page->revision_count(), 2,
         'page now has two revisions' );
@@ -196,7 +196,7 @@ EOF
     is( $incoming[0]->title(), 'Page 2',
         'incoming link is from Page 2' );
 
-    $rev2->delete();
+    $rev2->delete( user => $user );
 
     is( $page3->incoming_link_count(), 0,
         'Page 3 no longer has any incoming links after deleting rev 2 of Page 2' );

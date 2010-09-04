@@ -33,6 +33,8 @@ use MooseX::Params::Validate qw( validated_list validated_hash );
 
 with 'Silki::Role::Schema::URIMaker';
 
+with 'Silki::Role::Schema::SystemLogger' => { methods => ['delete'] };
+
 my $Schema = Silki::Schema->Schema();
 
 has_policy 'Silki::Schema::Policy';
@@ -41,7 +43,7 @@ has_table( $Schema->table('PageRevision') );
 
 has_one page => (
     table   => $Schema->table('Page'),
-    handles => ['domain'],
+    handles => [ qw( domain wiki_id ) ],
 );
 
 has_one( $Schema->table('User') );
@@ -267,6 +269,32 @@ sub _process_extracted_links {
         keys %{$links};
 
     return \@existing, \@pending, $capture;
+}
+
+sub _system_log_values_for_delete {
+    my $self = shift;
+
+    my $page = $self->page();
+
+    my $msg
+        = 'Deleted revision '
+        . $self->revision_number()
+        . ' of the '
+        . $page->title()
+        . ' page, in wiki '
+        . $page->wiki()->title();
+
+    return (
+        wiki_id   => $self->wiki_id(),
+        page_id   => $self->page_id(),
+        message   => $msg,
+        data_blob => {
+            revision_number   => $self->revision_number(),
+            content           => $self->content(),
+            user_id           => $self->user_id(),
+            creation_datetime => $self->creation_datetime_raw(),
+        },
+    );
 }
 
 sub _base_uri_path {
