@@ -527,4 +527,4 @@ ALTER TABLE "Process" ADD CONSTRAINT "Process_wiki_id"
   FOREIGN KEY ("wiki_id") REFERENCES "Wiki" ("wiki_id")
   ON DELETE SET NULL ON UPDATE CASCADE;
 
-INSERT INTO "Version" (version) VALUES (4);
+INSERT INTO "Version" (version) VALUES (5);
