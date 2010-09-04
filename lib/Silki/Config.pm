@@ -8,6 +8,7 @@ use autodie qw( :all );
 use File::HomeDir;
 use File::Slurp qw( write_file );
 use File::Spec;
+use File::Temp qw( tempdir );
 use Net::Interface;
 use Path::Class;
 use Silki::ConfigFile;
