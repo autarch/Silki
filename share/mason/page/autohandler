@@ -8,7 +8,7 @@ return $m->call_next();
       <a href="<% $page->uri() %>"
          title="<% loc('View this page') %>"><% loc('View') %></a>
     </li>
-% if ( $c->user()->has_permission_in_wiki( wiki => $wiki, permission => Silki::Schema::Permission->Edit()) ) {
+% if ( $c->user()->has_permission_in_wiki( wiki => $wiki, permission => Silki::Schema::Permission->Edit() ) ) {
     <li>
       <a href="<% $page->uri( view => 'edit_form' ) %>"
          title="<% loc('Edit this page') %>"><% loc('Edit') %></a>
@@ -22,13 +22,13 @@ return $m->call_next();
       <a href="<% $page->uri( view => 'history' ) %>"
          title="<% loc( q{This page's history of revisions} ) %>"><% loc('History') %></a> 
     </li>
-% if ( $page->can_be_renamed() && $c->user()->has_permission_in_wiki( wiki => $wiki, permission => Silki::Schema::Permission->Edit()) ) {
+% if ( $page->can_be_renamed() && $c->user()->has_permission_in_wiki( wiki => $wiki, permission => Silki::Schema::Permission->Edit() ) ) {
     <li>
       <a href="<% $page->uri( view => 'rename_form' ) %>"
          title="<% loc('Rename this page') %>"><% loc('Rename') %></a>
     </li>
 % }
-% if ( $c->user()->has_permission_in_wiki( wiki => $wiki, permission => Silki::Schema::Permission->Delete()) ) {
+% if ( $c->user()->has_permission_in_wiki( wiki => $wiki, permission => Silki::Schema::Permission->Delete() ) ) {
     <li>
       <a href="<% $page->uri( view => 'delete_confirmation' ) %>"
          title="<% loc('Delete this page') %>"><% loc('Delete') %></a>
