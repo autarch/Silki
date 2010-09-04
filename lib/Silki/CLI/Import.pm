@@ -14,19 +14,26 @@ use Moose;
 with qw( MooseX::Getopt::Dashes Silki::Role::CLI::HasOptionalProcess );
 
 has tarball => (
-    is       => 'ro',
-    isa      => Str,
-    required => 1,
+    is            => 'ro',
+    isa           => Str,
+    required      => 1,
+    documentation => 'The tarball containing the wiki to import. Required.',
 );
 
 has domain => (
     is  => 'ro',
     isa => Str,
+    documentation =>
+        'The domain for the new wiki. Defaults to the default domain for the site.',
 );
 
 has fast => (
     is  => 'ro',
     isa => Bool,
+    documentation =>
+        'If this is true, the importer will disable triggers during the import.'
+        . ' This is not safe if users are using the web interface at the same time,'
+        . ' so it defaults to false.'
 );
 
 sub _run {
