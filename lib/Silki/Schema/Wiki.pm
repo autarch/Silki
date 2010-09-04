@@ -1098,7 +1098,7 @@ sub _BuildActiveUsersSelect {
                 DateTime->today()->subtract( months => 1 )
             )
         )
-        ->order_by( $order_by );
+        ->order_by($order_by);
 
     return $users_select;
 }
@@ -1436,16 +1436,19 @@ sub _BuildPagesEditedByUserSelect {
 
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    my $max_revision = $class->_MaxRevisionSelect();
-
     my ( $page_t, $page_revision_t )
         = $Schema->tables( 'Page', 'PageRevision' );
+
+    my $max_revision = $class->_MaxRevisionSelect()->clone();
+    $max_revision->and(
+        $page_revision_t->column('user_id'), '=',
+        Fey::Placeholder->new()
+    );
 
     $select
         ->select( $page_t, $page_revision_t )
         ->from( $page_t, $page_revision_t )
         ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
-        ->and  ( $page_revision_t->column('user_id'), '=', Fey::Placeholder->new() )
         ->and  ( $page_revision_t->column('revision_number'),
                  '=', $max_revision )
         ->order_by( $page_revision_t->column('creation_datetime'), 'DESC',

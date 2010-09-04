@@ -14,6 +14,9 @@
 <ul>
 % while ( my ( $page, $revision ) = $edited_pages->next() ) {
   <li><a href="<% $page->uri() %>"><% $page->title() %></a>
+      (<% $page->most_recent_revision()->revision_number() == $revision->revision_number()
+          ? loc('Most recent revision')
+          : loc( 'revision %1 of %2', $revision->revision_number(), $page->most_recent_revision()->revision_number() ) %>)
     - <% loc( 'Edited %on_datetime(%1)', $revision->creation_datetime() ) %></li>
 % }
 </ul>
