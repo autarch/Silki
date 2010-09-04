@@ -6,7 +6,7 @@ use namespace::autoclean;
 use autodie;
 
 use Silki::Schema::Domain;
-use Silki::Types qw( Str );
+use Silki::Types qw( Bool Str );
 use Silki::Wiki::Importer;
 
 use Moose;
@@ -24,30 +24,30 @@ has domain => (
     isa => Str,
 );
 
+has fast => (
+    is  => 'ro',
+    isa => Bool,
+);
+
 sub _run {
     my $self = shift;
 
-    my %p;
-
-    if ( $self->process() ) {
-        $self->_replace_dbi_manager();
-
-        my $process = $self->process();
-
-        $p{log} = sub { $process->update( status => join '', @_ ) };
-    }
+    $self->_replace_dbi_manager() if $self->process();
 
     my $wiki;
 
     eval {
+        my %p = (
+            tarball => $self->tarball(),
+            log     => $self->_log_coderef(),
+            fast    => $self->fast(),
+        );
+
         $p{domain}
             = Silki::Schema::Domain->new( web_hostname => $self->domain() )
             if $self->domain();
 
-        $wiki = Silki::Wiki::Importer->new(
-            tarball => $self->tarball(),
-            %p,
-        )->imported_wiki();
+        $wiki = Silki::Wiki::Importer->new(%p)->imported_wiki();
     };
 
     return $wiki;

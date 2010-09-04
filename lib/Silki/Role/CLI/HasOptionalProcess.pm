@@ -46,6 +46,19 @@ sub run {
     }
 }
 
+sub _log_coderef {
+    my $self = shift;
+
+    if ( $self->process() ) {
+        my $process = $self->process();
+
+        return sub { $process->update( status => join '', @_ ) };
+    }
+    else {
+        return sub { print q{  }, @_, "\n" };
+    }
+}
+
 sub _handle_error {
     my $self  = shift;
     my $error = shift;

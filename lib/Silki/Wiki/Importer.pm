@@ -12,7 +12,7 @@ use Silki::JSON;
 use Silki::Schema::Domain;
 use Silki::Schema::User;
 use Silki::Schema::Wiki;
-use Silki::Types qw( ArrayRef Dir HashRef Tarball );
+use Silki::Types qw( ArrayRef Bool Dir HashRef Tarball );
 
 use Moose;
 use MooseX::SemiAffordanceAccessor;
@@ -31,6 +31,12 @@ has domain => (
     isa     => 'Silki::Schema::Domain',
     lazy    => 1,
     default => sub { Silki::Schema::Domain->DefaultDomain() },
+);
+
+has fast => (
+    is      => 'ro',
+    isa     => Bool,
+    default => 0,
 );
 
 has _tarball => (
@@ -109,14 +115,27 @@ sub imported_wiki {
 sub _import {
     my $self = shift;
 
-    Silki::Schema->RunInTransaction(
-        sub {
-            $self->_create_wiki();
-            $self->_import_users();
-            $self->_import_pages();
-            $self->_import_files();
-        }
-    );
+    $self->_disable_pg_triggers()
+        if $self->fast();
+
+    eval {
+        Silki::Schema->RunInTransaction(
+            sub {
+                $self->_create_wiki();
+                $self->_import_users();
+                $self->_import_pages();
+                $self->_import_files();
+            }
+        );
+    };
+
+    my $e = $@;
+
+    $self->_enable_pg_triggers() if $self->fast();
+
+    die $e if $e;
+
+    $self->_rebuild_searchable_text() if $self->fast();
 
     # invite users
 }
@@ -307,7 +326,7 @@ sub _import_pages {
 
             delete @{$rev_data}{qw( page_id revision_number )};
 
-            local $Silki::Schema::Page::SkipPostChangeHack
+            local $Silki::Schema::PageRevision::SkipPostChangeHack
                 = $revision_file eq $revision_files[-1] ? 0 : 1;
 
             $page->add_revision(
@@ -392,6 +411,49 @@ sub _build_export_root_dir {
     my ($dir) = ( glob( $tardir->subdir('export-of-*') ) )[0];
 
     return dir($dir);
+}
+
+sub _disable_pg_triggers {
+    my $self = shift;
+
+    my $dbh = Silki::Schema->DBIManager()->default_source()->dbh();
+
+    $dbh->do( q{ALTER TABLE "Page" DISABLE TRIGGER USER} );
+    $dbh->do( q{ALTER TABLE "PageRevision" DISABLE TRIGGER USER} );
+}
+
+sub _enable_pg_triggers {
+    my $self = shift;
+
+    my $dbh = Silki::Schema->DBIManager()->default_source()->dbh();
+
+    $dbh->do( q{ALTER TABLE "Page" ENABLE TRIGGER USER} );
+    $dbh->do( q{ALTER TABLE "PageRevision" ENABLE TRIGGER USER} );
+}
+
+sub _rebuild_searchable_text {
+    my $self = shift;
+
+    my $sql = <<'EOF';
+INSERT INTO "PageSearchableText"
+  (page_id, ts_text)
+SELECT pages.page_id,
+       setweight(to_tsvector('pg_catalog.english', pages.title), 'A') ||
+       setweight(to_tsvector('pg_catalog.english', pages.content), 'B')
+  FROM ( SELECT p.page_id, p.title, pr.content
+           FROM "Page" AS p, "PageRevision" AS pr
+          WHERE revision_number =
+                ( SELECT MAX(revision_number)
+                    FROM "PageRevision"
+                   WHERE page_id = p.page_id )
+            AND p.page_id = pr.page_id
+            AND p.wiki_id = ?
+       ) AS pages
+EOF
+
+    my $dbh = Silki::Schema->DBIManager()->default_source()->dbh();
+
+    $dbh->do( $sql, {}, $self->_wiki()->wiki_id() );
 }
 
 __PACKAGE__->meta()->make_immutable();

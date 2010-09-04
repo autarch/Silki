@@ -42,13 +42,10 @@ has file => (
 sub _run {
     my $self = shift;
 
-    my %p = ( wiki => $self->wiki() );
-
-    if ( $self->process() ) {
-        my $process = $self->process();
-
-        $p{log} = sub { $process->update( status => join '', @_ ) };
-    }
+    my %p = (
+        wiki => $self->wiki(),
+        log  => $self->_log_coderef(),
+    );
 
     my $tarball = Silki::Wiki::Exporter->new(%p)->tarball();
 
