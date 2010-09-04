@@ -3,7 +3,7 @@
 - Renamed a number of files in bin, and moved some of them to dev-bin.
 
 - Added export and import features, along with silki-export and silki-import
-  scripts.
+  scripts. This feature is also available to site admins via the web UI.
 
 - Searching for a word with leading or trailing space caused a SQL error.
 
@@ -13,7 +13,7 @@
 - The display of pages recently edited in their profile was broken.
 
 - Added a revision purge feature available to wiki admins. This destroys a
-  revision completely, renumbering any subsequent reevisions. This is useful
+  revision completely, renumbering any subsequent revisions. This is useful
   for removing spam and other bogus changes.
 
 
