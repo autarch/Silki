@@ -26,10 +26,11 @@ with qw( MooseX::Getopt::Dashes Silki::Role::CLI::HasOptionalProcess );
     MooseX::Getopt::OptionTypeMap->add_option_type_to_map( 'Wiki' => '=s' );
 
     has wiki => (
-        is       => 'ro',
-        isa      => 'Wiki',
-        required => 1,
-        coerce   => 1,
+        is            => 'ro',
+        isa           => 'Wiki',
+        required      => 1,
+        coerce        => 1,
+        documentation => 'The short name of the wiki to export. Required.',
     );
 }
 
@@ -37,6 +38,10 @@ has file => (
     is        => 'ro',
     isa       => Str,
     predicate => '_has_file',
+    documentation =>
+        'The name of the tarball to be created.'
+        . ' If not specified, the tarball is created as'
+        . ' export-of-<short-name>.tar.gz in the current directory',
 );
 
 sub _run {
