@@ -138,6 +138,18 @@ EOF
         ],
         'diff for two revisions, added a block and removed a block (looks like a change)'
     );
+
+    $rev2->delete();
+
+    is( $page->revision_count(), 2,
+        'page now has two revisions' );
+
+    my $max_rev = $page->most_recent_revision();
+
+    is( $max_rev->revision_number(), 2,
+        'most recent revision is now revision 2' );
+    is( $max_rev->content(), $content3,
+        'revision 3 became revision 2');
 }
 
 done_testing();

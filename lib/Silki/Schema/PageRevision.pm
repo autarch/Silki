@@ -28,6 +28,7 @@ use Storable qw( nfreeze thaw );
 use Text::TOC::HTML;
 
 use Fey::ORM::Table;
+use MooseX::ClassAttribute;
 use MooseX::Params::Validate qw( validated_list validated_hash );
 
 with 'Silki::Role::Schema::URIMaker';
@@ -51,6 +52,13 @@ transform content => deflate {
     return $_[1];
 };
 
+class_has _RenumberHigherRevisionsSQL => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Update',
+    lazy    => 1,
+    builder => '_BuildRenumberHigherRevisionsSQL',
+);
+
 with 'Silki::Role::Schema::Serializes';
 
 around insert => sub {
@@ -69,6 +77,61 @@ after update => sub {
 
     $self->_post_change();
 };
+
+around delete => sub {
+    my $orig = shift;
+    my $self = shift;
+
+    Silki::Schema->RunInTransaction(
+        sub {
+            my $rev = $self->revision_number();
+            $self->$orig(@_);
+            $self->_renumber_higher_revisions($rev);
+        }
+    );
+};
+
+sub _renumber_higher_revisions {
+    my $self = shift;
+    my $rev  = shift;
+
+    my $update = $self->_RenumberHigherRevisionsSQL();
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($update)->dbh();
+
+    $dbh->do(
+        $update->sql($dbh),
+        {},
+        $self->page_id(),
+        $rev,
+    );
+
+    return;
+}
+
+sub _BuildRenumberHigherRevisionsSQL {
+    my $class = shift;
+
+    my $update = Silki::Schema->SQLFactoryClass()->new_update();
+
+    my $page_rev_t = $Schema->table('PageRevision');
+
+    my $minus_one = Fey::Literal::Term->new(
+        $page_rev_t->column('revision_number'),
+        ' - 1'
+    );
+
+    $update
+        ->update($page_rev_t)
+        ->set( $page_rev_t->column('revision_number'),
+               $minus_one )
+        ->where( $page_rev_t->column('page_id'), '=',
+                 Fey::Placeholder->new() )
+        ->and  ( $page_rev_t->column('revision_number'), '>',
+                 Fey::Placeholder->new() );
+
+    return $update;
+}
 
 our $SkipPostChangeHack;
 
