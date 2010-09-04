@@ -73,7 +73,7 @@
   <div class="yui-g">
     <div class="yui-u first">
       <div class="dashboard-item">
-        <h2><% loc('More Stuff') %></h2>
+        <h2><% loc('Wiki Tools') %></h2>
 
         <ul>
           <li>
