@@ -65,27 +65,44 @@ around insert => sub {
     my $orig  = shift;
     my $class = shift;
 
-    my $revision = $class->$orig(@_);
+    my $revision;
 
-    $revision->_post_change();
+    my @args = @_;
+
+    Silki::Schema->RunInTransaction(
+        sub {
+            $revision = $class->$orig(@args);
+            $revision->_post_change();
+        }
+    );
 
     return $revision;
 };
 
-after update => sub {
+around update => sub {
+    my $orig = shift;
     my $self = shift;
 
-    $self->_post_change();
+    my @args = @_;
+
+    Silki::Schema->RunInTransaction(
+        sub {
+            $self->$orig(@args);
+            $self->_post_change();
+        }
+    );
 };
 
 around delete => sub {
     my $orig = shift;
     my $self = shift;
 
+    my @args = @_;
+
     Silki::Schema->RunInTransaction(
         sub {
             my $rev = $self->revision_number();
-            $self->$orig(@_);
+            $self->$orig(@args);
             $self->_renumber_higher_revisions($rev);
         }
     );
@@ -171,31 +188,27 @@ sub _post_change {
     my $dbh = Silki::Schema->DBIManager()->source_for_sql($delete_existing)
         ->dbh();
 
-    my $updates = sub {
-        $dbh->do(
-            $delete_existing->sql($dbh),
-            {},
-            $delete_existing->bind_params()
-        );
-        $dbh->do(
-            $delete_pending->sql($dbh),
-            {},
-            $delete_pending->bind_params()
-        );
+    $dbh->do(
+        $delete_existing->sql($dbh),
+        {},
+        $delete_existing->bind_params()
+    );
+    $dbh->do(
+        $delete_pending->sql($dbh),
+        {},
+        $delete_pending->bind_params()
+    );
 
-        my $sth = $dbh->prepare( $update_cached_content->sql($dbh) );
-        my @bind = $update_cached_content->bind_params();
-        $sth->bind_param( 1, $bind[0], { pg_type => DBD::Pg::PG_BYTEA() } );
-        $sth->bind_param( 2, $bind[1] );
-        $sth->execute();
+    my $sth  = $dbh->prepare( $update_cached_content->sql($dbh) );
+    my @bind = $update_cached_content->bind_params();
+    $sth->bind_param( 1, $bind[0], { pg_type => DBD::Pg::PG_BYTEA() } );
+    $sth->bind_param( 2, $bind[1] );
+    $sth->execute();
 
-        Silki::Schema::PageLink->insert_many( @{$existing} )
-            if @{$existing};
-        Silki::Schema::PendingPageLink->insert_many( @{$pending} )
-            if @{$pending};
-    };
-
-    Silki::Schema->RunInTransaction($updates);
+    Silki::Schema::PageLink->insert_many( @{$existing} )
+        if @{$existing};
+    Silki::Schema::PendingPageLink->insert_many( @{$pending} )
+        if @{$pending};
 }
 
 sub _process_extracted_links {
