@@ -157,7 +157,7 @@ sub _post_change {
 
     return if $SkipPostChangeHack;
 
-    my ( $existing, $pending, $files, $capture )
+    my ( $existing, $pending, $capture )
         = $self->_process_extracted_links();
 
     my $delete_existing = Silki::Schema->SQLFactoryClass()->new_delete();
@@ -255,16 +255,7 @@ sub _process_extracted_links {
         grep { $links->{$_}{title} && !$links->{$_}{page} }
         keys %{$links};
 
-    my @files = map {
-        {
-            page_id => $self->page_id(),
-            file_id => $links->{$_}{file}->file_id(),
-        }
-        }
-        grep { $links->{$_}{file} }
-        keys %{$links};
-
-    return \@existing, \@pending, \@files, $capture;
+    return \@existing, \@pending, $capture;
 }
 
 sub _base_uri_path {
