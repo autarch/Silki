@@ -12,6 +12,10 @@
 
 - The display of pages recently edited in their profile was broken.
 
+- Added a revision purge feature available to wiki admins. This destroys a
+  revision completely, renumbering any subsequent reevisions. This is useful
+  for removing spam and other bogus changes.
+
 
 0.12  2010-07-22
 
