@@ -24,21 +24,13 @@ has links => (
     },
 );
 
-my @types = map { 'Silki::Markdent::Event::' . $_ } qw( WikiLink FileLink ImageLink );
-
 sub handle_event {
     my $self  = shift;
     my $event = shift;
 
-    return unless any {  $event->isa($_) } @types;
+    return unless $event->isa('Silki::Markdent::Event::WikiLink');
 
-    my $link_data;
-    if ( $event->isa('Silki::Markdent::Event::WikiLink') ) {
-        $link_data = $self->_resolve_page_link( $event->link_text() );
-    }
-    else {
-        $link_data = $self->_resolve_file_link( $event->link_text() );
-    }
+    my $link_data = $self->_resolve_page_link( $event->link_text() );
 
     return unless $link_data && $link_data->{wiki};
 
