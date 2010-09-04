@@ -81,7 +81,7 @@ Last block here.
 EOF
 
     my $page = Silki::Schema::Page->insert_with_content(
-        title   => 'Diff Testing',
+        title   => 'Diff and Purge Testing',
         content => $content1,
         user_id => $user->user_id(),
         wiki_id => $wiki->wiki_id(),
