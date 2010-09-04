@@ -43,7 +43,8 @@ Silki.ProcessStatus.prototype._setupInterval = function () {
 };
 
 Silki.ProcessStatus.prototype._getProcessStatus = function () {
-    if ( ( new Date() ).getTime() - this._last_status_change > 20000 ) {
+    /* Processing large tarballs can take a lot of time. */
+    if ( ( new Date() ).getTime() - this._last_status_change > ( 60 * 20 * 1000 ) ) {
         this._status_div.innerHTML = this._process_type + " appears to have stalled on the server. Giving up.";
         return;
     }

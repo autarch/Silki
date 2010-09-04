@@ -124,6 +124,8 @@ sub _import {
 sub _build_archive {
     my $self = shift;
 
+    $self->_maybe_log( loc('Reading the tarball (this may take a while)') );
+
     my $arch = Archive::Tar::Wrapper->new();
     $arch->read( $self->_tarball() );
 

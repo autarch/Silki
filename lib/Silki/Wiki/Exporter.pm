@@ -101,6 +101,8 @@ sub _build_tarball {
         'export-of-' . $self->_wiki()->short_name() . '.tar.gz'
     );
 
+    $self->_maybe_log( loc('Creating the tarball (this may take a while).') );
+
     $self->_archive()->write( $tarball, 'compress' );
 
     return $tarball;
