@@ -10,7 +10,7 @@
 % while ( my ( $page, $revision ) = $pages->next() ) {
   <tbody>
     <tr class="<% $pages->index() % 2 ? 'odd' : 'even' %>">
-      <td><a href="<% $revision->uri() %>"><% $page->title() %></a> (<% loc( 'revision %1', $revision->revision_number() ) %>)</td>
+      <td><a href="<% $page->uri() %>"><% $page->title() %></a> (<% loc( 'revision %1', $revision->revision_number() ) %>)</td>
       <td><% loc( '%datetime(%1)', $c->user()->set_time_zone_for_dt( $revision->creation_datetime() ) ) %></td>
       <td>
         <& /lib/user-link.mas, user => $revision->user(), wiki => $wiki &>
