@@ -29,10 +29,6 @@ Silki.URI._staticURIRoot = "<% static_uri('/') %>";
       href="<% $page->uri( view => 'history.atom' ) %>" />
 % }
 
-% if ( $m->request_comp()->method_exists('head_links') ) {
-<& SELF:head_links, %ARGS &>
-% }
-
 </head>
 <body>
 
