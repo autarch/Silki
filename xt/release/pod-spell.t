@@ -31,7 +31,7 @@ MACs
 OpenID
 PSGI
 PayPal
-Postgress
+Postgres
 Sendfile
 Silki
 Silki's
