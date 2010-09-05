@@ -43,6 +43,11 @@ sub _set_dbh_attributes {
 
     $dbh->{pg_enable_utf8} = 1;
 
+    # In an ideal world, this would cause all non-binary data to be marked as
+    # utf-8. See https://rt.cpan.org/Public/Bug/Display.html?id=40199 for
+    # details.
+    $dbh->do(q{SET CLIENT_ENCODING TO 'UTF8'});
+
     $dbh->do('SET TIME ZONE UTC');
 
     $dbh->{HandleError} = sub { Carp::confess(shift) };
