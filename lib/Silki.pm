@@ -103,7 +103,7 @@ Silki requires the following software:
 =item * Postgres 8.4+
 
 Silki has been tested with Postgres 8.3 and 8.4. Silki uses the built-in
-Postgress full text search engine, which was integrated into the Postgres core
+Postgres full text search engine, which was integrated into the Postgres core
 in 8.3. It may be possible to use Silki with an earlier version of Postgres,
 using the full text search included as a contrib module.
 
