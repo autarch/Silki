@@ -313,8 +313,9 @@ wiki.
 
 Silki will throw an error if you attempt to access it from a domain it does
 not know about. If the default domain chosen when the system was installed is
-not being used, you can edit the domain from the C<psql> tool. In the future,
-the default domain will be made configurable during the installation process.
+not being used, you can edit the domain manually using the C<psql> command
+line tool. In the future, the default domain will be made configurable during
+the installation process.
 
 =head2 Multiple Domains
 
