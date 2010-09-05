@@ -1,9 +1,10 @@
   <div id="hd">
-    <ul id="global-nav">
+    <div id="global-nav">
+      <ul>
       <li><a href="<% $c->domain()->application_uri( path => '/' ) %>"><% loc('Home') %></a></li>
 % if ( $c->user()->is_authenticated() ) {
       <li><a href="<% $c->domain()->application_uri( path => '/user/authentication', query => { 'x-tunneled-method' => 'DELETE', return_to => $c->request()->uri() } ) %>"><% loc('Log out') %></a></li>
-      <li><a href="<% $c->user()->uri( view => 'preferences_form' ) %>"><% loc('Preferences') %></a></li>
+      <li><a href="<% $c->user()->uri( view => 'preferences_form' ) %>"><% loc('Your Account') %></a></li>
 % } else {
       <li><a href="<% $c->domain()->application_uri( path => '/user/login_form', query => { return_to => $c->request()->uri() } ) %>"><% loc('Log in') %></a></li>
 %   if ( Silki::Schema::Wiki->PublicWikiCount() ) {
@@ -12,13 +13,7 @@
 % }
       <li><a href="<% $c->domain()->application_uri( path => '/help' ) %>"><% loc('Help') %></a></li>
     </ul>
-
-<!--
-    <a href="<% $c->domain()->uri() %>"
-       ><img src="<% static_uri('/images/silki-logo.jpg') %>"
-             width="115" height="57" /></a>
--->
-    &nbsp;
+</div>
 
     <div id="tabs">
       <ul>

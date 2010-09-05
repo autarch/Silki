@@ -95,11 +95,6 @@ a {
     font-size: 120%;
 }
 
-#hd {
-    background-color: @light-blue;
-    padding-top: 1em;
-}
-
 #ft {
     background-color: white;
     color: black;
@@ -108,23 +103,27 @@ a {
 }
 
 #global-nav {
-    display: inline;
-    float: right;
-    font-size: 80%;
-}
+    text-align: right;
 
-#global-nav li {
-    display: inline;
-    list-style: none;
-}
+    ul {
+        font-size: 80%;
 
-#global-nav li a {
-    color: #111;
-    padding-left: 1.1em;
+        li {
+            display: inline;
+            list-style: none;
+
+            a {
+                color: #111;
+                padding-left: 1.1em;
+            }
+        }
+    }
 }
 
 #tabs {
+    background-color: @light-blue;
     line-height: 1.2;
+    padding-top: 2em;
 
     ul {
         border-bottom: 8px solid @dark-blue;
@@ -138,6 +137,7 @@ a {
         font-variant: small-caps;
         list-style: none;
         margin-right: 0.3em;
+        overflow: hidden;
         padding: 0;
 
         a {
