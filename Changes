@@ -1,3 +1,8 @@
+0.15  2010-09-05
+
+- The 0.13 and 0.14 releases were missing a prereq on Archive::Tar::Wrapper.
+
+
 0.14  2010-09-05
 
 - Added a hackaround for the fact that DBD::Pg doesn't handle UTF8 data
