@@ -31,7 +31,7 @@ has is_header_cell => (
 
 has content => (
     traits  => ['String'],
-    is      => 'ro',
+    is      => 'rw',
     isa     => Str,
     default => q{},
     handles => {

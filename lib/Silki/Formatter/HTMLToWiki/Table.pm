@@ -181,7 +181,17 @@ sub finalize {
         my $tbody = $self->_tbodies()->[0];
 
         while ( my $row = shift @{$tbody} ) {
-            if ( all { $_->is_header_cell() } @{$row} ) {
+            # If all the cells in a row are <th> cells, _or_ all the content
+            # in each cell is bold, it's a header row.
+            if (   ( all { $_->is_header_cell() } @{$row} )
+                || ( all { $_->content() =~ /^\s*\*\*.+\*\*\s*$/ } @{$row} ) )
+            {
+                for my $cell (@{$row} ) {
+                    my $content = $cell->content();
+                    $content =~ s/^(\s*)\*\*(.+)\*\*(\s*)$/$1$2$3/;
+                    $cell->set_content($content);
+                }
+
                 $self->_add_thead_row($row);
             }
             else {
