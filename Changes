@@ -1,3 +1,12 @@
+0.14  2010-09-05
+
+- Added a hackaround for the fact that DBD::Pg doesn't handle UTF8 data
+  entirely correctly (basically, a column with a user-defined type is never
+  treated as UTF8, even if the type is text-based). See
+  https://rt.cpan.org/Ticket/Display.html?id=40199 in the DBD::Pg queue for
+  discussion.
+
+
 0.13  2010-09-04
 
 - Renamed a number of files in bin, and moved some of them to dev-bin.
