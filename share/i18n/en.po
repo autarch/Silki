@@ -503,7 +503,7 @@ msgstr ""
 msgid "Guest"
 msgstr ""
 
-#: share/mason/header.mas:13
+#: share/mason/header.mas:14
 msgid "Help"
 msgstr ""
 
@@ -520,7 +520,7 @@ msgstr ""
 msgid "History for %1"
 msgstr ""
 
-#: share/mason/header.mas:3
+#: share/mason/header.mas:4
 msgid "Home"
 msgstr ""
 
@@ -651,11 +651,11 @@ msgstr ""
 msgid "Links to pages which do not yet exist"
 msgstr ""
 
-#: share/mason/header.mas:8
+#: share/mason/header.mas:9
 msgid "Log in"
 msgstr ""
 
-#: share/mason/header.mas:5
+#: share/mason/header.mas:6
 msgid "Log out"
 msgstr ""
 
@@ -851,10 +851,6 @@ msgstr ""
 msgid "Please pick a password or provide an OpenID for future logins to activate your account."
 msgstr ""
 
-#: share/mason/header.mas:6
-msgid "Preferences"
-msgstr ""
-
 #. ($user->best_name()
 #: lib/Silki/Role/Controller/User.pm:175
 msgid "Preferences for "
@@ -902,7 +898,7 @@ msgstr ""
 msgid "Recent activity in this wiki"
 msgstr ""
 
-#: share/mason/header.mas:10
+#: share/mason/header.mas:11
 msgid "Register"
 msgstr ""
 
@@ -1497,6 +1493,10 @@ msgstr ""
 
 #: lib/Silki/Controller/User.pm:121
 msgid "You must provide a password."
+msgstr ""
+
+#: share/mason/header.mas:7
+msgid "Your Account"
 msgstr ""
 
 #: share/mason/user/pending-activation:14
