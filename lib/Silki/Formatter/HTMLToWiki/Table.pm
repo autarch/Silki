@@ -178,15 +178,10 @@ sub finalize {
     }
 
     unless ( $self->_has_thead() ) {
-        for my $tbody ( @{ $self->_tbodies() } ) {
-            for my $row ( @{$tbody} ) {
-                if ( all { $_->is_header_cell() } @{$row} ) {
-                    $self->_add_thead_row( shift @{$tbody} );
-                }
-                else {
-                    last;
-                }
-            }
+        my $tbody = $self->_tbodies()->[0];
+
+        if ( all { $_->is_header_cell() } @{ $tbody->[0] } ) {
+            $self->_add_thead_row( shift @{$tbody} );
         }
     }
 }
