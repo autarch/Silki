@@ -249,6 +249,8 @@ sub table {
         $table->_end_tbody();
     }
 
+    $table->finalize();
+
     return $table;
 }
 
