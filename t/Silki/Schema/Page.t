@@ -8,6 +8,7 @@ use Silki::Test::RealSchema;
 
 use DateTime;
 use DateTime::Format::Pg;
+use Encode ();
 use Silki::Schema::Domain;
 use Silki::Schema::File;
 use Silki::Schema::Page;
@@ -280,6 +281,25 @@ my $user = Silki::Schema::User->GuestUser();
         );
     }
     qr/\Qcannot contain a slash/, 'cannot use / in a page title';
+}
+
+{
+    use utf8;
+    my $page_id = Silki::Schema::Page->insert(
+        title   => 'La Société du Thé',
+        user_id => $user->user_id(),
+        wiki_id => $wiki->wiki_id(),
+    )->page_id();
+
+    my $page = Silki::Schema::Page->new( page_id => $page_id );
+    is(
+        $page->title(), 'La Société du Thé',
+        'Unicode title comes back properly'
+    );
+    ok(
+        Encode::is_utf8( $page->title() ),
+        'page title is marked as utf8'
+    );
 }
 
 done_testing();
