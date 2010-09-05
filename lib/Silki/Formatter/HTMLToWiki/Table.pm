@@ -180,8 +180,14 @@ sub finalize {
     unless ( $self->_has_thead() ) {
         my $tbody = $self->_tbodies()->[0];
 
-        if ( all { $_->is_header_cell() } @{ $tbody->[0] } ) {
-            $self->_add_thead_row( shift @{$tbody} );
+        while ( my $row = shift @{$tbody} ) {
+            if ( all { $_->is_header_cell() } @{$row} ) {
+                $self->_add_thead_row($row);
+            }
+            else {
+                unshift @{$tbody}, $row;
+                last;
+            }
         }
     }
 }
@@ -232,7 +238,7 @@ sub _markdown_for_row {
 
     my @cells;
     for my $cell ( @{$row} ) {
-        # A multi-column cell needs to be as wide as all the column it spans
+        # A multi-column cell needs to be as wide as all the columns it spans
         my $width = sum( splice @widths, 0, $cell->colspan() );
 
         $md .= $cell->formatted_content($width);
