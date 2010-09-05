@@ -6,6 +6,12 @@
   https://rt.cpan.org/Ticket/Display.html?id=40199 in the DBD::Pg queue for
   discussion.
 
+- Fixed some bugs in the conversion of HTML tables to wikitext. This code
+  isn't used by Silki itself (yet), but is used by SilkiX::Converter::Kwiki.
+
+- Some style tweaks. In particular, the upper right global nav should no
+  longer interfere with the tabs in the header.
+
 
 0.13  2010-09-04
 
