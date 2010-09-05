@@ -2,13 +2,13 @@ SET CLIENT_MIN_MESSAGES = ERROR;
 
 CREATE LANGUAGE plpgsql;
 
-CREATE DOMAIN email_address AS citext
-       CONSTRAINT valid_email_address CHECK ( VALUE ~ E'^.+@.+(?:\\..+)+' );
-
 -- Is there a way to ensure that this table only ever has one row?
 CREATE TABLE "Version" (
        version                  INTEGER         PRIMARY KEY
 );
+
+CREATE DOMAIN email_address AS citext
+       CONSTRAINT valid_email_address CHECK ( VALUE ~ E'^.+@.+(?:\\..+)+' );
 
 CREATE TABLE "User" (
        user_id                  SERIAL8         PRIMARY KEY,
