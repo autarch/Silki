@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use DateTime::Format::Pg;
+use Encode qw( decode );
 use Lingua::EN::Inflect qw( PL_N );
 use Scalar::Util qw( blessed );
 
@@ -35,6 +36,16 @@ transform_all
         my $dt = DateTime::Format::Pg->parse_date( $_[1] );
         $dt->set_time_zone('UTC');
         return $dt;
+    };
+
+# This is a hack that should not be necessary, but DBD::Pg has a fixed list of
+# column types it will treat as utf-8, and user-defined types are not
+# included. See https://rt.cpan.org/Ticket/Display.html?id=40199 for details.
+my %text_types = map { $_ => 1 } qw( citext email_address filename );
+transform_all
+    matching { $text_types{ lc $_[0]->type() } } =>
+    inflate {
+        return decode( 'utf-8', $_[1] );
     };
 
 has_one_namer {
