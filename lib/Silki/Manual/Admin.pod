@@ -255,7 +255,7 @@ You must be a logged-in wiki member to edit the wiki.
 =back
 
 Regardless of the privacy setting, only a wiki admin can delete pages and
-attachments, or invite new members to the wiki.
+attachments or invite new members to the wiki.
 
 Of course, a site admin has access to all wikis.
 
@@ -264,7 +264,7 @@ Of course, a site admin has access to all wikis.
 A wiki admin can invite new users to the wiki. If the user already has an
 account in the Silki installation, they are immediately added.
 
-If they don't have an account, they receive an invitation email, and are asked
+If they don't have an account, they receive an invitation email and are asked
 to confirm their account's information (name, email, etc.). Once they do this,
 they are full members of that wiki.
 
