@@ -30,8 +30,8 @@ Silki.FileUpload.prototype.instrumentForm = function () {
 
     var self = this;
 
-    DOM.Events.addListenever( this._form,
-                              "submit",
-                              function () { self._lightbox.show(); }
-                            );
+    DOM.Events.addListener( this._form,
+                            "submit",
+                            function () { self._lightbox.show(); }
+                          );
 };
