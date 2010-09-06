@@ -16,7 +16,11 @@
 
 % if ($wiki) {
       <form id="quick-search" action="<% $wiki->uri( view => 'search' ) %>" method="get">
-        <input name="search" type="text" class="text" value="" />
+        <input id="quick-search-input"
+               name="search"
+               type="text"
+               class="text js-default-text-<% loc('Search') %>"
+               value="<% loc('Search') %>" />
       </form>
 % }
     </div>

@@ -2,6 +2,7 @@ JSAN.use('DOM.Ready');
 JSAN.use('Silki.FileView');
 JSAN.use('Silki.PageTags');
 JSAN.use('Silki.ProcessStatus');
+JSAN.use('Silki.QuickSearch');
 JSAN.use('Silki.SystemLogs');
 JSAN.use('Silki.URI');
 JSAN.use('Silki.User');
@@ -14,6 +15,7 @@ Silki.instrumentAll = function () {
     new Silki.FileView ();
     new Silki.PageTags ();
     new Silki.ProcessStatus ();
+    new Silki.QuickSearch ();
     new Silki.SystemLogs ();
 };
 
