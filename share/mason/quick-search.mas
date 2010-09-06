@@ -1,9 +1,0 @@
-<h2><% loc('Quick Search') %></h2>
-
-<form action="<% $wiki->uri( view => 'search' ) %>" method="get">
-  <input name="search" type="text" class="text" value="" />
-</form>
-
-<%args>
-$wiki
-</%args>

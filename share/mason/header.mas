@@ -13,6 +13,12 @@
 % }
         <li><a href="<% $c->domain()->application_uri( path => '/help' ) %>"><% loc('Help') %></a></li>
       </ul>
+
+% if ($wiki) {
+      <form id="quick-search" action="<% $wiki->uri( view => 'search' ) %>" method="get">
+        <input name="search" type="text" class="text" value="" />
+      </form>
+% }
     </div>
 
     <div id="tabs">
@@ -42,6 +48,7 @@
 
 <%args>
 $request_comp
+$wiki => undef
 </%args>
 
 <%init>

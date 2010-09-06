@@ -103,9 +103,25 @@ a {
 }
 
 #global-nav {
+    margin-bottom: 0.2em;
     text-align: right;
 
+    #quick-search {
+        display: inline;
+        font-size: 90%;
+        text-align: left;
+
+        input {
+            color: #999;
+
+            :focus {
+                color: black;
+            }
+        }
+    }
+
     ul {
+        display: inline;
         font-size: 80%;
 
         li {
@@ -138,7 +154,6 @@ a {
         font-variant: small-caps;
         list-style: none;
         margin-right: 0.3em;
-        overflow: hidden;
         padding: 0;
 
         a {
@@ -157,7 +172,6 @@ a {
     }
 
     li.selected {
-
         a {
             background-color: @dark-blue;
             color: white;
