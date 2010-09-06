@@ -2,7 +2,7 @@
       <div id="sidebar">
 
 % for my $comp ( @{ $m->request_comp()->attr('sidebar') } ) {
-      <& $comp . '.mas', %ARGS &>
+      <& $comp . '.mas', %ARGS, sidebar => 1 &>
 % }
       </div>
     </div>

@@ -214,18 +214,14 @@ a {
 }
 
 #sidebar {
-    margin-top: 0.5em;
-    padding-left: 0.5em;
+    margin-top: 1.5em;
+}
+
+.sidebar-box {
+    .rounded-box(6px, @dark-green);
 
     h2 {
-        color: @dark-green;
-        margin: 0.5em 0 0.1em 0;
-    }
-    h2 + ul {
-        margin-top: 0.5em;
-    }
-    h2 + form {
-        margin-top: 0.5em;
+        .rounded-box-h2(@dark-green);
     }
 }
 
@@ -274,40 +270,14 @@ img.user-image-mini {
     }
 }
 
-#tags, #incoming-links {
-    .rounded-box(6px, @dark-green);
-    margin-left: 1em;
-
-    h2 {
-        .rounded-box-h2(@dark-green);
-    }
-}
-
 #tags {
-    margin-top: 0.5em;
-
     ul, form {
         margin-right: 1em;
         margin-left: 1em;
     }
+
     form {
         margin-bottom: 1em;
-    }
-}
-
-#incoming-links {
-    ul {
-        margin-left: 1em;
-        padding-left: 0;
-
-        li {
-            list-style: none;
-        }
-    }
-
-    p {
-        font-size: 80%;
-        margin-left: 1em;
     }
 }
 

@@ -1,20 +1,22 @@
-<h2>Recently Viewed Pages</h2>
+<div class="sidebar-box" id="recently-viewed">
+  <h2>Recently Viewed Pages</h2>
 
-<ul>
+  <ul>
 % while ( my $page = $views->next() ) {
-  <li>
-    <a href="<% $page->uri() %>">
+    <li>
+      <a href="<% $page->uri() %>">
 % if ( ! $c->stash()->{wiki} || $c->stash()->{wiki}->wiki_id() != $page->wiki_id() ) {
-      <% $page->wiki()->title() %> /
+        <% $page->wiki()->title() %> /
 % }
-      <% $page->title() %>
-    </a>
-  </li>
+        <% $page->title() %>
+      </a>
+    </li>
 % }
 % unless ( $views->index() ) {
-  <li><% loc( q{Looks like you haven't seen any pages at all yet.} ) %></li>
+    <li><% loc( q{Looks like you haven't seen any pages at all yet.} ) %></li>
 % }
-</ul>
+  </ul>
+</div>
 
 <%init>
 my $views = $c->user()->recently_viewed_pages( limit => 10 );

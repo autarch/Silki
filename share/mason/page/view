@@ -1,15 +1,7 @@
-<div class="yui-gc">
-  <div class="yui-u first">
-    <h1><& SELF:title, %ARGS &></h1>
+<h1><& SELF:title, %ARGS &></h1>
 
-    <div id="page-content">
-      <% $html | n %>
-    </div>
-  </div>
-  <div class="yui-u">
-    <& tags.mas, page => $page, can_edit => $can_edit &>
-    <& incoming-links.mas, page => $page &>
-  </div>
+<div id="page-content">
+  <% $html | n %>
 </div>
 
 % unless ($is_current_revision) {
@@ -105,13 +97,11 @@ $html
 
 <%init>
 my $wiki = $page->wiki();
-
-my $can_edit =
-    $c->user()->has_permission_in_wiki( wiki => $wiki, permission => Silki::Schema::Permission->Edit() );
 </%init>
 
 <%attr>
 show_title => 0
+sidebar => [ 'page/tags', 'page/incoming-links', 'recently-viewed' ]
 </%attr>
 
 <%method title>

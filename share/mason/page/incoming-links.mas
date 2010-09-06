@@ -1,24 +1,23 @@
-      <div id="incoming-links">
-        <h2><% loc('Incoming Links') %></h2>
+<div class="sidebar-box" id="incoming-links">
+    <h2><% loc('Incoming Links') %></h2>
 
 % if ($links) {
-        <ul>
+    <ul>
 %   while ( my $linking_page = $links->next() ) {
-          <li><a href="<% $linking_page->uri() %>">
-              <% $linking_page->title() %>
+      <li><a href="<% $linking_page->uri() %>">
+          <% $linking_page->title() %>
 %     if ( $linking_page->wiki_id() != $page->wiki_id() ) {
 (<% $linking_page->wiki()->title() %>)
 %     }
           </a></li>
 %   }
-        </ul>
+    </ul>
 % } elsif ( ! $page->is_front_page() ) {
-        <p>
-          <% loc('No other pages link to this page. Orphan pages can be confusing, so you may want to add a link to this page.') %>
-        </p>
+    <p>
+      <% loc('No other pages link to this page. Orphan pages can be confusing, so you may want to add a link to this page.') %>
+    </p>
 % }
-        
-      </div>
+</div>
 
 <%args>
 $page
