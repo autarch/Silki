@@ -1,19 +1,19 @@
   <div id="hd">
     <div id="global-nav">
       <ul>
-      <li><a href="<% $c->domain()->application_uri( path => '/' ) %>"><% loc('Home') %></a></li>
+        <li><a href="<% $c->domain()->application_uri( path => '/' ) %>"><% loc('Home') %></a></li>
 % if ( $c->user()->is_authenticated() ) {
-      <li><a href="<% $c->domain()->application_uri( path => '/user/authentication', query => { 'x-tunneled-method' => 'DELETE', return_to => $c->request()->uri() } ) %>"><% loc('Log out') %></a></li>
-      <li><a href="<% $c->user()->uri( view => 'preferences_form' ) %>"><% loc('Your Account') %></a></li>
+        <li><a href="<% $c->domain()->application_uri( path => '/user/authentication', query => { 'x-tunneled-method' => 'DELETE', return_to => $c->request()->uri() } ) %>"><% loc('Log out') %></a></li>
+        <li><a href="<% $c->user()->uri( view => 'preferences_form' ) %>"><% loc('Your Account') %></a></li>
 % } else {
-      <li><a href="<% $c->domain()->application_uri( path => '/user/login_form', query => { return_to => $c->request()->uri() } ) %>"><% loc('Log in') %></a></li>
+        <li><a href="<% $c->domain()->application_uri( path => '/user/login_form', query => { return_to => $c->request()->uri() } ) %>"><% loc('Log in') %></a></li>
 %   if ( Silki::Schema::Wiki->PublicWikiCount() ) {
-      <li><a href="<% $c->domain()->application_uri( path => '/user/new_user_form' ) %>"><% loc('Register') %></a></li>
+        <li><a href="<% $c->domain()->application_uri( path => '/user/new_user_form' ) %>"><% loc('Register') %></a></li>
 %   }
 % }
-      <li><a href="<% $c->domain()->application_uri( path => '/help' ) %>"><% loc('Help') %></a></li>
-    </ul>
-</div>
+        <li><a href="<% $c->domain()->application_uri( path => '/help' ) %>"><% loc('Help') %></a></li>
+      </ul>
+    </div>
 
     <div id="tabs">
       <ul>
