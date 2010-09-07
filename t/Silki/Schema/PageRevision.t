@@ -32,7 +32,7 @@ my $user = Silki::Schema::User->GuestUser();
     );
 
     my $html = <<'EOF';
-<p>This is a page with a link to a <a href="/wiki/first-wiki/new_page_form?title=Pending+Page" class="new-page">Pending Page</a>
+<p>This is a page with a link to a <a href="/wiki/first-wiki/new_page_form?title=Pending+Page" class="new-page" title="This page has not yet been created">Pending Page</a>
 </p>
 EOF
 
