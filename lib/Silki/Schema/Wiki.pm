@@ -1120,7 +1120,7 @@ sub _BuildActiveUsersSelect {
 #       TS_RANK("PageSearchableText"."ts_text", "page") AS "rank"
 #     FROM
 #      "Page" JOIN "PageRevision" ON ("PageRevision"."page_id" = "Page"."page_id")
-              JOIN "PageSearchableText" ON ("PageSearchableText"."page_id" = "Page"."page_id")
+#             JOIN "PageSearchableText" ON ("PageSearchableText"."page_id" = "Page"."page_id")
 #     WHERE
 #      "PageSearchableText"."ts_text" @@ to_tsquery(?)
 #       AND
