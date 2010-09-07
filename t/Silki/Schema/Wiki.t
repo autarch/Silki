@@ -248,8 +248,8 @@ my $user = Silki::Schema::User->SystemUser();
     is( scalar @active, 2, 'wiki has two active users' );
     is_deeply(
         [ map { $_->username() } @active ],
-        [ $admin_username, $joe_username ],
-        'active users returns expected users, ordered by username'
+        [ $joe_username, $admin_username ],
+        'active users returns expected users, ordered by revision creation_datetime'
     );
 }
 
