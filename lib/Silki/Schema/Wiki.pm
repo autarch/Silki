@@ -1079,13 +1079,18 @@ sub _BuildActiveUsersSelect {
     my $page_t = $Schema->table('Page');
     my $page_revision_t = $Schema->table('PageRevision');
 
-    my $order_by = Fey::Literal::Term->new(
+    my $username_or_display_name = Fey::Literal::Term->new(
         q{CASE WHEN display_name = '' THEN username ELSE display_name END});
+
+    my $max = Fey::Literal::Function->new(
+        'MAX',
+        $page_revision_t->column('creation_datetime')
+    );
 
     my $users_select = Silki::Schema->SQLFactoryClass()->new_select();
 
     $users_select
-        ->select( $user_t, $order_by )
+        ->select( $user_t, $username_or_display_name, $max )
         ->distinct()
         ->from( $user_t, $page_revision_t )
         ->from( $page_revision_t, $page_t )
@@ -1098,7 +1103,8 @@ sub _BuildActiveUsersSelect {
                 DateTime->today()->subtract( months => 1 )
             )
         )
-        ->order_by($order_by);
+        ->group_by( $user_t->columns(), $username_or_display_name )
+        ->order_by( $max, 'DESC', $username_or_display_name, );
 
     return $users_select;
 }

@@ -59,7 +59,9 @@
         <ul id="active-users">
 % while ( my $user = $users->next() ) {
           <li>
-            <& /lib/user-link.mas, user => $user, wiki => $wiki &>
+            <& /lib/user-link.mas, user => $user, wiki => $wiki &> -
+            <% loc( '%datetime(%1)', 
+               DateTime::Format::Pg->parse_datetime( $users->raw_row()->[-1] ) ) %>
           </li>
 % }
 % unless ( $users->index() ) {
