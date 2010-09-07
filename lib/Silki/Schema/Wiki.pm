@@ -1117,11 +1117,12 @@ sub _BuildActiveUsersSelect {
 #       "PageRevision"."comment",
 #       "PageRevision"."creation_datetime",
 #       ...,
-#       TS_RANK("Page"."ts_text", "page") AS "rank"
+#       TS_RANK("PageSearchableText"."ts_text", "page") AS "rank"
 #     FROM
 #      "Page" JOIN "PageRevision" ON ("PageRevision"."page_id" = "Page"."page_id")
+              JOIN "PageSearchableText" ON ("PageSearchableText"."page_id" = "Page"."page_id")
 #     WHERE
-#      "Page"."ts_text" @@ to_tsquery(?)
+#      "PageSearchableText"."ts_text" @@ to_tsquery(?)
 #       AND
 #      "Page"."wiki_id" = ?
 #       AND
