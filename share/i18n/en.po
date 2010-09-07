@@ -33,7 +33,7 @@ msgid "%1 %2 <strong>%3</strong> of this wiki"
 msgstr ""
 
 #. ($wiki->title()
-#: share/mason/wiki/dashboard:110
+#: share/mason/wiki/dashboard:112
 msgid "%1 Dashboard "
 msgstr ""
 
@@ -102,7 +102,8 @@ msgid "%date(%1) %at_time(%1)"
 msgstr ""
 
 #. ($c->user()
-#: share/mason/domain/domains:20 share/mason/lib/table/attachments-table.mas:37 share/mason/log/logs:16 share/mason/page/history:30 share/mason/user/users:34 share/mason/wiki/dashboard:12 share/mason/wiki/recent:14 share/mason/wiki/search-results:14 share/mason/wiki/tag:19 share/mason/wiki/wikis:25
+#. (DateTime::Format::Pg->parse_datetime( $users->raw_row()
+#: share/mason/domain/domains:20 share/mason/lib/table/attachments-table.mas:37 share/mason/log/logs:16 share/mason/page/history:30 share/mason/user/users:34 share/mason/wiki/dashboard:12 share/mason/wiki/dashboard:64 share/mason/wiki/recent:14 share/mason/wiki/search-results:14 share/mason/wiki/tag:19 share/mason/wiki/wikis:25
 msgid "%datetime(%1)"
 msgstr ""
 
@@ -180,7 +181,7 @@ msgid "Admin"
 msgstr ""
 
 #. ($wiki->file_count()
-#: share/mason/wiki/dashboard:81
+#: share/mason/wiki/dashboard:83
 msgid "All Attachments (%1)"
 msgstr ""
 
@@ -189,7 +190,7 @@ msgstr ""
 msgid "All Attachments in the %1 wiki"
 msgstr ""
 
-#: share/mason/admin.mas:8
+#: share/mason/admin.mas:11
 msgid "All Domains"
 msgstr ""
 
@@ -197,7 +198,7 @@ msgstr ""
 msgid "All Users"
 msgstr ""
 
-#: share/mason/wiki/dashboard:81
+#: share/mason/wiki/dashboard:83
 msgid "All attachments in this wiki"
 msgstr ""
 
@@ -205,11 +206,11 @@ msgstr ""
 msgid "All tags in this wiki"
 msgstr ""
 
-#: share/mason/admin.mas:4
+#: share/mason/admin.mas:7
 msgid "All users"
 msgstr ""
 
-#: share/mason/admin.mas:5
+#: share/mason/admin.mas:8
 msgid "All wikis"
 msgstr ""
 
@@ -252,7 +253,7 @@ msgstr ""
 msgid "Authenticated"
 msgstr ""
 
-#: share/mason/page/diff:2 share/mason/page/view:17
+#: share/mason/page/diff:2 share/mason/page/view:9
 msgid "Back to current revision"
 msgstr ""
 
@@ -268,11 +269,11 @@ msgstr ""
 msgid "Compare"
 msgstr ""
 
-#: share/mason/page/view:78
+#: share/mason/page/view:70
 msgid "Compare to next revision"
 msgstr ""
 
-#: share/mason/page/view:75
+#: share/mason/page/view:67
 msgid "Compare to previous revision"
 msgstr ""
 
@@ -286,11 +287,11 @@ msgstr ""
 msgid "Create %1"
 msgstr ""
 
-#: share/mason/admin.mas:9 share/mason/domain/new-domain-form:4
+#: share/mason/admin.mas:12 share/mason/domain/new-domain-form:4
 msgid "Create a New Domain"
 msgstr ""
 
-#: share/mason/admin.mas:6 share/mason/wiki/new-wiki-form:41
+#: share/mason/admin.mas:9 share/mason/wiki/new-wiki-form:41
 msgid "Create a New Wiki"
 msgstr ""
 
@@ -388,7 +389,7 @@ msgstr ""
 msgid "Domain:"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:162 share/mason/file/view-in-frame:11 share/mason/lib/table/attachments-table.mas:19 share/mason/lib/table/attachments-table.mas:22
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:168 share/mason/file/view-in-frame:11 share/mason/lib/table/attachments-table.mas:19 share/mason/lib/table/attachments-table.mas:22
 msgid "Download this file"
 msgstr ""
 
@@ -528,7 +529,7 @@ msgstr ""
 msgid "If you provide an OpenID you do not need a password."
 msgstr ""
 
-#: share/mason/admin.mas:7 share/mason/wiki/import-wiki-form:21
+#: share/mason/admin.mas:10 share/mason/wiki/import-wiki-form:21
 msgid "Import a Wiki"
 msgstr ""
 
@@ -565,7 +566,7 @@ msgstr ""
 msgid "In a public wiki, anyone can read and edit pages without logging in. However, only wiki members can delete pages or upload files."
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:153
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:159
 msgid "Inaccessible file"
 msgstr ""
 
@@ -631,7 +632,7 @@ msgid "Last Revised By"
 msgstr ""
 
 #. ($wiki->uri_for_member( $revision->user()
-#: share/mason/page/view:35
+#: share/mason/page/view:27
 msgid "Last edited by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
@@ -647,7 +648,7 @@ msgstr ""
 msgid "Like a public wiki, but users must log-in to edit. However, users do not have to be explicitly invited to become members."
 msgstr ""
 
-#: share/mason/wiki/dashboard:89
+#: share/mason/wiki/dashboard:91
 msgid "Links to pages which do not yet exist"
 msgstr ""
 
@@ -667,11 +668,11 @@ msgstr ""
 msgid "Looks like there hasn't been any page view activity in this wiki yet."
 msgstr ""
 
-#: share/mason/wiki/dashboard:66
+#: share/mason/wiki/dashboard:68
 msgid "Looks like there hasn't been any user activity for the past month in this wiki."
 msgstr ""
 
-#: share/mason/recently-viewed.mas:15
+#: share/mason/recently-viewed.mas:16
 msgid "Looks like you haven't seen any pages at all yet."
 msgstr ""
 
@@ -755,7 +756,7 @@ msgid "Orphaned pages are pages which no other page in the system links to, maki
 msgstr ""
 
 #. ($wiki->orphaned_page_count()
-#: share/mason/wiki/dashboard:85
+#: share/mason/wiki/dashboard:87
 msgid "Orphans (%1)"
 msgstr ""
 
@@ -778,7 +779,7 @@ msgid "Page count"
 msgstr ""
 
 #. ($wiki->uri_for_member( $page->user()
-#: share/mason/page/view:54
+#: share/mason/page/view:46
 msgid "Page created by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
@@ -809,7 +810,7 @@ msgstr ""
 msgid "Pages tagged %1"
 msgstr ""
 
-#: share/mason/wiki/dashboard:85
+#: share/mason/wiki/dashboard:87
 msgid "Pages with no incoming links"
 msgstr ""
 
@@ -873,12 +874,13 @@ msgstr ""
 msgid "Public Wikis"
 msgstr ""
 
-#: share/mason/page/view:93
+#: share/mason/page/view:85
 msgid "Purge this revision"
 msgstr ""
 
-#: share/mason/quick-search.mas:1
-msgid "Quick Search"
+#. ($page->title()
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:93
+msgid "Read %1"
 msgstr ""
 
 #: lib/Silki/Wiki/Importer.pm:146
@@ -935,12 +937,12 @@ msgstr ""
 msgid "Requires SSL?"
 msgstr ""
 
-#: share/mason/page/view:25
+#: share/mason/page/view:17
 msgid "Restore this revision"
 msgstr ""
 
 #. ($revision->revision_number()
-#: share/mason/page/view:24
+#: share/mason/page/view:16
 msgid "Restoring revisoin %1"
 msgstr ""
 
@@ -961,7 +963,7 @@ msgid "Revision %1 has been deleted."
 msgstr ""
 
 #. ($revision->revision_number()
-#: share/mason/page/view:120
+#: share/mason/page/view:110
 msgid "Revision %1 of %2"
 msgstr ""
 
@@ -975,12 +977,16 @@ msgstr ""
 msgid "Revision <em>%1</em> of %2 for %3"
 msgstr ""
 
-#: share/mason/page/view:68
+#: share/mason/page/view:60
 msgid "Revisions"
 msgstr ""
 
 #: share/mason/wiki/users:5
 msgid "Role"
+msgstr ""
+
+#: share/mason/header.mas:22 share/mason/header.mas:23
+msgid "Search"
 msgstr ""
 
 #. ($search)
@@ -1007,7 +1013,7 @@ msgstr ""
 msgid "Since you already have a user account at %1, you can <a href=\"%html(%2)\">visit the wiki right now</a>."
 msgstr ""
 
-#: share/mason/admin.mas:1
+#: share/mason/admin.mas:4
 msgid "Site Admin Tools"
 msgstr ""
 
@@ -1024,7 +1030,7 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
-#: share/mason/admin.mas:10
+#: share/mason/admin.mas:13
 msgid "System Logs"
 msgstr ""
 
@@ -1171,7 +1177,7 @@ msgid "This page does not have any tags yet."
 msgstr ""
 
 #. ($page->revision_count()
-#: share/mason/page/view:71
+#: share/mason/page/view:63
 msgid "This page has %1 revisions."
 msgstr ""
 
@@ -1180,12 +1186,16 @@ msgstr ""
 msgid "This page has %quant(%1,revision,revisions)"
 msgstr ""
 
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:94
+msgid "This page has not yet been created"
+msgstr ""
+
 #: share/mason/page/autohandler:23
 msgid "This page's history of revisions"
 msgstr ""
 
 #. ($wiki->uri_for_member( $revision->user()
-#: share/mason/page/view:43
+#: share/mason/page/view:35
 msgid "This revision was created by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
@@ -1295,15 +1305,15 @@ msgstr ""
 msgid "View details about your profile"
 msgstr ""
 
-#: share/mason/page/view:85
+#: share/mason/page/view:77
 msgid "View next revision"
 msgstr ""
 
-#: share/mason/page/view:82
+#: share/mason/page/view:74
 msgid "View previous revision"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:161
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:167
 msgid "View this file"
 msgstr ""
 
@@ -1324,7 +1334,7 @@ msgid "Wanted Pages"
 msgstr ""
 
 #. ($wiki->wanted_page_count()
-#: share/mason/wiki/dashboard:89
+#: share/mason/wiki/dashboard:91
 msgid "Wanted Pages (%1)"
 msgstr ""
 
@@ -1368,7 +1378,7 @@ msgstr ""
 msgid "Wiki Title:"
 msgstr ""
 
-#: share/mason/wiki/dashboard:76
+#: share/mason/wiki/dashboard:78
 msgid "Wiki Tools"
 msgstr ""
 
