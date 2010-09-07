@@ -51,7 +51,7 @@ open my $fh, '>', \$buffer;
 
     is(
         $buffer,
-        q{<a href="/wiki/public/page/Front_Page" class="existing-page">Front Page</a>},
+        q{<a href="/wiki/public/page/Front_Page" class="existing-page" title="Read Front Page">Front Page</a>},
         'link to front page, no alternate link text'
     );
 
@@ -65,7 +65,7 @@ open my $fh, '>', \$buffer;
 
     is(
         $buffer,
-        q{<a href="/wiki/public/page/Front_Page" class="existing-page">the front page</a>},
+        q{<a href="/wiki/public/page/Front_Page" class="existing-page" title="Read Front Page">the front page</a>},
         'link to front page, with alternate link text'
     );
 
@@ -76,7 +76,7 @@ open my $fh, '>', \$buffer;
 
     is(
         $buffer,
-        q{<a href="/wiki/public/new_page_form?title=New+Page" class="new-page">New Page</a>},
+        q{<a href="/wiki/public/new_page_form?title=New+Page" class="new-page" title="This page has not yet been created">New Page</a>},
         'link to non-existent page, no alternate link text'
     );
 
@@ -90,7 +90,7 @@ open my $fh, '>', \$buffer;
 
     is(
         $buffer,
-        q{<a href="/wiki/public/new_page_form?title=New+Page" class="new-page">the new page</a>},
+        q{<a href="/wiki/public/new_page_form?title=New+Page" class="new-page" title="This page has not yet been created">the new page</a>},
         'link to non-existent page, with alternate link text'
     );
 
@@ -206,7 +206,7 @@ open my $fh, '>', \$buffer;
 
     is(
         $buffer,
-        q{<a href="/wiki/public/page/New_Page" class="existing-page">New Page</a>},
+        q{<a href="/wiki/public/page/New_Page" class="existing-page" title="Read New Page">New Page</a>},
         'link to non-existent page for editor'
     );
 }
@@ -236,7 +236,7 @@ open my $fh, '>', \$buffer;
 
     is(
         $buffer,
-        q{<a href="/wiki/other/page/Front_Page" class="existing-page">Front Page (Other)</a>},
+        q{<a href="/wiki/other/page/Front_Page" class="existing-page" title="Read Front Page">Front Page (Other)</a>},
         'link to another wiki front page, no alternate link text'
     );
 
@@ -247,7 +247,7 @@ open my $fh, '>', \$buffer;
 
     is(
         $buffer,
-        q{<a href="/wiki/other/page/Front_Page" class="existing-page">Front Page (Other)</a>},
+        q{<a href="/wiki/other/page/Front_Page" class="existing-page" title="Read Front Page">Front Page (Other)</a>},
         'link to another wiki front page, using wiki title'
     );
 
@@ -261,7 +261,7 @@ open my $fh, '>', \$buffer;
 
     is(
         $buffer,
-        q{<a href="/wiki/other/page/Front_Page" class="existing-page">the front page</a>},
+        q{<a href="/wiki/other/page/Front_Page" class="existing-page" title="Read Front Page">the front page</a>},
         'link to another wiki front page, with alternate link text'
     );
 
@@ -272,7 +272,7 @@ open my $fh, '>', \$buffer;
 
     is(
         $buffer,
-        q{<a href="/wiki/other/new_page_form?title=New+Page" class="new-page">New Page (Other)</a>},
+        q{<a href="/wiki/other/new_page_form?title=New+Page" class="new-page" title="This page has not yet been created">New Page (Other)</a>},
         'link to another wiki non-existent page, no alternate link text'
     );
 
@@ -286,7 +286,7 @@ open my $fh, '>', \$buffer;
 
     is(
         $buffer,
-        q{<a href="/wiki/other/new_page_form?title=New+Page" class="new-page">the new page</a>},
+        q{<a href="/wiki/other/new_page_form?title=New+Page" class="new-page" title="This page has not yet been created">the new page</a>},
         'link to another wiki non-existent page, with alternate link text'
     );
 
