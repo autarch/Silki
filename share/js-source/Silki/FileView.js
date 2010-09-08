@@ -4,10 +4,6 @@ if ( typeof Silki == "undefined" ) {
     Silki = {};
 }
 
-if ( typeof Silki.FileView == "undefined" ) {
-    Silki.FileView = {};
-}
-
 Silki.FileView = function () {
     var iframe = $("file-view-iframe");
 
