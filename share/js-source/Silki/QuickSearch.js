@@ -4,10 +4,6 @@ if ( typeof Silki == "undefined" ) {
     Silki = {};
 }
 
-if ( typeof Silki.QuickSearch == "undefined" ) {
-    Silki.QuickSearch = {};
-}
-
 Silki.QuickSearch = function () {
     var input = $("quick-search-input");
 
