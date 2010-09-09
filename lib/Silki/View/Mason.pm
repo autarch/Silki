@@ -61,6 +61,8 @@ sub has_template_for_path {
     );
 }
 
+__PACKAGE__->meta()->make_immutable( inline_constructor => 0 );
+
 1;
 
 # ABSTRACT: A Mason-based view
