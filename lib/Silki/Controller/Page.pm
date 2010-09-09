@@ -18,6 +18,7 @@ use Moose;
 BEGIN { extends 'Silki::Controller::Base' }
 
 with qw(
+    Silki::Role::Controller::PagePreview
     Silki::Role::Controller::Pager
     Silki::Role::Controller::RevisionsAtomFeed
     Silki::Role::Controller::WikitextHandler
@@ -71,7 +72,6 @@ sub page_GET_html {
 
     $page->record_view( $c->user() );
 
-    $c->stash()->{page}                = $page;
     $c->stash()->{revision}            = $revision;
     $c->stash()->{is_current_revision} = 1;
 
@@ -107,6 +107,12 @@ sub edit_form : Chained('_set_page') : PathPart('edit_form') : Args(0) {
     my $c    = shift;
 
     $self->_require_permission_for_wiki( $c, $c->stash()->{wiki}, 'Edit' );
+
+    $c->stash()->{preview}
+        = $c->stash()->{page}->most_recent_revision()->content_as_html(
+        user        => $c->user(),
+        include_toc => 1,
+        );
 
     $c->stash()->{template} = '/page/edit-form';
 }
@@ -179,6 +185,13 @@ sub page_title_PUT {
     }
 
     $c->redirect_and_detach( $page->uri() );
+}
+
+sub page_html : Chained('_set_page') : PathPart('html') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_send_preview_html($c);
 }
 
 sub _set_revision : Chained('_set_page') : PathPart('revision') : CaptureArgs(1) {

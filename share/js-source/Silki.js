@@ -1,5 +1,12 @@
 JSAN.use('DOM.Ready');
 JSAN.use('Silki.FileView');
+
+/* These three need to be loaded in this order so Silki.PageEdit can define
+   itself first */
+JSAN.use('Silki.PageEdit');
+JSAN.use('Silki.PageEdit.Preview');
+JSAN.use('Silki.PageEdit.Toolbar');
+
 JSAN.use('Silki.PageTags');
 JSAN.use('Silki.ProcessStatus');
 JSAN.use('Silki.QuickSearch');
@@ -13,6 +20,7 @@ if ( typeof Silki == "undefined" ) {
 
 Silki.instrumentAll = function () {
     new Silki.FileView ();
+    new Silki.PageEdit ();
     new Silki.PageTags ();
     new Silki.ProcessStatus ();
     new Silki.QuickSearch ();

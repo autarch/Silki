@@ -1,7 +1,7 @@
 <div id="form-and-preview">
   <div id="form">
-<%doc>
-    <div id="toolbar">
+
+    <div id="toolbar" style="display: none">
       <ul>
         <li>
           <a href="#" id="h2-button" title="<% loc('Insert a second level heading') %>"><img src="/images/icons/text_heading_2.png" height="16" width="16" /></a>
@@ -35,9 +35,9 @@
         </li>
       </ul>
     </div>
-</%doc>
+
    <&| /lib/filter/form.mas, objects => [ $page ? $page : () ] &>
-    <form class="flush-left" action="<% $action %>" method="post">
+    <form id="edit-form" class="flush-left" action="<% $action %>" method="post">
 % if ($page) {
       <input type="hidden" name="x-tunneled-method" value="PUT" />
 % } else {
@@ -50,18 +50,19 @@
     </form>
     </&>
   </div>
-<%doc>
+
+  <h3>Preview</h3>
+
   <div id="preview">
-    <div id="preview-content">
-      Preview text here.
-    </div>
+    <% $preview | n %>
   </div>
-</%doc>
+
 </div>
 
 <%args>
 $page => undef
 $title => undef
+$preview
 $wiki
 </%args>
 
