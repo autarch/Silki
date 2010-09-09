@@ -128,13 +128,14 @@ sub _process_html {
     my $toc = Text::TOC::HTML->new(
         filter => sub { $_[0]->tagName() =~ /^h[1-4]$/i } );
 
-    $toc->add_file( file => $self, content => $html );
+    my $fake_file = $self . q{};
+    $toc->add_file( file => $fake_file, content => $html );
 
     return
           q{<div id="table-of-contents">} . "\n"
         . $toc->html_for_toc() . "\n"
         . '</div>' . "\n"
-        . $toc->html_for_document($self);
+        . $toc->html_for_document($fake_file);
 }
 
 __PACKAGE__->meta()->make_immutable();
