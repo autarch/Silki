@@ -9,16 +9,10 @@ use Encode qw( decode );
 use List::AllUtils qw( all any );
 use Markdent::CapturedEvents;
 use Markdent::Handler::CaptureEvents;
-use Markdent::Handler::HTMLFilter;
-use Markdent::Handler::Multiplexer;
 use Markdent::Parser;
 use String::Diff qw( diff );
 use Silki::Config;
-use Silki::Markdent::Dialect::Silki::BlockParser;
-use Silki::Markdent::Dialect::Silki::SpanParser;
-use Silki::Markdent::Handler::ExtractWikiLinks;
-use Silki::Markdent::Handler::HeaderCount;
-use Silki::Markdent::Handler::HTMLStream;
+use Silki::Formatter::WikiToHTML;
 use Silki::Schema;
 use Silki::Schema::Page;
 use Silki::Schema::PageLink;
@@ -43,7 +37,7 @@ has_table( $Schema->table('PageRevision') );
 
 has_one page => (
     table   => $Schema->table('Page'),
-    handles => [ qw( domain wiki_id ) ],
+    handles => [ qw( domain wiki wiki_id ) ],
 );
 
 has_one( $Schema->table('User') );
@@ -358,61 +352,24 @@ sub content_as_html {
         for_editor  => { isa => Bool, default => 0 },
     );
 
-    my $include_toc = delete $p{include_toc};
-
     my $page = $self->page();
 
-    my $buffer = q{};
-    open my $fh, '>:utf8', \$buffer;
-
-    my $html = Silki::Markdent::Handler::HTMLStream->new(
-        output => $fh,
-        page   => $page,
-        wiki   => $page->wiki(),
+    my $formatter = Silki::Formatter::WikiToHTML->new(
         %p,
+        page => $page,
+        wiki => $self->wiki(),
     );
-
-    my $final_handler = $html;
-    my $counter;
-
-    if ( $include_toc ) {
-        $counter = Silki::Markdent::Handler::HeaderCount->new();
-        $final_handler = Markdent::Handler::Multiplexer->new( handlers => [ $html, $counter ] );
-    }
 
     if ( $self->revision_number()
         == $page->most_recent_revision()->revision_number() ) {
 
         my $captured = thaw( $page->cached_content() );
-        $captured->replay_events($final_handler);
+
+        return $formatter->captured_events_to_html($captured);
     }
     else {
-        my $filter = Markdent::Handler::HTMLFilter->new( handler => $final_handler );
-
-        my $parser = Markdent::Parser->new(
-            dialect => 'Silki::Markdent::Dialect::Silki',
-            handler => $filter,
-        );
-
-        $parser->parse( markdown => $self->content() );
+        return $formatter->wiki_to_html( $self->content() );
     }
-
-    $buffer = decode( 'utf8', $buffer );
-
-    if ( $counter && $counter->count() > 2 ) {
-        my $toc = Text::TOC::HTML->new(
-            filter => sub { $_[0]->tagName() =~ /^h[1-4]$/i } );
-
-        $toc->add_file( file => $page->title(), content => $buffer );
-
-        $buffer
-            = q{<div id="table-of-contents">} . "\n"
-            . $toc->html_for_toc() . "\n"
-            . '</div>' . "\n"
-            . $toc->html_for_document( $page->title() );
-    }
-
-    return $buffer;
 }
 
 __PACKAGE__->meta()->make_immutable();

@@ -6,10 +6,15 @@ use namespace::autoclean;
 
 use Encode qw( decode );
 use Markdent::Handler::HTMLFilter;
+use Markdent::Handler::Multiplexer;
 use Markdent::Parser;
 use Silki::Markdent::Dialect::Silki::BlockParser;
 use Silki::Markdent::Dialect::Silki::SpanParser;
+use Silki::Markdent::Handler::ExtractWikiLinks;
+use Silki::Markdent::Handler::HeaderCount;
 use Silki::Markdent::Handler::HTMLStream;
+use Silki::Types qw( Bool );
+use Text::TOC::HTML;
 
 use Moose;
 use MooseX::StrictConstructor;
@@ -34,30 +39,102 @@ has _wiki => (
     init_arg => 'wiki',
 );
 
+has _include_toc => (
+    is       => 'ro',
+    isa      => Bool,
+    init_arg => 'include_toc',
+    default  => 0,
+);
+
+has _for_editor => (
+    is       => 'ro',
+    isa      => Bool,
+    init_arg => 'for_editor',
+    default  => 0,
+);
+
+sub captured_events_to_html {
+    my $self     = shift;
+    my $captured = shift;
+
+    my $generator = sub { $captured->replay_events( $_[0] ) };
+
+    return $self->_generate_and_process_html($generator);
+}
+
 sub wiki_to_html {
     my $self = shift;
     my $text = shift;
+
+    my $generator = sub {
+        my $filter = Markdent::Handler::HTMLFilter->new( handler => $_[0] );
+
+        my $parser = Markdent::Parser->new(
+            dialect => 'Silki::Markdent::Dialect::Silki',
+            handler => $filter,
+        );
+
+        $parser->parse( markdown => $text );
+    };
+
+    return $self->_generate_and_process_html($generator);
+}
+
+sub _generate_and_process_html {
+    my $self = shift;
+
+    my ( $html, $counter ) = $self->_generate_html(@_);
+
+    return $self->_process_html( $html, $counter );
+}
+
+sub _generate_html {
+    my $self      = shift;
+    my $generator = shift;
 
     my $buffer = q{};
     open my $fh, '>:utf8', \$buffer;
 
     my $html = Silki::Markdent::Handler::HTMLStream->new(
-        output => $fh,
-        ( $self->_page() ? ( page => $self->_page() ) : () ),
-        wiki => $self->_wiki(),
-        user => $self->_user()
+        output     => $fh,
+        wiki       => $self->_wiki(),
+        user       => $self->_user(),
+        for_editor => $self->_for_editor(),
     );
 
-    my $filter = Markdent::Handler::HTMLFilter->new( handler => $html );
+    my $final_handler = $html;
+    my $counter;
 
-    my $parser = Markdent::Parser->new(
-        dialect => 'Silki::Markdent::Dialect::Silki',
-        handler => $filter,
-    );
+    if ( $self->_include_toc() ) {
+        $counter = Silki::Markdent::Handler::HeaderCount->new();
+        $final_handler = Markdent::Handler::Multiplexer->new( handlers => [ $html, $counter ] );
+    }
 
-    $parser->parse( markdown => $text );
+    $generator->($final_handler);
 
-    return decode( 'utf8', $buffer );
+    return ( $buffer, $counter );
+}
+
+sub _process_html {
+    my $self    = shift;
+    my $html    = shift;
+    my $counter = shift;
+
+    return decode( 'utf-8', $html )
+        unless $counter && $counter->count() > 2;
+
+    $html = decode( 'utf-8', $html );
+
+    my $toc = Text::TOC::HTML->new(
+        filter => sub { $_[0]->tagName() =~ /^h[1-4]$/i } );
+
+    $toc->add_file( file => $self, content => $html );
+
+    return
+          q{<div id="table-of-contents">} . "\n"
+        . $toc->html_for_toc() . "\n"
+        . '</div>' . "\n"
+        . $toc->html_for_document($self);
 }
 
 __PACKAGE__->meta()->make_immutable();
@@ -65,4 +142,3 @@ __PACKAGE__->meta()->make_immutable();
 1;
 
 # ABSTRACT: Turns wikitext into HTML
-
