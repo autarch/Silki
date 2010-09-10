@@ -16,5 +16,6 @@ Makefile.PL
 Makefile
 Makefile.old
 pm_to_blib*
+nytprof*
 t/lib/Silki/Test/FakeSchema.pm
 Silki-*
