@@ -38,7 +38,7 @@ msgid "%1 Dashboard "
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:61
+#: lib/Silki/Controller/Wiki.pm:62
 msgid "%1 Front Page"
 msgstr ""
 
@@ -53,7 +53,7 @@ msgid "%1 created %quant(%2, page, pages) in this wiki."
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:56
+#: lib/Silki/Controller/Wiki.pm:57
 msgid "%1 dashboard"
 msgstr ""
 
@@ -73,27 +73,27 @@ msgid "%1 has not edited any pages in this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:452
+#: lib/Silki/Controller/Wiki.pm:453
 msgid "%1 is already a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:424
+#: lib/Silki/Controller/Wiki.pm:425
 msgid "%1 is no longer an admin for this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:470
+#: lib/Silki/Controller/Wiki.pm:471
 msgid "%1 is now a member of this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:416
+#: lib/Silki/Controller/Wiki.pm:417
 msgid "%1 is now an admin for this wiki."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:403
+#: lib/Silki/Controller/Wiki.pm:404
 msgid "%1 was removed as a wiki member."
 msgstr ""
 
@@ -142,7 +142,7 @@ msgid "(Link to non-existent wiki: %1)"
 msgstr ""
 
 #. ($address->address()
-#: lib/Silki/Controller/Wiki.pm:503
+#: lib/Silki/Controller/Wiki.pm:504
 msgid "A user account for %1 has been created, and this person has been invited to join this wiki."
 msgstr ""
 
@@ -215,7 +215,7 @@ msgid "All wikis"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Controller/Wiki.pm:462
+#: lib/Silki/Controller/Wiki.pm:463
 msgid "An unactived account for %1 already exists. Once the account is activated, this user will be able to access this wiki."
 msgstr ""
 
@@ -361,7 +361,7 @@ msgid "Deleted the page %1"
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:160
+#: lib/Silki/Controller/Wiki.pm:161
 msgid "Deleted the wiki %1"
 msgstr ""
 
@@ -496,7 +496,7 @@ msgstr ""
 msgid "Found a system user that does not exist in this system (%1)!"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:60
+#: lib/Silki/Controller/Wiki.pm:61
 msgid "Front Page"
 msgstr ""
 
@@ -517,7 +517,7 @@ msgid "History"
 msgstr ""
 
 #. ($page->title()
-#: lib/Silki/Controller/Page.pm:284 share/mason/autohandler:28
+#: lib/Silki/Controller/Page.pm:297 share/mason/autohandler:28
 msgid "History for %1"
 msgstr ""
 
@@ -836,7 +836,7 @@ msgid "Permissions"
 msgstr ""
 
 #. ($perm_loc)
-#: lib/Silki/Controller/Wiki.pm:354
+#: lib/Silki/Controller/Wiki.pm:355
 msgid "Permissions for this wiki have been set to %1"
 msgstr ""
 
@@ -887,16 +887,16 @@ msgstr ""
 msgid "Reading the tarball (this may take a while)"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:65
+#: lib/Silki/Controller/Wiki.pm:66
 msgid "Recent Changes"
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Wiki.pm:220 share/mason/autohandler:23 share/mason/wiki/recent:39
+#: lib/Silki/Controller/Wiki.pm:221 share/mason/autohandler:23 share/mason/wiki/recent:39
 msgid "Recent Changes in %1"
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:66
+#: lib/Silki/Controller/Wiki.pm:67
 msgid "Recent activity in this wiki"
 msgstr ""
 
@@ -958,7 +958,7 @@ msgid "Revision %1"
 msgstr ""
 
 #. ($num)
-#: lib/Silki/Controller/Page.pm:241
+#: lib/Silki/Controller/Page.pm:254
 msgid "Revision %1 has been deleted."
 msgstr ""
 
@@ -1080,19 +1080,19 @@ msgstr ""
 msgid "The email hostname you provided is already in use by another domain."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:356
+#: lib/Silki/Controller/Page.pm:369
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
-#: lib/Silki/Controller/Wiki.pm:260
+#: lib/Silki/Controller/Wiki.pm:261
 msgid "The file has been uploaded."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:382
+#: lib/Silki/Controller/Page.pm:395
 msgid "The file you uploaded was empty."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:375
+#: lib/Silki/Controller/Page.pm:388
 msgid "The file you uploaded was too large."
 msgstr ""
 
@@ -1317,7 +1317,7 @@ msgstr ""
 msgid "View this file"
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:53 share/mason/page/autohandler:9
+#: lib/Silki/Controller/Page.pm:54 share/mason/page/autohandler:9
 msgid "View this page"
 msgstr ""
 
@@ -1463,7 +1463,7 @@ msgstr ""
 msgid "You cannot remove yourself as an admin."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:368
+#: lib/Silki/Controller/Page.pm:381
 msgid "You did not select a file to upload."
 msgstr ""
 
