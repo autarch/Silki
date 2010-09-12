@@ -43,21 +43,16 @@ sub _run {
 
     my $wiki;
 
-    eval {
-        my %p = (
-            tarball => $self->tarball(),
-            log     => $self->_log_coderef(),
-            fast    => $self->fast(),
-        );
+    my %p = (
+        tarball => $self->tarball(),
+        log     => $self->_log_coderef(),
+        fast    => $self->fast(),
+    );
 
-        $p{domain}
-            = Silki::Schema::Domain->new( web_hostname => $self->domain() )
-            if $self->domain();
+    $p{domain} = Silki::Schema::Domain->new( web_hostname => $self->domain() )
+        if $self->domain();
 
-        $wiki = Silki::Wiki::Importer->new(%p)->imported_wiki();
-    };
-
-    return $wiki;
+    return Silki::Wiki::Importer->new(%p)->imported_wiki();
 }
 
 sub _final_result_string {
