@@ -10,7 +10,7 @@
 %   }
 % } else {
 <pre id="process-status" class="js-process-id-<% $process->process_id() %> js-process-type-Import">
-<img src="<% static_uri('/images/small-spinner.gif') %>" /> <% loc('Waiting for import to start ...') %>
+<img src="/images/small-spinner.gif" /> <% loc('Waiting for import to start ...') %>
 </pre>
 % }
 <div id="process-complete" style="display: none">
