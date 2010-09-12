@@ -283,7 +283,7 @@ msgid "Contents of %1"
 msgstr ""
 
 #. ($title)
-#: share/mason/wiki/new-page-form:4
+#: share/mason/wiki/new-page-form:8
 msgid "Create %1"
 msgstr ""
 
@@ -399,7 +399,7 @@ msgstr ""
 
 #. ($domain->web_hostname()
 #. ($page->title()
-#: share/mason/domain/edit-form:8 share/mason/page/edit-form:4
+#: share/mason/domain/edit-form:8 share/mason/page/edit-form:8
 msgid "Edit %1"
 msgstr ""
 
