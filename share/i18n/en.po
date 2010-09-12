@@ -543,13 +543,13 @@ msgid "Import is complete. You can <a href=\"%html(%1)\">visit the imported wiki
 msgstr ""
 
 #. ($file_count)
-#: lib/Silki/Wiki/Importer.pm:390 lib/Silki/Wiki/Importer.pm:396
+#: lib/Silki/Wiki/Importer.pm:393 lib/Silki/Wiki/Importer.pm:399
 msgid "Imported %quant( %1, file, files )"
 msgstr ""
 
 #. ($revision_count,                        $page_count)
 #. ($revision_count,                $page_count)
-#: lib/Silki/Wiki/Importer.pm:345 lib/Silki/Wiki/Importer.pm:357
+#: lib/Silki/Wiki/Importer.pm:348 lib/Silki/Wiki/Importer.pm:360
 msgid "Imported %quant( %1, revision, revisions ) (%quant( %2, page, pages ))"
 msgstr ""
 
