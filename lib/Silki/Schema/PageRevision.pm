@@ -120,7 +120,7 @@ sub _renumber_higher_revisions {
     my $rev     = shift;
     my $max_rev = shift;
 
-    return $rev == $max_rev;
+    return if $rev == $max_rev;
 
     my $update = $self->_RenumberHigherRevisionsSQL();
 
