@@ -1,5 +1,7 @@
 0.19  2010-09-12
 
+- Errors during an import were not detected properly.
+
 - Import broke if any of the users being imported had an openid_uri.
 
 - Fix bad image URIs for import & export page.
