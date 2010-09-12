@@ -270,7 +270,10 @@ sub _import_user {
         );
 
         if ( $data->{openid_uri} ) {
-            $user->update( openid_uri => $data->{openid_uri} );
+            $user->update(
+                openid_uri => $data->{openid_uri},
+                user       => $self->user(),
+            );
         }
     }
 
