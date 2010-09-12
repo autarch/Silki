@@ -1,7 +1,7 @@
 0.18  2010-09-12
 
 - Purging a revision sometimes failed with a SQL error. Now this always works
-  (but is slower, sigh).
+  (but is slower, sigh.)
 
 
 0.17  2010-09-12
