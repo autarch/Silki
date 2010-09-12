@@ -1,3 +1,10 @@
+0.19  2010-09-12
+
+- Import broke if any of the users being imported had an openid_uri.
+
+- Fix bad image URIs for import & export page.
+
+
 0.18  2010-09-12
 
 - Purging a revision sometimes failed with a SQL error. Now this always works
