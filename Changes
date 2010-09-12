@@ -1,3 +1,8 @@
+0.17  2010-09-12
+
+- When editing a page, there is now a live preview shown below the edit form.
+
+
 0.16  2010-09-07
 
 - More layout changes. When viewing a page, tags and incoming links are on the
