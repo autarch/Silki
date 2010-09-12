@@ -99,15 +99,15 @@ around delete => sub {
         sub {
             my $rev = $self->revision_number();
 
-            my $page = $self->page();
-            my $is_most_recent
-                = $rev == $page->most_recent_revision()->revision_number();
+            my $page    = $self->page();
+            my $max_rev = $page->most_recent_revision()->revision_number();
+            my $is_most_recent = $rev == $max_rev;
 
             $self->$orig(@args);
 
             $page->_clear_most_recent_revision();
 
-            $self->_renumber_higher_revisions($rev);
+            $self->_renumber_higher_revisions( $rev, $max_rev );
 
             $page->most_recent_revision()->_post_change()
                 if $is_most_recent;
@@ -116,19 +116,24 @@ around delete => sub {
 };
 
 sub _renumber_higher_revisions {
-    my $self = shift;
-    my $rev  = shift;
+    my $self    = shift;
+    my $rev     = shift;
+    my $max_rev = shift;
+
+    return $rev == $max_rev;
 
     my $update = $self->_RenumberHigherRevisionsSQL();
 
     my $dbh = Silki::Schema->DBIManager()->source_for_sql($update)->dbh();
 
-    $dbh->do(
-        $update->sql($dbh),
-        {},
-        $self->page_id(),
-        $rev,
-    );
+    for my $r ( $rev + 1 .. $max_rev ) {
+        $dbh->do(
+            $update->sql($dbh),
+            {},
+            $self->page_id(),
+            $r,
+        );
+    }
 
     return;
 }
@@ -151,7 +156,7 @@ sub _BuildRenumberHigherRevisionsSQL {
                $minus_one )
         ->where( $page_rev_t->column('page_id'), '=',
                  Fey::Placeholder->new() )
-        ->and  ( $page_rev_t->column('revision_number'), '>',
+        ->and  ( $page_rev_t->column('revision_number'), '=',
                  Fey::Placeholder->new() );
 
     return $update;
