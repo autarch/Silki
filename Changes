@@ -1,3 +1,8 @@
+0.20
+
+- Added a feature to allow a user to change a forgotten password.
+
+
 0.19  2010-09-12
 
 - Errors during an import were not detected properly.
