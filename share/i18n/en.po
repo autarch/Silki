@@ -141,8 +141,12 @@ msgstr ""
 msgid "(Link to non-existent wiki: %1)"
 msgstr ""
 
+#: lib/Silki/Controller/User.pm:268
+msgid "A message telling you how to change your password has been sent to your email address."
+msgstr ""
+
 #. ($address->address()
-#: lib/Silki/Controller/Wiki.pm:504
+#: lib/Silki/Controller/Wiki.pm:503
 msgid "A user account for %1 has been created, and this person has been invited to join this wiki."
 msgstr ""
 
@@ -154,12 +158,12 @@ msgstr ""
 msgid "Account Preferences"
 msgstr ""
 
-#: share/mason/user/activation-form:20
+#: share/mason/user/confirmation-form:18
 msgid "Activate Your Account"
 msgstr ""
 
 #. ($self->domain()
-#: lib/Silki/Schema/User.pm:981
+#: lib/Silki/Schema/User.pm:1022
 msgid "Activate your user account on the %1 server"
 msgstr ""
 
@@ -257,8 +261,12 @@ msgstr ""
 msgid "Back to current revision"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:587
-msgid "Cannot make an activation uri for a user which does not need activation.\n"
+#: lib/Silki/Schema/User.pm:610
+msgid "Cannot make an confirmation uri for a user which does not have a confirmation key."
+msgstr ""
+
+#: lib/Silki/Schema/User.pm:219
+msgid "Cannot pass requires_activation and disable_login when inserting a user"
 msgstr ""
 
 #: share/mason/wiki/autohandler:18
@@ -324,6 +332,10 @@ msgstr ""
 
 #: lib/Silki/Wiki/Exporter.pm:104
 msgid "Creating the tarball (this may take a while)."
+msgstr ""
+
+#: share/mason/user/login-form:5
+msgid "Credentials"
 msgstr ""
 
 #: share/mason/page/history:10
@@ -416,7 +428,7 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: share/mason/user/login-form:8
+#: share/mason/user/forgot-password-form:8 share/mason/user/login-form:8
 msgid "Email Address:"
 msgstr ""
 
@@ -508,7 +520,7 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-#: share/email-templates/activation.html:2 share/email-templates/invitation.html:2
+#: share/email-templates/activation.html:2 share/email-templates/forgot-password.html:2 share/email-templates/invitation.html:2
 msgid "Hi,"
 msgstr ""
 
@@ -523,6 +535,10 @@ msgstr ""
 
 #: share/mason/header.mas:4
 msgid "Home"
+msgstr ""
+
+#: share/mason/user/login-form:24
+msgid "I forgot my password"
 msgstr ""
 
 #: share/mason/lib/forms/user.mas:43
@@ -543,13 +559,13 @@ msgid "Import is complete. You can <a href=\"%html(%1)\">visit the imported wiki
 msgstr ""
 
 #. ($file_count)
-#: lib/Silki/Wiki/Importer.pm:393 lib/Silki/Wiki/Importer.pm:399
+#: lib/Silki/Wiki/Importer.pm:392 lib/Silki/Wiki/Importer.pm:398
 msgid "Imported %quant( %1, file, files )"
 msgstr ""
 
 #. ($revision_count,                        $page_count)
 #. ($revision_count,                $page_count)
-#: lib/Silki/Wiki/Importer.pm:348 lib/Silki/Wiki/Importer.pm:360
+#: lib/Silki/Wiki/Importer.pm:347 lib/Silki/Wiki/Importer.pm:359
 msgid "Imported %quant( %1, revision, revisions ) (%quant( %2, page, pages ))"
 msgstr ""
 
@@ -615,6 +631,11 @@ msgstr ""
 msgid "Insert an image"
 msgstr ""
 
+#. ($user->domain()
+#: share/email-templates/forgot-password.html:6
+msgid "It looks like you forgot your password for a Silki wiki at %1."
+msgstr ""
+
 #: share/mason/wiki/orphans:12 share/mason/wiki/search-results:7
 msgid "Last Edited By"
 msgstr ""
@@ -652,7 +673,7 @@ msgstr ""
 msgid "Links to pages which do not yet exist"
 msgstr ""
 
-#: share/mason/header.mas:9
+#: share/mason/header.mas:9 share/mason/user/login-form:37
 msgid "Log in"
 msgstr ""
 
@@ -733,7 +754,7 @@ msgstr ""
 msgid "No other pages link to this page. Orphan pages can be confusing, so you may want to add a link to this page."
 msgstr ""
 
-#. ($user->activation_uri( with_host => 1)
+#. ($user->confirmation_uri( with_host => 1)
 #: share/email-templates/invitation-text.mas:4
 msgid "Once you <a href=\"%html(%1)\">activate your user account</a>, you will be a member of the wiki."
 msgstr ""
@@ -818,6 +839,11 @@ msgstr ""
 msgid "Password (again):"
 msgstr ""
 
+#. ($self->domain()
+#: lib/Silki/Schema/User.pm:994
+msgid "Password reset for %1"
+msgstr ""
+
 #: share/mason/lib/forms/user.mas:29 share/mason/user/login-form:13
 msgid "Password:"
 msgstr ""
@@ -844,16 +870,12 @@ msgstr ""
 msgid "Personal message"
 msgstr ""
 
-#: share/mason/user/activation-form:3
-msgid "Please confirm the information below to activate your account. If you already chose a password, you do not need to re-enter it."
-msgstr ""
-
-#: share/mason/user/activation-form:5
+#: share/mason/user/confirmation-form:3
 msgid "Please pick a password or provide an OpenID for future logins to activate your account."
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Role/Controller/User.pm:175
+#: lib/Silki/Role/Controller/User.pm:177
 msgid "Preferences for "
 msgstr ""
 
@@ -935,6 +957,10 @@ msgstr ""
 
 #: share/mason/domain/domains:6 share/mason/lib/forms/domain.mas:31
 msgid "Requires SSL?"
+msgstr ""
+
+#: share/mason/user/forgot-password-form:23
+msgid "Reset Your Password"
 msgstr ""
 
 #: share/mason/page/view:17
@@ -1026,7 +1052,7 @@ msgstr ""
 msgid "Skipping user already in system (%1)"
 msgstr ""
 
-#: share/mason/lib/forms/page.mas:49 share/mason/lib/forms/user.mas:69 share/mason/page/rename-form:11 share/mason/user/login-form:17
+#: share/mason/lib/forms/page.mas:49 share/mason/lib/forms/user.mas:69 share/mason/page/rename-form:11 share/mason/user/forgot-password-form:12 share/mason/user/login-form:17
 msgid "Submit"
 msgstr ""
 
@@ -1049,11 +1075,11 @@ msgstr ""
 msgid "The %1 domain has been updated."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:443
+#: lib/Silki/Schema/User.pm:459
 msgid "The OpenID URI you provided is already in use by another user."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:417
+#: lib/Silki/Schema/User.pm:433
 msgid "The OpenID you provided is not a valid URI."
 msgstr ""
 
@@ -1072,7 +1098,7 @@ msgstr ""
 msgid "The contents of <em>%html(%1)</em>"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:399
+#: lib/Silki/Schema/User.pm:415
 msgid "The email address you provided is already in use by another user."
 msgstr ""
 
@@ -1121,7 +1147,7 @@ msgstr ""
 msgid "The title you provided is already in use by another wiki."
 msgstr ""
 
-#: lib/Silki/Role/Controller/User.pm:203
+#: lib/Silki/Role/Controller/User.pm:205
 msgid "The two passwords you provided did not match"
 msgstr ""
 
@@ -1150,6 +1176,11 @@ msgstr ""
 #. ($wiki_data->{title})
 #: lib/Silki/Wiki/Importer.pm:167
 msgid "There is already a wiki with this title (%1)"
+msgstr ""
+
+#. ($username)
+#: lib/Silki/Controller/User.pm:245
+msgid "There is no user with the email address %1."
 msgstr ""
 
 #: share/mason/wiki/search-results:27
@@ -1207,7 +1238,7 @@ msgid ""
 "           if you have an account."
 msgstr ""
 
-#: lib/Silki/Controller/User.pm:137
+#: lib/Silki/Controller/User.pm:137 lib/Silki/Controller/User.pm:238
 msgid "This user account has been disabled by a site admin."
 msgstr ""
 
@@ -1274,6 +1305,10 @@ msgstr ""
 
 #: share/mason/lib/table/attachments-table.mas:8
 msgid "Type"
+msgstr ""
+
+#: share/mason/user/confirmation-form:18
+msgid "Update Your Account"
 msgstr ""
 
 #. ($old_title, $title)
@@ -1451,6 +1486,11 @@ msgstr ""
 msgid "You can <a href=\"%html(%1)\">download the export tarball</a>."
 msgstr ""
 
+#. ($user->confirmation_uri( with_host => 1)
+#: share/email-templates/forgot-password.html:8
+msgid "You can <a href=\"%html(%1)\">reset your password by using the web interface</a>."
+msgstr ""
+
 #: share/mason/wiki/import:17
 msgid "You can <a href=\"@result@\">visit the imported wiki</a>."
 msgstr ""
@@ -1473,7 +1513,7 @@ msgid "You do not have %1 permissions in this wiki."
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Schema/User.pm:976
+#: lib/Silki/Schema/User.pm:1017
 msgid "You have been invited to join the %1 wiki at %2"
 msgstr ""
 
@@ -1497,7 +1537,7 @@ msgstr ""
 msgid "You must log in to to perform this action in the %1 wiki."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:335
+#: lib/Silki/Schema/User.pm:351
 msgid "You must provide a password or OpenID."
 msgstr ""
 
@@ -1505,11 +1545,15 @@ msgstr ""
 msgid "You must provide a password."
 msgstr ""
 
+#: lib/Silki/Controller/User.pm:230
+msgid "You must provide an email address."
+msgstr ""
+
 #: share/mason/header.mas:7
 msgid "Your Account"
 msgstr ""
 
-#: share/mason/user/pending-activation:14
+#: share/mason/user/pending-confirmation:14
 msgid "Your Account Requires Confirmation"
 msgstr ""
 
@@ -1518,13 +1562,13 @@ msgid "Your Wikis"
 msgstr ""
 
 #. ($user->best_name()
-#: lib/Silki/Role/Controller/User.pm:170
+#: lib/Silki/Role/Controller/User.pm:172
 msgid "Your account has been activated. Welcome to the site, %1"
 msgstr ""
 
 #. ($user->email_address()
-#: share/mason/user/pending-activation:2
-msgid "Your account will be active once you confirm your email address. An email has been sent to %1 with an activation uri."
+#: share/mason/user/pending-confirmation:2
+msgid "Your account will be active once you confirm your email address. An email has been sent to %1 with a confirmation uri."
 msgstr ""
 
 #: share/mason/lib/forms/user.mas:14
@@ -1535,7 +1579,7 @@ msgstr ""
 msgid "Your preferences"
 msgstr ""
 
-#: lib/Silki/Role/Controller/User.pm:173
+#: lib/Silki/Role/Controller/User.pm:175
 msgid "Your preferences have been updated."
 msgstr ""
 
