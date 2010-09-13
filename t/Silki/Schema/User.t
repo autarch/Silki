@@ -174,9 +174,9 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         user          => Silki::Schema::User->SystemUser(),
     );
 
-    is(
-        $user->password(), '*disabled*',
-        'password is set to "*disabled*" when disable_login is passed to insert()'
+    ok(
+        !$user->_password_is_encrypted(),
+        'password is not encrypted when disable_login is passed to insert()'
     );
 
     ok( !$user->has_valid_password(), 'user does not have valid password' );
@@ -226,6 +226,11 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         'activation_uri() with explicit view'
     );
 
+    ok(
+        $user->has_valid_password(),
+        'can set a valid password when requires_activation is true'
+    );
+
     $user->update(
         activation_key => undef,
         user           => $user,
@@ -235,6 +240,25 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         sub { $user->activation_uri() },
         qr/^\QCannot make an activation uri for a user which does not need activation/,
         'cannot get an activation_uri for a user without an activation_key'
+    );
+}
+
+{
+    my $user;
+
+    lives_ok {
+        $user = Silki::Schema::User->insert(
+            email_address       => 'foobar@example.com',,
+            display_name        => 'Example User',
+            requires_activation => 1,
+            user                => Silki::Schema::User->SystemUser(),
+        );
+    }
+    'can insert a user that requires activation without providing a password';
+
+    ok(
+        !$user->has_valid_password(),
+        'that user ends up with an unusable password'
     );
 }
 

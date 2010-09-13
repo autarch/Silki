@@ -205,6 +205,81 @@ sub authentication_DELETE {
     $c->redirect_and_detach($redirect);
 }
 
+sub forgot_password_form : Local {
+    my $self = shift;
+    my $c    = shift;
+
+    $c->stash()->{template} = '/user/forgot-password-form';
+}
+
+sub password_reminder : Local : ActionClass('+Catalyst::Action::REST') {
+}
+
+sub password_reminder_POST {
+    my $self = shift;
+    my $c    = shift;
+
+    my $username = $c->request()->params()->{username};
+
+    my $user;
+
+    my @errors;
+    if ( string_is_empty($username) ) {
+        push @errors, {
+            field   => 'username',
+            message => loc('You must provide an email address.'),
+            };
+    }
+    else {
+        $user = Silki::Schema::User->new( username => $username );
+
+        if ($user) {
+            push @errors,
+                loc('This user account has been disabled by a site admin.')
+                if $user->is_disabled();
+        }
+        else {
+            push @errors, {
+                field => 'username',
+                message =>
+                    loc( "There is no user with the email address %1.", $username ),
+                };
+        }
+    }
+
+    if (@errors) {
+        $c->redirect_with_error(
+            error => \@errors,
+            uri   => $c->domain()->application_uri(
+                path      => '/user/forgot_password_form',
+                with_host => 1,
+            ),
+            form_data => {
+                username  => $username,
+                return_to => $c->request()->params()->{return_to},
+            },
+        );
+    }
+
+    $user->forgot_password();
+
+    $c->session_object()->add_message(
+        loc(
+            'A message telling you how to change your password has been sent to your email address.'
+        )
+    );
+
+    $c->redirect_and_detach(
+        $c->domain()->application_uri(
+            path      => '/user/forgot_password_form',
+            with_host => 1,
+            query =>
+                { return_to => $c->request()->parameters()->{return_to} },
+            with_host => 1,
+        )
+    );
+}
+
 sub new_user_form : Local {
     my $self = shift;
     my $c    = shift;
