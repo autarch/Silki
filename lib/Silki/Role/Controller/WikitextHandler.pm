@@ -47,11 +47,10 @@ sub _check_for_link_spam {
 
     my $config = Silki::Config->new();
 
-    my $key = $config->antispam_key();
-    return unless length $key;
-
+    my $key    = $config->antispam_key();
     my $server = $config->antispam_server();
-    return unless length $server;
+
+    return unless length $key && length $server;
 
     my $ua = Net::Akismet::Protocol->new(
         key  => $key,
