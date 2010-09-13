@@ -208,24 +208,30 @@ with 'Silki::Role::Schema::Serializes' => {
     skip => ['password'],
 };
 
-my $DisabledPW = '*disabled*';
+my $UnusablePW = '*unusable*';
 around insert => sub {
     my $orig  = shift;
     my $class = shift;
     my %p     = @_;
 
-    if ( delete $p{requires_activation} ) {
-        $p{activation_key}
-            = sha1_hex( $p{email_address}, Silki::Config->new()->secret() );
-        $p{password} //= $DisabledPW;
+    if ( $p{requires_activation} && $p{disable_login} ) {
+        die loc(
+            'Cannot pass requires_activation and disable_login when inserting a user'
+        );
     }
 
-    if ( delete $p{disable_login} ) {
-        $p{password}       = $DisabledPW;
-        $p{openid_uri}     = undef;
-        $p{activation_key} = undef;
+    if ( delete $p{requires_activation} ) {
+        $p{confirmation_key}
+            = $class->_make_confirmation_key( $p{email_address} );
+
+        $p{password} = $UnusablePW;
     }
-    elsif ( $p{password} ) {
+    elsif ( delete $p{disable_login} ) {
+        $p{password}       = $UnusablePW;
+        $p{openid_uri}     = undef;
+        $p{confirmation_key} = undef;
+    }
+    elsif ( defined $p{password} ) {
         $p{password} = $class->_password_as_rfc2307( $p{password} );
     }
 
@@ -253,9 +259,9 @@ around update => sub {
     }
 
     if ( delete $p{disable_login} ) {
-        $p{password}       = $DisabledPW;
+        $p{password}       = $UnusablePW;
         $p{openid_uri}     = undef;
-        $p{activation_key} = undef;
+        $p{confirmation_key} = undef;
     }
 
     $p{last_modified_datetime} = Fey::Literal::Function->new('NOW');
@@ -312,6 +318,15 @@ after update => sub {
     $_[0]->_clear_has_valid_password();
     $_[0]->_clear_has_login_credentials();
 };
+
+sub _make_confirmation_key {
+    shift;
+
+    return sha1_hex(
+        shift, time, $$, rand(1_000_000_000),
+        Silki::Config->new()->secret()
+    );
+}
 
 sub _password_as_rfc2307 {
     my $self = shift;
@@ -560,7 +575,7 @@ sub _build_has_valid_password {
     my $self = shift;
 
     return 0 if string_is_empty( $self->password() );
-    return 0 if $self->password eq $DisabledPW;
+    return 0 unless $self->_password_is_encrypted();
 
     return 1;
 }
@@ -575,23 +590,29 @@ sub _build_has_login_credentials {
     return 0;
 }
 
+sub _password_is_encrypted {
+    my $self = shift;
+
+    return $self->password() =~ /^{CRYPT}/ ? 1 : 0;
+}
+
 sub requires_activation {
     my $self = shift;
 
-    return defined $self->activation_key();
+    return defined $self->confirmation_key() && ! $self->has_valid_password();
 }
 
-sub activation_uri {
+sub confirmation_uri {
     my $self = shift;
     my %p    = @_;
 
     die
-        loc("Cannot make an activation uri for a user which does not need activation.\n")
-        unless $self->requires_activation();
+        loc('Cannot make an confirmation uri for a user which does not have a confirmation key.')
+        unless defined $self->confirmation_key();
 
     my $view = $p{view} || 'preferences_form';
 
-    $p{view} = 'activation/' . $self->activation_key() . q{/} . $view;
+    $p{view} = 'confirmation/' . $self->confirmation_key() . q{/} . $view;
 
     return $self->uri(%p);
 }
@@ -602,7 +623,7 @@ sub check_password {
 
     return if $self->is_system_user();
 
-    return if $self->password() eq $DisabledPW;
+    return unless $self->has_valid_password();
 
     my $pass = Authen::Passphrase::BlowfishCrypt->from_rfc2307(
         $self->password() );
@@ -957,21 +978,40 @@ sub send_activation_email {
     $self->_send_email( @_, template => 'activation' );
 }
 
+sub forgot_password {
+    my $self = shift;
+
+    $self->update(
+        confirmation_key =>
+            $self->_make_confirmation_key( $self->email_address() ),
+        user => Silki::Schema::User->SystemUser(),
+    );
+
+    $self->_send_email(
+        @_,
+        sender => $self,
+        subject =>
+            loc( 'Password reset for %1', $self->domain()->web_hostname() ),
+        template => 'forgot-password',
+    );
+}
+
 sub _send_email {
     my $self = shift;
-    my ( $wiki, $sender, $message, $template ) = validated_list(
+    my ( $wiki, $sender, $message, $subject, $template ) = validated_list(
         \@_,
         wiki     => { isa => 'Silki::Schema::Wiki', optional => 1 },
         sender   => { isa => 'Silki::Schema::User' },
         message  => { isa => Str,                   optional => 1 },
+        subject  => { isa => Str,                   optional => 1 },
         template => { isa => Str },
     );
 
     die "Cannot send an invitation email without a wiki."
         if $template eq 'invitation' && ! $wiki;
 
-    my $subject
-        = $wiki
+    $subject
+        ||= $wiki
         ? loc(
         'You have been invited to join the %1 wiki at %2',
         $wiki->title(),

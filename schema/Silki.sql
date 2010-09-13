@@ -22,7 +22,7 @@ CREATE TABLE "User" (
        password                 VARCHAR(67)     NULL,
        openid_uri               TEXT            UNIQUE  NULL,
        -- SHA1 in hex form
-       activation_key           VARCHAR(40)     UNIQUE  NULL,
+       confirmation_key         VARCHAR(40)     UNIQUE  NULL,
        is_admin                 BOOLEAN         NOT NULL DEFAULT FALSE,
        is_system_user           BOOLEAN         NOT NULL DEFAULT FALSE,
        is_disabled              BOOLEAN         NOT NULL DEFAULT FALSE,

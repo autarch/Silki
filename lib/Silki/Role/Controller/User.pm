@@ -86,10 +86,10 @@ sub user_PUT {
     my $user = $c->stash()->{user};
 
     my $can_edit = 0;
-    my $key = $params->{activation_key};
+    my $key = $params->{confirmation_key};
     if ($key) {
-        $can_edit
-            = $user->requires_activation() && $key eq $user->activation_key();
+        $can_edit = 1
+            if ( $user->confirmation_key() || q{} ) eq $key;
     }
     else {
         $can_edit = $c->user()->can_edit_user($user);
@@ -125,11 +125,13 @@ sub user_PUT {
     }
     else {
         my %update = $c->request()->user_params();
-        $update{activation_key} = undef
+        $update{confirmation_key} = undef
             if defined $key;
         $update{preserve_password} = 1;
 
         my @errors = $self->_check_passwords_match( \%update );
+
+        my $required_activation = $user->requires_activation();
 
         unless (@errors) {
             my $upload = $c->request()->upload('image');
@@ -165,11 +167,11 @@ sub user_PUT {
             if $c->user()->is_guest();
 
         $message
-            = $key ? loc(
+            = $required_activation ? loc(
             'Your account has been activated. Welcome to the site, %1',
             $user->best_name()
             )
-            : $user->user_id() == $c->user()->user_id()
+            : $key || $user->user_id() == $c->user()->user_id()
             ? loc('Your preferences have been updated.')
             : loc(
             'Preferences for ' . $user->best_name() . ' have been updated.' );
@@ -213,8 +215,8 @@ sub _user_update_error {
     delete @{$form_data}{qw( password password2 )};
 
     my $uri
-        = $c->request()->params()->{activation_key}
-        ? $c->stash()->{user}->activation_uri( view => 'preferences_form' )
+        = $c->request()->params()->{confirmation_key}
+        ? $c->stash()->{user}->confirmation_uri( view => 'preferences_form' )
         : $self->_make_user_uri(
         $c,
         $c->stash()->{user},

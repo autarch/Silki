@@ -1,10 +1,8 @@
+% if ( $user->requires_activation() ) {
 <p>
-% if ( $user->has_login_credentials() ) {
-<% loc('Please confirm the information below to activate your account. If you already chose a password, you do not need to re-enter it.') %>
-% } else {
 <% loc('Please pick a password or provide an OpenID for future logins to activate your account.') %>
-% }
 </p>
+% }
 
 <& /lib/forms/user.mas, user => $user, action => $user->uri() &>
 
@@ -17,5 +15,9 @@ sidebar => []
 </%attr>
 
 <%method title>
-<% loc('Activate Your Account') %>
+<% $user->requires_activation() ? loc('Activate Your Account') : loc('Update Your Account') %>
+
+<%args>
+$user
+</%args>
 </%method>

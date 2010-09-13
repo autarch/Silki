@@ -195,70 +195,45 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
     my $user = Silki::Schema::User->insert(
         email_address       => $email,
         display_name        => 'Example User',
-        password            => $pw,
         requires_activation => 1,
         user                => Silki::Schema::User->SystemUser(),
     );
 
-    ok( length $user->activation_key(),
-        'user has an activation_key when requires_activation is passed to insert()' );
+    ok( length $user->confirmation_key(),
+        'user has an confirmation_key when requires_confirmation is passed to insert()' );
 
     ok( $user->requires_activation(),
         'requires_activation is true' );
 
     is(
-        $user->activation_uri(),
+        $user->confirmation_uri(),
         '/user/'
             . $user->user_id()
-            . '/activation/'
-            . $user->activation_key()
+            . '/confirmation/'
+            . $user->confirmation_key()
             . '/preferences_form',
-        'default activation_uri() is for preferences form'
+        'default confirmation_uri() is for preferences form'
     );
 
     is(
-        $user->activation_uri( view => 'status' ),
+        $user->confirmation_uri( view => 'status' ),
         '/user/'
             . $user->user_id()
-            . '/activation/'
-            . $user->activation_key()
+            . '/confirmation/'
+            . $user->confirmation_key()
             . '/status',
-        'activation_uri() with explicit view'
-    );
-
-    ok(
-        $user->has_valid_password(),
-        'can set a valid password when requires_activation is true'
+        'confirmation_uri() with explicit view'
     );
 
     $user->update(
-        activation_key => undef,
-        user           => $user,
+        confirmation_key => undef,
+        user             => $user,
     );
 
     throws_ok(
-        sub { $user->activation_uri() },
-        qr/^\QCannot make an activation uri for a user which does not need activation/,
-        'cannot get an activation_uri for a user without an activation_key'
-    );
-}
-
-{
-    my $user;
-
-    lives_ok {
-        $user = Silki::Schema::User->insert(
-            email_address       => 'foobar@example.com',,
-            display_name        => 'Example User',
-            requires_activation => 1,
-            user                => Silki::Schema::User->SystemUser(),
-        );
-    }
-    'can insert a user that requires activation without providing a password';
-
-    ok(
-        !$user->has_valid_password(),
-        'that user ends up with an unusable password'
+        sub { $user->confirmation_uri() },
+        qr/^\QCannot make an confirmation uri for a user which does not need confirmation/,
+        'cannot get an confirmation_uri for a user without an confirmation_key'
     );
 }
 

@@ -54,12 +54,12 @@ sub wikis_GET {
     return $self->status_ok( $c, entity => \@entity );
 }
 
-sub _set_activation : Chained('_set_user') : PathPart('activation') : CaptureArgs(1) {
+sub _set_confirmation : Chained('_set_user') : PathPart('confirmation') : CaptureArgs(1) {
     my $self = shift;
     my $c    = shift;
     my $key  = shift;
 
-    my $user = Silki::Schema::User->new( activation_key => $key );
+    my $user = Silki::Schema::User->new( confirmation_key => $key );
 
     $c->redirect_and_detach( $c->domain()->uri( with_host => 1 ) )
         unless $user && $user->user_id() == $c->stash()->{user}->user_id();
@@ -67,18 +67,18 @@ sub _set_activation : Chained('_set_user') : PathPart('activation') : CaptureArg
     return;
 }
 
-sub pending_activation : Chained('_set_activation') : PathPart('status') : Args(0)  {
+sub pending_confirmation : Chained('_set_confirmation') : PathPart('status') : Args(0)  {
     my $self = shift;
     my $c    = shift;
 
-    $c->stash()->{template} = '/user/pending-activation';
+    $c->stash()->{template} = '/user/pending-confirmation';
 }
 
-sub activation_form : Chained('_set_activation') : PathPart('preferences_form') : Args(0)  {
+sub confirmation_form : Chained('_set_confirmation') : PathPart('preferences_form') : Args(0)  {
     my $self = shift;
     my $c    = shift;
 
-    $c->stash()->{template} = '/user/activation-form';
+    $c->stash()->{template} = '/user/confirmation-form';
 }
 
 sub login_form : Local {
@@ -141,7 +141,7 @@ sub authentication_POST {
 
                 if ($user) {
                     $c->redirect_and_detach(
-                        $user->activation_uri(
+                        $user->confirmation_uri(
                             view      => 'status',
                             with_host => 1,
                         )
@@ -369,7 +369,7 @@ sub users_collection_POST {
     $user->send_activation_email( sender => Silki::Schema::User->SystemUser() );
 
     $c->redirect_and_detach(
-        $user->activation_uri(
+        $user->confirmation_uri(
             view      => 'status',
             with_host => 1,
         )

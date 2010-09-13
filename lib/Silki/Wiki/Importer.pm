@@ -265,7 +265,6 @@ sub _import_user {
         $user = Silki::Schema::User->insert(
             %{$data},
             requires_activation => 1,
-            disable_login       => 1,
             user                => $self->user(),
         );
 

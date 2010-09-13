@@ -2,8 +2,8 @@
 <form action="<% $action %>" method="post" enctype="multipart/form-data">
 % if ($user) {
   <input type="hidden" name="x-tunneled-method" value="PUT" />
-%   if ( $user->activation_key() ) {
-  <input type="hidden" name="activation_key" value="<% $user->activation_key() %>" />
+%   if ( $user->confirmation_key() ) {
+  <input type="hidden" name="confirmation_key" value="<% $user->confirmation_key() %>" />
 %   }
 % }
 
