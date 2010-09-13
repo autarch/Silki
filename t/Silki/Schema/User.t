@@ -232,8 +232,8 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 
     throws_ok(
         sub { $user->confirmation_uri() },
-        qr/^\QCannot make an confirmation uri for a user which does not need confirmation/,
-        'cannot get an confirmation_uri for a user without an confirmation_key'
+        qr/^\QCannot make a confirmation uri for a user who does not have a confirmation key/,
+        'cannot get a confirmation_uri for a user without a confirmation_key'
     );
 }
 

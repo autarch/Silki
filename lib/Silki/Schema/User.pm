@@ -607,7 +607,7 @@ sub confirmation_uri {
     my %p    = @_;
 
     die
-        loc('Cannot make an confirmation uri for a user which does not have a confirmation key.')
+        loc('Cannot make a confirmation uri for a user who does not have a confirmation key.')
         unless defined $self->confirmation_key();
 
     my $view = $p{view} || 'preferences_form';

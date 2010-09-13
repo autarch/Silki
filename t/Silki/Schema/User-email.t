@@ -79,7 +79,7 @@ test_email(
             qr{^\QActivate your user account on the \E\S+\Q server},
     },
     qr{<p>\s+
-       \QYou have created a user account on the \E\S+\Q server. You must <a href="http://\E\S+?/user/\d+/activation/.+?\Q">activate your user account</a> before you can log in.\E
+       \QYou have created a user account on the \E\S+\Q server. You must <a href="http://\E\S+?/user/\d+/confirmation/.+?\Q">activate your user account</a> before you can log in.\E
        \s+</p>
        \s+
        \Q</body>\E
@@ -110,7 +110,7 @@ test_email(
     qr{<p>\s+
        \QYou have been invited to join the First Wiki wiki.\E
        \s+
-       \QOnce you <a href="http://\E\S+?/user/\d+/activation/.+?\Q">activate your user account</a>, you will be a member of the wiki.\E
+       \QOnce you <a href="http://\E\S+?/user/\d+/confirmation/.+?\Q">activate your user account</a>, you will be a member of the wiki.\E
        \s+</p>
        .+?
        <p>\s+

@@ -22,7 +22,7 @@ BEGIN {
 
 my $testdir = dir($Bin);
 
-my $min_version = 1;
+my $min_version = 4;
 my $max_version = max map { /\.v(\d+)/; $1 } glob "$testdir/*.v*";
 
 my $inst
