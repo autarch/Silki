@@ -217,6 +217,7 @@ around insert => sub {
     if ( delete $p{requires_activation} ) {
         $p{activation_key}
             = sha1_hex( $p{email_address}, Silki::Config->new()->secret() );
+        $p{password} //= $DisabledPW;
     }
 
     if ( delete $p{disable_login} ) {

@@ -482,7 +482,6 @@ sub _process_new_members {
         else {
             $user = Silki::Schema::User->insert(
                 requires_activation => 1,
-                disable_login       => 1,
                 email_address       => $address->address(),
                 (
                     $address->phrase()
