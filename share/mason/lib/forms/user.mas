@@ -11,7 +11,7 @@
     <legend><% loc('Account Preferences') %></legend>
 
     <div class="form-item">
-      <label for="display_name" class="for-field"><% loc('Your name:') %></label>
+      <label for="display_name" class="for-field"><% loc('Your name') %></label>
       <input type="text" class="text" name="display_name" id="display_name" />
       <div class="help-text">
         <p>
@@ -21,22 +21,22 @@
     </div>
 
     <div class="form-item">
-      <label for="email_address" class="for-field">Email:</label>
+      <label for="email_address" class="for-field"><% loc('Email') %></label>
       <input type="text" class="text medium" name="email_address" id="email_address" />
     </div>
 
     <div class="form-item">
-      <label for="password" class="for-field"><% loc('Password:') %></label>
+      <label for="password" class="for-field"><% loc('Password') %></label>
       <input type="password" class="text" name="password" id="password" />
     </div>
 
     <div class="form-item">
-      <label for="password2" class="for-field"><% loc('Password (again):') %></label>
+      <label for="password2" class="for-field"><% loc('Password (again)') %></label>
       <input type="password" class="text" name="password2" id="password2" />
     </div>
 
     <div class="form-item">
-      <label for="openid_uri" class="for-field">OpenID:</label>
+      <label for="openid_uri" class="for-field"><% loc('OpenID') %></label>
       <input type="text" class="text medium" name="openid_uri" id="openid_uri" />
       <div class="help-text">
         <p>
@@ -46,7 +46,7 @@
     </div>
 
     <div class="form-item">
-      <label for="time_zone" class="for-field"><% loc('Time Zone:') %></label>
+      <label for="time_zone" class="for-field"><% loc('Time Zone') %></label>
       <select name="time_zone">
 % for my $country ( qw( us ca ) ) {
 %   my $country = Silki::Schema::Country->new( iso_code => $country );
@@ -61,9 +61,9 @@
     </div>
 
     <div class="form-item">
-      <label for="image" class="for-field"><% loc('Profile Image:') %></label>
+      <label for="image" class="for-field"><% loc('Profile Image') %></label>
 
-      <input id="image" type="file" name="image" />
+      <input id="image" class="file" type="file" name="image" />
     </div>
 
     <input type="submit" class="submit" value="<% loc('Submit') %>" />

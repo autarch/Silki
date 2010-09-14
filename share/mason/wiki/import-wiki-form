@@ -7,8 +7,8 @@
 
   <fieldset>
     <div class="form-item">
-      <label class="for-field" for="tarball"><% loc('Wiki Tarball') %>:</label>
-      <input id="tarball" name="tarball" type="file" />
+      <label class="for-field" for="tarball"><% loc('Wiki Tarball') %></label>
+      <input id="tarball" class="file" name="tarball" type="file" />
     </div>
 
     <input class="submit" value="Import" type="submit" />

@@ -11,7 +11,7 @@
         <% $user->best_name() %>
       </label>
 %   if ( $user->user_id() == $c->user()->user_id() ) {
-      <% loc('You cannot remove yourself as an admin.') %>
+      <div><% loc('You cannot remove yourself as an admin.') %></div>
 %   } else {
       <input type="hidden" name="members" value="<% $user->user_id() %>" />
       <select id="role-for-<% $user->user_id() %>" name="role_for_<% $user->user_id() %>">

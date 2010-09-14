@@ -19,7 +19,7 @@
         <input id="quick-search-input"
                name="search"
                type="text"
-               class="text js-default-text-<% loc('Search') %>"
+               class="js-default-text-<% loc('Search') %>"
                value="<% loc('Search') %>" />
       </form>
 % }

@@ -2,8 +2,8 @@
     <legend><% loc('Permissions') %></legend>
 
     <div class="form-item">
-      <label for="public" class="for-field"><% loc('public') %></label>
-      <input id="public" class="checkbox" type="radio" name="permissions" value="public" />
+      <input id="public" class="radio" type="radio" name="permissions" value="public" />
+      <label for="public" class="for-radio"><% loc('public') %></label>
       <div class="help-text">
         <p>
           <% loc('In a public wiki, anyone can read and edit pages without logging in. However, only wiki members can delete pages or upload files.') %>
@@ -11,8 +11,8 @@
       </div>
     </div>
     <div class="form-item">
-      <label for="public-authenticate-to-edit" class="for-field"><% loc('public-authenticate-to-edit') %></label>
-      <input id="public-authenticate-to-edit" class="checkbox" type="radio" name="permissions" value="public-authenticate-to-edit" />
+      <input id="public-authenticate-to-edit" class="radio" type="radio" name="permissions" value="public-authenticate-to-edit" />
+      <label for="public-authenticate-to-edit" class="for-radio"><% loc('public-authenticate-to-edit') %></label>
       <div class="help-text">
         <p>
           <% loc('Like a public wiki, but users must log-in to edit. However, users do not have to be explicitly invited to become members.') %>
@@ -20,8 +20,8 @@
       </div>
     </div>
     <div class="form-item">
-      <label for="public-read-only" class="for-field"><% loc('public-read-only') %></label>
-      <input id="public-read-only" class="checkbox" type="radio" name="permissions" value="public-read-only" />
+      <input id="public-read-only" class="radio" type="radio" name="permissions" value="public-read-only" />
+      <label for="public-read-only" class="for-radio"><% loc('public-read-only') %></label>
       <div class="help-text">
         <p>
           <% loc('Like a public wiki, but only explicitly invited members may edit pages.') %>
@@ -29,8 +29,8 @@
       </div>
     </div>
     <div class="form-item">
-      <label for="private" class="for-field"><% loc('private') %></label>
-      <input id="private" class="checkbox" type="radio" name="permissions" value="private" />
+      <input id="private" class="radio" type="radio" name="permissions" value="private" />
+      <label for="private" class="for-radio"><% loc('private') %></label>
       <div class="help-text">
         <p>
           <% loc('Only explicitly invited members may access this wiki.') %>

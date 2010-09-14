@@ -5,12 +5,12 @@
     <legend><% loc('Credentials') %></legend>
 
     <div class="form-item">
-      <label for="username" class="for-field"><% loc('Email Address:') %></label>
+      <label for="username" class="for-field"><% loc('Email') %></label>
       <input type="text" class="text" name="username" id="username" />
     </div>
 
     <div class="form-item">
-      <label for="password" class="for-field"><% loc('Password:') %></label>
+      <label for="password" class="for-field"><% loc('Password') %></label>
       <input type="password" class="text" name="password" id="password" />
     </div>
 

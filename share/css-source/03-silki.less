@@ -113,6 +113,7 @@ a {
 
         input {
             color: #999;
+            display: inline;
 
             :focus {
                 color: black;
@@ -541,7 +542,6 @@ form {
     }
 
     div.form-item { 
-        clear: both;
         padding: 0.4em 0 0.4em 0;
 
         /* Having the help-text div allows us to set the margin in ems, to
@@ -549,9 +549,7 @@ form {
            the margin on the p tag, but this has a different font-size than
            the label, so the em size is not the same. */
         div.help-text { 
-            clear: both;
             margin-top: 0.1em;
-            margin-left: 12.5em;
 
             p {
                 font-size: 85%;
@@ -568,126 +566,80 @@ form {
         font-weight: bold;
     }
 
-    label.for-field {
-        display: block;
-        float: left;
-        margin-right: 0.5em;
-        text-align: right;
-        width: 12em;
-    }
-
-    label.secondary {
-        display: block;
-        float: left;
-        font-weight: normal;
-        margin-right: 0.5em;
-        text-align: right;
-        width: 12em;
-    }
-
     label.for-radio {
-        color: #777;
-        margin-right: 0.5em;
+        display: inline;
     }
 
-    label.for-checkbox {
-        font-weight: normal;
+    input.checkbox,
+    input.text,
+    input.file,
+    select {
+        border: 1px solid #333;
+        color: black;
+        display: block;
+        font-weight: bold;
+        padding: 0.2em;
     }
 
-    label.selected {
+    textarea {
+        display: block;
+    }
+
+    .text-for-hidden {
         color: black;
     }
 
-    div.no-label {
-        margin-left: 12.5em;
+    input.error,
+    textarea.error,
+    select.error,
+    p.error {
+        background-color: #FFCC66;
     }
 
-    input.no-label {
-        display: block;
-        margin-bottom: 0.2em;
+    input.disabled,
+    textarea.disabled,
+    select.disabled {
+        background-color: #CCC;
+        border-color: #333;
     }
 
-    input.checkbox {
-        margin-top: 0.2em;
-    }
-}
-
-input.text,
-input.file,
-select {
-    border: 1px solid #333;
-    color: black;
-    font-weight: bold;
-    margin-top: -0.1em;
-    padding: 0.2em;
-}
-
-span.text-for-hidden {
-    font-weight: bold;
-    color: black;
-}
-
-input.error,
-textarea.error,
-select.error,
-p.error {
-    background-color: #FFCC66;
-}
-
-input.disabled,
-textarea.disabled,
-select.disabled {
-    background-color: #CCC;
-    border-color: #333;
-}
-
-input.text:focus,
-textarea:focus,
-select:focus {
-    background-color: #FAFFCA;
-    border-color: black;
-}
-
-input.narrow {
-    width: 7em;
-}
-
-input.medium {
-    width: 18em;
-}
-
-input.wide {
-    width: 30em;
-}
-
-textarea.medium {
-    height: 7em;
-    width: 24em;
-}
-
-input.submit {
-    background-color: @orange-brown;
-    border-bottom: 2px solid @dark-orange-brown;
-    border-left: 1px solid @light-orange-brown;
-    border-right: 2px solid @dark-orange-brown;
-    border-top: 1px solid @light-orange-brown;
-    color: white;
-    font-weight: bold;
-    margin-left: 12.5em;
-    margin-top: 0.5em;
-    padding: 0.1em;
-    :hover {
-        background-color: @orange-brown + #222;
-    }
-}
-
-form.flush-left {
-    input.submit, div.form-item div.help-text { 
-        margin-left: 0;
+    input:focus,
+    textarea:focus,
+    select:focus {
+        background-color: #FAFFCA;
+        border-color: black;
     }
 
-    .for-field {
-        width: auto;
+    input.narrow {
+        width: 7em;
+    }
+
+    input.medium {
+        width: 18em;
+    }
+
+    input.wide {
+        width: 30em;
+    }
+
+    textarea.medium {
+        height: 7em;
+        width: 24em;
+    }
+
+    input.submit {
+        background-color: @orange-brown;
+        border-bottom: 2px solid @dark-orange-brown;
+        border-left: 1px solid @light-orange-brown;
+        border-right: 2px solid @dark-orange-brown;
+        border-top: 1px solid @light-orange-brown;
+        color: white;
+        font-weight: bold;
+        margin-top: 0.5em;
+        padding: 0.1em;
+        :hover {
+            background-color: @orange-brown + #222;
+        }
     }
 }
 
