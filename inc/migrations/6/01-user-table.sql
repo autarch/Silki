@@ -1,3 +1,5 @@
+SET CLIENT_MIN_MESSAGES = ERROR;
+
 ALTER TABLE "User"
   RENAME activation_key TO confirmation_key;
 
