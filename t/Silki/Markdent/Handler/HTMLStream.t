@@ -154,6 +154,13 @@ open my $fh, '>', \$buffer;
 
     $wiki->set_permissions('private');
 
+    $stream = Silki::Markdent::Handler::HTMLStream->new(
+        output => $fh,
+        user   => $user,
+        page   => $page,
+        wiki   => $wiki,
+    );
+
     $buffer = q{};
     seek $fh, 0, 0;
 

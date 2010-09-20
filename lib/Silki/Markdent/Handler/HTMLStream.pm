@@ -8,7 +8,7 @@ use MooseX::Params::Validate qw( validated_list );
 use Silki::I18N qw( loc );
 use Silki::Schema::Page;
 use Silki::Schema::Permission;
-use Silki::Types qw( Bool Str );
+use Silki::Types qw( Bool HashRef Str );
 
 use Moose;
 use MooseX::SemiAffordanceAccessor;
@@ -29,6 +29,13 @@ has _user => (
     isa      => 'Silki::Schema::User',
     required => 1,
     init_arg => 'user',
+);
+
+has _cached_perms => (
+    is       => 'ro',
+    isa      => HashRef,,
+    default  => sub { {} },
+    init_arg => undef,
 );
 
 sub wiki_link {
@@ -59,13 +66,7 @@ sub _link_to_page {
 
     my $wiki = $p->{wiki} || $page->wiki();
 
-    unless (
-        $self->_user()->has_permission_in_wiki(
-            wiki       => $wiki,
-            permission => Silki::Schema::Permission->Read(),
-        )
-        ) {
-
+    unless ( $self->_check_for_read_permission($wiki) ) {
         $self->_stream()->text( loc('Inaccessible page') );
         return;
     }
@@ -149,13 +150,7 @@ sub _link_to_file {
         return;
     }
 
-    unless (
-        $self->_user()->has_permission_in_wiki(
-            wiki       => $file->wiki(),
-            permission => Silki::Schema::Permission->Read(),
-        )
-        ) {
-
+    unless ( $self->_check_for_read_permission( $file->wiki() ) ) {
         $self->_stream()->text( loc('Inaccessible file') );
         return;
     }
@@ -188,6 +183,23 @@ sub _link_to_file {
     }
 
     $self->_stream()->tag('_a');
+}
+
+sub _check_for_read_permission {
+    my $self = shift;
+    my $wiki = shift;
+
+    my $cached_perms = $self->_cached_perms;
+
+    if ( exists $cached_perms->{ $wiki->wiki_id() } ) {
+        return $cached_perms->{ $wiki->wiki_id() };
+    }
+
+    return $cached_perms->{ $wiki->wiki_id() }
+        = $self->_user()->has_permission_in_wiki(
+        wiki       => $wiki,
+        permission => Silki::Schema::Permission->Read(),
+        );
 }
 
 __PACKAGE__->meta()->make_immutable();
