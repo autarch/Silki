@@ -18,11 +18,11 @@ my $formatter = Silki::Formatter::WikiToHTML->new(
 
 my $wikitext = do { local $/; <DATA> };
 
-DB::enable_profile();
+DB::enable_profile() if $ENV{NYTPROF};
 
-$formatter->wiki_to_html($wikitext) for 1..50;
+$formatter->wiki_to_html($wikitext) for 1 .. ( shift || 50 );
 
-DB::disable_profile();
+DB::disable_profile() if $ENV{NYTPROF};
 
 __DATA__
 ## Welcome to The Wiki!
