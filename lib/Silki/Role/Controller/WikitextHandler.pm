@@ -6,6 +6,7 @@ use namespace::autoclean;
 
 use Net::Akismet::Protocol;
 use Silki::Config;
+use Silki::I18N qw( loc );
 
 use Moose::Role;
 
