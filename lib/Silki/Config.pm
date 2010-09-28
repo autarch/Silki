@@ -338,7 +338,7 @@ has temp_dir => (
     is      => 'ro',
     isa     => Dir,
     lazy    => 1,
-    default => sub { dir( File::Spec->tmpdir() )->subdir('silki') },
+    default => '_build_temp_dir',
 );
 
 has static_path_prefix => (
@@ -574,6 +574,16 @@ sub _build_mini_image_dir {
     my $self = shift;
 
     return $self->_cache_subdir('mini-image');
+}
+
+sub _build_temp_dir {
+    my $self = shift;
+
+    my $temp = dir( File::Spec->tmpdir() )->subdir('silki');
+
+    $self->_ensure_dir($temp);
+
+    return $temp;
 }
 
 sub _cache_subdir {
