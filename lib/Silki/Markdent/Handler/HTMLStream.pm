@@ -11,6 +11,7 @@ use Silki::Schema::Permission;
 use Silki::Types qw( Bool HashRef Str );
 
 use Moose;
+use MooseX::Params::Validate qw( validated_hash );
 use MooseX::SemiAffordanceAccessor;
 use MooseX::StrictConstructor;
 
@@ -200,6 +201,37 @@ sub _check_for_read_permission {
         wiki       => $wiki,
         permission => Silki::Schema::Permission->Read(),
         );
+}
+
+sub auto_link {
+    my $self = shift;
+    my ($uri)    = validated_list(
+        \@_,
+        uri => { isa => Str, optional => 1 },
+    );
+
+    $self->_stream()->tag( 'a', href => $uri, rel => 'nofollow' );
+    $self->_stream()->text($uri);
+    $self->_stream()->tag('_a');
+}
+
+sub start_link {
+    my $self = shift;
+    my %p    = validated_hash(
+        \@_,
+        uri            => { isa => Str },
+        title          => { isa => Str, optional => 1 },
+        id             => { isa => Str, optional => 1 },
+        is_implicit_id => { isa => Bool, optional => 1 },
+    );
+
+    delete @p{ grep { ! defined $p{$_} } keys %p };
+
+    $self->_stream()->tag(
+        'a', href => $p{uri},
+        rel => 'nofollow',
+        ( exists $p{title} ? ( title => $p{title} ) : () ),
+    );
 }
 
 __PACKAGE__->meta()->make_immutable();
