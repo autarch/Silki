@@ -368,7 +368,7 @@ msgid "Deleted the file %1"
 msgstr ""
 
 #. ($page->title()
-#: lib/Silki/Controller/Page.pm:96
+#: lib/Silki/Controller/Page.pm:104
 msgid "Deleted the page %1"
 msgstr ""
 
@@ -517,7 +517,7 @@ msgid "History"
 msgstr ""
 
 #. ($page->title()
-#: lib/Silki/Controller/Page.pm:297 share/mason/autohandler:28
+#: lib/Silki/Controller/Page.pm:305 share/mason/autohandler:28
 msgid "History for %1"
 msgstr ""
 
@@ -976,7 +976,7 @@ msgid "Revision %1"
 msgstr ""
 
 #. ($num)
-#: lib/Silki/Controller/Page.pm:254
+#: lib/Silki/Controller/Page.pm:262
 msgid "Revision %1 has been deleted."
 msgstr ""
 
@@ -1102,7 +1102,7 @@ msgstr ""
 msgid "The email hostname you provided is already in use by another domain."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:369
+#: lib/Silki/Controller/Page.pm:377
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
@@ -1110,11 +1110,11 @@ msgstr ""
 msgid "The file has been uploaded."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:395
+#: lib/Silki/Controller/Page.pm:403
 msgid "The file you uploaded was empty."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:388
+#: lib/Silki/Controller/Page.pm:396
 msgid "The file you uploaded was too large."
 msgstr ""
 
@@ -1348,7 +1348,7 @@ msgstr ""
 msgid "View this file"
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:54 share/mason/page/autohandler:9
+#: lib/Silki/Controller/Page.pm:62 share/mason/page/autohandler:9
 msgid "View this page"
 msgstr ""
 
@@ -1495,7 +1495,7 @@ msgstr ""
 msgid "You cannot remove yourself as an admin."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:381
+#: lib/Silki/Controller/Page.pm:389
 msgid "You did not select a file to upload."
 msgstr ""
 

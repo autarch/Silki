@@ -114,6 +114,20 @@ has secret => (
     writer => '_set_secret',
 );
 
+has mod_rewrite_hack => (
+    traits      => ['MooseX::MetaDescription::Meta::Trait'],
+    is          => 'rw',
+    isa         => Bool,
+    default     => sub { $_[0]->_from_config_path('mod_rewrite_hack') || q{} },
+    description => {
+        config_path => [ 'Silki', 'mod_rewrite_hack' ],
+        description =>
+            'The Apache mod_rewrite module does not pass the original path to the app server. Turn on this hack to work around that.',
+        key_order => 6,
+    },
+    writer => '_set_mod_rewrite_hack',
+);
+
 has is_profiling => (
     is      => 'rw',
     isa     => Bool,

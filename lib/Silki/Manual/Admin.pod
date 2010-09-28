@@ -127,6 +127,13 @@ has been compromised.
 This will be set to true when the configuration file is first generated. Don't
 make this false unless you know what you're doing.
 
+=item * mod_rewrite_hack
+
+The Apache mod_rewrite module unescapes the URI before passing it to the
+backend. This ends up breaking paths to page titles with any escaped
+characters in them. Set this to a true value and Silki will account for this
+problem.
+
 =back
 
 =head2 [database] Section
