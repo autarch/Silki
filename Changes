@@ -1,3 +1,16 @@
+0.21  2010-09-28
+
+- Fixed the spam checking so it displays a useful error message to the
+  submitter.
+
+- Allow a wiki admin to skip spam checking when submitting a page.
+
+- Improved formatting of preformatted text in a page.
+
+- All external links now include a rel="nofollow" attribute to discourage
+  spam.
+
+
 0.20  2010-09-17
 
 - Added a "forgot my password" feature.
