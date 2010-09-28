@@ -86,7 +86,7 @@ sub _check_for_link_spam {
 
     die loc(
         'Your submission was flagged as spam by our antispam system. Please check any external links in your text.'
-            . "\n" );
+    ) . "\n";
 }
 
 1;
