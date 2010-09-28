@@ -397,7 +397,7 @@ msgstr ""
 msgid "Domain Settings"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:168 share/mason/file/view-in-frame:11 share/mason/lib/table/attachments-table.mas:19 share/mason/lib/table/attachments-table.mas:22
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:164 share/mason/file/view-in-frame:11 share/mason/lib/table/attachments-table.mas:19 share/mason/lib/table/attachments-table.mas:22
 msgid "Download this file"
 msgstr ""
 
@@ -570,11 +570,11 @@ msgstr ""
 msgid "In a public wiki, anyone can read and edit pages without logging in. However, only wiki members can delete pages or upload files."
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:159
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:155
 msgid "Inaccessible file"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:69
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:71
 msgid "Inaccessible page"
 msgstr ""
 
@@ -893,7 +893,7 @@ msgid "Purge this revision"
 msgstr ""
 
 #. ($page->title()
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:93
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:95
 msgid "Read %1"
 msgstr ""
 
@@ -1039,12 +1039,16 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
+#: share/mason/lib/forms/page.mas:51
+msgid "Skip spam check"
+msgstr ""
+
 #. ($user->email_address()
 #: lib/Silki/Wiki/Importer.pm:246
 msgid "Skipping user already in system (%1)"
 msgstr ""
 
-#: share/mason/lib/forms/page.mas:49 share/mason/lib/forms/user.mas:69 share/mason/page/rename-form:11 share/mason/user/forgot-password-form:12 share/mason/user/login-form:17
+#: share/mason/lib/forms/page.mas:56 share/mason/lib/forms/user.mas:69 share/mason/page/rename-form:11 share/mason/user/forgot-password-form:12 share/mason/user/login-form:17
 msgid "Submit"
 msgstr ""
 
@@ -1209,7 +1213,7 @@ msgstr ""
 msgid "This page has %quant(%1,revision,revisions)"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:94
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:96
 msgid "This page has not yet been created"
 msgstr ""
 
@@ -1340,7 +1344,7 @@ msgstr ""
 msgid "View previous revision"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:167
+#: lib/Silki/Markdent/Handler/HTMLStream.pm:163
 msgid "View this file"
 msgstr ""
 
@@ -1575,7 +1579,7 @@ msgstr ""
 msgid "Your profile"
 msgstr ""
 
-#: lib/Silki/Role/Controller/WikitextHandler.pm:79
+#: lib/Silki/Role/Controller/WikitextHandler.pm:88
 msgid "Your submission was flagged as spam by our antispam system. Please check any external links in your text."
 msgstr ""
 
