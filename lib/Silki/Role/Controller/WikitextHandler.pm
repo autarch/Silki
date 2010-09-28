@@ -17,7 +17,15 @@ sub _wikitext_from_form {
 
     my $wikitext = $self->_get_wikitext($c, $wiki);
 
-    $self->_check_for_link_spam( $c, $wiki, $wikitext );
+    unless (
+        $c->user()->has_permission_in_wiki(
+            wiki => $wiki, permission => Silki::Schema::Permission->Manage()
+        )
+        && $c->request()->params()->{skip_spam_check}
+        ) {
+
+        $self->_check_for_link_spam( $c, $wiki, $wikitext );
+    }
 
     return $wikitext;
 }
@@ -78,7 +86,7 @@ sub _check_for_link_spam {
 
     die loc(
         'Your submission was flagged as spam by our antispam system. Please check any external links in your text.'
-    );
+            . "\n" );
 }
 
 1;
