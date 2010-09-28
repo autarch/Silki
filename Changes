@@ -1,3 +1,10 @@
+0.22  2010-09-28
+
+- Added a config option, mod_rewrite_hack, to work around brain damage in
+  Apache's mod_rewrite. Turn this on if some pages cannot be resolved when
+  running with Apache+mod_rewrite as a frontend proxy.
+
+
 0.21  2010-09-28
 
 - Fixed the spam checking so it displays a useful error message to the
