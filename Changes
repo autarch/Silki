@@ -1,3 +1,9 @@
+0.23  2010-09-28
+
+- Whenever Silki generate URIs for email or redirects, it now makes sure to
+  use the domain of the current request, rather than the default domain.
+
+
 0.22  2010-09-28
 
 - Added a config option, mod_rewrite_hack, to work around brain damage in
