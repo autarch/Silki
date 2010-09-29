@@ -989,19 +989,19 @@ sub forgot_password {
 
     $self->_send_email(
         @_,
-        sender => $self,
-        subject =>
-            loc( 'Password reset for %1', $self->domain()->web_hostname() ),
+        sender   => $self,
+        subject  => loc('Password reset for Silki'),
         template => 'forgot-password',
     );
 }
 
 sub _send_email {
     my $self = shift;
-    my ( $wiki, $sender, $message, $subject, $template ) = validated_list(
+    my ( $wiki, $sender, $domain, $message, $subject, $template ) = validated_list(
         \@_,
         wiki     => { isa => 'Silki::Schema::Wiki', optional => 1 },
         sender   => { isa => 'Silki::Schema::User' },
+        domain   => { isa => 'Silki::Schema::Domain', default => Silki::Schema::Domain->DefaultDomain() },
         message  => { isa => Str,                   optional => 1 },
         subject  => { isa => Str,                   optional => 1 },
         template => { isa => Str },
@@ -1040,6 +1040,7 @@ sub _send_email {
         template_params => {
             user    => $self,
             wiki    => $wiki,
+            domain  => $domain,
             sender  => $sender,
             message => $message,
         },

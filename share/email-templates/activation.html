@@ -6,7 +6,7 @@
 <& invitation-text.mas, user => $user, wiki => $wiki &>
 % } else {
 <p>
-<% loc( q{You have created a user account on the %1 server. You must <a href="%html(%2)">activate your user account</a> before you can log in.}, Silki::Schema::Domain->DefaultDomain()->web_hostname(), $user->confirmation_uri( with_host => 1 ) ) %>
+<% loc( q{You have created a user account on the %1 server. You must <a href="%html(%2)">activate your user account</a> before you can log in.}, $domain->web_hostname(), $user->confirmation_uri( with_host => 1, host => $domain->web_hostname() ) ) %>
 </p>
 % }
 
@@ -21,6 +21,7 @@ Sent by <% $sender->best_name() %>
 <%args>
 $user
 $wiki => undef
+$domain
 $sender
 $message => undef
 </%args>

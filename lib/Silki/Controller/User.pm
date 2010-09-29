@@ -143,6 +143,7 @@ sub authentication_POST {
                     $c->redirect_and_detach(
                         $user->confirmation_uri(
                             view      => 'status',
+                            host      => $c->domain()->web_hostname(),
                             with_host => 1,
                         )
                     ) if $user->requires_activation();
@@ -261,7 +262,7 @@ sub password_reminder_POST {
         );
     }
 
-    $user->forgot_password();
+    $user->forgot_password( domain => $c->domain() );
 
     $c->session_object()->add_message(
         loc(
@@ -366,15 +367,18 @@ sub users_collection_POST {
         );
     }
 
-    $user->send_activation_email( sender => Silki::Schema::User->SystemUser() );
+    $user->send_activation_email(
+        sender => Silki::Schema::User->SystemUser(),
+        domain => $c->domain(),
+    );
 
     $c->redirect_and_detach(
         $user->confirmation_uri(
             view      => 'status',
+            host      => $c->domain()->web_hostname(),
             with_host => 1,
         )
     );
-
 }
 
 __PACKAGE__->meta()->make_immutable();

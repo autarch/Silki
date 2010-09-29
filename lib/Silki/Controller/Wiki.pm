@@ -476,6 +476,7 @@ sub _process_new_members {
             $user->send_invitation_email(
                 wiki   => $wiki,
                 sender => $c->user(),
+                domain => $c->domain(),
                 %message,
             );
         }
@@ -494,6 +495,7 @@ sub _process_new_members {
             $user->send_activation_email(
                 wiki   => $wiki,
                 sender => $c->user(),
+                domain => $c->domain(),
                 %message,
             );
 

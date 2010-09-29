@@ -5,7 +5,7 @@ use warnings;
 use namespace::autoclean;
 
 use MooseX::Params::Validate qw( validate );
-use Silki::Types qw( Bool HashRef Str );
+use Silki::Types qw( Bool HashRef Int Str );
 use Silki::Util qw( string_is_empty );
 use Silki::URI qw( dynamic_uri );
 
@@ -24,6 +24,8 @@ sub uri {
         view      => { isa => Str,     optional => 1 },
         fragment  => { isa => Str,     optional => 1 },
         query     => { isa => HashRef, default  => {} },
+        host      => { isa => Str,     optional => 1 },
+        port      => { isa => Int,     optional => 1 },
         with_host => { isa => Bool,    default  => 0 },
     );
 
@@ -33,11 +35,11 @@ sub uri {
         $path .= $p{view};
     }
 
+    delete $p{view};
+
     $self->_make_uri(
-        path      => $path,
-        fragment  => $p{fragment},
-        query     => $p{query},
-        with_host => $p{with_host},
+        path => $path,
+        %p,
     );
 }
 

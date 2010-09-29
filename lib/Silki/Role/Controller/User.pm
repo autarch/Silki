@@ -216,7 +216,10 @@ sub _user_update_error {
 
     my $uri
         = $c->request()->params()->{confirmation_key}
-        ? $c->stash()->{user}->confirmation_uri( view => 'preferences_form' )
+        ? $c->stash()->{user}->confirmation_uri(
+        view => 'preferences_form',
+        host => $c->domain()->web_hostname(),
+        )
         : $self->_make_user_uri(
         $c,
         $c->stash()->{user},
