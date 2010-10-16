@@ -83,9 +83,7 @@ sub wiki_to_html {
 sub _generate_and_process_html {
     my $self = shift;
 
-    my ( $html, $counter ) = $self->_generate_html(@_);
-
-    return $self->_process_html( $html, $counter );
+    return $self->_process_html( $self->_generate_html(@_) );
 }
 
 sub _generate_html {
