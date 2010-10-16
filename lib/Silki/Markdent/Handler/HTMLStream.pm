@@ -4,14 +4,13 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
-use MooseX::Params::Validate qw( validated_list );
 use Silki::I18N qw( loc );
 use Silki::Schema::Page;
 use Silki::Schema::Permission;
 use Silki::Types qw( Bool HashRef Str );
 
 use Moose;
-use MooseX::Params::Validate qw( validated_hash );
+use MooseX::Params::Validate qw( validated_list validated_hash );
 use MooseX::SemiAffordanceAccessor;
 use MooseX::StrictConstructor;
 
