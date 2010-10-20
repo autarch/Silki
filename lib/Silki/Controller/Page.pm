@@ -39,8 +39,6 @@ sub _set_page : Chained('/wiki/_set_wiki') : PathPart('page') : CaptureArgs(1) {
         $page_path = Silki::Schema::Page->TitleToURIPath($page_path);
     }
 
-    warn $c->request->path_info, "\n", $page_path, "\n",$c->request->uri, "\n\n";
-
     my $wiki = $c->stash()->{wiki};
 
     my $page = Silki::Schema::Page->new(
