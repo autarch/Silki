@@ -197,29 +197,31 @@ around insert => sub {
 
 sub _BuildPendingPageLinkSelectSQL {
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
-    $select->select(
-        $Schema->table('PendingPageLink')->column('from_page_id') )
-        ->from( $Schema->table('PendingPageLink') )->where(
-        $Schema->table('PendingPageLink')->column('to_wiki_id'),
-        '=', Fey::Placeholder->new()
-        )->and(
-        $Schema->table('PendingPageLink')->column('to_page_title'),
-        '=', Fey::Placeholder->new()
-        );
 
+    #<<<
+    $select
+        ->select( $Schema->table('PendingPageLink')->column('from_page_id') )
+        ->from( $Schema->table('PendingPageLink') )
+        ->where( $Schema->table('PendingPageLink')->column('to_wiki_id'),
+                 '=', Fey::Placeholder->new() )
+        ->and  ( $Schema->table('PendingPageLink')->column('to_page_title'),
+                 '=', Fey::Placeholder->new() );
+    #>>>
     return $select;
 }
 
 sub _BuildPendingPageLinkDeleteSQL {
     my $delete = Silki::Schema->SQLFactoryClass()->new_delete();
-    $delete->delete()->from( $Schema->table('PendingPageLink') )->where(
-        $Schema->table('PendingPageLink')->column('to_wiki_id'),
-        '=', Fey::Placeholder->new()
-        )->and(
-        $Schema->table('PendingPageLink')->column('to_page_title'),
-        '=', Fey::Placeholder->new()
-        );
 
+    #<<<
+    $delete
+        ->delete()
+        ->from( $Schema->table('PendingPageLink') )
+        ->where( $Schema->table('PendingPageLink')->column('to_wiki_id'),
+                 '=', Fey::Placeholder->new() )
+        ->and  ( $Schema->table('PendingPageLink')->column('to_page_title'),
+                 '=', Fey::Placeholder->new() );
+    #>>>
     return $delete;
 }
 
@@ -229,8 +231,8 @@ sub insert_with_content {
 
     my %page_p = (
         map { $_ => delete $p{$_} }
-            grep { exists $p{$_} }
-            map  { $_->name() } $class->Table()->columns()
+        grep { exists $p{$_} }
+        map  { $_->name() } $class->Table()->columns()
     );
 
     my $page;
@@ -357,7 +359,7 @@ sub add_file {
     my $self = shift;
     my ($file) = pos_validated_list( \@_, { isa => 'Silki::Schema::File' } );
 
-    my $last_rev = $self->most_recent_revision();
+    my $last_rev    = $self->most_recent_revision();
     my $new_content = $last_rev->content();
 
     $new_content =~ s/\n*$/\n\n/;
@@ -421,7 +423,7 @@ sub rename {
 }
 
 sub rewritten_content_for_rename {
-    my $self = shift;
+    my $self     = shift;
     my $old_name = shift;
     my $new_name = shift;
 
@@ -452,13 +454,14 @@ sub _BuildPageViewInsert {
 
     my $insert = Silki::Schema->SQLFactoryClass()->new_insert();
 
+    #<<<
     $insert
         ->insert()
         ->into( $page_view_t->columns( 'page_id', 'user_id' ) )
         ->values( page_id => Fey::Placeholder->new(),
                   user_id => Fey::Placeholder->new(),
                 );
-
+    #>>>
     return $insert;
 }
 
@@ -490,11 +493,14 @@ sub _TagsSelect {
 
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
+    #<<<
     $select->select( $Schema->table('Tag') )
            ->from( $Schema->tables( 'PageTag', 'Tag' ) )
            ->where( $Schema->table('PageTag')->column('page_id'), '=',
                     Fey::Placeholder->new() )
            ->order_by( $Schema->table('Tag')->column('tag') );
+    #>>>
+    return $select;
 }
 
 sub _MostRecentRevisionSelect {
@@ -502,15 +508,16 @@ sub _MostRecentRevisionSelect {
 
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    $select->select( $Schema->table('PageRevision') )
-           ->from( $Schema->table('PageRevision') )
-           ->where( $Schema->table('PageRevision')->column('page_id'),
-                    '=', Fey::Placeholder->new()
-                  )
-           ->order_by( $Schema->table('PageRevision')->column('revision_number'),
-                       'DESC' )
-           ->limit(1);
-
+    #<<<
+    $select
+        ->select( $Schema->table('PageRevision') )
+        ->from( $Schema->table('PageRevision') )
+        ->where( $Schema->table('PageRevision')->column('page_id'),
+                 '=', Fey::Placeholder->new() )
+        ->order_by( $Schema->table('PageRevision')->column('revision_number'),
+                    'DESC' )
+        ->limit(1);
+    #>>>
     return $select;
 }
 
@@ -519,15 +526,15 @@ sub _FirstRevisionSelect {
 
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    $select->select( $Schema->table('PageRevision') )
-           ->from( $Schema->table('PageRevision') )
-           ->where( $Schema->table('PageRevision')->column('page_id'),
-                    '=', Fey::Placeholder->new()
-                  )
-           ->and( $Schema->table('PageRevision')->column('revision_number'),
-                  '=', Fey::Placeholder->new()
-                );
-
+    #<<<
+    $select
+        ->select( $Schema->table('PageRevision') )
+        ->from( $Schema->table('PageRevision') )
+        ->where( $Schema->table('PageRevision')->column('page_id'),
+                 '=', Fey::Placeholder->new() )
+        ->and( $Schema->table('PageRevision')->column('revision_number'),
+               '=', Fey::Placeholder->new() );
+    #>>>
     return $select;
 }
 
@@ -536,13 +543,17 @@ sub _IncomingLinkCountSelect {
 
     my $page_link_t = $Schema->table('PageLink');
 
-    my $count = Fey::Literal::Function->new( 'COUNT',
-        $page_link_t->column('from_page_id') );
+    my $count = Fey::Literal::Function->new(
+        'COUNT',
+        $page_link_t->column('from_page_id')
+    );
 
-    $select->select($count)->from($page_link_t)
-           ->where( $page_link_t->column('to_page_id'), '=',
-                    Fey::Placeholder->new() );
-
+    #<<<
+    $select
+        ->select($count)->from($page_link_t)
+        ->where( $page_link_t->column('to_page_id'), '=',
+                 Fey::Placeholder->new() );
+    #>>>
     return $select;
 }
 
@@ -553,12 +564,15 @@ sub _IncomingLinkSelect {
 
     my ($fk)
         = first { $_->has_column( $page_link_t->column('from_page_id') ) }
+
     $Schema->foreign_keys_between_tables( $page_t, $page_link_t );
 
-    $select->select($page_t)->from( $page_t, $page_link_t, $fk )
-           ->where( $page_link_t->column('to_page_id'), '=',
-                    Fey::Placeholder->new() )->order_by( $page_t->column('title') );
-
+    #<<<
+    $select
+        ->select($page_t)->from( $page_t, $page_link_t, $fk )
+        ->where( $page_link_t->column('to_page_id'), '=',
+                 Fey::Placeholder->new() )->order_by( $page_t->column('title') );
+    #>>>
     return $select;
 }
 
@@ -571,25 +585,27 @@ sub _FileCountSelect {
         $file_t->column('file_id')
     );
 
-    $select->select($count)
-           ->from($file_t)
-           ->where( $file_t->column('page_id'), '=',
-                    Fey::Placeholder->new() );
-
+    #<<<
+    $select
+        ->select($count)
+        ->from($file_t)
+        ->where( $file_t->column('page_id'), '=', Fey::Placeholder->new() );
+    #>>>
     return $select;
 }
 
 sub _FileSelect {
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    my $file_t = $Schema->table( 'File' );
+    my $file_t = $Schema->table('File');
 
-    $select->select($file_t)
-           ->from( $file_t )
-           ->where( $file_t->column('page_id'), '=',
-                    Fey::Placeholder->new() )
-           ->order_by( $file_t->column('filename') );
-
+    #<<<
+    $select
+        ->select($file_t)
+        ->from( $file_t )
+        ->where( $file_t->column('page_id'), '=', Fey::Placeholder->new() )
+        ->order_by( $file_t->column('filename') );
+    #>>>
     return $select;
 }
 
@@ -598,13 +614,17 @@ sub _RevisionCountSelect {
 
     my $page_revision_t = $Schema->table('PageRevision');
 
-    my $count = Fey::Literal::Function->new( 'COUNT',
-        $page_revision_t->column('page_id') );
+    my $count = Fey::Literal::Function->new(
+        'COUNT',
+        $page_revision_t->column('page_id')
+    );
 
-    $select->select($count)->from($page_revision_t)
-           ->where( $page_revision_t->column('page_id'), '=',
-                    Fey::Placeholder->new() );
-
+    #<<<
+    $select
+        ->select($count)->from($page_revision_t)
+        ->where( $page_revision_t->column('page_id'), '=',
+                 Fey::Placeholder->new() );
+    #>>>
     return $select;
 }
 
@@ -632,11 +652,13 @@ sub _BuildRevisionsSelect {
 
     my $page_revision_t = $Schema->table('PageRevision');
 
-    $select->select($page_revision_t)->from($page_revision_t)
-           ->where( $page_revision_t->column('page_id'), '=',
-                    Fey::Placeholder->new() )
-           ->order_by( $page_revision_t->column('revision_number'), 'DESC' );
-
+    #<<<
+    $select
+        ->select($page_revision_t)->from($page_revision_t)
+        ->where( $page_revision_t->column('page_id'), '=',
+                 Fey::Placeholder->new() )
+        ->order_by( $page_revision_t->column('revision_number'), 'DESC' );
+    #>>>
     return $select;
 }
 
@@ -662,7 +684,7 @@ sub add_tags {
                 tag_id  => $tag->tag_id(),
                 );
 
-            push @tag_ids, $tag->tag_id()
+            push @tag_ids, $tag->tag_id();
         }
         else {
             $tag = Silki::Schema::Tag->insert(%tag_p);
@@ -673,7 +695,7 @@ sub add_tags {
 
     Silki::Schema::PageTag->insert_many(
         map { { page_id => $self->page_id(), tag_id => $_, } } @tag_ids )
-            if @tag_ids;
+        if @tag_ids;
 
     return;
 }
@@ -708,18 +730,20 @@ sub PagesByWikiAndTitle {
 
     my $page_t = $Schema->table('Page');
 
+    #<<<
     $select
         ->select($page_t)
-        ->from  ($page_t);
+        ->from  ($page_t); #>>>
 
     my @keys = keys %{$titles};
 
     for my $wiki_id (@keys) {
+        #<<<
         $select->where( '(' )
                ->and  ( $page_t->column('wiki_id'), '=', $wiki_id )
                ->and  ( $page_t->column('title'), 'IN', @{ $titles->{$wiki_id} } )
                ->and  ( ')' );
-
+        #>>>
         $select->and('or')
             unless $wiki_id == $keys[-1];
     }
