@@ -700,6 +700,38 @@ sub delete_tag {
     return;
 }
 
+sub PagesByWikiAndTitle {
+    my $self   = shift;
+    my $titles = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $page_t = $Schema->table('Page');
+
+    $select
+        ->select($page_t)
+        ->from  ($page_t);
+
+    my @keys = keys %{$titles};
+
+    for my $wiki_id (@keys) {
+        $select->where( '(' )
+               ->and  ( $page_t->column('wiki_id'), '=', $wiki_id )
+               ->and  ( $page_t->column('title'), 'IN', @{ $titles->{$wiki_id} } )
+               ->and  ( ')' );
+
+        $select->and('or')
+            unless $wiki_id == $keys[-1];
+    }
+
+    return Fey::Object::Iterator::FromSelect->new(
+        classes => ['Silki::Schema::Page'],
+        select  => $select,
+        dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
+        bind_params => [ $select->bind_params() ],
+    );
+}
+
 __PACKAGE__->meta()->make_immutable();
 
 1;

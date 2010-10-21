@@ -16,7 +16,7 @@ with 'Markdent::Role::Handler', 'Silki::Markdent::Role::WikiLinkResolver';
 has links => (
     traits   => ['Hash'],
     is       => 'ro',
-    isa      => HashRef[HashRef],
+    isa      => HashRef [HashRef],
     init_arg => undef,
     default  => sub { {} },
     handles  => {
@@ -24,17 +24,17 @@ has links => (
     },
 );
 
-sub handle_event {
-    my $self  = shift;
-    my $event = shift;
+# The WikiLinkResolver role does everything we need done for event handling.
+sub handle_event { }
 
-    return unless $event->isa('Silki::Markdent::Event::WikiLink');
-
-    my $link_data = $self->_resolve_page_link( $event->link_text() );
+sub _replace_placeholder {
+    my $self      = shift;
+    my $id        = shift;
+    my $link_data = shift;
 
     return unless $link_data && $link_data->{wiki};
 
-    $self->_add_link( $event->link_text() => $link_data );
+    $self->_add_link( $id => $link_data );
 
     return;
 }

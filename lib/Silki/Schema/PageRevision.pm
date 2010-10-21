@@ -13,6 +13,7 @@ use Markdent::Parser;
 use String::Diff qw( diff );
 use Silki::Config;
 use Silki::Formatter::WikiToHTML;
+use Silki::Markdent::Handler::ExtractWikiLinks;
 use Silki::Schema;
 use Silki::Schema::Page;
 use Silki::Schema::PageLink;
