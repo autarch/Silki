@@ -97,8 +97,8 @@ sub _handle_success {
 }
 
 if ( eval "use Getopt::Long::Descriptive; 1;"
-    && Getopt::Long::Descriptive->VERSION < 0.086 ) {
-eval <<'EOF';
+    && Getopt::Long::Descriptive->VERSION < 0.087 ) {
+    eval <<'EOF';
 {
 package
     Getopt::Long::Descriptive::Usage;
