@@ -75,8 +75,7 @@ sub _build_tarball {
     my $self = shift;
 
     $self->_add_to_archive(
-        $self->_dir()->file('export-metadata.json'),
-        {
+        $self->_dir()->file('export-metadata.json'), {
             silki_version         => Silki->VERSION(),
             export_format_version => EXPORT_FORMAT_VERSION,
         },
@@ -234,7 +233,8 @@ sub _add_files_to_archive {
     my $files = $self->_wiki()->files();
 
     while ( my $file = $files->next() ) {
-        my $dir = $self->_dir()->subdir( 'files', 'file-' . $file->file_id() );
+        my $dir
+            = $self->_dir()->subdir( 'files', 'file-' . $file->file_id() );
 
         $self->_add_to_archive(
             $dir->file('file.json'),

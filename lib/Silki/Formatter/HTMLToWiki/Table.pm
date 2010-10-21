@@ -13,12 +13,12 @@ use Moose::Util::TypeConstraints;
 use MooseX::SemiAffordanceAccessor;
 use MooseX::StrictConstructor;
 
-my $row = subtype as ArrayRef['Silki::Formatter::HTMLToWiki::Table::Cell'];
+my $row = subtype as ArrayRef ['Silki::Formatter::HTMLToWiki::Table::Cell'];
 
 has _thead_rows => (
     traits  => ['Array'],
     is      => 'ro',
-    isa     => ArrayRef[$row],
+    isa     => ArrayRef [$row],
     default => sub { [] },
     handles => {
         _add_thead_row => 'push',
@@ -37,7 +37,7 @@ has _in_thead => (
 has _tbodies => (
     traits => ['Array'],
     is     => 'ro',
-    isa    => ArrayRef[ ArrayRef[$row] ],
+    isa    => ArrayRef [ ArrayRef [$row] ],
     default => sub { [] },
     handles => {
         _add_tbody   => 'push',
@@ -49,7 +49,7 @@ has _tbodies => (
 has _current_tbody => (
     traits  => ['Array'],
     is      => 'ro',
-    isa     => ArrayRef[$row],
+    isa     => ArrayRef [$row],
     default => sub { [] },
     handles => {
         _add_tbody_row       => 'push',
@@ -79,7 +79,7 @@ has _current_cell => (
 
 has _max_cell_widths => (
     is       => 'ro',
-    isa      => ArrayRef[Int],
+    isa      => ArrayRef [Int],
     lazy     => 1,
     builder  => '_build_max_cell_widths',
     init_arg => undef,
@@ -142,8 +142,8 @@ sub _end_th {
 sub _start_td {
     my $self = shift;
 
-    $self->_start_cell(@_);}
-
+    $self->_start_cell(@_);
+}
 
 sub _end_td {
     my $self = shift;
@@ -181,12 +181,13 @@ sub finalize {
         my $tbody = $self->_tbodies()->[0];
 
         while ( my $row = shift @{$tbody} ) {
+
             # If all the cells in a row are <th> cells, _or_ all the content
             # in each cell is bold, it's a header row.
             if (   ( all { $_->is_header_cell() } @{$row} )
                 || ( all { $_->content() =~ /^\s*\*\*.+\*\*\s*$/ } @{$row} ) )
             {
-                for my $cell (@{$row} ) {
+                for my $cell ( @{$row} ) {
                     my $content = $cell->content();
                     $content =~ s/^(\s*)\*\*(.+)\*\*(\s*)$/$1$2$3/;
                     $cell->set_content($content);
@@ -248,6 +249,7 @@ sub _markdown_for_row {
 
     my @cells;
     for my $cell ( @{$row} ) {
+
         # A multi-column cell needs to be as wide as all the columns it spans
         my $width = sum( splice @widths, 0, $cell->colspan() );
 
@@ -264,7 +266,7 @@ sub _build_max_cell_widths {
 
     my @widths;
     for my $row ( $self->_all_rows() ) {
-        for my $x ( 0..$#{$row} ) {
+        for my $x ( 0 .. $#{$row} ) {
             $widths[$x] ||= 0;
             $widths[$x] = max( $widths[$x], length $row->[$x]->content() );
         }

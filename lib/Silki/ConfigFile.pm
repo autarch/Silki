@@ -15,7 +15,7 @@ use MooseX::StrictConstructor;
 
 has file => (
     is      => 'rw',
-    isa     => Maybe[File],
+    isa     => Maybe [File],
     lazy    => 1,
     builder => '_build_file',
     writer  => '_set_file',

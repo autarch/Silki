@@ -61,7 +61,8 @@ sub _match_wiki_link {
     $p{display_text} = $1
         if defined $1;
 
-    my $event = $self->_make_event( 'Silki::Markdent::Event::WikiLink' => %p );
+    my $event
+        = $self->_make_event( 'Silki::Markdent::Event::WikiLink' => %p );
 
     $self->_markup_event($event);
 
@@ -71,7 +72,6 @@ sub _match_wiki_link {
 sub _match_file_link {
     my $self = shift;
     my $text = shift;
-
 
     return unless ${$text} =~ / \G
                                 (?:
@@ -91,7 +91,8 @@ sub _match_file_link {
     my %p = ( link_text => $2 );
     $p{display_text} = $1 if defined $1;
 
-    my $event = $self->_make_event( 'Silki::Markdent::Event::FileLink' => %p );
+    my $event
+        = $self->_make_event( 'Silki::Markdent::Event::FileLink' => %p );
 
     $self->_markup_event($event);
 
@@ -114,7 +115,8 @@ sub _match_image_link {
 
     my %p = ( link_text => $1 );
 
-    my $event = $self->_make_event( 'Silki::Markdent::Event::ImageLink' => %p );
+    my $event
+        = $self->_make_event( 'Silki::Markdent::Event::ImageLink' => %p );
 
     $self->_markup_event($event);
 
@@ -131,8 +133,8 @@ sub _match_plain_text {
     # (possible) end of the plain text. If those things turn out to _not_ be
     # markup, we'll get them on the next pass, because we always match at
     # least one character, so we should never get stuck in a loop.
-    return unless
-        ${$text} =~ /\G
+    return
+        unless ${$text} =~ /\G
                      ( .+? )              # at least one character followed by ...
                      (?=
                        $escape_re
@@ -157,7 +159,7 @@ sub _match_plain_text {
                      )
                     /xgcs;
 
-    $self->_print_debug( "Interpreting as plain text\n\n[$1]\n" )
+    $self->_print_debug("Interpreting as plain text\n\n[$1]\n")
         if $self->debug();
 
     $self->_save_span_text($1);

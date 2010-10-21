@@ -38,7 +38,7 @@ has_table( $Schema->table('PageRevision') );
 
 has_one page => (
     table   => $Schema->table('Page'),
-    handles => [ qw( domain wiki wiki_id ) ],
+    handles => [qw( domain wiki wiki_id )],
 );
 
 has_one( $Schema->table('User') );
@@ -151,6 +151,7 @@ sub _BuildRenumberHigherRevisionsSQL {
         ' - 1'
     );
 
+    #<<<
     $update
         ->update($page_rev_t)
         ->set( $page_rev_t->column('revision_number'),
@@ -159,7 +160,7 @@ sub _BuildRenumberHigherRevisionsSQL {
                  Fey::Placeholder->new() )
         ->and  ( $page_rev_t->column('revision_number'), '=',
                  Fey::Placeholder->new() );
-
+    #>>>
     return $update;
 }
 
@@ -170,34 +171,37 @@ sub _post_change {
 
     return if $SkipPostChangeHack;
 
-    my ( $existing, $pending, $capture )
-        = $self->_process_extracted_links();
+    my ( $existing, $pending, $capture ) = $self->_process_extracted_links();
 
     my $delete_existing = Silki::Schema->SQLFactoryClass()->new_delete();
-    $delete_existing->delete()
+    #<<<
+    $delete_existing
+        ->delete()
         ->from( $Schema->table('PageLink') )
-        ->where(
-            $Schema->table('PageLink')->column('from_page_id'),
-            '=', $self->page_id()
-        );
+        ->where( $Schema->table('PageLink')->column('from_page_id'),
+                 '=', $self->page_id() );
+    #>>>
 
     my $delete_pending = Silki::Schema->SQLFactoryClass()->new_delete();
-    $delete_pending->delete()->from( $Schema->table('PendingPageLink') )
-        ->where(
-            $Schema->table('PendingPageLink')->column('from_page_id'),
-            '=', $self->page_id()
-        );
 
+    #<<<
+    $delete_pending
+        ->delete()
+        ->from( $Schema->table('PendingPageLink') )
+        ->where( $Schema->table('PendingPageLink')->column('from_page_id'),
+                 '=', $self->page_id() );
+    #>>>
     my $update_cached_content
         = Silki::Schema->SQLFactoryClass()->new_update();
-    $update_cached_content->update( $Schema->table('Page') )
-        ->set( $Schema->table('Page')->column('cached_content') =>
-                nfreeze( $capture->captured_events() ) )
-        ->where(
-            $Schema->table('Page')->column('page_id'), '=',
-            $self->page_id()
-        );
 
+    #<<<
+    $update_cached_content
+        ->update( $Schema->table('Page') )
+        ->set( $Schema->table('Page')->column('cached_content') =>
+               nfreeze( $capture->captured_events() ) )
+        ->where( $Schema->table('Page')->column('page_id'), '=',
+                 $self->page_id() );
+    #>>>
     my $dbh = Silki::Schema->DBIManager()->source_for_sql($delete_existing)
         ->dbh();
 
@@ -247,8 +251,7 @@ sub _process_extracted_links {
 
     my $links = $linkex->links();
 
-    my @existing
-        = map {
+    my @existing = map {
         {
             from_page_id => $self->page_id(),
             to_page_id   => $links->{$_}{page}->page_id(),
@@ -257,8 +260,7 @@ sub _process_extracted_links {
         grep { $links->{$_}{page} }
         keys %{$links};
 
-    my @pending
-        = map {
+    my @pending = map {
         {
             from_page_id  => $self->page_id(),
             to_wiki_id    => $links->{$_}{wiki}->wiki_id(),

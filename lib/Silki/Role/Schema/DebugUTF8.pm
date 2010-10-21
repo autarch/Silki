@@ -50,7 +50,7 @@ sub _debug_utf8 {
         next if $k eq 'cached_content';
         warn "    $k => $data{$k} - ",
             ( Encode::is_utf8( $data{$k} ) || 0 ), "\n";
-        }
+    }
     warn "\n\n";
 }
 

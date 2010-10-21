@@ -117,7 +117,7 @@ sub _make_first_wiki {
 }
 
 sub _make_production_wiki {
-    my $admin   = shift;
+    my $admin = shift;
 
     my $wiki = _make_wiki( 'My Wiki', 'my-wiki' );
 

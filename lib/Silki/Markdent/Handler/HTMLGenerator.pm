@@ -80,9 +80,10 @@ sub _build_output {
 
 after start_header => sub {
     my $self = shift;
-    my ($level) = validated_list( \@_,
-                                  level => { isa => HeaderLevel },
-                                );
+    my ($level) = validated_list(
+        \@_,
+        level => { isa => HeaderLevel },
+    );
 
     return unless $level <= 4;
 
@@ -185,7 +186,7 @@ sub _link_to_file {
                 src => $file->uri( view => 'small' ),
                 alt => $file->filename(),
             ),
-            '/', # XXX - should fix HTML::Stream to not need this
+            '/',    # XXX - should fix HTML::Stream to not need this
         );
     }
     else {
@@ -197,7 +198,7 @@ sub _link_to_file {
 
 sub auto_link {
     my $self = shift;
-    my ($uri)    = validated_list(
+    my ($uri) = validated_list(
         \@_,
         uri => { isa => Str, optional => 1 },
     );
@@ -217,7 +218,7 @@ sub start_link {
         is_implicit_id => { isa => Bool, optional => 1 },
     );
 
-    delete @p{ grep { ! defined $p{$_} } keys %p };
+    delete @p{ grep { !defined $p{$_} } keys %p };
 
     $self->_stream()->tag(
         'a',
@@ -258,8 +259,10 @@ sub _link_to_page {
     my $uri
         = $page
         ? $page->uri()
-        : $link_data->{wiki}->uri( view => 'new_page_form',
-        query => { title => $link_data->{title} } );
+        : $link_data->{wiki}->uri(
+        view  => 'new_page_form',
+        query => { title => $link_data->{title} }
+        );
 
     my $class = $page ? 'existing-page' : 'new-page';
 

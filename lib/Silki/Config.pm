@@ -115,10 +115,10 @@ has secret => (
 );
 
 has mod_rewrite_hack => (
-    traits      => ['MooseX::MetaDescription::Meta::Trait'],
-    is          => 'rw',
-    isa         => Bool,
-    default     => sub { $_[0]->_from_config_path('mod_rewrite_hack') || q{} },
+    traits  => ['MooseX::MetaDescription::Meta::Trait'],
+    is      => 'rw',
+    isa     => Bool,
+    default => sub { $_[0]->_from_config_path('mod_rewrite_hack') || q{} },
     description => {
         config_path => [ 'Silki', 'mod_rewrite_hack' ],
         description =>

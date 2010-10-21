@@ -60,7 +60,9 @@ sub end : Private {
                 $c->response()->body($fh);
             }
             else {
-                $c->log()->error( "X-sendfile pointed at nonexistent file - $file\n" );
+                $c->log()
+                    ->error(
+                    "X-sendfile pointed at nonexistent file - $file\n");
                 $c->response()->status(404);
             }
         }

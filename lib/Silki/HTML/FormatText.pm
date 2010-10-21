@@ -9,8 +9,8 @@ use base 'HTML::FormatText';
 # for text/etc.
 
 sub a_start {
-    my $self  = shift;
-    my $node  = shift;
+    my $self = shift;
+    my $node = shift;
 
     $self->{uri_for_a} = $node->attr('href');
 
@@ -18,8 +18,8 @@ sub a_start {
 }
 
 sub a_end {
-    my $self  = shift;
-    my $node  = shift;
+    my $self = shift;
+    my $node = shift;
 
     $self->out( ' (' . $self->{uri_for_a} . ')' )
         if $self->{uri_for_a};

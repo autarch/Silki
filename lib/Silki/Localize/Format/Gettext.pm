@@ -24,9 +24,9 @@ sub html {
 }
 
 sub quant {
-    my $self  = shift;
-    my $lang  = shift;
-    my $args  = shift;
+    my $self = shift;
+    my $lang = shift;
+    my $args = shift;
 
     my $num = shift @{$args};
     $num += 0;

@@ -420,8 +420,8 @@ sub _disable_pg_triggers {
 
     my $dbh = Silki::Schema->DBIManager()->default_source()->dbh();
 
-    $dbh->do( q{ALTER TABLE "Page" DISABLE TRIGGER USER} );
-    $dbh->do( q{ALTER TABLE "PageRevision" DISABLE TRIGGER USER} );
+    $dbh->do(q{ALTER TABLE "Page" DISABLE TRIGGER USER});
+    $dbh->do(q{ALTER TABLE "PageRevision" DISABLE TRIGGER USER});
 }
 
 sub _enable_pg_triggers {
@@ -429,8 +429,8 @@ sub _enable_pg_triggers {
 
     my $dbh = Silki::Schema->DBIManager()->default_source()->dbh();
 
-    $dbh->do( q{ALTER TABLE "Page" ENABLE TRIGGER USER} );
-    $dbh->do( q{ALTER TABLE "PageRevision" ENABLE TRIGGER USER} );
+    $dbh->do(q{ALTER TABLE "Page" ENABLE TRIGGER USER});
+    $dbh->do(q{ALTER TABLE "PageRevision" ENABLE TRIGGER USER});
 }
 
 sub _rebuild_searchable_text {

@@ -20,7 +20,8 @@ sub _output_atom_feed_for_revisions {
     my @entries;
 
     my $updated;
-    while ( my ( $page, $revision ) = $page ? ( $page, $revisions->next() ) : $revisions->next() ) {
+    while ( my ( $page, $revision )
+        = $page ? ( $page, $revisions->next() ) : $revisions->next() ) {
         last unless $revision;
 
         $updated ||= $revision->creation_datetime();

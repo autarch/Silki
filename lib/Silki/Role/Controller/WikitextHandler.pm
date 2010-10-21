@@ -15,7 +15,7 @@ sub _wikitext_from_form {
     my $c    = shift;
     my $wiki = shift;
 
-    my $wikitext = $self->_get_wikitext($c, $wiki);
+    my $wikitext = $self->_get_wikitext( $c, $wiki );
 
     unless (
         $c->user()->has_permission_in_wiki(
@@ -75,14 +75,13 @@ sub _check_for_link_spam {
 
     return
         unless $ua->check(
-                user_ip         => $c->request()->address(),
-                user_agent      => $c->request()->user_agent(),
-                comment_content => $wikitext,
-                referer         => $c->request()->referer(),
-                comment_type    => 'wiki page',
-                %user_info,
+        user_ip         => $c->request()->address(),
+        user_agent      => $c->request()->user_agent(),
+        comment_content => $wikitext,
+        referer         => $c->request()->referer(),
+        comment_type    => 'wiki page',
+        %user_info,
         );
-
 
     die loc(
         'Your submission was flagged as spam by our antispam system. Please check any external links in your text.'

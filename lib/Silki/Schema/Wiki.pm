@@ -66,7 +66,7 @@ has_many pages => (
 
 has permissions => (
     is       => 'ro',
-    isa      => HashRef[ HashRef[Bool] ],
+    isa      => HashRef [ HashRef [Bool] ],
     lazy     => 1,
     builder  => '_build_permissions',
     init_arg => undef,
@@ -286,7 +286,7 @@ around insert => sub {
     my $class = shift;
     my %p     = @_;
 
-    if ( ! exists $p{short_name} ) {
+    if ( !exists $p{short_name} ) {
         my $name = $p{title};
         $name =~ s/ +/-/g;
         $p{short_name} = lc $name;
@@ -329,7 +329,7 @@ around insert => sub {
 
 sub _system_log_values_for_insert {
     my $class = shift;
-    my %p    = @_;
+    my %p     = @_;
 
     my $msg = 'Created wiki: ' . $p{title};
 
@@ -368,8 +368,8 @@ sub _title_is_unique {
 }
 
 sub _title_is_valid {
-    my $self      = shift;
-    my $p         = shift;
+    my $self = shift;
+    my $p    = shift;
 
     return unless exists $p->{title};
 
@@ -398,7 +398,9 @@ sub _short_name_is_unique {
     my $is_insert = shift;
 
     return
-        if !$is_insert && exists $p->{short_name} && $p->{short_name} eq $self->short_name();
+        if !$is_insert
+            && exists $p->{short_name}
+            && $p->{short_name} eq $self->short_name();
 
     return unless __PACKAGE__->new( short_name => $p->{short_name} );
 
@@ -484,18 +486,18 @@ sub _build_permissions {
 
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    $select->select(
-        $Schema->table('Role')->column('name'),
-        $Schema->table('Permission')->column('name'),
-        )
+    #<<<
+    $select
+        ->select( $Schema->table('Role')->column('name'),
+                  $Schema->table('Permission')->column('name'),
+                )
         ->from( $Schema->table('Permission'),
-        $Schema->table('WikiRolePermission') )
-        ->from( $Schema->table('Role'), $Schema->table('WikiRolePermission') )
-        ->where(
-        $Schema->table('WikiRolePermission')->column('wiki_id'),
-        '=', $self->wiki_id()
-        );
-
+                $Schema->table('WikiRolePermission') )
+        ->from( $Schema->table('Role'),
+                $Schema->table('WikiRolePermission') )
+        ->where( $Schema->table('WikiRolePermission')->column('wiki_id'),
+                 '=', $self->wiki_id() );
+    #>>>
     my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
 
     my %perms;
@@ -573,12 +575,14 @@ sub _build_permissions {
 
 {
     my $Delete = Silki::Schema->SQLFactoryClass()->new_delete();
-    $Delete->from( $Schema->table('WikiRolePermission') )->where(
-        $Schema->table('WikiRolePermission')->column('wiki_id'),
-        '=',
-        Fey::Placeholder->new()
-    );
 
+    #<<<
+    $Delete
+        ->delete()
+        ->from( $Schema->table('WikiRolePermission') )
+        ->where( $Schema->table('WikiRolePermission')->column('wiki_id'),
+                 '=', Fey::Placeholder->new() );
+    #>>>
     sub _set_permissions_from_set {
         my $self = shift;
         my $set  = shift;
@@ -626,12 +630,16 @@ sub _RevisionCountSelect {
     my ( $page_t, $page_revision_t )
         = $Schema->tables( 'Page', 'PageRevision' );
 
-    my $count = Fey::Literal::Function->new( 'COUNT',
-        $page_revision_t->column('page_id') );
+    my $count = Fey::Literal::Function->new(
+        'COUNT',
+        $page_revision_t->column('page_id')
+    );
 
-    $select->select($count)->from( $page_t, $page_revision_t )
+    #<<<
+    $select
+        ->select($count)->from( $page_t, $page_revision_t )
         ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() );
-
+    #>>>
     return $select;
 }
 
@@ -651,15 +659,15 @@ sub _DistinctRevisionCountSelect {
     );
 
     my $count_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    #<<<
     $count_select
         ->select($count)
         ->from( $page_t, $page_revision_t )
         ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
-        ->and(
-            $page_revision_t->column('revision_number'),
-            '=', $max_revision
-        );
-
+        ->and  ( $page_revision_t->column('revision_number'),
+                 '=', $max_revision );
+    #>>>
     return $count_select;
 }
 
@@ -688,14 +696,17 @@ sub _BuildRecentChangesSelect {
     my $page_t = $Schema->table('Page');
 
     my $pages_select = Silki::Schema->SQLFactoryClass()->new_select();
-    $pages_select->select( $page_t, $Schema->table('PageRevision') )
+
+    #<<<
+    $pages_select
+        ->select( $page_t, $Schema->table('PageRevision') )
         ->from( $page_t, $Schema->table('PageRevision') )
         ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
         ->order_by(
             $Schema->table('PageRevision')->column('creation_datetime'), 'DESC',
             $Schema->table('Page')->column('title'),                     'ASC',
         );
-
+    #>>>
     return $pages_select;
 }
 
@@ -707,24 +718,28 @@ sub _BuildDistinctRecentChangesSelect {
     my ( $page_t, $page_revision_t )
         = $Schema->tables( 'Page', 'PageRevision' );
 
-    my $max_func = Fey::Literal::Function->new( 'MAX',
-        $Schema->table('PageRevision')->column('revision_number') );
+    my $max_func = Fey::Literal::Function->new(
+        'MAX',
+        $Schema->table('PageRevision')->column('revision_number')
+    );
 
     my $max_revision = $class->_MaxRevisionSelect();
 
     my $pages_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    #<<<
     $pages_select
         ->select( $page_t, $Schema->table('PageRevision') )
         ->from( $page_t, $Schema->table('PageRevision') )
         ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
-        ->and(
+        ->and  (
             $Schema->table('PageRevision')->column('revision_number'),
             '=', $max_revision
         )->order_by(
             $Schema->table('PageRevision')->column('creation_datetime'), 'DESC',
             $page_t->column('title'),                                    'ASC',
         );
-
+    #>>>
     return $pages_select;
 }
 
@@ -758,10 +773,14 @@ sub _PageCountSelect {
     );
 
     my $pages_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    #<<<
     $pages_select
         ->select($count)
         ->from($page_t)
         ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() );
+    #>>>
+    return $select;
 }
 
 sub _OrphanedPageCountSelect {
@@ -770,10 +789,12 @@ sub _OrphanedPageCountSelect {
     my $page_link_t = $Schema->table('PageLink');
 
     my $linked_pages = Silki::Schema->SQLFactoryClass()->new_select();
+
+    #<<<
     $linked_pages
         ->select( $page_link_t->column('to_page_id') )
         ->from( $page_link_t );
-
+    #>>>
     my $page_t = $Schema->table('Page');
 
     my $count = Fey::Literal::Function->new(
@@ -782,12 +803,16 @@ sub _OrphanedPageCountSelect {
     );
 
     my $pages_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    #<<<
     $pages_select
         ->select($count)
         ->from($page_t)
         ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
         ->and( $page_t->column( 'title' ), '!=', Fey::Placeholder->new() )
         ->and( $page_t->column('page_id'), 'NOT IN', $linked_pages );
+    #>>>
+    return $pages_select;
 }
 
 sub _BuildOrphanedPagesSelect {
@@ -796,13 +821,14 @@ sub _BuildOrphanedPagesSelect {
     my $page_link_t = $Schema->table('PageLink');
 
     my $linked_pages = Silki::Schema->SQLFactoryClass()->new_select();
-    $linked_pages
-        ->select( $page_link_t->column('to_page_id') )
-        ->from( $page_link_t );
+    $linked_pages->select( $page_link_t->column('to_page_id') )
+        ->from($page_link_t);
 
     my $page_t = $Schema->table('Page');
 
     my $pages_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    #<<<
     $pages_select
         ->select($page_t)
         ->from($page_t)
@@ -812,7 +838,8 @@ sub _BuildOrphanedPagesSelect {
         ->order_by(
             $page_t->column('title'), 'ASC',
         );
-
+    #>>>
+    return $pages_select;
 }
 
 sub _WantedPageCountSelect {
@@ -828,13 +855,14 @@ sub _WantedPageCountSelect {
 
     my $wanted_select = Silki::Schema->SQLFactoryClass()->new_select();
 
+    #<<<
     $wanted_select
         ->select($count)
         ->from($pending_page_link_t)
-        ->where(
-            $pending_page_link_t->column('to_wiki_id'), '=',
-            Fey::Placeholder->new()
-        );
+        ->where( $pending_page_link_t->column('to_wiki_id'), '=',
+                 Fey::Placeholder->new() );
+    #>>>
+    return $wanted_select;
 }
 
 sub wanted_pages {
@@ -881,6 +909,8 @@ sub _BuildWantedPagesSelect {
     );
 
     my $wanted_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    #<<<
     $wanted_select
         ->select( $pending_page_link_t->columns( 'to_page_title', 'to_wiki_id' ), $count )
         ->from( $pending_page_link_t )
@@ -890,7 +920,7 @@ sub _BuildWantedPagesSelect {
             $count, 'DESC',
             $pending_page_link_t->column('to_page_title'), 'ASC',
         );
-
+    #>>>
     return $wanted_select;
 }
 
@@ -931,17 +961,18 @@ sub _BuildRecentlyViewedPagesSelect {
     );
 
     my $viewed_select = Silki::Schema->SQLFactoryClass()->new_select();
+    #<<<
     $viewed_select
         ->select( $page_t, $count )
         ->from( $page_t, $page_view_t )
         ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
-        ->and( $page_view_t->column('view_datetime'), '>=', Fey::Placeholder->new() )
+        ->and  ( $page_view_t->column('view_datetime'), '>=', Fey::Placeholder->new() )
         ->group_by( $page_t->columns() )
         ->order_by(
             $count, 'DESC',
             $page_t->column('title'), 'ASC',
         );
-
+    #>>>
     return $viewed_select;
 }
 
@@ -954,11 +985,13 @@ sub _MemberCountSelect {
         = Fey::Literal::Function->new( 'COUNT', $uwr_t->column('user_id') );
 
     my $member_count_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    #<<<
     $member_count_select
         ->select($count)
         ->from($uwr_t)
         ->where( $uwr_t->column('wiki_id'), '=', Fey::Placeholder->new() );
-
+    #>>>
     return $member_count_select;
 }
 
@@ -971,11 +1004,13 @@ sub _FileCountSelect {
         = Fey::Literal::Function->new( 'COUNT', $file_t->column('file_id') );
 
     my $file_count_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    #<<<
     $file_count_select
         ->select($count)
         ->from( $file_t, $page_t )
         ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() );
-
+    #>>>
     return $file_count_select;
 }
 
@@ -994,7 +1029,7 @@ sub files {
         classes => ['Silki::Schema::File'],
         select  => $select,
         dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
-        bind_params   => [ $self->wiki_id() ],
+        bind_params => [ $self->wiki_id() ],
     );
 }
 
@@ -1004,12 +1039,14 @@ sub _BuildFilesSelect {
     my ( $file_t, $page_t ) = $Schema->tables( 'File', 'Page' );
 
     my $files_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    #<<<
     $files_select
         ->select($file_t)
         ->from( $file_t, $page_t )
         ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
         ->order_by( $file_t->column('filename'), 'ASC' );
-
+    #>>>
     return $files_select;
 }
 
@@ -1037,9 +1074,11 @@ sub _BuildMembersSelect {
 
     my $user_t = $Schema->table('User');
     my $uwr_t  = $Schema->table('UserWikiRole');
-    my $role_t  = $Schema->table('Role');
+    my $role_t = $Schema->table('Role');
 
     my $members_select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    #<<<
     $members_select
         ->select( $user_t, $role_t )
         ->from( $user_t, $uwr_t )
@@ -1049,7 +1088,7 @@ sub _BuildMembersSelect {
                     $user_t->column('display_name'), 'ASC',
                     $user_t->column('email_address'), 'ASC',
                   );
-
+    #>>>
     return $members_select;
 }
 
@@ -1065,7 +1104,7 @@ sub active_users {
     $select->limit( $limit, $offset );
 
     return Fey::Object::Iterator::FromSelect->new(
-        classes => [ 'Silki::Schema::User' ],
+        classes => ['Silki::Schema::User'],
         select  => $select,
         dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
         bind_params => [ $self->wiki_id(), $select->bind_params() ],
@@ -1075,8 +1114,8 @@ sub active_users {
 sub _BuildActiveUsersSelect {
     my $class = shift;
 
-    my $user_t = $Schema->table('User');
-    my $page_t = $Schema->table('Page');
+    my $user_t          = $Schema->table('User');
+    my $page_t          = $Schema->table('Page');
     my $page_revision_t = $Schema->table('PageRevision');
 
     my $username_or_display_name = Fey::Literal::Term->new(
@@ -1089,6 +1128,7 @@ sub _BuildActiveUsersSelect {
 
     my $users_select = Silki::Schema->SQLFactoryClass()->new_select();
 
+    #<<<
     $users_select
         ->select( $user_t, $username_or_display_name, $max )
         ->distinct()
@@ -1105,7 +1145,7 @@ sub _BuildActiveUsersSelect {
         )
         ->group_by( $user_t->columns(), $username_or_display_name )
         ->order_by( $max, 'DESC', $username_or_display_name, );
-
+    #>>>
     return $users_select;
 }
 
@@ -1161,12 +1201,12 @@ sub text_search {
         \@_,
         query  => { isa => Str },
         limit  => { isa => Int, optional => 1 },
-        offset => { isa => Int, default  => 0 },
+        offset => { isa => Int, default => 0 },
     );
 
-    my $page_t = $Schema->table('Page');
+    my $page_t          = $Schema->table('Page');
     my $page_revision_t = $Schema->table('PageRevision');
-    my $pst_t = $Schema->table('PageSearchableText');
+    my $pst_t           = $Schema->table('PageSearchableText');
 
     my $max_revision = $self->_MaxRevisionSelect();
 
@@ -1182,15 +1222,18 @@ sub text_search {
 
     my $search_select = Silki::Schema->SQLFactoryClass()->new_select();
 
-    $search_select->select( $page_t, $page_revision_t, $rank )
-           ->from( $page_t, $page_revision_t )
-           ->from( $page_t, $pst_t )
-           ->where( $pst_t->column('ts_text'), '@@', $ts_query )
-           ->and( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
-           ->and( $page_revision_t->column('revision_number'),
-                  '=', $max_revision )
-           ->order_by( $rank, 'DESC',
-                       $page_t->column('title'), 'ASC' );
+    #<<<
+    $search_select
+        ->select( $page_t, $page_revision_t, $rank )
+        ->from( $page_t, $page_revision_t )
+        ->from( $page_t, $pst_t )
+        ->where( $pst_t->column('ts_text'), '@@', $ts_query )
+        ->and  ( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
+        ->and  ( $page_revision_t->column('revision_number'),
+                 '=', $max_revision )
+        ->order_by( $rank, 'DESC',
+                    $page_t->column('title'), 'ASC' );
+    #>>>
     $search_select->limit( $limit, $offset );
 
     my $select = Silki::Schema->SQLFactoryClass()->new_select();
@@ -1207,9 +1250,11 @@ sub text_search {
     my $star = Fey::Literal::Term->new('*');
     $star->set_can_have_alias(0);
 
-    $select->select( $star, $result )
-           ->from($search_select);
-
+    #<<<
+    $select
+        ->select( $star, $result )
+        ->from($search_select);
+    #>>>
     my $x = 0;
     my %attribute_map;
 
@@ -1230,7 +1275,7 @@ sub text_search {
     }
 
     # Need to skip the rank item in the row
-    $attribute_map{++$x} = {
+    $attribute_map{ ++$x } = {
         class     => 'Silki::Schema::TextSearchResult',
         attribute => 'result',
     };
@@ -1282,24 +1327,24 @@ sub _BuildPagesByTagSelect {
 
     my $max_revision = $class->_MaxRevisionSelect();
 
+    #<<<
     $select
         ->select( $page_t, $page_revision_t )
         ->from( $page_t, $page_revision_t )
         ->from( $page_t, $page_tag_t )
         ->where( $page_tag_t->column('tag_id'), '=', Fey::Placeholder->new() )
-        ->and( $page_revision_t->column('revision_number'),
-               '=', $max_revision
-             )
+        ->and  ( $page_revision_t->column('revision_number'),
+                 '=', $max_revision )
         ->order_by( $page_t->column('title') );
-
+    #>>>
     return $select;
 }
 
 sub pages_tagged_count {
     my $self = shift;
-    my ( $tag_name ) = validated_list(
+    my ($tag_name) = validated_list(
         \@_,
-        tag    => { isa => Str },
+        tag => { isa => Str },
     );
 
     my $tag = $self->_find_tag_by_name($tag_name)
@@ -1330,11 +1375,12 @@ sub _BuildPagesByTagCountSelect {
         $page_tag_t->column('page_id'),
     );
 
+    #<<<
     $select
         ->select($count)
         ->from($page_tag_t)
         ->where( $page_tag_t->column('tag_id'), '=', Fey::Placeholder->new() );
-
+    #>>>
     return $select;
 }
 
@@ -1360,7 +1406,7 @@ sub popular_tags {
     $select->limit( $limit, $offset );
 
     return Fey::Object::Iterator::FromSelect->new(
-        classes => [ 'Silki::Schema::Tag' ],
+        classes => ['Silki::Schema::Tag'],
         select  => $select,
         dbh => Silki::Schema->DBIManager()->source_for_sql($select)->dbh(),
         bind_params => [ $self->wiki_id() ],
@@ -1379,6 +1425,7 @@ sub _BuildPopularTagsSelect {
         $page_tag_t->column('page_id'),
     );
 
+    #<<<
     $select
         ->select( $tag_t, $count )
         ->from( $tag_t, $page_tag_t )
@@ -1387,7 +1434,7 @@ sub _BuildPopularTagsSelect {
         ->group_by( $tag_t->columns() )
         ->order_by( $count,                'DESC',
                     $tag_t->column('tag'), 'ASC' );
-
+    #>>>
     return $select;
 }
 
@@ -1406,13 +1453,14 @@ sub _TagCountSelect {
 
     my $count = Fey::Literal::Function->new( 'COUNT', $distinct );
 
+    #<<<
     $select
         ->select($count)
         ->from( $page_t, $page_tag_t )
         ->from( $page_tag_t, $tag_t )
         ->where( $tag_t->column('wiki_id'), '=',
                  Fey::Placeholder->new() );
-
+    #>>>
     return $select;
 }
 
@@ -1431,9 +1479,9 @@ sub pages_edited_by_user {
     my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
 
     return Fey::Object::Iterator::FromSelect->new(
-        classes     => [ 'Silki::Schema::Page', 'Silki::Schema::PageRevision' ],
-        select      => $select,
-        dbh         => $dbh,
+        classes => [ 'Silki::Schema::Page', 'Silki::Schema::PageRevision' ],
+        select  => $select,
+        dbh     => $dbh,
         bind_params => [ $self->wiki_id(), $user->user_id() ],
     );
 }
@@ -1452,6 +1500,7 @@ sub _BuildPagesEditedByUserSelect {
         Fey::Placeholder->new()
     );
 
+    #<<<
     $select
         ->select( $page_t, $page_revision_t )
         ->from( $page_t, $page_revision_t )
@@ -1460,7 +1509,7 @@ sub _BuildPagesEditedByUserSelect {
                  '=', $max_revision )
         ->order_by( $page_revision_t->column('creation_datetime'), 'DESC',
                     $page_t->column('title'), 'ASC' );
-
+    #>>>
     return $select;
 }
 
@@ -1491,15 +1540,18 @@ sub _BuildPagesEditedByUserCountSelect {
 
     my $distinct = Fey::Literal::Term->new(
         'DISTINCT ',
-        Fey::Literal::Function->new( 'COUNT', $page_revision_t->column('page_id') )
+        Fey::Literal::Function->new(
+            'COUNT', $page_revision_t->column('page_id')
+        )
     );
 
+    #<<<
     $select
         ->select($distinct)
         ->from( $page_t, $page_revision_t )
         ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
         ->and  ( $page_revision_t->column('user_id'), '=', Fey::Placeholder->new() );
-
+    #>>>
     return $select;
 }
 
@@ -1518,9 +1570,9 @@ sub pages_created_by_user {
     my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
 
     return Fey::Object::Iterator::FromSelect->new(
-        classes     => [ 'Silki::Schema::Page', 'Silki::Schema::PageRevision' ],
-        select      => $select,
-        dbh         => $dbh,
+        classes => [ 'Silki::Schema::Page', 'Silki::Schema::PageRevision' ],
+        select  => $select,
+        dbh     => $dbh,
         bind_params => [ $self->wiki_id(), $user->user_id() ],
     );
 }
@@ -1535,6 +1587,7 @@ sub _BuildPagesCreatedByUserSelect {
     my ( $page_t, $page_revision_t )
         = $Schema->tables( 'Page', 'PageRevision' );
 
+    #<<<
     $select
         ->select( $page_t, $page_revision_t )
         ->from( $page_t, $page_revision_t )
@@ -1544,7 +1597,7 @@ sub _BuildPagesCreatedByUserSelect {
                  '=', $min_revision )
         ->order_by( $page_revision_t->column('creation_datetime'), 'DESC',
                     $page_t->column('title'), 'ASC' );
-
+    #>>>
     return $select;
 }
 
@@ -1575,12 +1628,13 @@ sub _BuildPagesCreatedByUserCountSelect {
     my $count
         = Fey::Literal::Function->new( 'COUNT', $page_t->column('page_id') );
 
+    #<<<
     $select
         ->select($count)
         ->from($page_t)
         ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() )
         ->and  ( $page_t->column('user_id'), '=', Fey::Placeholder->new() );
-
+    #>>>
     return $select;
 }
 
@@ -1591,8 +1645,10 @@ sub PublicWikiCount {
 
     my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
 
-    my $vals = $dbh->selectrow_arrayref( $select->sql($dbh), {},
-        $select->bind_params() );
+    my $vals = $dbh->selectrow_arrayref(
+        $select->sql($dbh), {},
+        $select->bind_params()
+    );
 
     return $vals ? $vals->[0] : 0;
 }
@@ -1626,10 +1682,12 @@ sub PublicWikis {
 
     my $base = Silki::Schema->SQLFactoryClass()->new_select();
 
-    $base->from( $wiki_t, $wrp_t )
-         ->where( $wrp_t->column('role_id'), '=', $guest->role_id() )
-         ->and( $wrp_t->column('permission_id'), '=', $read->permission_id() );
-
+    #<<<
+    $base
+        ->from( $wiki_t, $wrp_t )
+        ->where( $wrp_t->column('role_id'), '=', $guest->role_id() )
+        ->and  ( $wrp_t->column('permission_id'), '=', $read->permission_id() );
+    #>>>
     sub _BuildPublicWikiCountSelect {
         my $class = shift;
 
@@ -1651,9 +1709,8 @@ sub PublicWikis {
 
         my $select = $base->clone();
 
-        $select->select($wiki_t)
-               ->distinct()
-               ->order_by( $wiki_t->column('title') );
+        $select->select($wiki_t)->distinct()
+            ->order_by( $wiki_t->column('title') );
 
         return $select;
     }
@@ -1687,10 +1744,12 @@ sub _BuildAllWikiSelect {
 
     my $wiki_t = $Schema->table('Wiki');
 
-    $select->select($wiki_t)
-           ->from($wiki_t)
-           ->order_by( $wiki_t->column('title') );
-
+    #<<<
+    $select
+        ->select($wiki_t)
+        ->from($wiki_t)
+        ->order_by( $wiki_t->column('title') );
+    #>>>
     return $select;
 }
 
@@ -1706,13 +1765,15 @@ sub _BuildMaxRevisionSelect {
     );
 
     my $max_revision = Silki::Schema->SQLFactoryClass()->new_select();
+
+    #<<<
     $max_revision
         ->select($max_func)
         ->from( $Schema->table('PageRevision') )
         ->where( $Schema->table('PageRevision')->column('page_id'),
                  '=', $page_t->column('page_id')
                );
-
+    #>>>
     return $max_revision;
 }
 
@@ -1728,13 +1789,15 @@ sub _BuildMinRevisionSelect {
     );
 
     my $min_revision = Silki::Schema->SQLFactoryClass()->new_select();
+
+    #<<<
     $min_revision
         ->select($min_func)
         ->from( $Schema->table('PageRevision') )
         ->where( $Schema->table('PageRevision')->column('page_id'),
                  '=', $page_t->column('page_id')
                );
-
+    #>>>
     return $min_revision;
 }
 

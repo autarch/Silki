@@ -72,7 +72,9 @@ sub _web_hostname_is_unique {
     my $is_insert = shift;
 
     return
-        if !$is_insert && exists $p->{web_hostname} && $p->{web_hostname} eq $self->web_hostname();
+        if !$is_insert
+            && exists $p->{web_hostname}
+            && $p->{web_hostname} eq $self->web_hostname();
 
     return unless __PACKAGE__->new( web_hostname => $p->{web_hostname} );
 
@@ -90,7 +92,9 @@ sub _email_hostname_is_unique {
     my $is_insert = shift;
 
     return
-        if !$is_insert && exists $p->{email_hostname} && $p->{email_hostname} eq $self->email_hostname();
+        if !$is_insert
+            && exists $p->{email_hostname}
+            && $p->{email_hostname} eq $self->email_hostname();
 
     return unless __PACKAGE__->new( email_hostname => $p->{email_hostname} );
 
@@ -110,7 +114,10 @@ sub entity_uri {
     my $self = shift;
     my %p    = @_;
 
-    $p{view} = 'domain/' . $self->domain_id() . ( $p{view} ? q{/} . $p{view} : q{} );
+    $p{view}
+        = 'domain/'
+        . $self->domain_id()
+        . ( $p{view} ? q{/} . $p{view} : q{} );
 
     return $self->uri(%p);
 }
@@ -167,12 +174,13 @@ sub _WikiCountSelect {
     my $count
         = Fey::Literal::Function->new( 'COUNT', $wiki_t->column('wiki_id') );
 
+    #<<<
     $select
         ->select($count)
         ->from( $wiki_t )
         ->where( $wiki_t->column('domain_id'), '=',
                  Fey::Placeholder->new() );
-
+    #>>>
     return $select;
 }
 
@@ -204,10 +212,12 @@ sub _BuildAllDomainSelect {
 
     my $domain_t = $Schema->table('Domain');
 
-    $select->select($domain_t)
-           ->from($domain_t)
-           ->order_by( $domain_t->column('web_hostname') );
-
+    #<<<
+    $select
+        ->select($domain_t)
+        ->from($domain_t)
+        ->order_by( $domain_t->column('web_hostname') );
+    #>>>
     return $select;
 }
 

@@ -158,8 +158,10 @@ sub _fill_form_data {
 
     my $html = $self->_form_html_from_dom();
 
-    my $filled = HTML::FillInForm->fill( \$html, $data,
-        ignore_fields => $self->exclude() );
+    my $filled = HTML::FillInForm->fill(
+        \$html, $data,
+        ignore_fields => $self->exclude()
+    );
 
     my $dom = HTML::DOM->new();
     $dom->write($filled);
@@ -219,7 +221,6 @@ sub _form_html_from_dom {
 
 # This bizarro bit seems to fix some tests. Sigh ...
 {
-
     package
         HTML::DOM::Node;
 

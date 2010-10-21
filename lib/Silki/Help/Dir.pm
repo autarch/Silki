@@ -54,8 +54,8 @@ sub _build_files {
                 locale_code => $self->locale_code(),
                 )
             }
-        sort { $a cmp $b }
-        grep { !$_->is_dir() } $lang_dir->children()
+            sort { $a cmp $b }
+            grep { !$_->is_dir() } $lang_dir->children()
     ];
 }
 

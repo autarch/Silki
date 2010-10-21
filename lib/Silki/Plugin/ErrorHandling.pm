@@ -284,4 +284,3 @@ EOF
 1;
 
 # ABSTRACT: An uber-hack plugin to override Catalyst's error output and add better error logging
-

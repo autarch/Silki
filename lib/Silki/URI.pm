@@ -24,8 +24,10 @@ sub dynamic_uri {
 sub static_uri {
     my $path = shift;
 
-    return _prefixed_path( Silki::Config->new()->static_path_prefix(),
-        $path );
+    return _prefixed_path(
+        Silki::Config->new()->static_path_prefix(),
+        $path
+    );
 }
 
 sub _prefixed_path {

@@ -26,7 +26,7 @@ sub HighlightMarker {
 }
 
 sub title_for_display {
-    my $self = shift;
+    my $self       = shift;
     my $full_title = shift;
 
     my ( $title, undef ) = split /\n/, $self->_result(), 2;

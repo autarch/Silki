@@ -89,10 +89,12 @@ sub _BuildAllAccountSelect {
 
     my $account_t = $Schema->table('Account');
 
-    $select->select($account_t)
-           ->from($account_t)
-           ->order_by( $account_t->column('name') );
-
+    #<<<
+    $select
+        ->select($account_t)
+        ->from($account_t)
+        ->order_by( $account_t->column('name') );
+    #>>>
     return $select;
 }
 

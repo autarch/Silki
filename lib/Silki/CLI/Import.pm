@@ -92,6 +92,7 @@ sub _replace_dbi_manager {
 }
 
 {
+
     package _DBIManager;
 
     use Moose;

@@ -19,7 +19,7 @@ has colspan => (
 
 has alignment => (
     is      => 'ro',
-    isa     => enum( [ qw( left right center ) ] ),
+    isa     => enum( [qw( left right center )] ),
     default => 'left',
 );
 

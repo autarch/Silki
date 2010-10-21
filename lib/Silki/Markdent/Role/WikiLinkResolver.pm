@@ -30,7 +30,7 @@ has _page => (
 
 has _cached_wikis => (
     is       => 'ro',
-    isa      => HashRef['Silki::Schema::Wiki'],
+    isa      => HashRef ['Silki::Schema::Wiki'],
     default  => sub { {} },
     init_arg => undef,
 );
@@ -214,8 +214,9 @@ sub _replace_nonexistent_page_links {
             $id => {
                 page  => undef,
                 title => $links->{$id}{page_title},
-                text  => $links->{$id}{page_title} // $links->{$id}{display_text},
-                wiki  => $links->{$id}{wiki},
+                text  => $links->{$id}{page_title}
+                    // $links->{$id}{display_text},
+                wiki => $links->{$id}{wiki},
             }
         );
     }
@@ -252,7 +253,7 @@ sub _resolve_file_link {
         $wiki_name = $1;
         $page_name = $2;
     }
-    elsif ( all { defined } $1, $3 ) {
+    elsif ( all {defined} $1, $3 ) {
         $page_name = $1;
     }
 

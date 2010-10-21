@@ -19,10 +19,11 @@ my $Schema = Silki::Schema->Schema();
 
     has_table( $Schema->table('SystemLog') );
 
+    #<<<
     transform data_blob
         => inflate { thaw( $_[1] ) }
         => deflate { nfreeze( $_[1] ) };
-
+    #>>>
     has_one( $Schema->table('User') );
     has_one( $Schema->table('Wiki') );
     has_one( $Schema->table('Page') );
@@ -63,10 +64,12 @@ sub _BuildAllLogSelect {
 
     my $log_t = $Schema->table('SystemLog');
 
-    $select->select($log_t)
-           ->from($log_t)
-           ->order_by( $log_t->column('log_datetime'), 'DESC' );
-
+    #<<<
+    $select
+        ->select($log_t)
+        ->from($log_t)
+        ->order_by( $log_t->column('log_datetime'), 'DESC' );
+    #>>>
     return $select;
 }
 

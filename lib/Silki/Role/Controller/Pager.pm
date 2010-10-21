@@ -10,8 +10,8 @@ use Data::Page;
 use Data::Page::FlickrLike;
 
 sub _make_pager {
-    my $self = shift;
-    my $c    = shift;
+    my $self  = shift;
+    my $c     = shift;
     my $total = shift;
 
     my $limit    = 50;
