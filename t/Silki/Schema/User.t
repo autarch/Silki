@@ -88,7 +88,8 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         user          => $user,
     );
 
-    ok( ! $user->has_login_credentials(), 'user does not have login credentials' );
+    ok( !$user->has_login_credentials(),
+        'user does not have login credentials' );
 
     ok(
         !$user->is_guest(),
@@ -187,7 +188,6 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
     );
 }
 
-
 {
     my $email = 'user3@example.com';
     my $pw    = 's3cr3t';
@@ -199,11 +199,15 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         user                => Silki::Schema::User->SystemUser(),
     );
 
-    ok( length $user->confirmation_key(),
-        'user has an confirmation_key when requires_confirmation is passed to insert()' );
+    ok(
+        length $user->confirmation_key(),
+        'user has an confirmation_key when requires_confirmation is passed to insert()'
+    );
 
-    ok( $user->requires_activation(),
-        'requires_activation is true' );
+    ok(
+        $user->requires_activation(),
+        'requires_activation is true'
+    );
 
     is(
         $user->confirmation_uri(),
@@ -322,7 +326,8 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 
     ok( !$user->has_valid_password(), 'user does not have valid password' );
 
-    ok( $user->has_login_credentials(), 'user has login credentials (openid)' );
+    ok( $user->has_login_credentials(),
+        'user has login credentials (openid)' );
 
     throws_ok(
         sub {
@@ -485,8 +490,10 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
     ok( $admin->can_edit_user($reg1),  'admin can edit other users' );
 
     ok( $reg1->can_edit_user($reg1), 'regular user can edit self' );
-    ok( !$reg1->can_edit_user($reg2),
-        'regular user cannot edit other users' );
+    ok(
+        !$reg1->can_edit_user($reg2),
+        'regular user cannot edit other users'
+    );
 
     ok(
         !$admin->can_edit_user( Silki::Schema::User->SystemUser() ),
@@ -509,8 +516,10 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 
     test_permissions( $user, $wiki, \%perms );
 
-    ok( !$user->is_wiki_member($wiki),
-        'user is not a member of the first wiki' );
+    ok(
+        !$user->is_wiki_member($wiki),
+        'user is not a member of the first wiki'
+    );
 
     is(
         $user->role_in_wiki($wiki)->name(), 'Authenticated',
@@ -585,7 +594,7 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 
     $wiki->add_user( user => $user, role => Silki::Schema::Role->Member() );
 
-    @perms{ qw( Read Edit Upload ) } = (1) x 5;
+    @perms{qw( Read Edit Upload )} = (1) x 5;
     test_permissions( $user, $wiki, \%perms );
 
     is(
@@ -613,8 +622,8 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 }
 
 sub test_permissions {
-    my $user = shift;
-    my $wiki = shift;
+    my $user  = shift;
+    my $wiki  = shift;
     my $perms = shift;
 
     my $member_desc
@@ -712,7 +721,7 @@ sub test_permissions {
 
     is_deeply(
         [ sort map { $_->title() } @wikis ],
-        ['First Wiki', 'Second Wiki' ],
+        [ 'First Wiki', 'Second Wiki' ],
         'the shared wikis are First and Second Wiki'
     );
 

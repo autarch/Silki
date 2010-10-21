@@ -6,8 +6,8 @@ use Test::More;
 
 use Silki::Formatter::HTMLToWiki::Table;
 
-
 {
+
     package FakeNode;
 
     use strict;

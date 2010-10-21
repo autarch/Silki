@@ -126,8 +126,7 @@ EOF
         user_id => $user->user_id(),
     );
 
-    $diff
-        = Silki::Schema::PageRevision->Diff( rev1 => $rev1, rev2 => $rev3 );
+    $diff = Silki::Schema::PageRevision->Diff( rev1 => $rev1, rev2 => $rev3 );
 
     is_deeply(
         $diff,
@@ -141,15 +140,21 @@ EOF
 
     $rev2->delete( user => $user );
 
-    is( $page->revision_count(), 2,
-        'page now has two revisions' );
+    is(
+        $page->revision_count(), 2,
+        'page now has two revisions'
+    );
 
     my $max_rev = $page->most_recent_revision();
 
-    is( $max_rev->revision_number(), 2,
-        'most recent revision is now revision 2' );
-    is( $max_rev->content(), $content3,
-        'revision 3 became revision 2');
+    is(
+        $max_rev->revision_number(), 2,
+        'most recent revision is now revision 2'
+    );
+    is(
+        $max_rev->content(), $content3,
+        'revision 3 became revision 2'
+    );
 }
 
 {
@@ -176,37 +181,53 @@ EOF
 
     my @incoming = $page1->incoming_links()->all();
 
-    is( @incoming, 1,
-        'Page 1 has one incoming link' );
-    is( $incoming[0]->title(), 'Page 2',
-        'incoming link is from Page 2' );
+    is(
+        @incoming, 1,
+        'Page 1 has one incoming link'
+    );
+    is(
+        $incoming[0]->title(), 'Page 2',
+        'incoming link is from Page 2'
+    );
 
     my $rev2 = $page2->add_revision(
         content => 'Now linking to ((Page 3))',
         user_id => $user->user_id(),
     );
 
-    is( $page1->incoming_link_count(), 0,
-        'Page 1 no longer has any incoming links' );
+    is(
+        $page1->incoming_link_count(), 0,
+        'Page 1 no longer has any incoming links'
+    );
 
     @incoming = $page3->incoming_links()->all();
 
-    is( @incoming, 1,
-        'Page 3 has one incoming link' );
-    is( $incoming[0]->title(), 'Page 2',
-        'incoming link is from Page 2' );
+    is(
+        @incoming, 1,
+        'Page 3 has one incoming link'
+    );
+    is(
+        $incoming[0]->title(), 'Page 2',
+        'incoming link is from Page 2'
+    );
 
     $rev2->delete( user => $user );
 
-    is( $page3->incoming_link_count(), 0,
-        'Page 3 no longer has any incoming links after deleting rev 2 of Page 2' );
+    is(
+        $page3->incoming_link_count(), 0,
+        'Page 3 no longer has any incoming links after deleting rev 2 of Page 2'
+    );
 
     @incoming = $page1->incoming_links()->all();
 
-    is( @incoming, 1,
-        'Page 1 has one incoming link again' );
-    is( $incoming[0]->title(), 'Page 2',
-        'incoming link is from Page 2' );
+    is(
+        @incoming, 1,
+        'Page 1 has one incoming link again'
+    );
+    is(
+        $incoming[0]->title(), 'Page 2',
+        'incoming link is from Page 2'
+    );
 }
 
 done_testing();

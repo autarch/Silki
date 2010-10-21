@@ -19,7 +19,7 @@ use Silki::Schema::Wiki;
 use Silki::Wiki::Exporter;
 
 my $wiki = Silki::Schema::Wiki->new( title => 'First Wiki' );
-my $text  = "Some random text\nin this file.\n";
+my $text = "Some random text\nin this file.\n";
 
 {
     my $guest = Silki::Schema::User->GuestUser();
@@ -325,7 +325,7 @@ sub _check_pages {
         'revision 1 has the right content'
     );
 
-    ok( ! $revisions->next(), 'retrieved 6 revisions and no more' );
+    ok( !$revisions->next(), 'retrieved 6 revisions and no more' );
 
     ok(
         Silki::Schema::Page->new(
@@ -375,6 +375,5 @@ sub _check_files {
         'wiki has two files'
     );
 }
-
 
 done_testing();

@@ -8,7 +8,6 @@ use Silki::Test::FakeSchema;
 
 use Silki::Schema;
 
-lives_ok { Silki::Schema->LoadAllClasses() }
-'call LoadAllClasses';
+lives_ok { Silki::Schema->LoadAllClasses() } 'call LoadAllClasses';
 
 done_testing();

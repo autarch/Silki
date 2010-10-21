@@ -109,7 +109,7 @@ open my $fh, '>', \$buffer;
 {
     my $text = "This is some plain text.\n";
     my $file = Silki::Schema::File->insert(
-        filename => 'test.txt',
+        filename  => 'test.txt',
         mime_type => 'text/plain',
         file_size => length $text,
         contents  => $text,
@@ -361,7 +361,7 @@ open my $fh, '>', \$buffer;
     );
 
     my $file = Silki::Schema::File->insert(
-        filename => 'test.tif',
+        filename  => 'test.tif',
         mime_type => 'image/tiff',
         file_size => 3,
         contents  => q{foo},
@@ -404,7 +404,7 @@ open my $fh, '>', \$buffer;
     );
 
     my $file = Silki::Schema::File->insert(
-        filename => 'test.png',
+        filename  => 'test.png',
         mime_type => 'image/png',
         file_size => 3,
         contents  => q{foo},

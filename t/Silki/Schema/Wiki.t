@@ -221,7 +221,7 @@ my $user = Silki::Schema::User->SystemUser();
     my @wanted = $wiki->wanted_pages()->all();
     is_deeply(
         [ sort map { $_->title() } @wanted ],
-        [ 'Something New' ],
+        ['Something New'],
         'wanted pages returns expected list of pages'
     );
 
@@ -386,8 +386,10 @@ my $user = Silki::Schema::User->SystemUser();
         'cannot add a user in the Guest role'
     );
 
-    $wiki->add_user( user => $user1,
-        role => Silki::Schema::Role->Authenticated() );
+    $wiki->add_user(
+        user => $user1,
+        role => Silki::Schema::Role->Authenticated()
+    );
 
     check_members(
         $wiki,
@@ -450,7 +452,7 @@ sub check_members {
     check_search(
         $wiki,
         'page',
-        [ 'Front Page' ],
+        ['Front Page'],
     );
 }
 

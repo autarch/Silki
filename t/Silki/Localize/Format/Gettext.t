@@ -45,13 +45,13 @@ throws_ok {
     $formatter->quant( 'en', [ 42, 'dog' ] );
 }
 qr/quant can only be called with 2 or 3 forms/,
-'quant throws an error when called with 1 form';
+    'quant throws an error when called with 1 form';
 
 throws_ok {
     $formatter->quant( 'en', [ 42, 'dog', 'dogs', 'no dogs', 'doggika' ] );
 }
 qr/quant can only be called with 2 or 3 forms/,
-'quant throws an error when called with 4 forms';
+    'quant throws an error when called with 4 forms';
 
 {
     no warnings 'redefine';
@@ -112,7 +112,12 @@ qr/quant can only be called with 2 or 3 forms/,
 {
     is(
         $formatter->at_time(
-            'en_US', [ DateTime->new( year => 2009, hour => 8, minute => 12, second => 33 ) ],
+            'en_US',
+            [
+                DateTime->new(
+                    year => 2009, hour => 8, minute => 12, second => 33
+                )
+            ],
         ),
         'at 8:12 AM',
         'at_time for for morning - en_US'
@@ -120,7 +125,12 @@ qr/quant can only be called with 2 or 3 forms/,
 
     is(
         $formatter->at_time(
-            'en_US', [ DateTime->new( year => 2009, hour => 13, minute => 12, second => 33 ) ],
+            'en_US',
+            [
+                DateTime->new(
+                    year => 2009, hour => 13, minute => 12, second => 33
+                )
+            ],
         ),
         'at 1:12 PM',
         'at_time for for afternoon - en_US'
@@ -130,7 +140,12 @@ qr/quant can only be called with 2 or 3 forms/,
 {
     is(
         $formatter->time(
-            'fr_FR', [ DateTime->new( year => 2009, hour => 8, minute => 12, second => 33 ) ],
+            'fr_FR',
+            [
+                DateTime->new(
+                    year => 2009, hour => 8, minute => 12, second => 33
+                )
+            ],
         ),
         '8:12',
         'time for for morning - fr_FR'
@@ -138,7 +153,12 @@ qr/quant can only be called with 2 or 3 forms/,
 
     is(
         $formatter->time(
-            'fr_FR', [ DateTime->new( year => 2009, hour => 13, minute => 12, second => 33 ) ],
+            'fr_FR',
+            [
+                DateTime->new(
+                    year => 2009, hour => 13, minute => 12, second => 33
+                )
+            ],
         ),
         '13:12',
         'time for for afternoon - fr_FR'

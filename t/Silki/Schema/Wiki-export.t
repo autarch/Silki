@@ -53,7 +53,7 @@ my $file2 = Silki::Schema::File->insert(
 $fp->add_file($_) for $file1, $file2;
 
 {
-    my @pages = map { _data_for_page( $_ ) } $wiki->pages()->all();
+    my @pages = map { _data_for_page($_) } $wiki->pages()->all();
 
     my @users = sort { $a->{display_name} cmp $b->{display_name} }
         map { _data_for_user( $wiki, $_ ) } Silki::Schema::User->All()->all();

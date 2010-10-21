@@ -90,7 +90,8 @@ my $user = Silki::Schema::User->GuestUser();
         'is_front_page is true for page where title is Front Page'
     );
 
-    throws_ok { $page->rename('foo') } qr/\QCannot rename this page - Front Page/,
+    throws_ok { $page->rename('foo') }
+    qr/\QCannot rename this page - Front Page/,
         'rename throws an exception for pages where can_be_renamed is false';
 }
 
@@ -244,7 +245,8 @@ my $user = Silki::Schema::User->GuestUser();
 
     is( $page->incoming_link_count(), 1, 'page still has one incoming link' );
     @links = $page->incoming_links()->all();
-    is( $links[0]->title(), 'Some Page', 'Some Page still links to the renamed Page' );
+    is( $links[0]->title(), 'Some Page',
+        'Some Page still links to the renamed Page' );
 
     my $link_rev = $links[0]->most_recent_revision();
     is(

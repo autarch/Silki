@@ -93,8 +93,8 @@ EOF
                 type => 'text',
                 text => "Some file - ",
             }, {
-                type         => 'file_link',
-                link_text    => 'foo.pdf',
+                type      => 'file_link',
+                link_text => 'foo.pdf',
             }, {
                 type => 'text',
                 text => "\n",
@@ -190,8 +190,8 @@ EOF
                 type => 'text',
                 text => "Some image - ",
             }, {
-                type         => 'image_link',
-                link_text    => 'foo.png',
+                type      => 'image_link',
+                link_text => 'foo.png',
             }, {
                 type => 'text',
                 text => "\n",

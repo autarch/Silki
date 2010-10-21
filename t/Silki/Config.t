@@ -14,7 +14,7 @@ use Silki::Config;
 
 my $dir = tempdir( CLEANUP => 1 );
 
-$ENV{HARNESS_ACTIVE} = 0;
+$ENV{HARNESS_ACTIVE}       = 0;
 $ENV{SILKI_CONFIG_TESTING} = 1;
 
 {
