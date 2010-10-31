@@ -127,11 +127,11 @@ msgid "(Link to non-existent wiki: %1)"
 msgstr ""
 
 #: lib/Silki/Markdent/Handler/HTMLGenerator.pm:172
-msgid "(inaccessable file)"
+msgid "(inaccessible file)"
 msgstr ""
 
 #: lib/Silki/Markdent/Handler/HTMLGenerator.pm:256
-msgid "(inaccessable page)"
+msgid "(inaccessible page)"
 msgstr ""
 
 #. ($link_text)

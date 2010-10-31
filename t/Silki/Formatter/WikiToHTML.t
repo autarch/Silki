@@ -437,15 +437,15 @@ EOF
 
     my $expect_html = <<'EOF';
 <p>
-Link to (inaccessable page)
+Link to (inaccessible page)
 </p>
 
 <p>
-Link to (inaccessable file)
+Link to (inaccessible file)
 </p>
 
 <p>
-(inaccessable file)
+(inaccessible file)
 </p>
 EOF
 

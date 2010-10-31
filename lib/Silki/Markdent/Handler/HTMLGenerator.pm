@@ -169,7 +169,7 @@ sub _link_to_file {
     }
 
     unless ( $self->_check_for_read_permission( $file->wiki() ) ) {
-        $self->_stream()->text( loc('(inaccessable file)') );
+        $self->_stream()->text( loc('(inaccessible file)') );
         return;
     }
 
@@ -253,7 +253,7 @@ sub _link_to_page {
     my $wiki = $link_data->{wiki} || $page->wiki();
 
     unless ( $self->_check_for_read_permission($wiki) ) {
-        return encode_entities( loc('(inaccessable page)') );
+        return encode_entities( loc('(inaccessible page)') );
         return;
     }
 
