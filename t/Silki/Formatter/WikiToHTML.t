@@ -399,7 +399,60 @@ EOF
         $html, $expect_html,
         'external link in public wiki do have nofollow'
     );
+}
 
+{
+    my $page = Silki::Schema::Page->new(
+        title   => 'Front Page',
+        wiki_id => $wiki1->wiki_id(),
+    );
+
+    my $markdown = <<'EOF';
+<http://example.com>
+
+[External link](http://example.com)
+EOF
+
+    my $user2 = Silki::Schema::User->insert(
+        email_address => 'user2@example.com',
+        display_name  => 'Example User',
+        password      => 'xyz',
+        time_zone     => 'America/New_York',
+        user          => $sys_user,
+    );
+
+    my $formatter = Silki::Formatter::WikiToHTML->new(
+        user        => $user2,
+        page        => $page,
+        wiki        => $wiki1,
+    );
+
+    my $html = $formatter->wiki_to_html(<<'EOF');
+Link to ((Page 1))
+
+Link to {{file:foo1.jpg}}
+
+{{image:foo1.jpg}}
+EOF
+
+    my $expect_html = <<'EOF';
+<p>
+Link to (inaccessable page)
+</p>
+
+<p>
+Link to (inaccessable file)
+</p>
+
+<p>
+(inaccessable file)
+</p>
+EOF
+
+    test_html(
+        $html, $expect_html,
+        'link formatting for page and file when user does not have read access to them'
+    );
 }
 
 done_testing();
