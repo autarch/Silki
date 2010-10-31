@@ -1,3 +1,13 @@
+0.24
+
+- Added missing test prereq for Test::Differences.
+
+- Pages with many links to other pages ended up doing a lot of SQL queries
+  (one per link). This has been refactored so that the pages for all links are
+  fetched in one query, which should speed up HTML generation for pages with
+  many links.
+
+
 0.23  2010-09-28
 
 - Whenever Silki generate URIs for email or redirects, it now makes sure to
