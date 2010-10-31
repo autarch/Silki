@@ -117,28 +117,41 @@ msgstr ""
 msgid "%quant( %1, view, views )"
 msgstr ""
 
-#. ($filename)
-#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:161
-msgid "(Link to non-existent file - %1)"
-msgstr ""
-
 #: lib/Silki/Formatter/HTMLToWiki.pm:252
 msgid "(Link to non-existent file)"
-msgstr ""
-
-#. ($link_text)
-#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:127
-msgid "(Link to non-existent page - %1)"
-msgstr ""
-
-#. ($link_text)
-#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:113 lib/Silki/Markdent/Role/WikiLinkResolver.pm:38
-msgid "(Link to non-existent wiki - %1)"
 msgstr ""
 
 #. ($wiki_name)
 #: lib/Silki/Formatter/HTMLToWiki.pm:275
 msgid "(Link to non-existent wiki: %1)"
+msgstr ""
+
+#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:172
+msgid "(inaccessible file)"
+msgstr ""
+
+#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:256
+msgid "(inaccessible page)"
+msgstr ""
+
+#. ($link_text)
+#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:333
+msgid "(link to a non-existent file - %1)"
+msgstr ""
+
+#. ($link_text)
+#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:302
+msgid "(link to a non-existent page in a file link - %1)"
+msgstr ""
+
+#. ($link_text)
+#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:285
+msgid "(link to a non-existent wiki in a file link - %1)"
+msgstr ""
+
+#. ($link->{link_text})
+#: lib/Silki/Markdent/Role/WikiLinkResolver.pm:168
+msgid "(link to a non-existent wiki in a page link - %1)"
 msgstr ""
 
 #: lib/Silki/Controller/User.pm:269
@@ -163,7 +176,7 @@ msgid "Activate Your Account"
 msgstr ""
 
 #. ($self->domain()
-#: lib/Silki/Schema/User.pm:1022
+#: lib/Silki/Schema/User.pm:1039
 msgid "Activate your user account on the %1 server"
 msgstr ""
 
@@ -176,7 +189,7 @@ msgid "Add Tags"
 msgstr ""
 
 #. ($file->filename()
-#: lib/Silki/Schema/Page.pm:371
+#: lib/Silki/Schema/Page.pm:373
 msgid "Adding a link to a new file: %1"
 msgstr ""
 
@@ -261,7 +274,7 @@ msgstr ""
 msgid "Back to current revision"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:610
+#: lib/Silki/Schema/User.pm:612
 msgid "Cannot make a confirmation uri for a user who does not have a confirmation key."
 msgstr ""
 
@@ -330,7 +343,7 @@ msgstr ""
 msgid "Creating a new wiki (%1)"
 msgstr ""
 
-#: lib/Silki/Wiki/Exporter.pm:104
+#: lib/Silki/Wiki/Exporter.pm:103
 msgid "Creating the tarball (this may take a while)."
 msgstr ""
 
@@ -368,7 +381,7 @@ msgid "Deleted the file %1"
 msgstr ""
 
 #. ($page->title()
-#: lib/Silki/Controller/Page.pm:104
+#: lib/Silki/Controller/Page.pm:102
 msgid "Deleted the page %1"
 msgstr ""
 
@@ -397,7 +410,7 @@ msgstr ""
 msgid "Domain Settings"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:164 share/mason/file/view-in-frame:11 share/mason/lib/table/attachments-table.mas:19 share/mason/lib/table/attachments-table.mas:22
+#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:181 share/mason/file/view-in-frame:11 share/mason/lib/table/attachments-table.mas:19 share/mason/lib/table/attachments-table.mas:22
 msgid "Download this file"
 msgstr ""
 
@@ -458,7 +471,7 @@ msgstr ""
 
 #. ($revision_count,                        $pages->index()
 #. ($revision_count,                $pages->index()
-#: lib/Silki/Wiki/Exporter.pm:149 lib/Silki/Wiki/Exporter.pm:163
+#: lib/Silki/Wiki/Exporter.pm:148 lib/Silki/Wiki/Exporter.pm:162
 msgid "Exported %1 revisions (of %quant( %2, page, pages ))"
 msgstr ""
 
@@ -468,7 +481,7 @@ msgid "Exported %quant( %1, file, files )"
 msgstr ""
 
 #. ($user_count,)
-#: lib/Silki/Wiki/Exporter.pm:195 lib/Silki/Wiki/Exporter.pm:216 lib/Silki/Wiki/Exporter.pm:226
+#: lib/Silki/Wiki/Exporter.pm:194 lib/Silki/Wiki/Exporter.pm:215 lib/Silki/Wiki/Exporter.pm:225
 msgid "Exported %quant( %1, user, users )"
 msgstr ""
 
@@ -517,7 +530,7 @@ msgid "History"
 msgstr ""
 
 #. ($page->title()
-#: lib/Silki/Controller/Page.pm:305 share/mason/autohandler:28
+#: lib/Silki/Controller/Page.pm:303 share/mason/autohandler:28
 msgid "History for %1"
 msgstr ""
 
@@ -568,14 +581,6 @@ msgstr ""
 
 #: share/mason/wiki/permissions-fieldset.mas:9
 msgid "In a public wiki, anyone can read and edit pages without logging in. However, only wiki members can delete pages or upload files."
-msgstr ""
-
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:155
-msgid "Inaccessible file"
-msgstr ""
-
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:71
-msgid "Inaccessible page"
 msgstr ""
 
 #: share/mason/page/incoming-links.mas:2
@@ -796,11 +801,11 @@ msgstr ""
 msgid "Page created by <a href=\"%html(%1)\">%html(%2)</a> %on_datetime(%3)."
 msgstr ""
 
-#: lib/Silki/Schema/Page.pm:293
+#: lib/Silki/Schema/Page.pm:295
 msgid "Page titles cannot contain a slash (/), since this conflicts with the syntax to link to another wiki."
 msgstr ""
 
-#: lib/Silki/Schema/Page.pm:285
+#: lib/Silki/Schema/Page.pm:287
 msgid "Page titles cannot contain the characters \"))\", since this conflicts with the wiki link syntax."
 msgstr ""
 
@@ -835,7 +840,7 @@ msgstr ""
 msgid "Password (again)"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:993
+#: lib/Silki/Schema/User.pm:1006
 msgid "Password reset for Silki"
 msgstr ""
 
@@ -892,7 +897,7 @@ msgid "Purge this revision"
 msgstr ""
 
 #. ($page->title()
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:95
+#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:283
 msgid "Read %1"
 msgstr ""
 
@@ -975,7 +980,7 @@ msgid "Revision %1"
 msgstr ""
 
 #. ($num)
-#: lib/Silki/Controller/Page.pm:262
+#: lib/Silki/Controller/Page.pm:260
 msgid "Revision %1 has been deleted."
 msgstr ""
 
@@ -1070,11 +1075,11 @@ msgstr ""
 msgid "The %1 domain has been updated."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:459
+#: lib/Silki/Schema/User.pm:461
 msgid "The OpenID URI you provided is already in use by another user."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:433
+#: lib/Silki/Schema/User.pm:435
 msgid "The OpenID you provided is not a valid URI."
 msgstr ""
 
@@ -1093,15 +1098,15 @@ msgstr ""
 msgid "The contents of <em>%html(%1)</em>"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:415
+#: lib/Silki/Schema/User.pm:417
 msgid "The email address you provided is already in use by another user."
 msgstr ""
 
-#: lib/Silki/Schema/Domain.pm:100
+#: lib/Silki/Schema/Domain.pm:104
 msgid "The email hostname you provided is already in use by another domain."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:377
+#: lib/Silki/Controller/Page.pm:375
 msgid "The file has been uploaded, and this page now links to the file."
 msgstr ""
 
@@ -1109,15 +1114,15 @@ msgstr ""
 msgid "The file has been uploaded."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:403
+#: lib/Silki/Controller/Page.pm:401
 msgid "The file you uploaded was empty."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:396
+#: lib/Silki/Controller/Page.pm:394
 msgid "The file you uploaded was too large."
 msgstr ""
 
-#: lib/Silki/Schema/File.pm:103
+#: lib/Silki/Schema/File.pm:102
 msgid "The filename you provided is already in use for another file on this page."
 msgstr ""
 
@@ -1130,15 +1135,15 @@ msgid "The hostname to be used when sending and receiving email. Defaults to the
 msgstr ""
 
 #. ($p->{title})
-#: lib/Silki/Schema/Page.pm:324
+#: lib/Silki/Schema/Page.pm:326
 msgid "The page title you have chosen (%1) is already in use in this wiki."
 msgstr ""
 
-#: lib/Silki/Schema/Wiki.pm:407
+#: lib/Silki/Schema/Wiki.pm:418
 msgid "The title you provided generates the same URI as an existing wiki."
 msgstr ""
 
-#: lib/Silki/Schema/Wiki.pm:365
+#: lib/Silki/Schema/Wiki.pm:374
 msgid "The title you provided is already in use by another wiki."
 msgstr ""
 
@@ -1150,7 +1155,7 @@ msgstr ""
 msgid "The username or password you provided was not valid."
 msgstr ""
 
-#: lib/Silki/Schema/Domain.pm:82
+#: lib/Silki/Schema/Domain.pm:84
 msgid "The web hostname you provided is already in use by another domain."
 msgstr ""
 
@@ -1212,7 +1217,7 @@ msgstr ""
 msgid "This page has %quant(%1,revision,revisions)"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:96
+#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:284
 msgid "This page has not yet been created"
 msgstr ""
 
@@ -1307,7 +1312,7 @@ msgid "Update Your Account"
 msgstr ""
 
 #. ($old_title, $title)
-#: lib/Silki/Schema/Page.pm:415
+#: lib/Silki/Schema/Page.pm:417
 msgid "Updating links because a page is being renamed from %1 to %2"
 msgstr ""
 
@@ -1343,11 +1348,11 @@ msgstr ""
 msgid "View previous revision"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLStream.pm:163
+#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:180
 msgid "View this file"
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:62 share/mason/page/autohandler:9
+#: lib/Silki/Controller/Page.pm:60 share/mason/page/autohandler:9
 msgid "View this page"
 msgstr ""
 
@@ -1412,11 +1417,11 @@ msgstr ""
 msgid "Wiki members"
 msgstr ""
 
-#: lib/Silki/Schema/Wiki.pm:387
+#: lib/Silki/Schema/Wiki.pm:396
 msgid "Wiki titles cannot contain a slash (/), since this conflicts with the syntax to link to another wiki."
 msgstr ""
 
-#: lib/Silki/Schema/Wiki.pm:379
+#: lib/Silki/Schema/Wiki.pm:388
 msgid "Wiki titles cannot contain the characters \"))\", since this conflicts with the wiki link syntax."
 msgstr ""
 
@@ -1494,17 +1499,17 @@ msgstr ""
 msgid "You cannot remove yourself as an admin."
 msgstr ""
 
-#: lib/Silki/Controller/Page.pm:389
+#: lib/Silki/Controller/Page.pm:387
 msgid "You did not select a file to upload."
 msgstr ""
 
 #. (lc $perm)
-#: lib/Silki/Controller/Base.pm:150
+#: lib/Silki/Controller/Base.pm:152
 msgid "You do not have %1 permissions in this wiki."
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Schema/User.pm:1017
+#: lib/Silki/Schema/User.pm:1034
 msgid "You have been invited to join the %1 wiki at %2"
 msgstr ""
 
@@ -1519,12 +1524,12 @@ msgid "You have created a user account on the %1 server. You must <a href=\"%htm
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Base.pm:132 lib/Silki/Controller/Base.pm:158
+#: lib/Silki/Controller/Base.pm:134 lib/Silki/Controller/Base.pm:160
 msgid "You must be a member of the %1 wiki to perform this action."
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Controller/Base.pm:124
+#: lib/Silki/Controller/Base.pm:126
 msgid "You must log in to to perform this action in the %1 wiki."
 msgstr ""
 
@@ -1578,7 +1583,7 @@ msgstr ""
 msgid "Your profile"
 msgstr ""
 
-#: lib/Silki/Role/Controller/WikitextHandler.pm:88
+#: lib/Silki/Role/Controller/WikitextHandler.pm:87
 msgid "Your submission was flagged as spam by our antispam system. Please check any external links in your text."
 msgstr ""
 
@@ -1632,7 +1637,7 @@ msgid "public-read-only"
 msgstr "Public can read, members can edit"
 
 #. ($revision->revision_number()
-#: lib/Silki/Role/Controller/RevisionsAtomFeed.pm:29 share/mason/wiki/dashboard:11 share/mason/wiki/recent:13 share/mason/wiki/search-results:13
+#: lib/Silki/Role/Controller/RevisionsAtomFeed.pm:30 share/mason/wiki/dashboard:11 share/mason/wiki/recent:13 share/mason/wiki/search-results:13
 msgid "revision %1"
 msgstr ""
 
