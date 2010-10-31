@@ -81,11 +81,12 @@ sub _generate_html {
     my $generator = shift;
 
     my $html = Silki::Markdent::Handler::HTMLGenerator->new(
-        wiki        => $self->_wiki(),
-        user        => $self->_user(),
-        page        => $self->_page(),
-        include_toc => $self->_include_toc(),
-        for_editor  => $self->_for_editor(),
+        wiki              => $self->_wiki(),
+        user              => $self->_user(),
+        page              => $self->_page(),
+        nofollow_external => $self->_wiki()->non_member_can_edit(),
+        include_toc       => $self->_include_toc(),
+        for_editor        => $self->_for_editor(),
     );
 
     $generator->($html);

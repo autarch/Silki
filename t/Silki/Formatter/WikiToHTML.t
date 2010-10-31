@@ -261,6 +261,147 @@ EOF
     );
 }
 
+{
+    my $page = Silki::Schema::Page->new(
+        title   => 'Front Page',
+        wiki_id => $wiki1->wiki_id(),
+    );
+
+    my $formatter = Silki::Formatter::WikiToHTML->new(
+        user        => $user,
+        page        => $page,
+        wiki        => $wiki1,
+        include_toc => 1,
+    );
+
+    my $html = $formatter->wiki_to_html(<<'EOF');
+## Header 2A
+
+Some text
+
+### Header 3A
+
+#### Header 4A
+
+##### Header 5
+
+###### Header 6
+
+### Header 3B
+
+#### Header 4B
+
+## Header 2B
+EOF
+
+    my $expect_html = <<'EOF';
+<div id="table-of-contents">
+  <ul>
+    <li><a href="#Header_2A_-0">Header 2A</a>
+      <ul>
+        <li><a href="#Header_3A_-1">Header 3A</a>
+          <ul>
+            <li><a href="#Header_4A_-2">Header 4A</a></li>
+          </ul>
+        </li>
+        <li><a href="#Header_3B_-3">Header 3B</a>
+          <ul>
+            <li><a href="#Header_4B_-4">Header 4B</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#Header_2B_-5">Header 2B</a></li>
+  </ul>
+</div>
+
+<h2><a name="Header_2A_-0"></a>Header 2A</h2>
+
+<p>
+Some text
+</p>
+
+<h3><a name="Header_3A_-1"></a>Header 3A</h3>
+
+<h4><a name="Header_4A_-2"></a>Header 4A</h4>
+
+<h5>Header 5</h5>
+
+<h6>Header 6</h6>
+
+<h3><a name="Header_3B_-3"></a>Header 3B</h3>
+
+<h4><a name="Header_4B_-4"></a>Header 4B</h4>
+
+<h2><a name="Header_2B_-5"></a>Header 2B</h2>
+EOF
+
+    test_html(
+        $html, $expect_html,
+        'header and TOC generation'
+    );
+}
+
+{
+    my $page = Silki::Schema::Page->new(
+        title   => 'Front Page',
+        wiki_id => $wiki1->wiki_id(),
+    );
+
+    my $markdown = <<'EOF';
+<http://example.com>
+
+[External link](http://example.com)
+EOF
+
+    my $formatter = Silki::Formatter::WikiToHTML->new(
+        user        => $user,
+        page        => $page,
+        wiki        => $wiki1,
+    );
+
+    my $html = $formatter->wiki_to_html($markdown);
+
+    my $expect_html = <<'EOF';
+<p>
+<a href="http://example.com">http://example.com</a>
+</p>
+
+<p>
+<a href="http://example.com">External link</a>
+</p>
+EOF
+
+    test_html(
+        $html, $expect_html,
+        'external links in private wiki do not have nofollow'
+    );
+
+    $formatter = Silki::Formatter::WikiToHTML->new(
+        user        => $user,
+        page        => $page,
+        wiki        => $wiki2,
+    );
+
+    $html = $formatter->wiki_to_html($markdown);
+
+    $expect_html = <<'EOF';
+<p>
+<a href="http://example.com" rel="nofollow">http://example.com</a>
+</p>
+
+<p>
+<a href="http://example.com" rel="nofollow">External link</a>
+</p>
+EOF
+
+    test_html(
+        $html, $expect_html,
+        'external link in public wiki do have nofollow'
+    );
+
+}
+
 done_testing();
 
 sub test_html {

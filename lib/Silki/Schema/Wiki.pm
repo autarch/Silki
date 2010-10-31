@@ -73,6 +73,15 @@ has permissions => (
     clearer  => '_clear_permissions',
 );
 
+has non_member_can_edit => (
+    is       => 'ro',
+    isa      => Bool,
+    lazy     => 1,
+    builder  => '_build_non_member_can_edit',
+    init_arg => undef,
+    clearer  => '_clear_non_member_can_edit',
+);
+
 has permissions_name => (
     is       => 'ro',
     isa      => Str,
@@ -514,6 +523,14 @@ sub _build_permissions {
     return \%perms;
 }
 
+sub _build_non_member_can_edit {
+    my $self = shift;
+
+    my $permissions = $self->permissions();
+
+    return $permissions->{Guest}{Edit} || $permissions->{Authenticated}{Edit};
+}
+
 {
     my %Sets = (
         'public' => {
@@ -612,6 +629,7 @@ sub _build_permissions {
 
         $self->_clear_permissions();
         $self->_clear_permissions_name();
+        $self->_clear_non_member_can_edit();
 
         return;
     }

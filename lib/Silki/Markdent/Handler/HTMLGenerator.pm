@@ -42,6 +42,13 @@ has _include_toc => (
     default  => 0,
 );
 
+has _nofollow_external => (
+    is       => 'ro',
+    isa      => Bool,
+    init_arg => 'nofollow_external',
+    default  => 1,
+);
+
 has _for_editor => (
     is       => 'ro',
     isa      => Bool,
@@ -203,7 +210,11 @@ sub auto_link {
         uri => { isa => Str, optional => 1 },
     );
 
-    $self->_stream()->tag( 'a', href => $uri, rel => 'nofollow' );
+    my %tag_attr = ( href => $uri );
+    $tag_attr{rel} = 'nofollow'
+        if $self->_nofollow_external();
+
+    $self->_stream()->tag( 'a', %tag_attr );
     $self->_stream()->text($uri);
     $self->_stream()->tag('_a');
 }
@@ -220,12 +231,13 @@ sub start_link {
 
     delete @p{ grep { !defined $p{$_} } keys %p };
 
-    $self->_stream()->tag(
-        'a',
-        href => $p{uri},
-        rel  => 'nofollow',
-        ( exists $p{title} ? ( title => $p{title} ) : () ),
-    );
+    my %tag_attr = ( href => $p{uri} );
+    $tag_attr{title} = $p{title}
+        if exists $p{title};
+    $tag_attr{rel} = 'nofollow'
+        if $self->_nofollow_external();
+
+    $self->_stream()->tag( 'a', %tag_attr );
 }
 
 sub _link_to_page {

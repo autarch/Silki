@@ -7,6 +7,9 @@
   fetched in one query, which should speed up HTML generation for pages with
   many links.
 
+- External links in wikis which only allow members to post no longer include a
+  rel="nofollow" attribute, since these wikis are presumably secure from spam.
+
 
 0.23  2010-09-28
 
