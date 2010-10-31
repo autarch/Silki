@@ -83,6 +83,7 @@ sub _generate_html {
     my $html = Silki::Markdent::Handler::HTMLGenerator->new(
         wiki        => $self->_wiki(),
         user        => $self->_user(),
+        page        => $self->_page(),
         include_toc => $self->_include_toc(),
         for_editor  => $self->_for_editor(),
     );

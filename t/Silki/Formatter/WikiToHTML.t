@@ -48,12 +48,12 @@ $wiki1->add_user(
     role => Silki::Schema::Role->Member(),
 );
 
-my $page = Silki::Schema::Page->new(
-    title   => 'Front Page',
-    wiki_id => $wiki1->wiki_id(),
-);
-
 {
+    my $page = Silki::Schema::Page->new(
+        title   => 'Front Page',
+        wiki_id => $wiki1->wiki_id(),
+    );
+
     my $formatter = Silki::Formatter::WikiToHTML->new(
         user => $user,
         page => $page,
@@ -120,14 +120,157 @@ Link to (link to a non-existent wiki in a page link - Bad Wiki/Page Which Does N
 </p>
 EOF
 
-    my $tidy = HTML::Tidy->new(
-        {
-            doctype           => 'transitional',
-            'sort-attributes' => 'alpha',
-        }
+    test_html(
+        $html, $expect_html,
+        'html output for a variety of page links'
+    );
+}
+
+{
+    my $page1 = Silki::Schema::Page->new(
+        title   => 'Front Page',
+        wiki_id => $wiki1->wiki_id(),
     );
 
-    my $real_expect_html = <<"EOF";
+    Silki::Schema::File->insert(
+        file_id   => 1,
+        filename  => 'foo1.jpg',
+        mime_type => 'image/jpeg',
+        file_size => 3,
+        contents  => 'foo',
+        user_id   => $sys_user->user_id(),
+        page_id   => $page1->page_id(),
+    );
+
+    my $page2 = Silki::Schema::Page->new(
+        title   => 'Front Page',
+        wiki_id => $wiki2->wiki_id(),
+    );
+
+    Silki::Schema::File->insert(
+        file_id   => 2,
+        filename  => 'foo2.jpg',
+        mime_type => 'image/jpeg',
+        file_size => 3,
+        contents  => 'foo',
+        user_id   => $sys_user->user_id(),
+        page_id   => $page2->page_id(),
+    );
+
+    Silki::Schema::File->insert(
+        file_id   => 3,
+        filename  => 'foo3.doc',
+        mime_type => 'application/msword',
+        file_size => 3,
+        contents  => 'foo',
+        user_id   => $sys_user->user_id(),
+        page_id   => $page1->page_id(),
+    );
+
+    my $formatter = Silki::Formatter::WikiToHTML->new(
+        user => $user,
+        page => $page1,
+        wiki => $wiki1,
+    );
+
+    my $html = $formatter->wiki_to_html(<<'EOF');
+Link to {{file:foo1.jpg}}
+
+Link to {{file:Front Page/foo1.jpg}}
+
+Link to {{file:bad-file1.jpg}}
+
+Link to {{file:Second Wiki/Front Page/foo2.jpg}}
+
+Link to {{file:Second Wiki/Front Page/bad-file2.jpg}}
+
+Link to {{file:Bad Wiki/Front Page/bad-file3.jpg}}
+
+Link to {{file:foo1.jpg}}
+
+Link to {{file:foo3.doc}}
+
+{{image:foo1.jpg}}
+
+{{image:bad-file1.jpg}}
+
+{{image:Second Wiki/Front Page/foo2.jpg}}
+
+{{image:Second Wiki/Front Page/bad-file2.jpg}}
+
+{{image:Bad Wiki/Front Page/bad-file3.jpg}}
+EOF
+
+    my $expect_html = <<'EOF';
+<p>
+Link to <a href="/wiki/first-wiki/file/1" title="View this file">foo1.jpg</a>
+</p>
+
+<p>
+Link to <a href="/wiki/first-wiki/file/1" title="View this file">foo1.jpg</a>
+</p>
+
+<p>
+Link to (link to a non-existent file - bad-file1.jpg)
+</p>
+
+<p>
+Link to <a href="/wiki/second-wiki/file/2" title="View this file">foo2.jpg (Second Wiki)</a>
+</p>
+
+<p>
+Link to (link to a non-existent file - Second Wiki/Front Page/bad-file2.jpg)
+</p>
+
+<p>
+Link to (link to a non-existent wiki in a file link - Bad Wiki/Front Page/bad-file3.jpg)
+</p>
+
+<p>
+Link to <a href="/wiki/first-wiki/file/1" title="View this file">foo1.jpg</a>
+</p>
+
+<p>
+Link to <a href="/wiki/first-wiki/file/3" title="Download this file">foo3.doc</a>
+</p>
+
+<p>
+<a href="/wiki/first-wiki/file/1" title="View this file"><img src="/wiki/first-wiki/file/1/small" alt="foo1.jpg" /></a>
+</p>
+
+<p>
+(link to a non-existent file - bad-file1.jpg)
+</p>
+
+<p>
+<a href="/wiki/second-wiki/file/2" title="View this file"><img src="/wiki/second-wiki/file/2/small" alt="foo2.jpg" /></a>
+</p>
+
+<p>
+(link to a non-existent file - Second Wiki/Front Page/bad-file2.jpg)
+</p>
+
+<p>
+(link to a non-existent wiki in a file link - Bad Wiki/Front Page/bad-file3.jpg)
+</p>
+EOF
+
+    test_html(
+        $html, $expect_html,
+        'html output for a variety of file and image links'
+    );
+}
+
+done_testing();
+
+sub test_html {
+    my $got    = shift;
+    my $expect = shift;
+    my $desc   = shift;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    my $real_expect = <<"EOF";
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
@@ -135,16 +278,23 @@ EOF
   <title>Test</title>
 </head>
 <body>
-$expect_html
+$expect
 </body>
 </html>
 EOF
 
-    local $Test::Builder::Level = $Test::Builder::Level + 1;
-
-    eq_or_diff(
-        $tidy->clean($html),
-        $tidy->clean($real_expect_html),
-        'html output for a variety of page links'
+    my $tidy = HTML::Tidy->new(
+        {
+            doctype           => 'transitional',
+            'sort-attributes' => 'alpha',
+            output_xhtml      => 1,
+        }
     );
+
+    $got    = $tidy->clean($got);
+    $expect = $tidy->clean($real_expect);
+
+    s{.+<body>\s*|\s*</body>.+}{}gs for $got, $expect;
+
+    eq_or_diff( $got, $expect, $desc );
 }

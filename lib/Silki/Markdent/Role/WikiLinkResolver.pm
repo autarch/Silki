@@ -81,6 +81,7 @@ sub wiki_link {
             wiki         => $wiki,
             page_title   => $page_title,
             display_text => $display_text,
+            link_text    => $link_text,
         }
     );
 
@@ -157,13 +158,15 @@ sub _replace_bad_wiki_links {
         keys %{$links}
         ) {
 
-        delete $links->{$id};
+        my $link = delete $links->{$id};
 
         $self->_replace_placeholder(
-            $id => loc(
-                '(Link to non-existent wiki in page link - %1)',
-                $links->{$id}{link_text}
-            )
+            $id => {
+                text => loc(
+                    '(link to a non-existent wiki in a page link - %1)',
+                    $link->{link_text}
+                )
+            },
         );
     }
 }
@@ -172,6 +175,7 @@ sub _replace_good_wiki_links {
     my $self = shift;
 
     my $links = $self->_page_links();
+
 
     my %titles;
     for my $link ( values %{$links} ) {
@@ -210,13 +214,26 @@ sub _replace_nonexistent_page_links {
 
     for my $id ( keys %{$links} ) {
 
+        my $text;
+
+        if ( $links->{$id}{display_text} ) {
+            $text = $links->{$id}{display_text};
+        }
+        else {
+            $text = $links->{$id}{page_title};
+
+            my $wiki = $links->{$id}{wiki};
+
+            $text .= ' (' . $wiki->title() . ')'
+                unless $wiki->wiki_id() == $self->_wiki()->wiki_id();
+        }
+
         $self->_replace_placeholder(
             $id => {
                 page  => undef,
                 title => $links->{$id}{page_title},
-                text  => $links->{$id}{page_title}
-                    // $links->{$id}{display_text},
-                wiki => $links->{$id}{wiki},
+                text  => $text,
+                wiki  => $links->{$id}{wiki},
             }
         );
     }
@@ -258,11 +275,14 @@ sub _resolve_file_link {
     }
 
     if ( defined $wiki_name ) {
-        $wiki = Silki::Schema::Wiki->new( title => $1 )
-            || Silki::Schema::Wiki->new( short_name => $1 );
+        $wiki = Silki::Schema::Wiki->new( title => $wiki_name )
+            || Silki::Schema::Wiki->new( short_name => $wiki_name );
 
         return {
-            text => loc( '(Link to non-existent wiki - %1)', $link_text ),
+            text => loc(
+                '(link to a non-existent wiki in a file link - %1)',
+                $link_text
+            ),
             }
             unless $wiki;
     }
@@ -276,13 +296,13 @@ sub _resolve_file_link {
         );
 
         return {
-            text => loc( '(Link to non-existent page - %1)', $link_text ),
+            text => loc(
+                '(link to a non-existent page in a file link - %1)',
+                $link_text
+            ),
             }
             unless $page;
     }
-
-    die "Cannot resolve file links without a page"
-        unless $page;
 
     my $file = Silki::Schema::File->new(
         page_id  => $page->page_id(),
@@ -293,7 +313,7 @@ sub _resolve_file_link {
         $display_text = $self->_link_text_for_file(
             $wiki,
             $file,
-            $filename,
+            $link_text,
         );
     }
 
@@ -305,12 +325,13 @@ sub _resolve_file_link {
 }
 
 sub _link_text_for_file {
-    my $self     = shift;
-    my $wiki     = shift;
-    my $file     = shift;
-    my $filename = shift;
+    my $self      = shift;
+    my $wiki      = shift;
+    my $file      = shift;
+    my $link_text = shift;
 
-    return loc( '(Link to non-existent file - %1)', $filename ) unless $file;
+    return loc( '(link to a non-existent file - %1)', $link_text )
+        unless $file;
 
     my $text = $file->filename();
 

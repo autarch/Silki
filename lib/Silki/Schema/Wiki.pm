@@ -780,7 +780,7 @@ sub _PageCountSelect {
         ->from($page_t)
         ->where( $page_t->column('wiki_id'), '=', Fey::Placeholder->new() );
     #>>>
-    return $select;
+    return $pages_select;
 }
 
 sub _OrphanedPageCountSelect {
