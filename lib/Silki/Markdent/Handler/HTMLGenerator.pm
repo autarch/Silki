@@ -254,7 +254,6 @@ sub _link_to_page {
 
     unless ( $self->_check_for_read_permission($wiki) ) {
         return encode_entities( loc('(inaccessible page)') );
-        return;
     }
 
     if ( $self->_for_editor() ) {
