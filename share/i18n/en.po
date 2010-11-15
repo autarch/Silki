@@ -897,7 +897,7 @@ msgid "Purge this revision"
 msgstr ""
 
 #. ($page->title()
-#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:283
+#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:282
 msgid "Read %1"
 msgstr ""
 
@@ -1217,7 +1217,7 @@ msgstr ""
 msgid "This page has %quant(%1,revision,revisions)"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:284
+#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:283
 msgid "This page has not yet been created"
 msgstr ""
 
