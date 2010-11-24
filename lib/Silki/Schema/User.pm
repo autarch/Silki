@@ -34,7 +34,7 @@ my $Schema = Silki::Schema->Schema();
 with 'Silki::Role::Schema::URIMaker';
 
 with 'Silki::Role::Schema::SystemLogger' =>
-    { methods => [ 'insert', 'update' ] };
+    { methods => [ 'insert', 'update', 'delete' ] };
 
 with 'Silki::Role::Schema::DataValidator' => {
     steps => [
@@ -166,6 +166,13 @@ class_has _AllUsersSelect => (
     builder => '_BuildAllUsersSelect',
 );
 
+class_has _AllRevisionsForDeleteSelect => (
+    is      => 'ro',
+    isa     => 'Fey::SQL::Select',
+    lazy    => 1,
+    builder => '_BuildAllRevisionsForDeleteSelect',
+);
+
 {
     my $select = __PACKAGE__->_MemberWikiCountSelect();
 
@@ -269,6 +276,29 @@ around update => sub {
     return $self->$orig(%p);
 };
 
+after update => sub {
+    $_[0]->_clear_best_name();
+    $_[0]->_clear_has_valid_password();
+    $_[0]->_clear_has_login_credentials();
+};
+
+around delete => sub {
+    my $orig = shift;
+    my $self = shift;
+    my %p    = @_;
+
+    Silki::Schema->RunInTransaction(
+        sub {
+            my $revisions = $self->_all_revisions_for_delete();
+            while ( my $revision = $revisions->next() ) {
+                $revision->delete( user => $p{user} );
+            }
+
+            $self->$orig(%p);
+        }
+    );
+};
+
 sub _system_log_values_for_insert {
     my $class = shift;
     my %p     = @_;
@@ -313,11 +343,29 @@ sub _system_log_values_for_update {
     );
 }
 
-after update => sub {
-    $_[0]->_clear_best_name();
-    $_[0]->_clear_has_valid_password();
-    $_[0]->_clear_has_login_credentials();
-};
+sub _system_log_values_for_delete {
+    my $self = shift;
+
+    my $msg
+        = 'Deleted user '
+        . $self->best_name() . ' - '
+        . ( $self->email_address() || $self->openid_uri() );
+
+    return (
+        message   => $msg,
+        data_blob => {
+            map { $_ => $self->$_() }
+                qw(
+                email_address
+                username
+                openid_uri
+                display_name
+                time_zone
+                locale_code
+                )
+        }
+    );
+}
 
 sub _make_confirmation_key {
     shift;
@@ -1169,6 +1217,40 @@ sub _BuildAllUsersSelect {
         ->select($user_t)
         ->from($user_t)
         ->order_by($order_by);
+    #>>>
+    return $select;
+}
+
+sub _all_revisions_for_delete {
+    my $self = shift;
+
+    my $select = $self->_AllRevisionsForDeleteSelect();
+
+    my $dbh = Silki::Schema->DBIManager()->source_for_sql($select)->dbh();
+
+    return Fey::Object::Iterator::FromSelect->new(
+        classes     => 'Silki::Schema::PageRevision',
+        select      => $select,
+        dbh         => $dbh,
+        bind_params => [ $self->user_id() ],
+    );
+}
+
+sub _BuildAllRevisionsForDeleteSelect {
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $rev_t = $Schema->table('PageRevision');
+
+    #<<<
+    $select
+        ->select($rev_t)
+        ->from($rev_t)
+        ->where( $rev_t->column('user_id'), '=', Fey::Placeholder->new() )
+        ->order_by( $rev_t->column('page_id'), 'ASC',
+                    $rev_t->column('revision_number'), 'DESC',
+                  );
     #>>>
     return $select;
 }

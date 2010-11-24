@@ -10,6 +10,7 @@ use Silki::Test::RealSchema;
 use DateTime;
 use DateTime::Format::Pg;
 use Digest::SHA qw( sha512_base64 );
+use List::AllUtils qw( any );
 use Silki::Schema;
 use Silki::Schema::Permission;
 use Silki::Schema::Role;
@@ -761,6 +762,67 @@ sub test_permissions {
         $reg5->domain()->web_hostname(),
         $domain->web_hostname(),
         'default domain for user in a wiki is domain of the first wiki they belong to'
+    );
+}
+
+{
+    my $to_del = Silki::Schema::User->insert(
+        email_address => 'delete@example.com',
+        password      => 'foo',
+        user          => Silki::Schema::User->SystemUser(),
+    );
+
+    my $to_keep = Silki::Schema::User->insert(
+        email_address => 'keep@example.com',
+        password      => 'foo',
+        user          => Silki::Schema::User->SystemUser(),
+    );
+
+    my $page = Silki::Schema::Page->insert_with_content(
+        wiki_id => $wiki->wiki_id(),
+        title   => 'Page for Testing',
+        content => 'good1',
+        user_id    => $to_keep->user_id(),
+    );
+
+    $page->add_revision(
+        content => 'spam1',
+        user_id => $to_del->user_id(),
+    );
+
+    $page->add_revision(
+        content => 'spam2',
+        user_id => $to_del->user_id(),
+    );
+
+    $page->add_revision(
+        content => 'good2',
+        user_id => $to_keep->user_id(),
+    );
+
+    $page->add_revision(
+        content => 'good3',
+        user_id => $to_keep->user_id(),
+    );
+
+    $page->add_revision(
+        content => 'spam3',
+        user_id => $to_del->user_id(),
+    );
+
+    $to_del->delete( user => $to_keep );
+
+    my @revisions = $page->revisions()->all();
+
+    is_deeply(
+        [ map { $_->revision_number() } @revisions ],
+        [ 3, 2, 1 ],
+        'page has four revisions after bad user is deleted'
+    );
+
+    ok(
+        ( !any { $_->content() =~ /spam/ } @revisions ),
+        'all content from bad revisions is gone'
     );
 }
 
