@@ -13,6 +13,9 @@ use File::Spec;
 use File::Which qw( which );
 use File::Temp qw( tempdir);
 use Path::Class qw( dir file );
+use Pg::CLI::pg_config;
+use Pg::CLI::pg_dump;
+use Pg::CLI::psql;
 
 use Moose;
 use MooseX::StrictConstructor;
@@ -28,9 +31,10 @@ has name => (
 
 for my $attr (qw( username password host port )) {
     has $attr => (
-        is     => 'rw',
-        writer => '_set_' . $attr,
-        isa    => 'Str',
+        is        => 'rw',
+        writer    => '_set_' . $attr,
+        isa       => 'Str',
+        predicate => '_has_' . $attr,
     );
 }
 
@@ -41,7 +45,7 @@ has _existing_config => (
     builder => '_build_existing_config',
 );
 
-has db_exists => (
+has _db_exists => (
     traits  => ['NoGetopt'],
     is      => 'ro',
     isa     => 'Bool',
@@ -73,6 +77,22 @@ has quiet => (
     default => 0,
 );
 
+has _psql => (
+    is       => 'ro',
+    isa      => 'Pg::CLI::psql',
+    init_arg => undef,
+    lazy     => 1,
+    builder  => '_build_psql',
+);
+
+has _pg_dump => (
+    is       => 'ro',
+    isa      => 'Pg::CLI::pg_dump',
+    init_arg => undef,
+    lazy     => 1,
+    builder  => '_build_pg_dump',
+);
+
 sub BUILD {
     my $self = shift;
     my $p    = shift;
@@ -99,7 +119,7 @@ sub BUILD {
 sub run {
     my $self = shift;
 
-    if ( !$self->drop() && $self->db_exists() ) {
+    if ( !$self->drop() && $self->_db_exists() ) {
         warn
             qq{\n  Will not drop a database unless you pass the --drop argument.\n\n};
         exit 1;
@@ -142,7 +162,8 @@ sub update_or_install_db {
     print "\n" unless $self->quiet();
 
     my $name = $self->name();
-    $self->_msg("Installing/updating your Silki database (database name = $name).");
+    $self->_msg(
+        "Installing/updating your Silki database (database name = $name).");
 
     if ( !defined $version ) {
         $self->_msg("Installing a fresh database.");
@@ -171,7 +192,10 @@ sub _can_connect {
 
     my $dsn = $self->_make_dsn('template1');
 
-    DBI->connect($dsn, $self->username(), $self->password(), { PrintError => 0, PrintWarn => 0 } );
+    DBI->connect(
+        $dsn, $self->username(), $self->password(),
+        { PrintError => 0, PrintWarn => 0 }
+    );
 }
 
 sub _build_db_exists {
@@ -184,19 +208,43 @@ sub _build_db_exists {
     return 0;
 }
 
+sub _build_psql {
+    my $self = shift;
+
+    return Pg::CLI::psql->new( $self->_pg_cli_params() );
+}
+
+sub _build_pg_dump {
+    my $self = shift;
+
+    return Pg::CLI::pg_dump->new( $self->_pg_cli_params() );
+}
+
+sub _pg_cli_params {
+    my $self = shift;
+
+    my %p = map {
+        my $pred = '_has_' . $_;
+        $self->$pred() ? ( $_ => $self->$_() ) : ()
+    } qw( username password host port );
+
+    return ( %p, quiet => $self->quiet() );
+}
+
 sub _get_installed_version {
     my $self = shift;
 
     my $dbh = eval { $self->_make_dbh() }
         or return;
 
-    my $row = eval { $dbh->selectrow_arrayref(q{SELECT version FROM "Version"}) };
+    my $row
+        = eval { $dbh->selectrow_arrayref(q{SELECT version FROM "Version"}) };
 
     return $row->[0] if $row;
 }
 
 sub _make_dbh {
-    my $self   = shift;
+    my $self = shift;
 
     my %source = ( dsn => $self->_make_dsn() );
 
@@ -288,9 +336,9 @@ EOF
     print {$fh} $commands;
     close $fh;
 
-    $self->_run_pg_bin(
-        name  => 'template1',
-        flags => [ '-f', $file ],
+    $self->_psql->execute_file(
+        database => 'template1',
+        file     => $file,
     );
 }
 
@@ -313,25 +361,27 @@ sub _build_db {
 
     $self->_import_citext() if $import_citext;
 
-    $self->_run_pg_bin( flags => [ '-f', $schema_file ] );
+    $self->_psql->execute_file(
+        database => $self->name(),
+        file     => $schema_file
+    );
 }
 
 sub _import_citext {
     my $self = shift;
 
-    my $config = which('pg_config')
-        or die "Cannot find pg_config in your path";
+    my $config = Pg::CLI::pg_config->new();
 
-    my $share = `pg_config --sharedir`;
-    chomp $share;
-
-    my $citext = file( $share, 'contrib', 'citext.sql' );
+    my $citext = file( $config->sharedir(), 'contrib', 'citext.sql' );
 
     unless ( -f $citext ) {
         die "Cannot find citext.sql in your share dir - looked for $citext";
     }
 
-    $self->_run_pg_bin( flags => [ '-f', $citext ] );
+    $self->_psql()->execute_file(
+        database => $self->name(),
+        file     => $citext,
+    );
 }
 
 sub _run_pg_bin {
@@ -415,10 +465,10 @@ sub _migrate_db {
         $self->_msg(
             "Dumping Silki database to $tmp_file before running migrations");
 
-        $self->_run_pg_bin(
-            command => 'pg_dump',
-            flags   => [
-                '-C', $self->name(),
+        $self->_pg_dump()->run(
+            name    => $self->name(),
+            options => [
+                '-C',
                 '-f', $tmp_file
             ],
         );
@@ -429,21 +479,25 @@ sub _migrate_db {
 
         my $dir = dir( 'inc', 'migrations', $version );
         unless ( -d $dir ) {
-            warn "No migration direction for version $version (looked for $dir)!";
+            warn
+                "No migration direction for version $version (looked for $dir)!";
             exit;
         }
 
-        my @files = sort grep { ! $_->is_dir() } $dir->children();
+        my @files = sort grep { !$_->is_dir() } $dir->children();
         unless (@files) {
             warn "Migration directory exists but is empty ($dir)";
             exit;
         }
 
         for my $file (@files) {
-            $self->_msg( "  running $file" );
+            $self->_msg("  running $file");
 
             if ( $file =~ /\.sql/ ) {
-                $self->_run_pg_bin( flags => [ '-f', $file ] );
+                $self->_psql()->execute_file(
+                    database => $self->name(),
+                    file     => $file,
+                );
             }
             else {
                 my $perl = read_file( $file->stringify() );
