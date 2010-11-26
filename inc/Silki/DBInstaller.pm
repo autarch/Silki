@@ -384,48 +384,6 @@ sub _import_citext {
     );
 }
 
-sub _run_pg_bin {
-    my $self = shift;
-    my %p    = @_;
-
-    local $ENV{PGPASSWORD} = $self->password();
-
-    my @command = $p{command} || 'psql';
-    push @command, $p{name} || $self->name()
-        if $command[0] eq 'psql';
-
-    my @default_flags = $command[0] eq 'psql' ? ( '-q', '-w' ) : '-w';
-
-    push @command,
-        (
-        $self->_pg_bin_args(),
-        @default_flags,
-        @{ $p{flags} || [] }
-        );
-
-    system(@command);
-}
-
-sub _pg_bin_args {
-    my $self = shift;
-
-    my @args;
-
-    if ( $self->username() ) {
-        push @args, '-U', $self->username();
-    }
-
-    if ( $self->host() ) {
-        push @args, '-h', $self->host();
-    }
-
-    if ( $self->port() ) {
-        push @args, '-p', $self->port();
-    }
-
-    return @args;
-}
-
 sub _seed_data {
     my $self = shift;
 
