@@ -12,7 +12,7 @@
 # To install this into the /etc/rc*.d directories you can run this command as
 # root:
 #
-# update-rc.d apache2-backend start 70 2 3 4 5 . stop 05 0 1 6 .
+# update-rc.d silki start 70 2 3 4 5 . stop 05 0 1 6 .
 
 . /lib/lsb/init-functions
 
