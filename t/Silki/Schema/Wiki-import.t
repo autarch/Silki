@@ -100,7 +100,8 @@ my $text = "Some random text\nin this file.\n";
 
     # This lets us test that users which don't exist are created as part of
     # the import.
-    Silki::Schema::User->new( email_address => $_ )->delete()
+    Silki::Schema::User->new( email_address => $_ )
+        ->delete( user => Silki::Schema::User->SystemUser() )
         for 'bob@example.com', 'lisa@example.com';
 
     Silki::Schema->ClearObjectCaches();
