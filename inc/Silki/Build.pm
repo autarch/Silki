@@ -63,6 +63,7 @@ sub _update_from_existing_config {
             password => 'db-password',
             host     => 'db-host',
             port     => 'db-port',
+            ssl      => 'db-ssl',
         },
         dirs => { share => 'share-dir' },
     );
