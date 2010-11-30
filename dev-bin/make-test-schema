@@ -12,7 +12,7 @@ use Silki::DatabaseManager;
 use Storable qw( nfreeze );
 
 Silki::DatabaseManager->new(
-    name             => 'SilkiTest',
+    db_name          => 'SilkiTest',
     drop             => 1,
     seed             => 0,
     quiet            => 1,
