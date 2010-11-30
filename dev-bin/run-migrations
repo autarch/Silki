@@ -6,6 +6,6 @@ use autodie qw( :all );
 
 use lib './inc';
 
-use Silki::DBInstaller;
+use Silki::DatabaseManager;
 
-Silki::DBInstaller->new_with_options()->update_or_install_db();
+Silki::DatabaseManager->new_with_options()->update_or_install_db();

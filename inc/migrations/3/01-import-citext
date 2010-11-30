@@ -5,6 +5,6 @@
 
     return sub {
         my $installer = shift;
-        $installer->_import_citext();
+        $installer->import_contrib_file('citext.sql');
     };
 }

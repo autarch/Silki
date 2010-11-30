@@ -74,9 +74,9 @@ sub _database_exists {
 sub _recreate_database {
     diag('Creating SilkiTest database');
 
-    require Silki::DBInstaller;
+    require Silki::DatabaseManager;
 
-    my $inst = Silki::DBInstaller->new(
+    my $inst = Silki::DatabaseManager->new(
         name  => 'SilkiTest',
         drop  => 1,
         quiet => 1,

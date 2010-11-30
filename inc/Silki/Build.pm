@@ -124,7 +124,7 @@ sub ACTION_share {
 sub ACTION_database {
     my $self = shift;
 
-    require Silki::DBInstaller;
+    require Silki::DatabaseManager;
 
     my %db_config;
 
@@ -140,7 +140,7 @@ sub ACTION_database {
     local $ENV{SILKI_HOSTNAME} = $hostname
         if defined $hostname && $hostname ne q{};
 
-    Silki::DBInstaller->new(
+    Silki::DatabaseManager->new(
         %db_config,
         production => 1,
         quiet      => $self->quiet(),
