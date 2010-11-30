@@ -5,6 +5,8 @@
   files. This is intended to make it trivially easy to remove "contributions"
   from spammers.
 
+- Deleting all of a page's revisions now deletes the page.
+
 
 0.24  2010-10-31
 
