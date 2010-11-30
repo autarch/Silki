@@ -103,7 +103,7 @@ msgstr ""
 
 #. ($c->user()
 #. (DateTime::Format::Pg->parse_datetime( $users->raw_row()
-#: share/mason/domain/domains:20 share/mason/lib/table/attachments-table.mas:37 share/mason/log/logs:16 share/mason/page/history:30 share/mason/user/users:34 share/mason/wiki/dashboard:12 share/mason/wiki/dashboard:64 share/mason/wiki/recent:14 share/mason/wiki/search-results:14 share/mason/wiki/tag:19 share/mason/wiki/wikis:25
+#: share/mason/domain/domains:20 share/mason/lib/table/attachments-table.mas:37 share/mason/log/logs:16 share/mason/page/history:30 share/mason/user/users:35 share/mason/wiki/dashboard:12 share/mason/wiki/dashboard:64 share/mason/wiki/recent:14 share/mason/wiki/search-results:14 share/mason/wiki/tag:19 share/mason/wiki/wikis:25
 msgid "%datetime(%1)"
 msgstr ""
 
@@ -176,11 +176,11 @@ msgid "Activate Your Account"
 msgstr ""
 
 #. ($self->domain()
-#: lib/Silki/Schema/User.pm:1039
+#: lib/Silki/Schema/User.pm:1135
 msgid "Activate your user account on the %1 server"
 msgstr ""
 
-#: share/mason/user/users:89
+#: share/mason/user/users:95
 msgid "Active Users"
 msgstr ""
 
@@ -211,7 +211,7 @@ msgstr ""
 msgid "All Domains"
 msgstr ""
 
-#: share/mason/user/users:89
+#: share/mason/user/users:95
 msgid "All Users"
 msgstr ""
 
@@ -274,11 +274,11 @@ msgstr ""
 msgid "Back to current revision"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:612
+#: lib/Silki/Schema/User.pm:708
 msgid "Cannot make a confirmation uri for a user who does not have a confirmation key."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:219
+#: lib/Silki/Schema/User.pm:274
 msgid "Cannot pass requires_activation and disable_login when inserting a user"
 msgstr ""
 
@@ -385,6 +385,11 @@ msgstr ""
 msgid "Deleted the page %1"
 msgstr ""
 
+#. ($user->best_name()
+#: lib/Silki/Controller/User.pm:303
+msgid "Deleted the user %1 - %2"
+msgstr ""
+
 #. ($wiki->title()
 #: lib/Silki/Controller/Wiki.pm:161
 msgid "Deleted the wiki %1"
@@ -394,8 +399,12 @@ msgstr ""
 msgid "Deleting this wiki will delete all of its pages and files!"
 msgstr ""
 
-#: share/mason/user/users:58
+#: share/mason/user/purge-confirmation:18 share/mason/user/users:59
 msgid "Disable"
+msgstr ""
+
+#: share/mason/user/purge-confirmation:13
+msgid "Disable this user instead"
 msgstr ""
 
 #: share/mason/site/help:8
@@ -445,7 +454,7 @@ msgstr ""
 msgid "Email addresses"
 msgstr ""
 
-#: share/mason/user/users:51
+#: share/mason/user/users:52
 msgid "Enable"
 msgstr ""
 
@@ -840,7 +849,7 @@ msgstr ""
 msgid "Password (again)"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:1006
+#: lib/Silki/Schema/User.pm:1102
 msgid "Password reset for Silki"
 msgstr ""
 
@@ -894,6 +903,23 @@ msgstr ""
 
 #: share/mason/page/view:85
 msgid "Purge this revision"
+msgstr ""
+
+#: share/mason/user/purge-confirmation:21
+msgid "Purge this user"
+msgstr ""
+
+#: share/mason/user/purge-confirmation:52
+msgid "Purge this user?"
+msgstr ""
+
+#: share/mason/user/purge-confirmation:4
+msgid "Purging a user removes the user and all edits they've made in all wiki, as well as all pages and files they've created!"
+msgstr ""
+
+#. ($page_count, $rev_count, $file_count)
+#: share/mason/user/purge-confirmation:26
+msgid "Purging this user will delete %quant( %1, page, pages ), %quant( %2, revision, revisions ), and %quant( %3, file, files )."
 msgstr ""
 
 #. ($page->title()
@@ -1075,11 +1101,11 @@ msgstr ""
 msgid "The %1 domain has been updated."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:461
+#: lib/Silki/Schema/User.pm:557
 msgid "The OpenID URI you provided is already in use by another user."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:435
+#: lib/Silki/Schema/User.pm:531
 msgid "The OpenID you provided is not a valid URI."
 msgstr ""
 
@@ -1098,7 +1124,7 @@ msgstr ""
 msgid "The contents of <em>%html(%1)</em>"
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:417
+#: lib/Silki/Schema/User.pm:513
 msgid "The email address you provided is already in use by another user."
 msgstr ""
 
@@ -1185,6 +1211,10 @@ msgstr ""
 
 #: share/mason/wiki/search-results:27
 msgid "There were no matches for your search."
+msgstr ""
+
+#: share/mason/user/purge-confirmation:10
+msgid "This action should only be used to remove spammers. If you want to remove a user who is not a spammer, you should simply disable their account, which will prevent them from logging in."
 msgstr ""
 
 #: share/mason/wiki/new-wiki-form:12
@@ -1332,6 +1362,11 @@ msgstr ""
 msgid "User"
 msgstr ""
 
+#. ($user->best_name()
+#: share/mason/user/purge-confirmation:32
+msgid "User: <em>%html(%1) - %html(%2)</em>"
+msgstr ""
+
 #: share/mason/page/autohandler:9
 msgid "View"
 msgstr ""
@@ -1452,6 +1487,10 @@ msgstr ""
 msgid "Yes, delete it"
 msgstr ""
 
+#: share/mason/user/purge-confirmation:37
+msgid "Yes, purge this user"
+msgstr ""
+
 #: lib/Silki/Localize/Format/Gettext.pm:65
 msgid "Yesterday"
 msgstr ""
@@ -1509,7 +1548,7 @@ msgid "You do not have %1 permissions in this wiki."
 msgstr ""
 
 #. ($wiki->title()
-#: lib/Silki/Schema/User.pm:1034
+#: lib/Silki/Schema/User.pm:1130
 msgid "You have been invited to join the %1 wiki at %2"
 msgstr ""
 
@@ -1533,7 +1572,7 @@ msgstr ""
 msgid "You must log in to to perform this action in the %1 wiki."
 msgstr ""
 
-#: lib/Silki/Schema/User.pm:351
+#: lib/Silki/Schema/User.pm:447
 msgid "You must provide a password or OpenID."
 msgstr ""
 
@@ -1592,7 +1631,7 @@ msgstr ""
 msgid "at %time(%1)"
 msgstr ""
 
-#: share/mason/user/users:40
+#: share/mason/user/users:41
 msgid "created by system"
 msgstr ""
 
@@ -1600,7 +1639,7 @@ msgstr ""
 msgid "current"
 msgstr ""
 
-#: share/mason/user/users:42
+#: share/mason/user/users:43
 msgid "disabled"
 msgstr ""
 
@@ -1650,7 +1689,7 @@ msgstr ""
 msgid "see changes"
 msgstr ""
 
-#: share/mason/user/users:38
+#: share/mason/user/users:39
 msgid "site admin"
 msgstr ""
 
