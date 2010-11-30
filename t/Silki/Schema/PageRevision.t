@@ -155,6 +155,16 @@ EOF
         $max_rev->content(), $content3,
         'revision 3 became revision 2'
     );
+
+    $_->delete( user => $user ) for $page->revisions()->all();
+
+    ok(
+        !Silki::Schema::Page->new(
+            title   => 'Diff and Purge Testing',
+            wiki_id => $wiki->wiki_id(),
+        ),
+        'page is deleted once it has no revisions'
+    );
 }
 
 {
