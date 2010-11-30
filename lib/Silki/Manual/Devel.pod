@@ -57,7 +57,7 @@ drop the existing schema you'll have to pass the C<--drop> flag.
 
 Typically, you'll run it like this:
 
-  > dev-bin/manage-db --name Silki --drop --seed
+  > dev-bin/manage-db --db-name Silki --drop --seed
 
 Be careful not to run this on a system where you have a production install of
 Silki! You could easily destroy a real database.
