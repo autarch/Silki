@@ -68,9 +68,9 @@ sub BUILD {
     unless ( exists $p->{db_name} ) {
         die
             "No database name provided to the constructor and none can be found in an existing Silki config file."
-            unless $existing->{db_name};
+            unless $existing->{name};
 
-        $self->_set_db_name( $p->{db_name} );
+        $self->_set_db_name( $existing->{name} );
     }
 
     for my $attr (qw( username password host port )) {
