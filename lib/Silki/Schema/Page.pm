@@ -266,8 +266,8 @@ sub _system_log_values_for_delete {
         message   => $msg,
         data_blob => {
             title     => $self->title(),
-            revisions => $revision->revision_number(),
-            content   => $revision->content(),
+            revisions => ( $revision ? $revision->revision_number() : 0 ),
+            content   => ( $revision ? $revision->content() : undef ),
         },
     );
 }

@@ -131,6 +131,27 @@ class_has _RecentlyViewedPagesSelect => (
     builder => '_BuildRecentlyViewedPagesSelect',
 );
 
+class_has _AllPageCountSelect => (
+    is      => 'ro',
+    does    => 'Fey::Role::SQL::ReturnsData',
+    lazy    => 1,
+    builder => '_BuildAllPageCountSelect',
+);
+
+class_has _AllRevisionCountSelect => (
+    is      => 'ro',
+    does    => 'Fey::Role::SQL::ReturnsData',
+    lazy    => 1,
+    builder => '_BuildAllRevisionCountSelect',
+);
+
+class_has _AllFileCountSelect => (
+    is      => 'ro',
+    does    => 'Fey::Role::SQL::ReturnsData',
+    lazy    => 1,
+    builder => '_BuildAllFileCountSelect',
+);
+
 class_has 'SystemUser' => (
     is      => 'ro',
     isa     => __PACKAGE__,
@@ -208,6 +229,33 @@ class_has _AllRevisionsForDeleteSelect => (
         table       => $Schema->table('Wiki'),
         select      => $select,
         bind_params => sub { ( $_[0]->user_id() ) x 3 },
+    );
+}
+
+{
+    my $select = __PACKAGE__->_AllPageCountSelect();
+
+    query page_count => (
+        select      => $select,
+        bind_params => sub { ( $_[0]->user_id() ) },
+    );
+}
+
+{
+    my $select = __PACKAGE__->_AllRevisionCountSelect();
+
+    query revision_count => (
+        select      => $select,
+        bind_params => sub { ( $_[0]->user_id() ) },
+    );
+}
+
+{
+    my $select = __PACKAGE__->_AllFileCountSelect();
+
+    query file_count => (
+        select      => $select,
+        bind_params => sub { ( $_[0]->user_id() ) },
     );
 }
 
@@ -1251,6 +1299,63 @@ sub _BuildAllRevisionsForDeleteSelect {
         ->order_by( $rev_t->column('page_id'), 'ASC',
                     $rev_t->column('revision_number'), 'DESC',
                   );
+    #>>>
+    return $select;
+}
+
+sub _BuildAllPageCountSelect {
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $page_t = $Schema->table('Page');
+
+    my $count
+        = Fey::Literal::Function->new( 'COUNT', $page_t->column('page_id') );
+
+    #<<<
+    $select
+        ->select($count)
+        ->from($page_t)
+        ->where( $page_t->column('user_id'), '=', Fey::Placeholder->new() );
+    #>>>
+    return $select;
+}
+
+sub _BuildAllRevisionCountSelect {
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $rev_t = $Schema->table('PageRevision');
+
+    my $count
+        = Fey::Literal::Function->new( 'COUNT', $rev_t->column('page_id') );
+
+    #<<<
+    $select
+        ->select($count)
+        ->from($rev_t)
+        ->where( $rev_t->column('user_id'), '=', Fey::Placeholder->new() );
+    #>>>
+    return $select;
+}
+
+sub _BuildAllFileCountSelect {
+    my $class = shift;
+
+    my $select = Silki::Schema->SQLFactoryClass()->new_select();
+
+    my $file_t = $Schema->table('File');
+
+    my $count
+        = Fey::Literal::Function->new( 'COUNT', $file_t->column('file_id') );
+
+    #<<<
+    $select
+        ->select($count)
+        ->from($file_t)
+        ->where( $file_t->column('user_id'), '=', Fey::Placeholder->new() );
     #>>>
     return $select;
 }

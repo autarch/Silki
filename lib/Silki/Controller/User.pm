@@ -281,6 +281,37 @@ sub password_reminder_POST {
     );
 }
 
+sub purge_confirmation : Chained('_set_user') : PathPart('purge_confirmation') : Args(0) {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_site_admin($c);
+
+    $c->stash()->{template} = '/user/purge-confirmation';
+}
+
+sub user_DELETE {
+    my $self = shift;
+    my $c    = shift;
+
+    $self->_require_site_admin($c);
+
+    my $user = $c->stash()->{user};
+
+    my $msg = loc(
+        'Deleted the user %1 - %2',
+        $user->best_name(),
+        $user->email_address()
+    );
+
+    $user->delete( user => $c->user() );
+
+    $c->session_object()->add_message($msg);
+
+    $c->redirect_and_detach(
+        $c->domain()->uri( view => 'users', with_host => 1 ) );
+}
+
 sub new_user_form : Local {
     my $self = shift;
     my $c    = shift;

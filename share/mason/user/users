@@ -17,6 +17,7 @@
       <th><% loc('Created') %></th>
       <th></th>
       <th></th>
+      <th></th>
     </tr>
   </thead>
 
@@ -57,6 +58,11 @@
           <input type="hidden" name="is_disabled" value="1" />
           <input type="submit" value="<% loc('Disable') %>" />
         </form>
+%   }
+      </td>
+      <td>
+%   if ( ! ( $user->user_id() == $c->user()->user_id() || $user->is_system_user() ) ) {
+        <a href="<% $user->uri( view => 'purge_confirmation' ) %>">Purge</a>
 %   }
       </td>
     </tr>
