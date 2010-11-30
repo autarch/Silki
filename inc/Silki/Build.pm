@@ -141,6 +141,8 @@ sub ACTION_database {
     local $ENV{SILKI_HOSTNAME} = $hostname
         if defined $hostname && $hostname ne q{};
 
+    $db_config{db_name} = delete $db_config{name};
+
     Silki::DatabaseManager->new(
         %db_config,
         production => 1,
