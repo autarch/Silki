@@ -9,13 +9,14 @@ use Silki::Test::FakeSchema;
 
 use Cwd qw( abs_path );
 use File::Temp qw( tempdir );
+use Path::Class qw( dir );
 use Silki::Config;
 
 BEGIN {
-    Silki::Config->new()->mason_config_for_email->{comp_root}
-        = abs_path('t/share/mason/email');
-    Silki::Config->new()->mason_config_for_email->{data_dir}
-        = tempdir( CLEANUP => 1 );
+    my $config = Silki::Config->new();
+
+    $config->_set_share_dir( dir( abs_path('t/share') ) );
+    $config->_set_cache_dir( dir( tempdir( CLEANUP => 1 ) ) );
 }
 
 use Silki::Email;

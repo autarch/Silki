@@ -18,7 +18,6 @@ use Socket qw( AF_INET );
 use Sys::Hostname qw( hostname );
 use Text::Autoformat qw( autoformat );
 
-use MooseX::MetaDescription;
 use MooseX::Params::Validate qw( validated_list );
 use MooseX::Singleton;
 
@@ -136,32 +135,11 @@ has is_profiling => (
     writer  => '_set_is_profiling',
 );
 
-has catalyst_imports => (
-    is      => 'ro',
-    isa     => ArrayRef [Str],
-    lazy    => 1,
-    builder => '_build_catalyst_imports',
-);
-
-has catalyst_roles => (
-    is      => 'ro',
-    isa     => ArrayRef [Str],
-    lazy    => 1,
-    builder => '_build_catalyst_roles',
-);
-
-has catalyst_config => (
+has database_connection => (
     is      => 'ro',
     isa     => HashRef,
     lazy    => 1,
-    builder => '_build_catalyst_config',
-);
-
-has dbi_config => (
-    is      => 'ro',
-    isa     => HashRef,
-    lazy    => 1,
-    builder => '_build_dbi_config',
+    builder => '_build_database_connection',
 );
 
 has database_name => (
@@ -239,27 +217,6 @@ has database_port => (
     writer => '_set_database_port',
 );
 
-has mason_config => (
-    is      => 'ro',
-    isa     => HashRef,
-    lazy    => 1,
-    builder => '_build_mason_config',
-);
-
-has mason_config_for_email => (
-    is      => 'ro',
-    isa     => HashRef,
-    lazy    => 1,
-    builder => '_build_mason_config_for_email',
-);
-
-has mason_config_for_help => (
-    is      => 'ro',
-    isa     => HashRef,
-    lazy    => 1,
-    builder => '_build_mason_config_for_help',
-);
-
 has _home_dir => (
     is      => 'rw',
     isa     => Dir,
@@ -291,7 +248,7 @@ has share_dir => (
     coerce => 1,
 );
 
-has _etc_dir => (
+has etc_dir => (
     is      => 'rw',
     isa     => Dir,
     lazy    => 1,
@@ -453,32 +410,6 @@ sub _build_is_production {
     return $self->_from_config_path('is_production') || 0;
 }
 
-{
-    my @StandardImports = qw(
-        AuthenCookie
-        +Silki::Plugin::ErrorHandling
-        Session::AsObject
-        Session::State::URI
-        +Silki::Plugin::Session::Store::Silki
-        RedirectAndDetach
-        SubRequest
-        Unicode::Encoding
-    );
-
-    sub _build_catalyst_imports {
-        my $self = shift;
-
-        my @imports = @StandardImports;
-        push @imports, 'Static::Simple'
-            if $self->serve_static_files();
-
-        push @imports, 'StackTrace'
-            unless $self->is_production() || $self->is_profiling();
-
-        return \@imports;
-    }
-}
-
 sub _build_serve_static_files {
     my $self = shift;
 
@@ -489,19 +420,6 @@ sub _build_serve_static_files {
     return !( $ENV{MOD_PERL}
         || $self->is_production()
         || $self->is_profiling() );
-}
-
-{
-    my @StandardRoles = qw(
-        Silki::AppRole::Domain
-        Silki::AppRole::RedirectWithError
-        Silki::AppRole::Tabs
-        Silki::AppRole::User
-    );
-
-    sub _build_catalyst_roles {
-        return \@StandardRoles;
-    }
 }
 
 {
@@ -663,51 +581,6 @@ sub _ensure_dir {
     return;
 }
 
-sub _build_catalyst_config {
-    my $self = shift;
-
-    my %config = (
-        default_view => 'Mason',
-
-        'Plugin::Session' => {
-            expires => ( 60 * 5 ),
-
-            # Need to quote it for Pg
-            dbi_table        => q{"Session"},
-            dbi_dbh          => 'Silki::Plugin::Session::Store::Silki',
-            object_class     => 'Silki::Web::Session',
-            rewrite_body     => 0,
-            rewrite_redirect => 1,
-        },
-
-        authen_cookie => {
-            name       => 'Silki-user',
-            path       => '/',
-            mac_secret => $self->secret(),
-        },
-
-        encoding => 'UTF-8',
-
-        'Log::Dispatch' => $self->_log_config(),
-    );
-
-    $config{root} = $self->share_dir();
-
-    unless ( $self->is_production() ) {
-        $config{static} = {
-            dirs         => [qw( files images js css static w3c ckeditor )],
-            include_path => [
-                $self->cache_dir()->stringify(),
-                $self->var_lib_dir()->stringify(),
-                $self->share_dir()->stringify(),
-            ],
-            debug => 1,
-        };
-    }
-
-    return \%config;
-}
-
 {
 
     sub _log_config {
@@ -751,7 +624,7 @@ sub _build_catalyst_config {
     }
 }
 
-sub _build_dbi_config {
+sub _build_database_connection {
     my $self = shift;
 
     my $dsn = 'dbi:Pg:dbname=' . $self->database_name();
@@ -769,66 +642,6 @@ sub _build_dbi_config {
         username => ( $self->database_username() || q{} ),
         password => ( $self->database_password() || q{} ),
     };
-}
-
-sub _build_mason_config {
-    my $self = shift;
-
-    my %config = (
-        comp_root => $self->share_dir()->subdir('mason')->stringify(),
-        data_dir => $self->cache_dir()->subdir( 'mason', 'web' )->stringify(),
-        error_mode           => 'fatal',
-        in_package           => 'Silki::Mason::Web',
-        use_match            => 0,
-        default_escape_flags => 'h',
-    );
-
-    if ( $self->is_production() ) {
-        $config{static_source} = 1;
-        $config{static_source_touch_file}
-            = $self->_etc_dir()->file('mason-touch')->stringify();
-    }
-
-    return \%config;
-}
-
-sub _build_mason_config_for_email {
-    my $self = shift;
-
-    my %config = (
-        comp_root =>
-            $self->share_dir()->subdir('email-templates')->stringify(),
-        data_dir =>
-            $self->cache_dir()->subdir( 'mason', 'email' )->stringify(),
-        error_mode => 'fatal',
-        in_package => 'Silki::Mason::Email',
-    );
-
-    if ( $self->is_production() ) {
-        $config{static_source} = 1;
-        $config{static_source_touch_file}
-            = $self->_etc_dir()->file('mason-touch')->stringify();
-    }
-
-    return \%config;
-}
-
-sub _build_mason_config_for_help {
-    my $self = shift;
-
-    my %config = (
-        error_mode           => 'fatal',
-        in_package           => 'Silki::Mason::Help',
-        default_escape_flags => 'h',
-    );
-
-    if ( $self->is_production() ) {
-        $config{static_source} = 1;
-        $config{static_source_touch_file}
-            = $self->_etc_dir()->file('mason-touch')->stringify();
-    }
-
-    return \%config;
 }
 
 sub _build_static_path_prefix {

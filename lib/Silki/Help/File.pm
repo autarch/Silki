@@ -37,14 +37,26 @@ sub _build_content {
 
     my $config = Silki::Config->new();
 
-    my $body   = q{};
-    my $interp = HTML::Mason::Interp->new(
-        out_method => \$body,
-        comp_root  => $self->file()->dir()->stringify(),
+    my %config = (
+        comp_root => $self->file()->dir()->stringify(),
         data_dir =>
             $config->cache_dir()
             ->subdir( 'mason', 'help', $self->locale_code() )->stringify(),
-        %{ $config->mason_config_for_help() },
+        error_mode           => 'fatal',
+        in_package           => 'Silki::Mason::Help',
+        default_escape_flags => 'h',
+    );
+
+    if ( $config->is_production() ) {
+        $config{static_source} = 1;
+        $config{static_source_touch_file}
+            = $config->etc_dir()->file('mason-touch')->stringify();
+    }
+
+    my $body   = q{};
+    my $interp = HTML::Mason::Interp->new(
+        out_method => \$body,
+        %config,
     );
 
     $interp->exec( q{/} . $self->file()->basename() );

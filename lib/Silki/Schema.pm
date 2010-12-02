@@ -24,10 +24,10 @@ if ($Silki::Schema::TestSchema) {
     __PACKAGE__->DBIManager()->add_source($source);
 }
 else {
-    my $dbi_config = Silki::Config->new()->dbi_config();
+    my $connection = Silki::Config->new()->database_connection();
 
     my $source = Fey::DBIManager::Source->new(
-        %{$dbi_config},
+        %{$connection},
         post_connect => \&_set_dbh_attributes,
     );
 

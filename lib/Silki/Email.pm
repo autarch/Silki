@@ -18,10 +18,31 @@ use Silki::Types qw( Str HashRef );
 use Sub::Exporter -setup => { exports => ['send_email'] };
 
 my $Body;
-my $Interp = HTML::Mason::Interp->new(
-    out_method => \$Body,
-    %{ Silki::Config->new()->mason_config_for_email() },
-);
+my $Interp;
+
+{
+    my $config = Silki::Config->new();
+
+    my %config = (
+        comp_root =>
+            $config->share_dir()->subdir('email-templates')->stringify(),
+        data_dir =>
+            $config->cache_dir()->subdir( 'mason', 'email' )->stringify(),
+        error_mode => 'fatal',
+        in_package => 'Silki::Mason::Email',
+    );
+
+    if ( $config->is_production() ) {
+        $config{static_source} = 1;
+        $config{static_source_touch_file}
+            = $config->etc_dir()->file('mason-touch')->stringify();
+    }
+
+    $Interp = HTML::Mason::Interp->new(
+        out_method => \$Body,
+        %config,
+    );
+};
 
 sub send_email {
     my ( $from, $to, $subject, $template, $args ) = validated_list(

@@ -28,17 +28,71 @@ BEGIN {
 
     $Config = Silki::Config->new();
 
-    Catalyst->import( @{ $Config->catalyst_imports() } );
+    my @imports = qw(
+        AuthenCookie
+        +Silki::Plugin::ErrorHandling
+        Session::AsObject
+        Session::State::URI
+        +Silki::Plugin::Session::Store::Silki
+        RedirectAndDetach
+        SubRequest
+        Unicode::Encoding
+    );
+
+    push @imports, 'Static::Simple'
+        if $Config->serve_static_files();
+
+    push @imports, 'StackTrace'
+        unless $Config->is_production() || $Config->is_profiling();
+
+    Catalyst->import(@imports);
 
     Silki::Schema->LoadAllClasses();
 }
 
-with @{ $Config->catalyst_roles() };
-
-__PACKAGE__->config(
-    name => 'Silki',
-    %{ $Config->catalyst_config() },
+with qw(
+    Silki::AppRole::Domain
+    Silki::AppRole::RedirectWithError
+    Silki::AppRole::Tabs
+    Silki::AppRole::User
 );
+
+{
+    my %config = (
+        name              => 'Silki',
+        default_view      => 'Mason',
+        'Plugin::Session' => {
+            expires => ( 60 * 5 ),
+
+            # Need to quote it for Pg
+            dbi_table        => q{"Session"},
+            dbi_dbh          => 'Silki::Plugin::Session::Store::Silki',
+            object_class     => 'Silki::Web::Session',
+            rewrite_body     => 0,
+            rewrite_redirect => 1,
+        },
+        authen_cookie => {
+            name       => 'Silki-user',
+            path       => '/',
+            mac_secret => $Config->secret(),
+        },
+        encoding => 'UTF-8',
+        root     => $Config->share_dir(),
+    );
+
+    unless ( $Config->is_production() ) {
+        $config{static} = {
+            dirs         => [qw( files images js css static w3c ckeditor )],
+            include_path => [
+                map { $Config->$_()->stringify() }
+                    qw( cache_dir var_lib_dir share_dir )
+            ],
+            debug => 1,
+        };
+    }
+
+    __PACKAGE__->config(\%config);
+}
 
 __PACKAGE__->apply_request_class_roles('Silki::Request');
 
