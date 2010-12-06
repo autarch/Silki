@@ -21,13 +21,19 @@ sub dynamic_uri {
     return URI::FromHash::uri(%p);
 }
 
-sub static_uri {
-    my $path = shift;
+{
+    my $StaticPathPrefix = Silki::Config->new()->path_prefix();
+    $StaticPathPrefix .= q{/};
+    $StaticPathPrefix .= $Silki::Config::VERSION || 'wc';
 
-    return _prefixed_path(
-        Silki::Config->new()->static_path_prefix(),
-        $path
-    );
+    sub static_uri {
+        my $path = shift;
+
+        return _prefixed_path(
+            $StaticPathPrefix,
+            $path
+        );
+    }
 }
 
 sub _prefixed_path {

@@ -4,10 +4,12 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
+use Net::Interface;
 use Silki::Config;
 use Silki::I18N qw( loc );
 use Silki::Schema;
 use Silki::Types qw( Bool HashRef Int Str );
+use Sys::Hostname qw( hostname );
 use URI;
 
 use Fey::ORM::Table;
@@ -131,13 +133,24 @@ sub EnsureRequiredDomainsExist {
 sub _FindOrCreateDefaultDomain {
     my $class = shift;
 
-    my $hostname = $ENV{SILKI_HOSTNAME}
-        || Silki::Config->new()->system_hostname();
+    my $hostname = $ENV{SILKI_HOSTNAME} || $class->_SystemHostname();
 
     my $domain = $class->new( web_hostname => $hostname );
     return $domain if $domain;
 
     return $class->insert( web_hostname => $hostname );
+}
+
+sub _SystemHostname {
+    for my $name (
+        hostname(),
+        map { scalar gethostbyaddr( $_->address(), AF_INET ) }
+        grep { $_->address() } Net::Interface->interfaces()
+        ) {
+        return $name if $name =~ /\.[^.]+$/;
+    }
+
+    die 'Cannot determine system hostname.';
 }
 
 sub domain { $_[0] }
