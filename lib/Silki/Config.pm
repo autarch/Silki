@@ -34,7 +34,7 @@ has max_upload_size => (
     section => 'Silki',
     key     => 'max_upload_size',
     documentation =>
-        'The maximum size of an upload in bytes. Defaults to 10 megabytes.',
+        'The maximum size of an upload in bytes.',
 );
 
 has path_prefix => (
@@ -100,7 +100,7 @@ has database_name => (
     section => 'database',
     key     => 'name',
     documentation =>
-        'The name of the database. Defaults to Silki.',
+        'The name of the database.',
 );
 
 has database_username => (
@@ -231,11 +231,11 @@ has temp_dir => (
 has antispam_server => (
     is      => 'ro',
     isa     => Str,
-    default => q{},
+    default => q{api.antispam.typepad.com},
     section => 'antispam',
     key     => 'server',
     documentation =>
-        'The antispam server to use. This defaults to api.antispam.typepad.com.',
+        'The antispam server to use.',
 );
 
 has antispam_key => (
