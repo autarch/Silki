@@ -508,7 +508,7 @@ msgstr ""
 msgid "File: <em>%html(%1)</em>"
 msgstr ""
 
-#. (format_bytes( Silki::Config->new()
+#. (format_bytes( Silki::Config->instance()
 #: share/mason/lib/forms/attachment-upload.mas:15
 msgid "Files cannot be larger than %1."
 msgstr ""
@@ -1128,7 +1128,7 @@ msgstr ""
 msgid "The email address you provided is already in use by another user."
 msgstr ""
 
-#: lib/Silki/Schema/Domain.pm:104
+#: lib/Silki/Schema/Domain.pm:106
 msgid "The email hostname you provided is already in use by another domain."
 msgstr ""
 
@@ -1181,7 +1181,7 @@ msgstr ""
 msgid "The username or password you provided was not valid."
 msgstr ""
 
-#: lib/Silki/Schema/Domain.pm:84
+#: lib/Silki/Schema/Domain.pm:86
 msgid "The web hostname you provided is already in use by another domain."
 msgstr ""
 

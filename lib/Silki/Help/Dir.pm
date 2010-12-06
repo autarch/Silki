@@ -40,7 +40,7 @@ has content => (
 sub _build_files {
     my $self = shift;
 
-    my $help_dir = Silki::Config->new()->share_dir()->subdir('help');
+    my $help_dir = Silki::Config->instance()->share_dir()->subdir('help');
 
     my $lang_dir = $help_dir->subdir( $self->locale_code() );
 

@@ -10,9 +10,9 @@
     <div class="form-item">
       <label class="for-field" for="file"><% loc('File') %>:</label>
       <input id="file" name="file" type="file" />
-% if ( Silki::Config->new()->max_upload_size() ) {
+% if ( Silki::Config->instance()->max_upload_size() ) {
       <div class="help-text">
-        <p><% loc( 'Files cannot be larger than %1.', format_bytes( Silki::Config->new()->max_upload_size() ) ) %></p>
+        <p><% loc( 'Files cannot be larger than %1.', format_bytes( Silki::Config->instance()->max_upload_size() ) ) %></p>
       </div>
 % }
     </div>

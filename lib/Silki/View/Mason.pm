@@ -28,7 +28,7 @@ use Silki::Web::FormData;
 use Silki::Util qw( string_is_empty );
 
 {
-    my $config = Silki::Config->new();
+    my $config = Silki::Config->instance();
 
     my %config = (
         comp_root => $config->share_dir()->subdir('mason')->stringify(),

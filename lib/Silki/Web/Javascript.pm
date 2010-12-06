@@ -18,7 +18,7 @@ sub _build_header {
 }
 
 sub _build_files {
-    my $dir = dir( Silki::Config->new()->share_dir(), 'js-source' );
+    my $dir = dir( Silki::Config->instance()->share_dir(), 'js-source' );
 
     # Works around an error that comes from JSAN::Parse::FileDeps
     # attempting to assign $_, which is somehow read-only.
@@ -37,7 +37,7 @@ sub _build_files {
 }
 
 sub _build_target_file {
-    my $js_dir = dir( Silki::Config->new()->var_lib_dir(), 'js' );
+    my $js_dir = dir( Silki::Config->instance()->var_lib_dir(), 'js' );
 
     $js_dir->mkpath( 0, 0755 );
 

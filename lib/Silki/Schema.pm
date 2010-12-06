@@ -24,7 +24,7 @@ if ($Silki::Schema::TestSchema) {
     __PACKAGE__->DBIManager()->add_source($source);
 }
 else {
-    my $connection = Silki::Config->new()->database_connection();
+    my $connection = Silki::Config->instance()->database_connection();
 
     my $source = Fey::DBIManager::Source->new(
         %{$connection},

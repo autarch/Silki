@@ -54,7 +54,7 @@ sub _check_for_link_spam {
     my $wiki     = shift;
     my $wikitext = shift;
 
-    my $config = Silki::Config->new();
+    my $config = Silki::Config->instance();
 
     my $key    = $config->antispam_key();
     my $server = $config->antispam_server();

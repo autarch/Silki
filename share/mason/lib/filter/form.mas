@@ -23,7 +23,7 @@ my $form = Silki::Web::Form->new( html        => $m->content(),
                                   form_data   => $form_data,
                                   exclude     => \@exclude,
                                   is_fragment => $is_fragment,
-                                  make_pretty => ( ! Silki::Config->new()->is_production() ),
+                                  make_pretty => ( ! Silki::Config->instance()->is_production() ),
                                 );
 
 $m->print( $form->filled_in_form() );

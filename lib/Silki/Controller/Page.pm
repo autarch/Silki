@@ -34,7 +34,7 @@ sub _set_page : Chained('/wiki/_set_wiki') : PathPart('page') : CaptureArgs(1) {
     # the original form.
     my $page_path = ( split /\//, $c->request()->path_info() )[3];
 
-    if ( Silki::Config->new()->mod_rewrite_hack() ) {
+    if ( Silki::Config->instance()->mod_rewrite_hack() ) {
         $page_path =~ s/_/ /g;
         $page_path = Silki::Schema::Page->TitleToURIPath($page_path);
     }
@@ -389,7 +389,7 @@ sub _handle_upload {
         );
     }
 
-    if ( $upload->size() > Silki::Config->new()->max_upload_size() ) {
+    if ( $upload->size() > Silki::Config->instance()->max_upload_size() ) {
         $c->redirect_with_error(
             error => loc('The file you uploaded was too large.'),
             uri   => $on_error,

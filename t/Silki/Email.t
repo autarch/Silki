@@ -13,7 +13,7 @@ use Path::Class qw( dir );
 use Silki::Config;
 
 BEGIN {
-    my $config = Silki::Config->new();
+    my $config = Silki::Config->instance();
 
     $config->_set_share_dir( dir( abs_path('t/share') ) );
     $config->_set_cache_dir( dir( tempdir( CLEANUP => 1 ) ) );

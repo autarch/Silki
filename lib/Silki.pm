@@ -26,7 +26,7 @@ my $Config;
 BEGIN {
     extends 'Catalyst';
 
-    $Config = Silki::Config->new();
+    $Config = Silki::Config->instance();
 
     my @imports = qw(
         AuthenCookie

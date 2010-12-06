@@ -35,7 +35,7 @@ has content => (
 sub _build_content {
     my $self = shift;
 
-    my $config = Silki::Config->new();
+    my $config = Silki::Config->instance();
 
     my %config = (
         comp_root => $self->file()->dir()->stringify(),

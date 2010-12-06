@@ -16,13 +16,13 @@ sub dynamic_uri {
     my %p = @_;
 
     $p{path}
-        = _prefixed_path( Silki::Config->new()->path_prefix(), $p{path} );
+        = _prefixed_path( Silki::Config->instance()->path_prefix(), $p{path} );
 
     return URI::FromHash::uri(%p);
 }
 
 {
-    my $StaticPathPrefix = Silki::Config->new()->path_prefix();
+    my $StaticPathPrefix = Silki::Config->instance()->path_prefix();
     $StaticPathPrefix .= q{/};
     $StaticPathPrefix .= $Silki::Config::VERSION || 'wc';
 

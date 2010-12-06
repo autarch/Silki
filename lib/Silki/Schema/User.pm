@@ -420,7 +420,7 @@ sub _make_confirmation_key {
 
     return sha1_hex(
         shift, time, $$, rand(1_000_000_000),
-        Silki::Config->new()->secret()
+        Silki::Config->instance()->secret()
     );
 }
 

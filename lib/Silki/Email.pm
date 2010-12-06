@@ -21,7 +21,7 @@ my $Body;
 my $Interp;
 
 {
-    my $config = Silki::Config->new();
+    my $config = Silki::Config->instance();
 
     my %config = (
         comp_root =>
