@@ -101,6 +101,7 @@ has database_name => (
     key     => 'name',
     documentation =>
         'The name of the database.',
+    writer => '_set_database_name',
 );
 
 has database_username => (
@@ -111,6 +112,7 @@ has database_username => (
     key     => 'username',
     documentation =>
         'The username to use when connecting to the database. By default, this is empty.',
+    writer => '_set_database_username',
 );
 
 has database_password => (
@@ -121,6 +123,7 @@ has database_password => (
     key     => 'password',
     documentation =>
         'The password to use when connecting to the database. By default, this is empty.',
+    writer => '_set_database_password',
 );
 
 has database_host => (
@@ -131,6 +134,7 @@ has database_host => (
     key     => 'host',
     documentation =>
         'The host to use when connecting to the database. By default, this is empty.',
+    writer => '_set_database_host',
 );
 
 has database_port => (
@@ -141,6 +145,7 @@ has database_port => (
     key     => 'port',
     documentation =>
         'The port to use when connecting to the database. By default, this is empty.',
+    writer => '_set_database_port',
 );
 
 has share_dir => (
