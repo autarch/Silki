@@ -82,7 +82,7 @@ with qw(
 
     unless ( $Config->is_production() ) {
         $config{static} = {
-            dirs         => [qw( files images js css static w3c ckeditor )],
+            dirs         => [qw( files images js css static )],
             include_path => [
                 map { $Config->$_()->stringify() }
                     qw( cache_dir var_lib_dir share_dir )
