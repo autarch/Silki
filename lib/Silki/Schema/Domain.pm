@@ -9,6 +9,7 @@ use Silki::Config;
 use Silki::I18N qw( loc );
 use Silki::Schema;
 use Silki::Types qw( Bool HashRef Int Str );
+use Socket qw( AF_INET );
 use Sys::Hostname qw( hostname );
 use URI;
 
