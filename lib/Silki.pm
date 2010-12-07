@@ -77,7 +77,7 @@ with qw(
             mac_secret => $Config->secret(),
         },
         encoding => 'UTF-8',
-        root     => $Config->share_dir(),
+        root     => $Config->share_dir()->stringify(),
     );
 
     unless ( $Config->is_production() ) {
