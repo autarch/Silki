@@ -348,15 +348,6 @@ sub _build_share_dir {
     );
 }
 
-sub _build_etc_dir {
-    my $self = shift;
-
-    return $self->_dir(
-        ['etc'],
-        '/etc/silki',
-    );
-}
-
 sub _build_cache_dir {
     my $self = shift;
 
