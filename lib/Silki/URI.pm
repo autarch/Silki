@@ -22,9 +22,17 @@ sub dynamic_uri {
 }
 
 {
-    my $StaticPathPrefix = Silki::Config->instance()->path_prefix();
-    $StaticPathPrefix .= q{/};
-    $StaticPathPrefix .= $Silki::Config::VERSION || 'wc';
+    my $StaticPathPrefix;
+
+    my $config = Silki::Config->instance();
+    if ( $config->is_production() ) {
+        $StaticPathPrefix = $config->path_prefix();
+        $StaticPathPrefix .= q{/};
+        $StaticPathPrefix .= $Silki::Config::VERSION || 'wc';
+    }
+    else {
+        $StaticPathPrefix = q{};
+    }
 
     sub static_uri {
         my $path = shift;
