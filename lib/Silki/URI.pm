@@ -51,7 +51,7 @@ sub _prefixed_path {
     return '/'
         if all { string_is_empty($_) } $prefix, $path;
 
-    $path = ( $prefix || '' ) . ( $path || '' );
+    $path = ( $prefix || q{} ) . ( $path || q{} );
 
     return $path;
 }
