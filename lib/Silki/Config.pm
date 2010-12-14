@@ -157,6 +157,7 @@ has share_dir => (
     key     => 'share',
     documentation =>
         'The directory where share files are located. By default, these are installed in the Perl module directory tree, but you might want to change this to something like /usr/local/share/Silki.',
+    writer => '_set_share_dir',
 );
 
 has cache_dir => (
@@ -168,6 +169,7 @@ has cache_dir => (
     key     => 'cache',
     documentation =>
         'The directory where generated files are stored. Defaults to /var/cache/silki.',
+    writer => '_set_cache_dir',
 );
 
 has var_lib_dir => (
