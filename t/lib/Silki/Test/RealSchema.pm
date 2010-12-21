@@ -77,9 +77,9 @@ sub _recreate_database {
     require Silki::DatabaseManager;
 
     my $man = Silki::DatabaseManager->new(
-        db_name  => 'SilkiTest',
-        drop  => 1,
-        quiet => 1,
+        db_name => 'SilkiTest',
+        drop    => 1,
+        quiet   => 1,
     );
 
     $man->update_or_install_db();
