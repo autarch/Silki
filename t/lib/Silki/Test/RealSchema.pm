@@ -76,14 +76,13 @@ sub _recreate_database {
 
     require Silki::DatabaseManager;
 
-    my $inst = Silki::DatabaseManager->new(
-        name  => 'SilkiTest',
+    my $man = Silki::DatabaseManager->new(
+        db_name  => 'SilkiTest',
         drop  => 1,
         quiet => 1,
     );
 
-    $inst->_drop_and_create_db();
-    $inst->_build_db();
+    $man->update_or_install_db();
 }
 
 sub _clean_tables {
