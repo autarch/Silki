@@ -87,7 +87,7 @@ CREATE DOMAIN hostname AS citext
 CREATE TABLE "Domain" (
        domain_id          SERIAL             PRIMARY KEY,
        web_hostname       hostname           UNIQUE  NOT NULL,
-       email_hostname     hostname           NOT NULL,
+       email_hostname     hostname           UNIQUE  NOT NULL,
        requires_ssl       BOOLEAN            DEFAULT FALSE,
        creation_datetime  TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT CURRENT_TIMESTAMP,
        CONSTRAINT valid_web_hostname CHECK ( web_hostname != '' ),
