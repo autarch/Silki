@@ -2,6 +2,8 @@ package Silki::Manual::Admin;
 
 # ABSTRACT: Admin manual for Silki
 
+__END__
+
 =pod
 
 =head1 INSTALLATION
