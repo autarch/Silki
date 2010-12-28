@@ -427,8 +427,8 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#. ($domain->web_hostname()
 #. ($page->title()
+#. ($domain->web_hostname()
 #: share/mason/domain/edit-form:8 share/mason/page/edit-form:8
 msgid "Edit %1"
 msgstr ""
@@ -1128,7 +1128,7 @@ msgstr ""
 msgid "The email address you provided is already in use by another user."
 msgstr ""
 
-#: lib/Silki/Schema/Domain.pm:106
+#: lib/Silki/Schema/Domain.pm:107
 msgid "The email hostname you provided is already in use by another domain."
 msgstr ""
 
@@ -1181,7 +1181,7 @@ msgstr ""
 msgid "The username or password you provided was not valid."
 msgstr ""
 
-#: lib/Silki/Schema/Domain.pm:86
+#: lib/Silki/Schema/Domain.pm:87
 msgid "The web hostname you provided is already in use by another domain."
 msgstr ""
 
