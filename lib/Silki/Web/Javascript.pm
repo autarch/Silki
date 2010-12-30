@@ -44,22 +44,14 @@ sub _build_target_file {
     return file( $js_dir, 'silki-combined.js' );
 }
 
-{
-    my @Exceptions = (
-        qr/\@cc_on/,
-        qr/\@if/,
-        qr/\@end/,
-    );
+sub _squish {
+    my $self = shift;
+    my $code = shift;
 
-    sub _squish {
-        my $self = shift;
-        my $code = shift;
+    return $code
+        unless Silki::Config->instance()->is_production();
 
-        return $code
-            unless Silki::Config->instance()->is_production();
-
-        return minify($code);
-    }
+    return minify($code);
 }
 
 __PACKAGE__->meta()->make_immutable();
