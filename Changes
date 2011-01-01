@@ -12,9 +12,6 @@
 
 - Deleting all of a page's revisions now deletes the page.
 
-- The Build.PL now accepts a --db-ssl flag to require an SSL connection when
-  creating/migrating the database.
-
 
 0.24  2010-10-31
 
