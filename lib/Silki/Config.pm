@@ -368,7 +368,7 @@ sub _build_etc_dir {
     my $self = shift;
 
     return $self->config_file()->dir()
-        if -f $self->config_file();
+        if defined $self->config_file() && -f $self->config_file();
 
     return $self->_pick_dir(
         ['etc'],
