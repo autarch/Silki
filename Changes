@@ -1,3 +1,9 @@
+0.27
+
+- Really added support for ssl database connections, including a --db-ssl
+  parameter to the Build.PL.
+
+
 0.26  2010-11-30
 
 - Removed a bogus prereq on Apache2::ServerUtil.
