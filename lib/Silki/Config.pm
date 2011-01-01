@@ -148,6 +148,17 @@ has database_port => (
     writer => '_set_database_port',
 );
 
+has database_ssl => (
+    is      => 'ro',
+    isa     => Bool,
+    default => 0,
+    section => 'database',
+    key     => 'ssl',
+    documentation =>
+        'If this is true, then the database connection with require SSL.',
+    writer => '_set_database_ssl',
+);
+
 has share_dir => (
     is      => 'ro',
     isa     => Dir,
@@ -478,6 +489,9 @@ sub _build_database_connection {
     if ( my $port = $self->database_port() ) {
         $dsn .= ';port=' . $port;
     }
+
+    $dsn .= ';sslmode=require'
+        if $self->database_ssl();
 
     return {
         dsn      => $dsn,

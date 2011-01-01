@@ -29,6 +29,8 @@ Defaults to "Silki".
 
 =item * --db-port
 
+=item * --db-ssl
+
 None of these are necessary, if the user that runs C<./Build install> has
 permission create a Postgres database using the default connection settings.
 

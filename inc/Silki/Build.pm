@@ -20,6 +20,7 @@ sub new {
         'db-password' => { type => '=s' },
         'db-host'     => { type => '=s' },
         'db-port'     => { type => '=s' },
+        'db-ssl'      => {},
     };
 
     $args{auto_features} = {
@@ -57,8 +58,11 @@ sub _update_from_existing_config {
 
     return unless $config;
 
-    for my $mb_key ( qw( db-name db-username db-password db-host db-port share-dir ) ) {
+    for my $mb_key (
+        qw( db-name db-username db-password db-host db-port db-ssl share-dir )
+        ) {
         ( my $meth = $mb_key ) =~ s/-/_/g;
+        $meth =~ s/db/database/;
 
         my $value = $config->$meth();
 
@@ -160,24 +164,31 @@ sub ACTION_config {
     my $secret = Digest::SHA::sha1_hex( time . $$ . rand(1_000_000_000) );
 
     my %values = (
-        'Silki/is_production' => 1,
-        'Silki/secret'        => $secret,
+        'is_production' => 1,
+        'secret'        => $secret,
     );
 
     my %args = $self->args();
 
-    $values{'dirs/share'} = $args{'share-dir'}
+    $values{share_dir} = $args{'share-dir'}
         if $args{'share-dir'};
 
-    $values{'dirs/cache'} = $args{'cache-dir'}
+    $values{cache_dir} = $args{'cache-dir'}
         if $args{'cache-dir'};
 
     for my $key ( grep { defined $args{$_} } grep {/^db-/} keys %args ) {
         ( my $conf_key = $key ) =~ s/^db-//;
-        $values{"database/$conf_key"} = $args{$key};
+        $values{ 'database_' . $conf_key } = $args{$key};
     }
 
-    $config->write_config_file( file => $config_file, values => \%values );
+    delete $values{database_name}
+        if $values{database_name} eq 'Silki';
+
+    delete $values{database_ssl}
+        unless $values{database_ssl};
+
+    Silki::Config->new()
+        ->write_config_file( file => $config_file, values => \%values );
 }
 
 sub ACTION_clean_mason_cache {
