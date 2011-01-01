@@ -8,6 +8,8 @@ use File::Spec;
 
 use base 'Module::Build';
 
+use lib 'lib';
+
 sub new {
     my $class = shift;
     my %args  = @_;
@@ -48,35 +50,21 @@ sub _update_from_existing_config {
             ? File::Spec->catfile( $self->args('etc-dir'), 'silki.conf' )
             : undef;
 
-        require Silki::ConfigFile;
+        require Silki::Config;
 
-        Silki::ConfigFile->new()->raw_data();
+        Silki::Config->new();
     };
 
     return unless $config;
 
-    my %map = (
-        Silki    => { hostname => 'hostname' },
-        database => {
-            name     => 'db-name',
-            username => 'db-username',
-            password => 'db-password',
-            host     => 'db-host',
-            port     => 'db-port',
-            ssl      => 'db-ssl',
-        },
-        dirs => { share => 'share-dir' },
-    );
+    for my $mb_key ( qw( db-name db-username db-password db-host db-port share-dir ) ) {
+        ( my $meth = $mb_key ) =~ s/-/_/g;
 
-    for my $section (keys %map ) {
-        for my $key ( keys %{$map{$section}} ) {
-            my $value = $config->{$section}{$key};
+        my $value = $config->$meth();
 
-            next unless defined $value && $value ne q{};
+        next unless defined $value && length $value;
 
-            my $mb_key = $map{$section}{$key};
-            $self->args( $mb_key => $value );
-        }
+        $self->args( $mb_key => $value );
     }
 
     return;
