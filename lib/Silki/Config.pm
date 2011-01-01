@@ -367,6 +367,9 @@ sub _build_cache_dir {
 sub _build_etc_dir {
     my $self = shift;
 
+    return $self->config_file()->dir()
+        if -f $self->config_file();
+
     return $self->_pick_dir(
         ['etc'],
         '/etc/silki',
