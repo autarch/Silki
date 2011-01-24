@@ -3,6 +3,8 @@
 - Really added support for ssl database connections, including a --db-ssl
   parameter to the Build.PL.
 
+- All foreign key columns in the schema are now indexed.
+
 
 0.26  2010-11-30
 
