@@ -5,6 +5,9 @@
 
 - All foreign key columns in the schema are now indexed.
 
+- The previous release appeared to have some bad mock data for the
+  schema. This release should fix that.
+
 
 0.26  2010-11-30
 
