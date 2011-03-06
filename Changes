@@ -8,6 +8,8 @@
 - The previous release appeared to have some bad mock data for the
   schema. This release should fix that.
 
+- Switch from Test::Exception to Test::Fatal, and add the later as a prereq.
+
 
 0.26  2010-11-30
 

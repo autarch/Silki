@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::Exception;
+use Test::Fatal;
 use Test::More;
 
 use lib 't/lib';
@@ -127,8 +127,8 @@ test_email(
       }xs,
 );
 
-throws_ok(
-    sub {
+like(
+    exception {
         $user3->send_invitation_email(
             sender => $user2,
         );

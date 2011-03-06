@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::Exception;
+use Test::Fatal;
 use Test::More;
 
 use lib 't/lib';
@@ -89,8 +89,10 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         user          => $user,
     );
 
-    ok( !$user->has_login_credentials(),
-        'user does not have login credentials' );
+    ok(
+        !$user->has_login_credentials(),
+        'user does not have login credentials'
+    );
 
     ok(
         !$user->is_guest(),
@@ -235,16 +237,16 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         user             => $user,
     );
 
-    throws_ok(
-        sub { $user->confirmation_uri() },
+    like(
+        exception { $user->confirmation_uri() },
         qr/^\QCannot make a confirmation uri for a user who does not have a confirmation key/,
         'cannot get a confirmation_uri for a user without a confirmation_key'
     );
 }
 
 {
-    throws_ok(
-        sub {
+    like(
+        exception {
             Silki::Schema::User->insert(
                 email_address => 'fail@example.com',
                 display_name  => 'Faily McFail',
@@ -256,8 +258,8 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         'Cannot insert a user without a pw or openid'
     );
 
-    throws_ok(
-        sub {
+    like(
+        exception {
             Silki::Schema::User->insert(
                 email_address => 'fail@example.com',
                 display_name  => 'Faily McFail',
@@ -281,8 +283,8 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         user          => Silki::Schema::User->SystemUser(),
     );
 
-    throws_ok(
-        sub {
+    like(
+        exception {
             $user->update(
                 password => undef,
                 user     => $user,
@@ -292,29 +294,31 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         'Cannot update a user to not have a password'
     );
 
-    lives_ok(
-        sub {
+    is(
+        exception {
             $user->update(
                 openid_uri => 'http://example.com',
                 password   => undef,
                 user       => $user,
             );
         },
+        undef,
         'Can update a user to unset the password but add an openid_uri'
     );
 
-    lives_ok(
-        sub {
+    is(
+        exception {
             $user->update(
                 password => undef,
                 user     => $user,
             );
         },
+        undef,
         'Can update a user to not have a password if they have an openid_uri in the dbms'
     );
 
-    throws_ok(
-        sub {
+    like(
+        exception {
             $user->update(
                 openid_uri => undef,
                 password   => q{},
@@ -327,11 +331,13 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
 
     ok( !$user->has_valid_password(), 'user does not have valid password' );
 
-    ok( $user->has_login_credentials(),
-        'user has login credentials (openid)' );
+    ok(
+        $user->has_login_credentials(),
+        'user has login credentials (openid)'
+    );
 
-    throws_ok(
-        sub {
+    like(
+        exception {
             $user->update(
                 openid_uri => 'not a uri',
                 user       => $user,
@@ -341,8 +347,8 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         'Cannot update a user with an invalid openid_uri (not a uri at all)'
     );
 
-    throws_ok(
-        sub {
+    like(
+        exception {
             $user->update(
                 openid_uri => 'ftp://example.com/dir',
                 user       => $user,
@@ -352,8 +358,8 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         'Cannot update a user with an invalid openid_uri (ftp uri)'
     );
 
-    throws_ok(
-        sub {
+    like(
+        exception {
             $user->update(
                 openid_uri => undef,
                 user       => $user,
@@ -363,8 +369,8 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         'Cannot update a user to not have a password or openid'
     );
 
-    throws_ok(
-        sub {
+    like(
+        exception {
             Silki::Schema::User->insert(
                 email_address => 'user5@example.com',
                 display_name  => 'Example User',
@@ -376,13 +382,14 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         'Cannot insert a user with the same openid_uri as an existing usre',
     );
 
-    lives_ok(
-        sub {
+    is(
+        exception {
             $user->update(
                 openid_uri => 'http://example.com',
                 user       => $user,
             );
         },
+        undef,
         q{can update a user's openid to the same openid it already has}
     );
 
@@ -393,8 +400,8 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         user          => Silki::Schema::User->SystemUser(),
     );
 
-    throws_ok(
-        sub {
+    like(
+        exception {
             $user5->update(
                 openid_uri => 'http://example.com',
                 user       => $user5,
@@ -404,8 +411,8 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         'Cannot update a user to the same openid_uri as an existing usre',
     );
 
-    throws_ok(
-        sub {
+    like(
+        exception {
             Silki::Schema::User->insert(
                 email_address => 'user4@example.com',
                 display_name  => 'Example User',
@@ -417,18 +424,19 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         'Cannot insert a user with the same email_address as an existing user',
     );
 
-    lives_ok(
-        sub {
+    is(
+        exception {
             $user->update(
                 email_address => $email,
                 user          => $user,
             );
         },
+        undef,
         q{can update a user's email address to the same email address it already has}
     );
 
-    throws_ok(
-        sub {
+    like(
+        exception {
             $user->update(
                 email_address => 'user@example.com',
                 user          => $user,
@@ -444,18 +452,19 @@ my $wiki = Silki::Schema::Wiki->new( short_name => 'first-wiki' );
         user       => $user,
     );
 
-    lives_ok(
-        sub {
+    is(
+        exception {
             $user->update(
                 openid_uri => undef,
                 user       => $user,
             );
         },
+        undef,
         'Can update a user to not have an openid_uri if they have a password in the dbms'
     );
 
-    throws_ok(
-        sub {
+    like(
+        exception {
             $user->update(
                 openid_uri => undef,
                 password   => undef,
@@ -782,7 +791,7 @@ sub test_permissions {
         wiki_id => $wiki->wiki_id(),
         title   => 'Page for Testing',
         content => 'good1',
-        user_id    => $to_keep->user_id(),
+        user_id => $to_keep->user_id(),
     );
 
     $page->add_revision(
