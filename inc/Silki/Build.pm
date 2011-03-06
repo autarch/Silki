@@ -47,9 +47,8 @@ sub _update_from_existing_config {
 
     my $config = eval {
         local $ENV{SILKI_CONFIG}
-            = $self->args('etc-dir')
-            ? File::Spec->catfile( $self->args('etc-dir'), 'silki.conf' )
-            : undef;
+            = File::Spec->catfile( $self->args('etc-dir'), 'silki.conf' )
+            if $self->args('etc-dir');
 
         require Silki::Config;
 
