@@ -1,3 +1,8 @@
+{{$NEXT}}
+
+- Remove File::Next from test code. This dependency wasn't declared.
+
+
 0.27  2011-03-06
 
 - Really added support for ssl database connections, including a --db-ssl
