@@ -427,8 +427,8 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#. ($page->title()
 #. ($domain->web_hostname()
+#. ($page->title()
 #: share/mason/domain/edit-form:8 share/mason/page/edit-form:8
 msgid "Edit %1"
 msgstr ""
@@ -998,9 +998,9 @@ msgstr ""
 msgid "Revision #"
 msgstr ""
 
+#. ($revision->revision_number()
 #. ($rev1->revision_number()
 #. ($rev2->revision_number()
-#. ($revision->revision_number()
 #: share/mason/page/diff:14 share/mason/page/diff:9 share/mason/page/history:24 share/mason/page/history:27
 msgid "Revision %1"
 msgstr ""
