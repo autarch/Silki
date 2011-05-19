@@ -7,7 +7,6 @@ use lib 't/lib';
 use Silki::Test::RealSchema;
 
 use Archive::Tar::Wrapper;
-use File::Next;
 use File::Slurp qw( read_file );
 use Path::Class qw( dir file );
 use Silki;
@@ -176,20 +175,26 @@ sub _get_one_json_file {
 sub _get_pages {
     my $dir = shift;
 
-    my $iter = File::Next::files( $dir->subdir('pages') );
-
     my %pages;
     my %revisions;
 
-    while ( defined( my $file = $iter->() ) ) {
+    my $pages_dir = $dir->subdir('pages');
 
-        my $data = Silki::JSON->Decode( scalar read_file($file) );
+    while ( my $entry = $pages_dir->next() ) {
+        next unless -d $entry && $entry !~ /\.\./;
 
-        if ( $file =~ m{/([^/]+)/page\.json} ) {
-            $pages{$1} = $data;
-        }
-        elsif ( $file =~ m{/([^/]+)/revision-\d+\.json} ) {
-            push @{ $revisions{$1} }, $data;
+    FILE:
+        while ( my $file = $entry->next() ) {
+            next FILE unless -f $file;
+
+            my $data = Silki::JSON->Decode( scalar read_file($file) );
+
+            if ( $file =~ m{/([^/]+)/page\.json} ) {
+                $pages{$1} = $data;
+            }
+            elsif ( $file =~ m{/([^/]+)/revision-\d+\.json} ) {
+                push @{ $revisions{$1} }, $data;
+            }
         }
     }
 
@@ -214,10 +219,11 @@ sub _get_pages {
 sub _get_users {
     my $dir = shift;
 
-    my $iter = File::Next::files( $dir->subdir('users') );
+    my $users_dir = $dir->subdir('users');
 
     my @users;
-    while ( defined( my $file = $iter->() ) ) {
+    while ( defined( my $file = $users_dir->next() ) ) {
+        next unless -f $file;
         push @users, Silki::JSON->Decode( scalar read_file($file) );
     }
 
@@ -227,17 +233,23 @@ sub _get_users {
 sub _get_files {
     my $dir = shift;
 
-    my $iter = File::Next::files( $dir->subdir('files') );
-
     my @files;
     my %contents;
 
-    while ( defined( my $file = $iter->() ) ) {
-        if ( $file =~ /\.json$/ ) {
-            push @files, Silki::JSON->Decode( scalar read_file($file) );
-        }
-        else {
-            $contents{ file($file)->basename() } = read_file($file);
+    my $files_dir = $dir->subdir('files');
+
+    while ( my $entry = $files_dir->next() ) {
+        next unless -d $entry && $entry !~ /\.\./;
+
+        while ( my $file = $entry->next() ) {
+            next unless -f $file;
+
+            if ( $file =~ /\.json$/ ) {
+                push @files, Silki::JSON->Decode( scalar read_file($file) );
+            }
+            else {
+                $contents{ file($file)->basename() } = read_file($file);
+            }
         }
     }
 
