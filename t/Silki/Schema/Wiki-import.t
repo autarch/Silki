@@ -7,7 +7,6 @@ use lib 't/lib';
 use Silki::Test::RealSchema;
 
 use Archive::Tar::Wrapper;
-use File::Next;
 use File::Slurp qw( read_file );
 use Path::Class qw( dir file );
 use Silki;
