@@ -118,8 +118,8 @@ sub _clean_tables {
         return @DDL if @DDL;
 
         my $file = file(
-            $INC{'Silki/Test/RealSchema.pm'},
-            '..', '..', '..', '..', '..',
+            file( $INC{'Silki/Test/RealSchema.pm'} )->dir(),
+            '..', '..', '..', '..',
             'schema',
             'Silki.sql'
         );
