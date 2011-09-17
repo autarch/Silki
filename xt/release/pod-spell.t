@@ -32,6 +32,7 @@ OpenID
 PSGI
 PayPal
 Postgres
+Rolsky
 Sendfile
 Silki
 Silki's
@@ -43,9 +44,9 @@ UI
 Wikis
 antispam
 backend
-citext
 cgi
 changeme
+citext
 contrib
 dir
 dirs
