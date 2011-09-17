@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.28  2011-09-17
+
 - Remove File::Next from test code. This dependency wasn't declared.
 
 - Fix some possible failures in the tests when trying to find files in the
