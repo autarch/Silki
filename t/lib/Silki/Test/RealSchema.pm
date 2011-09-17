@@ -8,7 +8,7 @@ use lib 'inc';
 use DBD::Pg;
 use DBI;
 use File::Slurp qw( read_file );
-use Path::Class qw( file );
+use Path::Class qw( dir file );
 use Test::More;
 
 sub import {
@@ -117,12 +117,8 @@ sub _clean_tables {
     sub _ddl_statements {
         return @DDL if @DDL;
 
-        my $file = file(
-            file( $INC{'Silki/Test/RealSchema.pm'} )->dir(),
-            '..', '..', '..', '..',
-            'schema',
-            'Silki.sql'
-        );
+        my $file = dir( $INC{'Silki/Test/RealSchema.pm'} )->parent()->parent()
+            ->parent()->parent()->parent()->file( 'schema', 'Silki.sql' );
 
         my $ddl = read_file( $file->resolve()->stringify() );
 
