@@ -2,6 +2,9 @@
 
 - Remove File::Next from test code. This dependency wasn't declared.
 
+- Fix some possible failures in the tests when trying to find files in the
+  distro.
+
 
 0.27  2011-03-06
 
