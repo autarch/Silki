@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+- Added missing prereq on Catalyst::Plugin::StackTrace.
+
+
 0.28  2011-09-17
 
 - Remove File::Next from test code. This dependency wasn't declared.
