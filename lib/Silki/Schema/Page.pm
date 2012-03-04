@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
-use Encode qw( decode );
+use Encode qw( decode FB_CROAK );
 use Fey::Object::Iterator::FromSelect;
 use Fey::Placeholder;
 use List::AllUtils qw( first );
@@ -485,7 +485,7 @@ sub URIPathToTitle {
 
     $path =~ s/_/%20/g;
 
-    return decode( 'utf-8', uri_unescape($path) );
+    return decode( 'UTF-8', uri_unescape($path), FB_CROAK );
 }
 
 sub _TagsSelect {

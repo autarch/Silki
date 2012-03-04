@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use DateTime::Format::Pg;
-use Encode qw( decode );
+use Encode qw( decode FB_CROAK );
 use Lingua::EN::Inflect qw( PL_N );
 use Scalar::Util qw( blessed );
 
@@ -48,7 +48,8 @@ my %text_types = map { $_ => 1 } qw( citext email_address filename );
 transform_all
     matching { $text_types{ lc $_[0]->type() } } =>
     inflate {
-        return decode( 'utf-8', $_[1] );
+        return decode( 'UTF-8', $_[1], FB_CROAK )
+            unless Encode::is_utf8($_[1]);
     };
 #>>>
 has_one_namer {

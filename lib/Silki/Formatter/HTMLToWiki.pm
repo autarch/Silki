@@ -4,9 +4,9 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
-use Encode qw( decode );
+use Encode qw( decode FB_CROAK );
 use HTML::TreeBuilder;
-use IO::Handle;
+use IO::String;
 use Markdent::Types qw( OutputStream );
 use Silki::Formatter::HTMLToWiki::Table;
 use Silki::I18N qw( loc );
@@ -100,14 +100,15 @@ sub html_to_wikitext {
     # I tried finding a way to avoid this, but if I don't open the in-memory
     # filehandle with the utf8 layer, I get "wide character" warnings. This
     # works, though it's kind of fugly.
-    return decode( 'utf-8', $buffer );
+    return decode( 'UTF-8', $buffer, FB_CROAK );
 }
 
 sub _replace_stream {
     my $self   = shift;
     my $buffer = shift;
 
-    open my $fh, '>:utf8', $buffer;
+    open my $fh, '>:encoding(UTF-8)', $buffer;
+    $fh->autoflush(1);
 
     my $old_stream = $self->_stream();
 

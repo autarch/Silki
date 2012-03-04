@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
+use Encode qw( encode FB_CROAK );
 use HTML::Entities qw( encode_entities );
 use Markdent::Types qw( HeaderLevel );
 use Silki::I18N qw( loc );
@@ -80,7 +81,8 @@ has _header_count => (
 sub _build_output {
     my $self = shift;
 
-    open my $fh, '>:utf8', $self->_buffer();
+    open my $fh, '>:encoding(UTF-8)', $self->_buffer();
+    $fh->autoflush(1);
 
     return $fh;
 }
@@ -308,9 +310,7 @@ sub _check_for_read_permission {
 sub final_html_output {
     my $self = shift;
 
-    my $html = ${ $self->_buffer() };
-
-    utf8::decode($html);
+    my $html = encode( 'UTF-8', ${ $self->_buffer() }, FB_CROAK );
 
     return $html unless $self->_header_count() > 2;
 

@@ -5,7 +5,6 @@ use warnings;
 use namespace::autoclean;
 
 use Algorithm::Diff qw( sdiff );
-use Encode qw( decode );
 use List::AllUtils qw( all any );
 use Markdent::CapturedEvents;
 use Markdent::Handler::CaptureEvents;
