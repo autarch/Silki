@@ -12,7 +12,7 @@ use Silki::Schema::Page;
 {
     my $tb = Test::Builder->new();
 
-    binmode $_, ':utf8'
+    binmode $_, ':encoding(UTF-8)'
         for $tb->output(),
         $tb->failure_output(),
         $tb->todo_output();

@@ -265,7 +265,7 @@ sub _add_to_archive {
     $self->_archive()->add(
         $path,
         \( Silki::JSON->Encode($data) ),
-        { binmode => ':utf8' }
+        { binmode => ':encoding(UTF-8)' }
     );
 
     return;
