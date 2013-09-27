@@ -100,9 +100,6 @@ sub finalize_error {
     }
 
     $self->error( [] );
-
-    $self->response()->content_type('text/html; charset=utf-8');
-    $self->response()->body( $self->subreq("/error/$status") );
 }
 
 # copied from Catalyst::Engine->finalize_error just so we can set the
