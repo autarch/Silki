@@ -36,7 +36,6 @@ BEGIN {
         +Silki::Plugin::Session::Store::Silki
         RedirectAndDetach
         SubRequest
-        Unicode::Encoding
     );
 
     push @imports, 'Static::Simple'
