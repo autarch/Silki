@@ -117,20 +117,20 @@ msgstr ""
 msgid "%quant( %1, view, views )"
 msgstr ""
 
-#: lib/Silki/Formatter/HTMLToWiki.pm:252
+#: lib/Silki/Formatter/HTMLToWiki.pm:253
 msgid "(Link to non-existent file)"
 msgstr ""
 
 #. ($wiki_name)
-#: lib/Silki/Formatter/HTMLToWiki.pm:275
+#: lib/Silki/Formatter/HTMLToWiki.pm:276
 msgid "(Link to non-existent wiki: %1)"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:172
+#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:174
 msgid "(inaccessible file)"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:256
+#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:258
 msgid "(inaccessible page)"
 msgstr ""
 
@@ -419,7 +419,7 @@ msgstr ""
 msgid "Domain Settings"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:181 share/mason/file/view-in-frame:11 share/mason/lib/table/attachments-table.mas:19 share/mason/lib/table/attachments-table.mas:22
+#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:183 share/mason/file/view-in-frame:11 share/mason/lib/table/attachments-table.mas:19 share/mason/lib/table/attachments-table.mas:22
 msgid "Download this file"
 msgstr ""
 
@@ -427,8 +427,8 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#. ($domain->web_hostname()
 #. ($page->title()
+#. ($domain->web_hostname()
 #: share/mason/domain/edit-form:8 share/mason/page/edit-form:8
 msgid "Edit %1"
 msgstr ""
@@ -923,7 +923,7 @@ msgid "Purging this user will delete %quant( %1, page, pages ), %quant( %2, revi
 msgstr ""
 
 #. ($page->title()
-#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:282
+#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:284
 msgid "Read %1"
 msgstr ""
 
@@ -998,9 +998,9 @@ msgstr ""
 msgid "Revision #"
 msgstr ""
 
-#. ($revision->revision_number()
 #. ($rev1->revision_number()
 #. ($rev2->revision_number()
+#. ($revision->revision_number()
 #: share/mason/page/diff:14 share/mason/page/diff:9 share/mason/page/history:24 share/mason/page/history:27
 msgid "Revision %1"
 msgstr ""
@@ -1247,7 +1247,7 @@ msgstr ""
 msgid "This page has %quant(%1,revision,revisions)"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:283
+#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:285
 msgid "This page has not yet been created"
 msgstr ""
 
@@ -1383,7 +1383,7 @@ msgstr ""
 msgid "View previous revision"
 msgstr ""
 
-#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:180
+#: lib/Silki/Markdent/Handler/HTMLGenerator.pm:182
 msgid "View this file"
 msgstr ""
 
