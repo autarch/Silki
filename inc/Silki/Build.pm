@@ -5,6 +5,8 @@ use warnings;
 
 use File::Path qw( mkpath );
 use File::Spec;
+use Path::Class::Dir;
+use Path::Class::File;
 
 use base 'Module::Build';
 
@@ -106,7 +108,7 @@ sub ACTION_share {
 
         $self->copy_if_modified(
             from => $file,
-            to   => File::Spec->catfile( $share_dir, $shareless ),
+            to   => $share_dir->file($shareless)->stringify(),
         );
     }
 
