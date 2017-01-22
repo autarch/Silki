@@ -97,7 +97,7 @@ msgstr ""
 msgid "%1 was removed as a wiki member."
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:162
+#: lib/Silki/Localize/Format/Gettext.pm:158
 msgid "%date(%1) %at_time(%1)"
 msgstr ""
 
@@ -1297,11 +1297,11 @@ msgstr ""
 msgid "This wiki is currently <strong>%1</strong>."
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:67
+#: lib/Silki/Localize/Format/Gettext.pm:65
 msgid "Three days ago"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:161 lib/Silki/Localize/Format/Gettext.pm:90
+#: lib/Silki/Localize/Format/Gettext.pm:157 lib/Silki/Localize/Format/Gettext.pm:87
 msgid "Three days ago %at_time(%1)"
 msgstr ""
 
@@ -1317,19 +1317,19 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:64
+#: lib/Silki/Localize/Format/Gettext.pm:62
 msgid "Today"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:158 lib/Silki/Localize/Format/Gettext.pm:87
+#: lib/Silki/Localize/Format/Gettext.pm:154 lib/Silki/Localize/Format/Gettext.pm:84
 msgid "Today %at_time(%1)"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:66
+#: lib/Silki/Localize/Format/Gettext.pm:64
 msgid "Two days ago"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:160 lib/Silki/Localize/Format/Gettext.pm:89
+#: lib/Silki/Localize/Format/Gettext.pm:156 lib/Silki/Localize/Format/Gettext.pm:86
 msgid "Two days ago %at_time(%1)"
 msgstr ""
 
@@ -1491,11 +1491,11 @@ msgstr ""
 msgid "Yes, purge this user"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:65
+#: lib/Silki/Localize/Format/Gettext.pm:63
 msgid "Yesterday"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:159 lib/Silki/Localize/Format/Gettext.pm:88
+#: lib/Silki/Localize/Format/Gettext.pm:155 lib/Silki/Localize/Format/Gettext.pm:85
 msgid "Yesterday %at_time(%1)"
 msgstr ""
 
@@ -1627,7 +1627,7 @@ msgid "Your submission was flagged as spam by our antispam system. Please check 
 msgstr ""
 
 #. ($dt)
-#: lib/Silki/Localize/Format/Gettext.pm:176
+#: lib/Silki/Localize/Format/Gettext.pm:173
 msgid "at %time(%1)"
 msgstr ""
 
@@ -1651,11 +1651,11 @@ msgstr ""
 msgid "more"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:68
+#: lib/Silki/Localize/Format/Gettext.pm:66
 msgid "on %date(%1)"
 msgstr ""
 
-#: lib/Silki/Localize/Format/Gettext.pm:91
+#: lib/Silki/Localize/Format/Gettext.pm:88
 msgid "on %date(%1) %at_time(%1)"
 msgstr ""
 
