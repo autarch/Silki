@@ -24,13 +24,6 @@ has '+db_encoding' => (
     default => 'UTF-8',
 );
 
-has '+contrib_files' => (
-    lazy    => 1,
-    default => sub {
-        $_[0]->sql_file() =~ /v[12]$/ ? [] : ['citext.sql'];
-    },
-);
-
 has _existing_config => (
     traits  => ['NoGetopt'],
     is      => 'ro',

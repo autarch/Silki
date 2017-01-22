@@ -2,6 +2,8 @@ SET CLIENT_MIN_MESSAGES = ERROR;
 
 CREATE LANGUAGE plpgsql;
 
+CREATE EXTENSION citext;
+
 -- Is there a way to ensure that this table only ever has one row?
 CREATE TABLE "Version" (
        version                  INTEGER         PRIMARY KEY
