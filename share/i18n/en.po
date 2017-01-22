@@ -427,8 +427,8 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#. ($page->title()
 #. ($domain->web_hostname()
+#. ($page->title()
 #: share/mason/domain/edit-form:8 share/mason/page/edit-form:8
 msgid "Edit %1"
 msgstr ""
