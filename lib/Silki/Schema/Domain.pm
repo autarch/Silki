@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use namespace::autoclean;
 
-use Net::Interface;
+#use Net::Interface;
 use Silki::Config;
 use Silki::I18N qw( loc );
 use Silki::Schema;
@@ -145,8 +145,8 @@ sub _FindOrCreateDefaultDomain {
 sub _SystemHostname {
     for my $name (
         hostname(),
-        map { scalar gethostbyaddr( $_->address(), AF_INET ) }
-        grep { $_->address() } Net::Interface->interfaces()
+#        map { scalar gethostbyaddr( $_->address(), AF_INET ) }
+#        grep { $_->address() } Net::Interface->interfaces()
         ) {
         return $name if $name =~ /\.[^.]+$/;
     }
