@@ -58,16 +58,15 @@ sub on_date {
 
     my $day_key = $self->_day_key_for_dt($dt);
 
-    my $id;
+    my %loc = (
+        today          => loc('Today'),
+        yesterday      => loc('Yesterday'),
+        two_days_ago   => loc('Two days ago'),
+        three_days_ago => loc('Three days ago'),
+        any            => loc('on %date(%1)'),
+    );
 
-    given ($day_key) {
-        when ('today')          { $id = loc('Today') }
-        when ('yesterday')      { $id = loc('Yesterday') }
-        when ('two_days_ago')   { $id = loc('Two days ago') }
-        when ('three_days_ago') { $id = loc('Three days ago') }
-        when ('any')            { $id = loc('on %date(%1)') }
-        default { die "Unknown day key: $day_key" }
-    }
+    my $id = $loc{$day_key} or die "Unknown day key: $day_key";
 
     return Silki::I18N::loc( $id, $dt );
 }
@@ -81,16 +80,15 @@ sub on_datetime {
 
     my $day_key = $self->_day_key_for_dt($dt);
 
-    my $id;
+    my %loc = (
+        today          => loc('Today %at_time(%1)'),
+        yesterday      => loc('Yesterday %at_time(%1)'),
+        two_days_ago   => loc('Two days ago %at_time(%1)'),
+        three_days_ago => loc('Three days ago %at_time(%1)'),
+        any            => loc('on %date(%1) %at_time(%1)'),
+    );
 
-    given ($day_key) {
-        when ('today')          { $id = loc('Today %at_time(%1)') }
-        when ('yesterday')      { $id = loc('Yesterday %at_time(%1)') }
-        when ('two_days_ago')   { $id = loc('Two days ago %at_time(%1)') }
-        when ('three_days_ago') { $id = loc('Three days ago %at_time(%1)') }
-        when ('any')            { $id = loc('on %date(%1) %at_time(%1)') }
-        default { die "Unknown day key: $day_key" }
-    }
+    my $id = $loc{$day_key} or die "Unknown day key: $day_key";
 
     return Silki::I18N::loc( $id, $dt );
 }
@@ -152,16 +150,15 @@ sub datetime {
 
     my $day_key = $self->_day_key_for_dt($dt);
 
-    my $id;
+    my %loc = (
+        today          => loc('Today %at_time(%1)'),
+        yesterday      => loc('Yesterday %at_time(%1)'),
+        two_days_ago   => loc('Two days ago %at_time(%1)'),
+        three_days_ago => loc('Three days ago %at_time(%1)'),
+        any            => loc('%date(%1) %at_time(%1)'),
+    );
 
-    given ($day_key) {
-        when ('today')          { $id = loc('Today %at_time(%1)') }
-        when ('yesterday')      { $id = loc('Yesterday %at_time(%1)') }
-        when ('two_days_ago')   { $id = loc('Two days ago %at_time(%1)') }
-        when ('three_days_ago') { $id = loc('Three days ago %at_time(%1)') }
-        when ('any')            { $id = loc('%date(%1) %at_time(%1)') }
-        default { die "Unknown day key: $day_key" }
-    }
+    my $id = $loc{$day_key} or die "Unknown day key: $day_key";
 
     return Silki::I18N::loc( $id, $dt );
 }
